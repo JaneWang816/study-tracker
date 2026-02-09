@@ -13,6 +13,10 @@ import DayHome from './pages/DayHome'
 import LearningSession from './pages/LearningSession'
 import DayComplete from './pages/DayComplete'
 
+// 每日練習頁面
+import DailyArithmetic from './pages/DailyArithmetic'
+import DailyArithmeticSession from './pages/DailyArithmeticSession'
+
 import './App.css'
 
 function App() {
@@ -26,6 +30,15 @@ function App() {
           {/* 首頁 - 週次選擇 */}
           <Route path="/" element={
             <ProtectedRoute><Home /></ProtectedRoute>
+          } />
+          
+          {/* 每日練習 - 四則運算 */}
+          <Route path="/daily/arithmetic" element={
+            <ProtectedRoute><DailyArithmetic /></ProtectedRoute>
+          } />
+          
+          <Route path="/daily/arithmetic/session" element={
+            <ProtectedRoute><DailyArithmeticSession /></ProtectedRoute>
           } />
           
           {/* 週頁面 - 天數選擇 */}

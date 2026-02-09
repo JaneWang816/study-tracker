@@ -1,3 +1,4 @@
+// src/pages/Login.jsx
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
@@ -7,9 +8,8 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  
-  const { signIn } = useAuth()
   const navigate = useNavigate()
+  const { signIn } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -17,9 +17,9 @@ export default function Login() {
     setLoading(true)
 
     const { error } = await signIn(email, password)
-
+    
     if (error) {
-      setError('登入失敗：' + error.message)
+      setError(error.message || '登入失敗')
       setLoading(false)
     } else {
       navigate('/')
@@ -28,10 +28,16 @@ export default function Login() {
 
   return (
     <div className="login-container">
+      <div className="login-decoration login-decoration-1"></div>
+      <div className="login-decoration login-decoration-2"></div>
+      
       <div className="login-card">
-        <h1>📚 學習追蹤系統</h1>
-        <p className="login-subtitle">請登入以繼續</p>
-
+        <div className="login-logo">📚</div>
+        <h1>歡迎回來</h1>
+        <p>登入以繼續學習旅程</p>
+        
+        {error && <div className="error-message">{error}</div>}
+        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>電子郵件</label>
@@ -39,36 +45,30 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
+              placeholder="請輸入您的電子郵件"
               required
             />
           </div>
-
+          
           <div className="form-group">
             <label>密碼</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="請輸入您的密碼"
               required
             />
           </div>
-
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
-
-          <button 
-            type="submit" 
-            className="btn btn-primary btn-large"
-            disabled={loading}
-          >
+          
+          <button type="submit" className="btn-login" disabled={loading}>
             {loading ? '登入中...' : '登入'}
           </button>
         </form>
+        
+        <div className="login-footer">
+          小六學習系統 © 2024
+        </div>
       </div>
     </div>
   )

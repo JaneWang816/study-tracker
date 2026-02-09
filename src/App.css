@@ -889,6 +889,223 @@ body {
   color: var(--text-dark);
 }
 
+/* ========== Loading ========== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg-main);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  margin-top: 16px;
+  color: var(--text-light);
+}
+
+/* ========== Login ========== */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  animation: pulse 15s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-5%, -5%) scale(1.1); }
+}
+
+.login-card {
+  background: white;
+  padding: 48px 40px;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+  border-radius: 24px 24px 0 0;
+}
+
+.login-logo {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 0 auto 24px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.login-card h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.login-card > p {
+  color: #64748b;
+  margin-bottom: 32px;
+  font-size: 15px;
+}
+
+.login-card form {
+  text-align: left;
+}
+
+.login-card .form-group {
+  margin-bottom: 20px;
+}
+
+.login-card .form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.login-card .form-group input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.3s;
+  background: #f9fafb;
+}
+
+.login-card .form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.login-card .form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.error-message {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: 18px;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-login:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-login:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-footer {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.login-decoration {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+}
+
+.login-decoration-1 {
+  width: 300px;
+  height: 300px;
+  background: white;
+  top: -100px;
+  right: -100px;
+}
+
+.login-decoration-2 {
+  width: 200px;
+  height: 200px;
+  background: white;
+  bottom: -50px;
+  left: -50px;
+}
+
 /* ========== 練習題樣式 ========== */
 
 /* 題目圖片 */
@@ -1107,5 +1324,488 @@ body {
   
   .question-text {
     font-size: 22px;
+  }
+}
+
+/* ========== 每日練習 - 四則運算 ========== */
+
+/* 練習設定頁面 */
+.practice-setup {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.setup-section {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.setup-section h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.option-grid {
+  display: grid;
+  gap: 15px;
+}
+
+/* 難度選擇：最多 3 個，在電腦上橫向排列 */
+.setup-section:first-of-type .option-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* 位數選擇：最多 4 個，在電腦上橫向排列 */
+.setup-section:nth-of-type(2) .option-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* 題數選擇：最多 4 個，在電腦上橫向排列 */
+.setup-section:nth-of-type(3) .option-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.option-card {
+  padding: 20px;
+  background: var(--bg-main);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.option-card:hover:not(.disabled) {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+.option-card.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.option-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.option-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.option-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.option-desc {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.btn-start {
+  width: 100%;
+  padding: 18px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-start:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 練習進行頁面 - 進度條 */
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.current-question {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s;
+}
+
+/* 題目容器 */
+.question-container {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* 答案輸入 - 除法 */
+.answer-inputs.division {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.division-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.division-input label {
+  font-size: 14px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.division-input input {
+  width: 120px;
+  padding: 12px 16px;
+  font-size: 20px;
+  text-align: center;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.division-input input:focus {
+  border-color: var(--primary);
+}
+
+.division-separator {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-light);
+  padding-top: 20px;
+}
+
+/* 答案輸入 - 一般 */
+.answer-inputs {
+  margin-top: 20px;
+}
+
+.answer-input {
+  width: 200px;
+  padding: 16px;
+  font-size: 24px;
+  text-align: center;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.answer-input:focus {
+  border-color: var(--primary);
+}
+
+/* 導航按鈕 */
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.btn-nav {
+  padding: 12px 24px;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-dark);
+}
+
+.btn-nav:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-submit {
+  padding: 12px 32px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-submit:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* 題號網格 */
+.question-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.question-number {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.question-number:hover {
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.question-number.current {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.question-number.answered {
+  background: #E0E7FF;
+  border-color: #C7D2FE;
+}
+
+/* 結果頁面 */
+.result-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.result-container h1 {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.result-summary {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 30px;
+}
+
+.result-score {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.score-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 700;
+  color: white;
+  margin: 0 auto 10px;
+}
+
+.score-label {
+  font-size: 18px;
+  color: var(--text-light);
+}
+
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 20px;
+  background: var(--bg-main);
+  border-radius: 12px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* 錯題列表 */
+.wrong-questions {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+}
+
+.wrong-questions h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.wrong-question-item {
+  padding: 20px;
+  background: var(--bg-main);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--danger);
+}
+
+.wrong-question-item .question-text {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-dark);
+}
+
+.answer-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-answer {
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.user-answer.wrong {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.correct-answer {
+  font-size: 14px;
+  padding: 8px 12px;
+  background: #D1FAE5;
+  color: #059669;
+  border-radius: 6px;
+}
+
+/* 結果頁操作按鈕 */
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.result-actions .btn,
+.result-actions .btn-primary,
+.result-actions .btn-secondary {
+  min-width: 140px;
+}
+
+/* 響應式 */
+@media (max-width: 768px) {
+  /* 難度選擇：平板上 2 個一排 */
+  .setup-section:first-of-type .option-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* 位數和題數選擇：平板上 2 個一排 */
+  .setup-section:nth-of-type(2) .option-grid,
+  .setup-section:nth-of-type(3) .option-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .question-grid {
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+  }
+  
+  .question-number {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .result-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  /* 所有選項在手機上都直向排列 */
+  .setup-section:first-of-type .option-grid,
+  .setup-section:nth-of-type(2) .option-grid,
+  .setup-section:nth-of-type(3) .option-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-nav,
+  .btn-submit {
+    width: 100%;
+  }
+  
+  .result-actions {
+    flex-direction: column;
+  }
+  
+  .result-actions .btn,
+  .result-actions .btn-primary,
+  .result-actions .btn-secondary {
+    width: 100%;
   }
 }
