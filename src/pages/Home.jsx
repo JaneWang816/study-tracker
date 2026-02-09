@@ -133,6 +133,54 @@ export default function Home() {
               <div style={{ fontSize: '24px', color: 'var(--text-light)' }}>→</div>
             </div>
 
+            {/* 自然發音 */}
+            <div
+              onClick={() => navigate('/daily/phonics')}
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: 'var(--shadow)',
+                borderLeft: '4px solid #10B981',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'var(--shadow)'
+              }}
+            >
+              <div style={{
+                width: '60px',
+                height: '60px',
+                background: '#10B981',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+                flexShrink: 0
+              }}>
+                🔤
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '18px', marginBottom: '4px', fontWeight: 600 }}>
+                  自然發音
+                </h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-light)' }}>
+                  聽音選字練習
+                </p>
+              </div>
+              <div style={{ fontSize: '24px', color: 'var(--text-light)' }}>→</div>
+            </div>
+
             {/* 預留：乘法速算 */}
             <div style={{
               background: 'white',
@@ -167,43 +215,7 @@ export default function Home() {
                   即將推出...
                 </p>
               </div>
-            </div>
-
-            {/* 預留：自然發音 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '16px',
-              padding: '20px',
-              cursor: 'not-allowed',
-              boxShadow: 'var(--shadow)',
-              borderLeft: '4px solid #CBD5E1',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              opacity: 0.6
-            }}>
-              <div style={{
-                width: '60px',
-                height: '60px',
-                background: '#CBD5E1',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '28px',
-                flexShrink: 0
-              }}>
-                📚
-              </div>
-              <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: '18px', marginBottom: '4px', fontWeight: 600 }}>
-                  自然發音
-                </h3>
-                <p style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-                  即將推出...
-                </p>
-              </div>
-            </div>
+            </div>            
           </div>
         </section>
 

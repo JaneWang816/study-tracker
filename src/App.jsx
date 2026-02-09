@@ -18,6 +18,8 @@ import DailyArithmetic from './pages/DailyArithmetic'
 import DailyArithmeticSession from './pages/DailyArithmeticSession'
 import DailyFlashcards from './pages/DailyFlashcards'
 import DailyFlashcardsReview from './pages/DailyFlashcardsReview'
+import DailyPhonics from './pages/DailyPhonics'
+import DailyPhonicsSession from './pages/DailyPhonicsSession'
 
 import './App.css'
 
@@ -50,6 +52,15 @@ function App() {
           
           <Route path="/daily/flashcards/:deckId/review" element={
             <ProtectedRoute><DailyFlashcardsReview /></ProtectedRoute>
+          } />
+
+          {/* 每日練習 - 自然發音 */}
+          <Route path="/daily/phonics" element={
+            <ProtectedRoute><DailyPhonics /></ProtectedRoute>
+          } />
+          
+          <Route path="/daily/phonics/session" element={
+            <ProtectedRoute><DailyPhonicsSession /></ProtectedRoute>
           } />
           
           {/* 週頁面 - 天數選擇 */}

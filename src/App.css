@@ -1864,8 +1864,8 @@ body {
   border-radius: 24px;
   padding: 40px;
   width: 100%;
-  max-width: 500px;
-  min-width: 500px;
+  max-width: 600px;
+  min-width: 600px;
   min-height: 500px;
   max-height: 500px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -1887,8 +1887,8 @@ body {
   cursor: default;
   /* 背面完全相同尺寸 */
   width: 100%;
-  max-width: 500px;
-  min-width: 500px;
+  max-width: 600px;
+  min-width: 600px;
   min-height: 500px;
   max-height: 500px;
 }
@@ -2220,5 +2220,50 @@ body {
   
   .complete-actions .btn {
     width: 100%;
+  }
+}
+
+/* ========== 自然發音練習功能 ========== */
+
+.phonics-practice-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* 練習頁面特殊動畫 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 響應式 - 自然發音 */
+@media (max-width: 768px) {
+  .phonics-practice-container {
+    padding: 0 16px;
+  }
+  
+  .phonics-practice-container button[style*="120px"] {
+    width: 100px !important;
+    height: 100px !important;
+    fontSize: 40px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .phonics-practice-container > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  .phonics-practice-container button[style*="padding: 24px"] {
+    padding: 20px !important;
+    fontSize: 20px !important;
   }
 }
