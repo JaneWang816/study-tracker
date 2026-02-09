@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -24,6 +24,9 @@ export default function DailyFlashcardsReview() {
     incorrect: 0
   })
 
+  // 記錄本次 session 已評分的卡片 ID（避免重複計數）
+  const [reviewedCardIds, setReviewedCardIds] = useState(new Set())
+
   const currentCard = cards[currentIndex]
 
   // 取得本地日期字串 YYYY-MM-DD
@@ -35,47 +38,47 @@ export default function DailyFlashcardsReview() {
     return `${year}-${month}-${day}`
   }
 
-  // 取得資料
-  const fetchData = useCallback(async () => {
-    if (!user) return
-
-    // 取得 deck 資訊
-    const { data: deckData } = await supabase
-      .from('decks')
-      .select('*')
-      .eq('id', deckId)
-      .single()
-
-    if (deckData) {
-      setDeck(deckData)
-    }
-
-    // 取得待複習字卡
-    const { data: cardsData } = await supabase
-      .from('flashcards')
-      .select('*')
-      .eq('deck_id', deckId)
-      .lte('next_review_at', new Date().toISOString())
-
-    if (cardsData && cardsData.length > 0) {
-      // 隨機排序
-      const shuffled = [...cardsData].sort(() => Math.random() - 0.5)
-      setCards(shuffled)
-    } else {
-      setIsComplete(true)
-    }
-
-    setLoading(false)
-  }, [deckId, user])
-
+  // 取得資料（只在初次載入時執行）
   useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return
+
+      // 取得 deck 資訊
+      const { data: deckData } = await supabase
+        .from('decks')
+        .select('*')
+        .eq('id', deckId)
+        .single()
+
+      if (deckData) {
+        setDeck(deckData)
+      }
+
+      // 取得待複習字卡
+      const { data: cardsData } = await supabase
+        .from('flashcards')
+        .select('*')
+        .eq('deck_id', deckId)
+        .lte('next_review_at', new Date().toISOString())
+
+      if (cardsData && cardsData.length > 0) {
+        // 隨機排序（只在初次載入時排序一次）
+        const shuffled = [...cardsData].sort(() => Math.random() - 0.5)
+        setCards(shuffled)
+      } else {
+        setIsComplete(true)
+      }
+
+      setLoading(false)
+    }
+
     fetchData()
     
     // 清理：離開頁面時停止語音
     return () => {
       stopSpeaking()
     }
-  }, [fetchData])
+  }, [deckId, user]) // 只在 deckId 或 user 改變時重新載入
 
   // 更新 study_logs
   const updateStudyLog = async (count) => {
@@ -166,44 +169,55 @@ export default function DailyFlashcardsReview() {
   const handleRate = async (quality) => {
     if (!currentCard) return
 
-    // 計算新的 SM-2 參數
-    const result = calculateSM2({
-      quality,
-      currentInterval: currentCard.interval || 0,
-      currentEaseFactor: currentCard.ease_factor || 2.5,
-      currentRepetitionCount: currentCard.repetition_count || 0,
-    })
+    // 防止重複點擊
+    if (currentCard.isRating) return
+    currentCard.isRating = true
 
-    // 更新字卡
-    await supabase
-      .from('flashcards')
-      .update({
-        ease_factor: result.easeFactor,
-        interval: result.interval,
-        repetition_count: result.repetitions,
-        next_review_at: result.nextReview.toISOString(),
+    try {
+      // 計算新的 SM-2 參數
+      const result = calculateSM2({
+        quality,
+        currentInterval: currentCard.interval || 0,
+        currentEaseFactor: currentCard.ease_factor || 2.5,
+        currentRepetitionCount: currentCard.repetition_count || 0,
       })
-      .eq('id', currentCard.id)
 
-    // 更新學習記錄
-    await updateStudyLog(1)
+      // 更新字卡
+      await supabase
+        .from('flashcards')
+        .update({
+          ease_factor: result.easeFactor,
+          interval: result.interval,
+          repetition_count: result.repetitions,
+          next_review_at: result.nextReview.toISOString(),
+        })
+        .eq('id', currentCard.id)
 
-    // 更新統計
-    setStats((prev) => ({
-      reviewed: prev.reviewed + 1,
-      correct: quality >= 2 ? prev.correct + 1 : prev.correct,
-      incorrect: quality < 2 ? prev.incorrect + 1 : prev.incorrect,
-    }))
+      // 更新學習記錄（只在第一次評分這張卡片時計數）
+      if (!reviewedCardIds.has(currentCard.id)) {
+        await updateStudyLog(1)
+        setReviewedCardIds(prev => new Set([...prev, currentCard.id]))
+      }
 
-    // 下一張卡
-    if (currentIndex < cards.length - 1) {
-      setCurrentIndex(currentIndex + 1)
-      setIsFlipped(false)
-      stopSpeaking()
-    } else {
-      // 完成
-      setIsComplete(true)
-      stopSpeaking()
+      // 更新統計
+      setStats((prev) => ({
+        reviewed: prev.reviewed + 1,
+        correct: quality >= 2 ? prev.correct + 1 : prev.correct,
+        incorrect: quality < 2 ? prev.incorrect + 1 : prev.incorrect,
+      }))
+
+      // 下一張卡
+      if (currentIndex < cards.length - 1) {
+        setCurrentIndex(currentIndex + 1)
+        setIsFlipped(false)
+        stopSpeaking()
+      } else {
+        // 完成
+        setIsComplete(true)
+        stopSpeaking()
+      }
+    } finally {
+      currentCard.isRating = false
     }
   }
 
