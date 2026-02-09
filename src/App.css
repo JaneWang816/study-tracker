@@ -1809,3 +1809,416 @@ body {
     width: 100%;
   }
 }
+
+/* ========== 字卡複習功能 ========== */
+
+/* 字卡複習頁面容器 */
+.flashcard-review {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* 字卡頁首 */
+.flashcard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.flashcard-header .header-info {
+  flex: 1;
+  text-align: center;
+}
+
+.flashcard-header .header-info h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.flashcard-header .header-info p {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.stats-mini {
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* 字卡容器 */
+.flashcard-container {
+  max-width: 600px;
+  margin: 30px auto 20px;
+  padding: 0 20px;
+}
+
+/* 字卡 - 正面和背面完全相同尺寸 */
+.flashcard {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  min-width: 500px;
+  min-height: 500px;
+  max-height: 500px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
+.flashcard:hover {
+  transform: scale(1.02);
+}
+
+.flashcard.flipped {
+  cursor: default;
+  /* 背面完全相同尺寸 */
+  width: 100%;
+  max-width: 500px;
+  min-width: 500px;
+  min-height: 500px;
+  max-height: 500px;
+}
+
+.flashcard-content {
+  width: 100%;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-side-label {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+
+.card-text {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 20px 0;
+  line-height: 1.2;
+  word-wrap: break-word;
+}
+
+.card-note {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #F8FAFC;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-dark);
+  text-align: left;
+  line-height: 1.5;
+  max-width: 90%;
+}
+
+.note-label {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 12px;
+}
+
+.btn-speak {
+  margin-top: 20px;
+  padding: 10px 24px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-speak:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-speak-small {
+  padding: 4px 10px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-speak-small:hover {
+  background: var(--primary-dark);
+}
+
+.flip-hint {
+  margin-top: 24px;
+  font-size: 13px;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.btn-flip-back {
+  margin-top: 16px;
+  padding: 8px 20px;
+  background: var(--border);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-flip-back:hover {
+  background: #CBD5E1;
+}
+
+/* 評分區塊 - 緊湊排列 */
+.rating-section {
+  margin-top: 24px;
+}
+
+.rating-hint {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 12px;
+}
+
+.rating-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rating-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.rating-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.rating-button:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.rating-label {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.rating-preview {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* 完成頁面 */
+.flashcard-complete {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 48px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.complete-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.flashcard-complete h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.complete-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  padding: 20px;
+  background: var(--bg-main);
+  border-radius: 12px;
+}
+
+.stat-card .stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.stat-card .stat-label {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.complete-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 響應式 - 字卡 */
+@media (max-width: 768px) {
+  .flashcard-container {
+    max-width: 500px;
+  }
+  
+  .flashcard {
+    padding: 32px;
+    max-width: 500px;
+    min-height: 450px;
+    max-height: 450px;
+  }
+  
+  .flashcard.flipped {
+    min-height: 450px;
+    max-height: 450px;
+  }
+  
+  .card-text {
+    font-size: 36px;
+  }
+  
+  .card-note {
+    font-size: 12px;
+  }
+  
+  .rating-buttons {
+    gap: 8px;
+  }
+  
+  .rating-button {
+    min-width: 70px;
+    padding: 10px 14px;
+  }
+  
+  .rating-label {
+    font-size: 14px;
+  }
+  
+  .rating-preview {
+    font-size: 10px;
+  }
+  
+  .complete-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stat-card .stat-value {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .flashcard-header {
+    flex-wrap: wrap;
+  }
+  
+  .stats-mini {
+    width: 100%;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  
+  .flashcard-container {
+    max-width: 100%;
+  }
+  
+  .flashcard {
+    padding: 24px;
+    max-width: 100%;
+    min-height: 420px;
+    max-height: 420px;
+  }
+  
+  .flashcard.flipped {
+    min-height: 420px;
+    max-height: 420px;
+  }
+  
+  .card-text {
+    font-size: 32px;
+  }
+  
+  .card-note {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+  
+  .rating-section {
+    margin-top: 20px;
+  }
+  
+  .rating-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .rating-button {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 12px 20px;
+  }
+  
+  .complete-actions {
+    flex-direction: column;
+  }
+  
+  .complete-actions .btn {
+    width: 100%;
+  }
+}

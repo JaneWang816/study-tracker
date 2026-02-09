@@ -85,6 +85,54 @@ export default function Home() {
               <div style={{ fontSize: '24px', color: 'var(--text-light)' }}>→</div>
             </div>
 
+            {/* 字卡複習 */}
+            <div
+              onClick={() => navigate('/daily/flashcards')}
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: 'var(--shadow)',
+                borderLeft: '4px solid #F59E0B',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'var(--shadow)'
+              }}
+            >
+              <div style={{
+                width: '60px',
+                height: '60px',
+                background: '#F59E0B',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+                flexShrink: 0
+              }}>
+                🎴
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '18px', marginBottom: '4px', fontWeight: 600 }}>
+                  背字卡
+                </h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-light)' }}>
+                  間隔複習
+                </p>
+              </div>
+              <div style={{ fontSize: '24px', color: 'var(--text-light)' }}>→</div>
+            </div>
+
             {/* 預留：乘法速算 */}
             <div style={{
               background: 'white',

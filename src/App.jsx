@@ -16,6 +16,8 @@ import DayComplete from './pages/DayComplete'
 // 每日練習頁面
 import DailyArithmetic from './pages/DailyArithmetic'
 import DailyArithmeticSession from './pages/DailyArithmeticSession'
+import DailyFlashcards from './pages/DailyFlashcards'
+import DailyFlashcardsReview from './pages/DailyFlashcardsReview'
 
 import './App.css'
 
@@ -39,6 +41,15 @@ function App() {
           
           <Route path="/daily/arithmetic/session" element={
             <ProtectedRoute><DailyArithmeticSession /></ProtectedRoute>
+          } />
+          
+          {/* 每日練習 - 字卡複習 */}
+          <Route path="/daily/flashcards" element={
+            <ProtectedRoute><DailyFlashcards /></ProtectedRoute>
+          } />
+          
+          <Route path="/daily/flashcards/:deckId/review" element={
+            <ProtectedRoute><DailyFlashcardsReview /></ProtectedRoute>
           } />
           
           {/* 週頁面 - 天數選擇 */}
