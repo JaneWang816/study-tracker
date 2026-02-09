@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>題庫編輯工具 - 學期課程系統</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', sans-serif;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 28px; margin-bottom: 8px; }
+    .header p { opacity: 0.9; font-size: 16px; }
+    
+    .form-section { padding: 30px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: 600; color: #2d3436; margin-bottom: 6px; font-size: 13px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px 14px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #f093fb; }
+    .hint { font-size: 11px; color: #636e72; margin-top: 3px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .form-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+    
+    h3.section-heading { color: #f5576c; margin: 24px 0 12px 0; padding-top: 16px; border-top: 2px solid #e9ecef; font-size: 16px; }
+    h3.section-heading:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+    
+    /* 題目卡片 */
+    .question-card {
+      background: #fff5f5;
+      border: 2px solid #fecaca;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .question-card.choice { border-left: 4px solid #f093fb; }
+    .question-card.fill { border-left: 4px solid #38b2ac; }
+    
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .question-header h4 {
+      font-size: 14px;
+      color: #2d3436;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .question-type-badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+    }
+    .question-type-badge.choice { background: #f093fb; }
+    .question-type-badge.fill { background: #38b2ac; }
+    
+    .question-actions { display: flex; gap: 6px; }
+    .btn-move { padding: 4px 8px; background: #e9ecef; color: #636e72; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; }
+    .btn-move:hover { background: #dfe6e9; }
+    .btn-remove-q { padding: 4px 10px; background: #ff6b6b; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; }
+    
+    /* 選項 */
+    .options-container { margin-top: 12px; }
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+    }
+    .option-item.correct { background: #d1fae5; border-color: #34d399; }
+    .option-label {
+      width: 28px;
+      height: 28px;
+      background: #f093fb;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .option-item.correct .option-label { background: #10b981; }
+    .option-input { flex: 1; border: none; background: transparent; font-size: 14px; padding: 4px; }
+    .option-input:focus { outline: none; }
+    .btn-correct {
+      padding: 4px 10px;
+      background: #e9ecef;
+      color: #636e72;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .option-item.correct .btn-correct { background: #10b981; color: white; }
+    .btn-remove-opt { padding: 4px 6px; background: #ff6b6b; color: white; border: none; border-radius: 4px; font-size: 10px; cursor: pointer; }
+    
+    .btn-add-option {
+      padding: 6px 12px;
+      background: #f0f4ff;
+      color: #667eea;
+      border: 1px dashed #667eea;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    
+    /* 圖片區塊 */
+    .image-section {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .image-section label { color: #166534; }
+    .image-preview {
+      margin-top: 8px;
+      max-width: 200px;
+      max-height: 150px;
+      border-radius: 8px;
+      display: none;
+    }
+    .image-preview.show { display: block; }
+    
+    /* 按鈕 */
+    .btn-add-question {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn-add-question button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: white;
+      transition: transform 0.2s;
+    }
+    .btn-add-question button:hover { transform: translateY(-2px); }
+    .btn-add-choice { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .btn-add-fill { background: linear-gradient(135deg, #38b2ac 0%, #319795 100%); }
+    
+    .btn-generate {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+    
+    /* 輸出 */
+    .output-section { padding: 30px; background: #f8f9fa; border-top: 2px solid #e9ecef; display: none; }
+    .output-section.show { display: block; }
+    .instruction { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 14px; border-radius: 8px; margin-bottom: 16px; }
+    .instruction h3 { color: #b45309; font-size: 15px; margin-bottom: 6px; }
+    .instruction p { font-size: 13px; margin: 3px 0; }
+    .instruction code { background: #fde68a; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+    
+    .code-block { margin-bottom: 16px; }
+    .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #2d3436; color: white; border-radius: 8px 8px 0 0; }
+    .code-title { font-weight: 600; font-size: 13px; }
+    .btn-copy { padding: 5px 10px; background: #f093fb; color: white; border: none; border-radius: 5px; font-size: 11px; cursor: pointer; }
+    .btn-copy.copied { background: #10b981; }
+    .code-content { background: #1e1e1e; color: #d4d4d4; padding: 14px; border-radius: 0 0 8px 8px; overflow-x: auto; font-family: Monaco, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.4; white-space: pre; max-height: 400px; overflow-y: auto; }
+    
+    .summary-box { background: #fdf2f8; border: 2px solid #f9a8d4; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .summary-box h3 { color: #9d174d; margin-bottom: 10px; font-size: 15px; }
+    .summary-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #fbcfe8; font-size: 13px; }
+    .summary-item:last-child { border-bottom: none; }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #9ca3af;
+    }
+    .empty-state p { font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📝 題庫編輯工具</h1>
+      <p>輕鬆建立選擇題和填充題，支援圖片題目</p>
+    </div>
+    
+    <div class="form-section">
+      <h3 class="section-heading">➕ 新增題目</h3>
+      <div class="btn-add-question">
+        <button class="btn-add-choice" onclick="addQuestion('choice')">📋 新增選擇題</button>
+        <button class="btn-add-fill" onclick="addQuestion('fill')">✏️ 新增填充題</button>
+      </div>
+      
+      <h3 class="section-heading">📚 題目列表（<span id="questionCount">0</span> 題）</h3>
+      <div id="questionsContainer">
+        <div class="empty-state">
+          <p>尚未新增題目，點擊上方按鈕開始新增</p>
+        </div>
+      </div>
+      
+      <button class="btn-generate" onclick="generate()">✨ 生成題庫 JSON</button>
+    </div>
+    
+    <div class="output-section" id="output">
+      <div class="summary-box">
+        <h3>📊 題庫摘要</h3>
+        <div id="summary"></div>
+      </div>
+      
+      <div class="instruction">
+        <h3>📋 使用說明</h3>
+        <p>複製下方 JSON，貼到「新增單元工具」的<strong>題庫 JSON</strong>欄位</p>
+        <p>或直接貼到 <code>dayX.js</code> 的 <code>questionBank</code> 欄位</p>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title">📁 題庫 JSON</span>
+          <button class="btn-copy" onclick="copyCode()">複製</button>
+        </div>
+        <pre class="code-content" id="codeOutput"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let questionCounter = 0
+    const optionLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+    
+    function addQuestion(type) {
+      questionCounter++
+      const qid = questionCounter
+      
+      // 移除空狀態提示
+      const emptyState = document.querySelector('.empty-state')
+      if (emptyState) emptyState.remove()
+      
+      const container = document.getElementById('questionsContainer')
+      const div = document.createElement('div')
+      div.className = `question-card ${type}`
+      div.id = `question-${qid}`
+      div.dataset.type = type
+      
+      let optionsHtml = ''
+      if (type === 'choice') {
+        optionsHtml = `
+          <label style="font-weight:600;font-size:13px;margin-bottom:6px;display:block;">選項（點擊「正確」標記答案）</label>
+          <div class="options-container" id="options-${qid}">
+            <div class="option-item" data-index="0">
+              <span class="option-label">A</span>
+              <input type="text" class="option-input" placeholder="選項 A">
+              <button class="btn-correct" onclick="setCorrect(${qid}, 0)">正確</button>
+              <button class="btn-remove-opt" onclick="removeOption(${qid}, this)" style="display:none;">✕</button>
+            </div>
+            <div class="option-item" data-index="1">
+              <span class="option-label">B</span>
+              <input type="text" class="option-input" placeholder="選項 B">
+              <button class="btn-correct" onclick="setCorrect(${qid}, 1)">正確</button>
+              <button class="btn-remove-opt" onclick="removeOption(${qid}, this)" style="display:none;">✕</button>
+            </div>
+            <div class="option-item" data-index="2">
+              <span class="option-label">C</span>
+              <input type="text" class="option-input" placeholder="選項 C">
+              <button class="btn-correct" onclick="setCorrect(${qid}, 2)">正確</button>
+              <button class="btn-remove-opt" onclick="removeOption(${qid}, this)" style="display:none;">✕</button>
+            </div>
+            <div class="option-item" data-index="3">
+              <span class="option-label">D</span>
+              <input type="text" class="option-input" placeholder="選項 D">
+              <button class="btn-correct" onclick="setCorrect(${qid}, 3)">正確</button>
+              <button class="btn-remove-opt" onclick="removeOption(${qid}, this)" style="display:none;">✕</button>
+            </div>
+          </div>
+          <button class="btn-add-option" onclick="addOption(${qid})">+ 新增選項</button>
+        `
+      } else {
+        optionsHtml = `
+          <div class="form-group">
+            <label>正確答案</label>
+            <input type="text" class="fill-answer" placeholder="輸入正確答案">
+            <div class="hint">填充題的標準答案</div>
+          </div>
+        `
+      }
+      
+      div.innerHTML = `
+        <div class="question-header">
+          <h4>
+            <span class="question-type-badge ${type}">${type === 'choice' ? '選擇題' : '填充題'}</span>
+            題目 ${qid}
+          </h4>
+          <div class="question-actions">
+            <button class="btn-move" onclick="moveQuestion(${qid}, -1)">↑</button>
+            <button class="btn-move" onclick="moveQuestion(${qid}, 1)">↓</button>
+            <button class="btn-remove-q" onclick="removeQuestion(${qid})">刪除</button>
+          </div>
+        </div>
+        
+        <div class="image-section">
+          <label>🖼️ 題目圖片（選填）</label>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0;">
+              <input type="text" class="question-image" placeholder="圖片網址" oninput="previewImage(${qid})">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <input type="text" class="image-alt" placeholder="圖片描述（選填）">
+            </div>
+          </div>
+          <img class="image-preview" id="preview-${qid}" src="" alt="預覽">
+        </div>
+        
+        <div class="form-group">
+          <label>題目內容</label>
+          <textarea class="question-text" placeholder="輸入題目..." style="min-height:60px;"></textarea>
+        </div>
+        
+        ${optionsHtml}
+      `
+      
+      container.appendChild(div)
+      updateQuestionCount()
+      updateOptionRemoveButtons(qid)
+    }
+    
+    function removeQuestion(qid) {
+      document.getElementById(`question-${qid}`).remove()
+      updateQuestionCount()
+      
+      // 如果沒有題目了，顯示空狀態
+      const container = document.getElementById('questionsContainer')
+      if (container.children.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>尚未新增題目，點擊上方按鈕開始新增</p></div>'
+      }
+    }
+    
+    function moveQuestion(qid, direction) {
+      const card = document.getElementById(`question-${qid}`)
+      const container = document.getElementById('questionsContainer')
+      
+      if (direction === -1 && card.previousElementSibling) {
+        container.insertBefore(card, card.previousElementSibling)
+      } else if (direction === 1 && card.nextElementSibling) {
+        container.insertBefore(card.nextElementSibling, card)
+      }
+    }
+    
+    function addOption(qid) {
+      const container = document.getElementById(`options-${qid}`)
+      const optionCount = container.children.length
+      if (optionCount >= 8) {
+        alert('最多 8 個選項')
+        return
+      }
+      
+      const div = document.createElement('div')
+      div.className = 'option-item'
+      div.dataset.index = optionCount
+      div.innerHTML = `
+        <span class="option-label">${optionLabels[optionCount]}</span>
+        <input type="text" class="option-input" placeholder="選項 ${optionLabels[optionCount]}">
+        <button class="btn-correct" onclick="setCorrect(${qid}, ${optionCount})">正確</button>
+        <button class="btn-remove-opt" onclick="removeOption(${qid}, this)">✕</button>
+      `
+      container.appendChild(div)
+      updateOptionRemoveButtons(qid)
+    }
+    
+    function removeOption(qid, btn) {
+      const container = document.getElementById(`options-${qid}`)
+      if (container.children.length <= 2) {
+        alert('至少需要 2 個選項')
+        return
+      }
+      btn.closest('.option-item').remove()
+      
+      // 重新編號
+      Array.from(container.children).forEach((item, idx) => {
+        item.dataset.index = idx
+        item.querySelector('.option-label').textContent = optionLabels[idx]
+        item.querySelector('.option-input').placeholder = `選項 ${optionLabels[idx]}`
+        item.querySelector('.btn-correct').onclick = () => setCorrect(qid, idx)
+      })
+      
+      updateOptionRemoveButtons(qid)
+    }
+    
+    function updateOptionRemoveButtons(qid) {
+      const container = document.getElementById(`options-${qid}`)
+      if (!container) return
+      const options = container.children
+      Array.from(options).forEach(opt => {
+        const btn = opt.querySelector('.btn-remove-opt')
+        if (btn) btn.style.display = options.length > 2 ? 'block' : 'none'
+      })
+    }
+    
+    function setCorrect(qid, index) {
+      const container = document.getElementById(`options-${qid}`)
+      Array.from(container.children).forEach((item, idx) => {
+        if (idx === index) {
+          item.classList.add('correct')
+        } else {
+          item.classList.remove('correct')
+        }
+      })
+    }
+    
+    function previewImage(qid) {
+      const input = document.querySelector(`#question-${qid} .question-image`)
+      const preview = document.getElementById(`preview-${qid}`)
+      if (input.value) {
+        preview.src = input.value
+        preview.classList.add('show')
+        preview.onerror = () => preview.classList.remove('show')
+      } else {
+        preview.classList.remove('show')
+      }
+    }
+    
+    function updateQuestionCount() {
+      const count = document.querySelectorAll('.question-card').length
+      document.getElementById('questionCount').textContent = count
+    }
+    
+    function escapeStr(str) {
+      return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')
+    }
+    
+    function generate() {
+      const questions = []
+      let hasError = false
+      
+      document.querySelectorAll('.question-card').forEach((card, idx) => {
+        if (hasError) return
+        
+        const type = card.dataset.type
+        const questionText = card.querySelector('.question-text').value.trim()
+        const imageSrc = card.querySelector('.question-image').value.trim()
+        const imageAlt = card.querySelector('.image-alt').value.trim()
+        
+        if (!questionText && !imageSrc) {
+          alert(`題目 ${idx + 1}：請輸入題目內容或圖片`)
+          hasError = true
+          return
+        }
+        
+        const q = {
+          id: `q${idx + 1}`,
+          type: type,
+          question: questionText
+        }
+        
+        // 圖片
+        if (imageSrc) {
+          q.image = { src: imageSrc }
+          if (imageAlt) q.image.alt = imageAlt
+        }
+        
+        if (type === 'choice') {
+          // 選擇題
+          const options = []
+          let correctIndex = -1
+          
+          card.querySelectorAll('.option-item').forEach((opt, optIdx) => {
+            const optText = opt.querySelector('.option-input').value.trim()
+            if (optText) {
+              options.push(optText)
+              if (opt.classList.contains('correct')) {
+                correctIndex = options.length - 1
+              }
+            }
+          })
+          
+          if (options.length < 2) {
+            alert(`題目 ${idx + 1}：選擇題至少需要 2 個選項`)
+            hasError = true
+            return
+          }
+          
+          if (correctIndex === -1) {
+            alert(`題目 ${idx + 1}：請標記正確答案`)
+            hasError = true
+            return
+          }
+          
+          q.options = options
+          q.answer = correctIndex
+          q.displayAnswer = options[correctIndex]
+          
+        } else {
+          // 填充題
+          const answer = card.querySelector('.fill-answer').value.trim()
+          if (!answer) {
+            alert(`題目 ${idx + 1}：請輸入正確答案`)
+            hasError = true
+            return
+          }
+          q.answer = answer
+          q.displayAnswer = answer
+        }
+        
+        questions.push(q)
+      })
+      
+      if (hasError) return
+      
+      if (questions.length === 0) {
+        alert('請至少新增一題')
+        return
+      }
+      
+      // 生成 JSON
+      const jsonLines = questions.map(q => {
+        let line = `  {\n    "id": "${q.id}",\n    "type": "${q.type}",\n    "question": "${escapeStr(q.question)}"`
+        
+        if (q.image) {
+          line += `,\n    "image": { "src": "${escapeStr(q.image.src)}"`
+          if (q.image.alt) line += `, "alt": "${escapeStr(q.image.alt)}"`
+          line += ` }`
+        }
+        
+        if (q.options) {
+          line += `,\n    "options": [${q.options.map(o => `"${escapeStr(o)}"`).join(', ')}]`
+        }
+        
+        line += `,\n    "answer": ${typeof q.answer === 'string' ? `"${escapeStr(q.answer)}"` : q.answer}`
+        line += `,\n    "displayAnswer": "${escapeStr(q.displayAnswer)}"\n  }`
+        
+        return line
+      }).join(',\n')
+      
+      const fullJson = `[\n${jsonLines}\n]`
+      
+      document.getElementById('codeOutput').textContent = fullJson
+      
+      // 摘要
+      const choiceCount = questions.filter(q => q.type === 'choice').length
+      const fillCount = questions.filter(q => q.type === 'fill').length
+      const imageCount = questions.filter(q => q.image).length
+      
+      document.getElementById('summary').innerHTML = `
+        <div class="summary-item"><span>總題數</span><strong>${questions.length} 題</strong></div>
+        <div class="summary-item"><span>📋 選擇題</span><strong>${choiceCount} 題</strong></div>
+        <div class="summary-item"><span>✏️ 填充題</span><strong>${fillCount} 題</strong></div>
+        <div class="summary-item"><span>🖼️ 含圖片</span><strong>${imageCount} 題</strong></div>
+      `
+      
+      document.getElementById('output').classList.add('show')
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth' })
+    }
+    
+    function copyCode() {
+      navigator.clipboard.writeText(document.getElementById('codeOutput').textContent).then(() => {
+        const btn = event.target
+        btn.textContent = '✓ 已複製'
+        btn.classList.add('copied')
+        setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('copied') }, 2000)
+      })
+    }
+  </script>
+</body>
+</html>

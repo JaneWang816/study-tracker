@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>題庫管理工具</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar select,
+    .toolbar input {
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .toolbar button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .toolbar button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 15px;
+    }
+
+    .question-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid #667eea;
+      transition: all 0.2s;
+    }
+
+    .question-card:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transform: translateX(5px);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 15px;
+    }
+
+    .question-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-easy { background: #d4edda; color: #155724; }
+    .badge-medium { background: #fff3cd; color: #856404; }
+    .badge-hard { background: #f8d7da; color: #721c24; }
+    .badge-category { background: #d1ecf1; color: #0c5460; }
+
+    .question-content {
+      margin-bottom: 15px;
+    }
+
+    .question-text {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .option {
+      padding: 8px 12px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .option.correct {
+      border-color: #28a745;
+      background: #d4edda;
+    }
+
+    .explanation {
+      font-size: 13px;
+      color: #666;
+      font-style: italic;
+      margin-top: 10px;
+      padding-left: 15px;
+      border-left: 3px solid #667eea;
+    }
+
+    .question-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .option-inputs {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-input {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .option-input input[type="text"] {
+      flex: 1;
+    }
+
+    .option-input input[type="radio"] {
+      width: 20px;
+      height: 20px;
+    }
+
+    .btn-add-option {
+      margin-top: 10px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .code-preview {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 題庫管理工具</h1>
+      <p>建立和管理手動題庫</p>
+    </header>
+
+    <div class="content">
+      <!-- 工具列 -->
+      <div class="toolbar">
+        <select id="categoryFilter">
+          <option value="all">所有題型</option>
+          <option value="polyphonic">多音字</option>
+          <option value="similar-shape">形似字</option>
+          <option value="common-errors">易錯字</option>
+        </select>
+
+        <select id="difficultyFilter">
+          <option value="all">所有難度</option>
+          <option value="easy">簡單</option>
+          <option value="medium">中等</option>
+          <option value="hard">困難</option>
+        </select>
+
+        <input type="text" id="searchInput" placeholder="搜尋題目..." style="flex: 1; min-width: 200px;">
+
+        <button class="btn-primary" onclick="showAddModal()">➕ 新增題目</button>
+        <button class="btn-success" onclick="exportQuestionBank()">💾 匯出題庫</button>
+        <button class="btn-secondary" onclick="showImportModal()">📥 匯入題庫</button>
+      </div>
+
+      <!-- 統計卡片 -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value" id="totalCount">0</div>
+          <div class="stat-label">總題數</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="easyCount">0</div>
+          <div class="stat-label">簡單</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="mediumCount">0</div>
+          <div class="stat-label">中等</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="hardCount">0</div>
+          <div class="stat-label">困難</div>
+        </div>
+      </div>
+
+      <!-- 題目列表 -->
+      <div id="questionList" class="question-list"></div>
+
+      <!-- 空狀態 -->
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📝</div>
+        <h3>還沒有題目</h3>
+        <p>點擊「新增題目」開始建立你的題庫</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增/編輯題目 Modal -->
+  <div id="questionModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header" id="modalTitle">新增題目</div>
+      
+      <div class="form-group">
+        <label>題型</label>
+        <select id="questionCategory">
+          <option value="polyphonic">多音字</option>
+          <option value="similar-shape">形似字</option>
+          <option value="common-errors">易錯字</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>難度</label>
+        <select id="questionDifficulty">
+          <option value="easy">簡單</option>
+          <option value="medium">中等</option>
+          <option value="hard">困難</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>題目</label>
+        <textarea id="questionText" placeholder="輸入題目內容..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>選項（可選，填空題不需要）</label>
+        <div id="optionInputs" class="option-inputs">
+          <div class="option-input">
+            <input type="radio" name="correctOption" value="0" checked>
+            <input type="text" placeholder="選項 1" data-option-index="0">
+            <button class="btn-danger btn-sm" onclick="removeOption(0)">刪除</button>
+          </div>
+        </div>
+        <button class="btn-secondary btn-sm btn-add-option" onclick="addOption()">➕ 新增選項</button>
+        <div class="hint">勾選正確答案的選項</div>
+      </div>
+
+      <div class="form-group">
+        <label>答案</label>
+        <input type="text" id="questionAnswer" placeholder="如果是選擇題，會自動填入">
+        <div class="hint">選擇題會自動從選項中選取，填空題請直接輸入答案</div>
+      </div>
+
+      <div class="form-group">
+        <label>解釋（可選）</label>
+        <textarea id="questionExplanation" placeholder="解釋為什麼這是正確答案..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>關鍵字（可選，用逗號分隔）</label>
+        <input type="text" id="questionKeywords" placeholder="例如：多音字,樂">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn-primary" onclick="saveQuestion()">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 匯入 Modal -->
+  <div id="importModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">匯入題庫</div>
+      
+      <div class="form-group">
+        <label>貼上題庫 JSON 或 JS 程式碼</label>
+        <textarea id="importText" placeholder='貼上題庫資料...' style="min-height: 200px;"></textarea>
+        <div class="hint">支援 JSON 格式或 JavaScript 匯出格式</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeImportModal()">取消</button>
+        <button class="btn-primary" onclick="importQuestionBank()">匯入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 匯出預覽 Modal -->
+  <div id="exportModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">匯出題庫</div>
+      
+      <div class="form-group">
+        <label>題庫程式碼</label>
+        <div class="code-preview" id="exportCode"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeExportModal()">關閉</button>
+        <button class="btn-success" onclick="copyExportCode()">📋 複製程式碼</button>
+        <button class="btn-primary" onclick="downloadQuestionBank()">💾 下載檔案</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 題庫資料（存在瀏覽器 localStorage）
+    let questionBank = {
+      polyphonic: { easy: [], medium: [], hard: [] },
+      'similar-shape': { easy: [], medium: [], hard: [] },
+      'common-errors': { easy: [], medium: [], hard: [] }
+    }
+
+    let editingQuestionId = null
+    let nextQuestionId = 1
+
+    // 初始化
+    function init() {
+      loadFromLocalStorage()
+      updateStats()
+      renderQuestions()
+      
+      // 監聽篩選
+      document.getElementById('categoryFilter').addEventListener('change', renderQuestions)
+      document.getElementById('difficultyFilter').addEventListener('change', renderQuestions)
+      document.getElementById('searchInput').addEventListener('input', renderQuestions)
+      
+      // 監聽選項選擇
+      document.addEventListener('change', (e) => {
+        if (e.target.name === 'correctOption') {
+          updateAnswerFromOptions()
+        }
+      })
+    }
+
+    // 從 localStorage 載入
+    function loadFromLocalStorage() {
+      const saved = localStorage.getItem('questionBank')
+      if (saved) {
+        questionBank = JSON.parse(saved)
+      }
+      
+      const savedId = localStorage.getItem('nextQuestionId')
+      if (savedId) {
+        nextQuestionId = parseInt(savedId)
+      }
+    }
+
+    // 儲存到 localStorage
+    function saveToLocalStorage() {
+      localStorage.setItem('questionBank', JSON.stringify(questionBank))
+      localStorage.setItem('nextQuestionId', nextQuestionId.toString())
+    }
+
+    // 更新統計
+    function updateStats() {
+      let total = 0
+      let easy = 0
+      let medium = 0
+      let hard = 0
+
+      for (const category in questionBank) {
+        total += questionBank[category].easy.length
+        total += questionBank[category].medium.length
+        total += questionBank[category].hard.length
+        easy += questionBank[category].easy.length
+        medium += questionBank[category].medium.length
+        hard += questionBank[category].hard.length
+      }
+
+      document.getElementById('totalCount').textContent = total
+      document.getElementById('easyCount').textContent = easy
+      document.getElementById('mediumCount').textContent = medium
+      document.getElementById('hardCount').textContent = hard
+    }
+
+    // 渲染題目列表
+    function renderQuestions() {
+      const categoryFilter = document.getElementById('categoryFilter').value
+      const difficultyFilter = document.getElementById('difficultyFilter').value
+      const searchText = document.getElementById('searchInput').value.toLowerCase()
+      
+      const container = document.getElementById('questionList')
+      const emptyState = document.getElementById('emptyState')
+      container.innerHTML = ''
+      
+      let hasQuestions = false
+      
+      for (const category in questionBank) {
+        if (categoryFilter !== 'all' && category !== categoryFilter) continue
+        
+        for (const difficulty in questionBank[category]) {
+          if (difficultyFilter !== 'all' && difficulty !== difficultyFilter) continue
+          
+          const questions = questionBank[category][difficulty]
+          
+          questions.forEach(q => {
+            if (searchText && !q.question.toLowerCase().includes(searchText) &&
+                !q.answer.toLowerCase().includes(searchText)) {
+              return
+            }
+            
+            hasQuestions = true
+            container.appendChild(createQuestionCard(q, category, difficulty))
+          })
+        }
+      }
+      
+      emptyState.style.display = hasQuestions ? 'none' : 'block'
+    }
+
+    // 建立題目卡片
+    function createQuestionCard(question, category, difficulty) {
+      const card = document.createElement('div')
+      card.className = 'question-card'
+      
+      const difficultyText = { easy: '簡單', medium: '中等', hard: '困難' }
+      const categoryText = { 
+        polyphonic: '多音字', 
+        'similar-shape': '形似字', 
+        'common-errors': '易錯字' 
+      }
+      
+      let optionsHtml = ''
+      if (question.options && question.options.length > 0) {
+        optionsHtml = '<div class="options">'
+        question.options.forEach(opt => {
+          const isCorrect = opt === question.answer
+          optionsHtml += `<div class="option ${isCorrect ? 'correct' : ''}">${opt}</div>`
+        })
+        optionsHtml += '</div>'
+      }
+      
+      card.innerHTML = `
+        <div class="question-header">
+          <div class="question-meta">
+            <span class="badge badge-${difficulty}">${difficultyText[difficulty]}</span>
+            <span class="badge badge-category">${categoryText[category]}</span>
+            ${question.id ? `<span class="badge" style="background: #e9ecef; color: #495057;">#${question.id}</span>` : ''}
+          </div>
+          <div class="question-actions">
+            <button class="btn-primary btn-sm" onclick='editQuestion("${category}", "${difficulty}", "${question.id}")'>編輯</button>
+            <button class="btn-danger btn-sm" onclick='deleteQuestion("${category}", "${difficulty}", "${question.id}")'>刪除</button>
+          </div>
+        </div>
+        <div class="question-content">
+          <div class="question-text">${question.question}</div>
+          ${optionsHtml}
+          <div style="margin-top: 10px;">
+            <strong>答案：</strong>${question.answer}
+          </div>
+          ${question.explanation ? `<div class="explanation">💡 ${question.explanation}</div>` : ''}
+          ${question.keywords && question.keywords.length > 0 ? 
+            `<div style="margin-top: 10px; font-size: 12px; color: #888;">
+              🏷️ ${question.keywords.join(', ')}
+            </div>` : ''}
+        </div>
+      `
+      
+      return card
+    }
+
+    // 顯示新增 Modal
+    function showAddModal() {
+      editingQuestionId = null
+      document.getElementById('modalTitle').textContent = '新增題目'
+      document.getElementById('questionCategory').value = 'polyphonic'
+      document.getElementById('questionDifficulty').value = 'easy'
+      document.getElementById('questionText').value = ''
+      document.getElementById('questionAnswer').value = ''
+      document.getElementById('questionExplanation').value = ''
+      document.getElementById('questionKeywords').value = ''
+      
+      // 重設選項
+      document.getElementById('optionInputs').innerHTML = `
+        <div class="option-input">
+          <input type="radio" name="correctOption" value="0" checked>
+          <input type="text" placeholder="選項 1" data-option-index="0">
+          <button class="btn-danger btn-sm" onclick="removeOption(0)">刪除</button>
+        </div>
+      `
+      
+      document.getElementById('questionModal').classList.add('show')
+    }
+
+    // 編輯題目
+    function editQuestion(category, difficulty, id) {
+      const question = questionBank[category][difficulty].find(q => q.id === id)
+      if (!question) return
+      
+      editingQuestionId = id
+      document.getElementById('modalTitle').textContent = '編輯題目'
+      document.getElementById('questionCategory').value = category
+      document.getElementById('questionDifficulty').value = difficulty
+      document.getElementById('questionText').value = question.question
+      document.getElementById('questionAnswer').value = question.answer
+      document.getElementById('questionExplanation').value = question.explanation || ''
+      document.getElementById('questionKeywords').value = question.keywords ? question.keywords.join(', ') : ''
+      
+      // 載入選項
+      const optionsContainer = document.getElementById('optionInputs')
+      optionsContainer.innerHTML = ''
+      
+      if (question.options && question.options.length > 0) {
+        question.options.forEach((opt, index) => {
+          const optionDiv = document.createElement('div')
+          optionDiv.className = 'option-input'
+          optionDiv.innerHTML = `
+            <input type="radio" name="correctOption" value="${index}" ${opt === question.answer ? 'checked' : ''}>
+            <input type="text" placeholder="選項 ${index + 1}" data-option-index="${index}" value="${opt}">
+            <button class="btn-danger btn-sm" onclick="removeOption(${index})">刪除</button>
+          `
+          optionsContainer.appendChild(optionDiv)
+        })
+      } else {
+        optionsContainer.innerHTML = `
+          <div class="option-input">
+            <input type="radio" name="correctOption" value="0" checked>
+            <input type="text" placeholder="選項 1" data-option-index="0">
+            <button class="btn-danger btn-sm" onclick="removeOption(0)">刪除</button>
+          </div>
+        `
+      }
+      
+      document.getElementById('questionModal').classList.add('show')
+    }
+
+    // 刪除題目
+    function deleteQuestion(category, difficulty, id) {
+      if (!confirm('確定要刪除這個題目嗎？')) return
+      
+      questionBank[category][difficulty] = questionBank[category][difficulty].filter(q => q.id !== id)
+      saveToLocalStorage()
+      updateStats()
+      renderQuestions()
+    }
+
+    // 新增選項
+    function addOption() {
+      const container = document.getElementById('optionInputs')
+      const index = container.children.length
+      
+      const optionDiv = document.createElement('div')
+      optionDiv.className = 'option-input'
+      optionDiv.innerHTML = `
+        <input type="radio" name="correctOption" value="${index}">
+        <input type="text" placeholder="選項 ${index + 1}" data-option-index="${index}">
+        <button class="btn-danger btn-sm" onclick="removeOption(${index})">刪除</button>
+      `
+      
+      container.appendChild(optionDiv)
+    }
+
+    // 移除選項
+    function removeOption(index) {
+      const container = document.getElementById('optionInputs')
+      if (container.children.length <= 1) {
+        alert('至少要保留一個選項！')
+        return
+      }
+      
+      container.children[index].remove()
+      
+      // 重新編號
+      Array.from(container.children).forEach((child, i) => {
+        const radio = child.querySelector('input[type="radio"]')
+        const input = child.querySelector('input[type="text"]')
+        const button = child.querySelector('button')
+        
+        radio.value = i
+        input.setAttribute('data-option-index', i)
+        input.placeholder = `選項 ${i + 1}`
+        button.setAttribute('onclick', `removeOption(${i})`)
+      })
+    }
+
+    // 從選項更新答案
+    function updateAnswerFromOptions() {
+      const selectedRadio = document.querySelector('input[name="correctOption"]:checked')
+      if (!selectedRadio) return
+      
+      const index = parseInt(selectedRadio.value)
+      const optionInput = document.querySelector(`input[data-option-index="${index}"]`)
+      
+      if (optionInput && optionInput.value) {
+        document.getElementById('questionAnswer').value = optionInput.value
+      }
+    }
+
+    // 儲存題目
+    function saveQuestion() {
+      const category = document.getElementById('questionCategory').value
+      const difficulty = document.getElementById('questionDifficulty').value
+      const question = document.getElementById('questionText').value.trim()
+      const answer = document.getElementById('questionAnswer').value.trim()
+      const explanation = document.getElementById('questionExplanation').value.trim()
+      const keywords = document.getElementById('questionKeywords').value
+        .split(',')
+        .map(k => k.trim())
+        .filter(k => k)
+      
+      if (!question || !answer) {
+        alert('題目和答案不能為空！')
+        return
+      }
+      
+      // 收集選項
+      const optionInputs = document.querySelectorAll('#optionInputs input[type="text"]')
+      const options = Array.from(optionInputs)
+        .map(input => input.value.trim())
+        .filter(opt => opt)
+      
+      const questionData = {
+        id: editingQuestionId || `q_${Date.now()}_${nextQuestionId++}`,
+        question,
+        answer,
+        explanation: explanation || undefined,
+        keywords: keywords.length > 0 ? keywords : undefined,
+        options: options.length > 0 ? options : undefined
+      }
+      
+      if (editingQuestionId) {
+        // 更新現有題目
+        const index = questionBank[category][difficulty].findIndex(q => q.id === editingQuestionId)
+        if (index !== -1) {
+          questionBank[category][difficulty][index] = questionData
+        }
+      } else {
+        // 新增題目
+        questionBank[category][difficulty].push(questionData)
+      }
+      
+      saveToLocalStorage()
+      updateStats()
+      renderQuestions()
+      closeModal()
+    }
+
+    // 關閉 Modal
+    function closeModal() {
+      document.getElementById('questionModal').classList.remove('show')
+    }
+
+    // 顯示匯入 Modal
+    function showImportModal() {
+      document.getElementById('importModal').classList.add('show')
+    }
+
+    // 關閉匯入 Modal
+    function closeImportModal() {
+      document.getElementById('importModal').classList.remove('show')
+    }
+
+    // 匯入題庫
+    function importQuestionBank() {
+      const text = document.getElementById('importText').value.trim()
+      if (!text) {
+        alert('請貼上題庫資料！')
+        return
+      }
+      
+      try {
+        // 嘗試解析 JSON
+        let data
+        if (text.startsWith('{')) {
+          data = JSON.parse(text)
+        } else {
+          // 嘗試執行 JS 程式碼
+          const match = text.match(/export\s+(?:const|let|var)\s+\w+\s*=\s*({[\s\S]*})/m)
+          if (match) {
+            data = eval('(' + match[1] + ')')
+          } else {
+            throw new Error('無法解析題庫格式')
+          }
+        }
+        
+        // 合併題庫
+        for (const category in data) {
+          if (!questionBank[category]) {
+            questionBank[category] = { easy: [], medium: [], hard: [] }
+          }
+          for (const difficulty in data[category]) {
+            if (Array.isArray(data[category][difficulty])) {
+              questionBank[category][difficulty].push(...data[category][difficulty])
+            }
+          }
+        }
+        
+        saveToLocalStorage()
+        updateStats()
+        renderQuestions()
+        closeImportModal()
+        alert('匯入成功！')
+      } catch (error) {
+        alert('匯入失敗：' + error.message)
+      }
+    }
+
+    // 匯出題庫
+    function exportQuestionBank() {
+      const code = generateQuestionBankCode()
+      document.getElementById('exportCode').textContent = code
+      document.getElementById('exportModal').classList.add('show')
+    }
+
+    // 生成題庫程式碼
+    function generateQuestionBankCode() {
+      return `// 題庫資料
+// 此檔案由題庫管理工具自動生成於 ${new Date().toLocaleString('zh-TW')}
+
+export const questionBank = ${JSON.stringify(questionBank, null, 2)}
+
+export default questionBank
+`
+    }
+
+    // 複製匯出程式碼
+    function copyExportCode() {
+      const code = document.getElementById('exportCode').textContent
+      navigator.clipboard.writeText(code).then(() => {
+        alert('已複製到剪貼簿！')
+      })
+    }
+
+    // 下載題庫檔案
+    function downloadQuestionBank() {
+      const code = generateQuestionBankCode()
+      const blob = new Blob([code], { type: 'text/javascript' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `questionBank-${Date.now()}.js`
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+
+    // 關閉匯出 Modal
+    function closeExportModal() {
+      document.getElementById('exportModal').classList.remove('show')
+    }
+
+    // 初始化
+    init()
+  </script>
+</body>
+</html>

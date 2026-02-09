@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工具 4 - 新增教學內容</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 28px; margin-bottom: 8px; }
+    .header p { opacity: 0.9; font-size: 16px; }
+    .form-section { padding: 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2d3436;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #74b9ff;
+    }
+    .hint { font-size: 12px; color: #636e72; margin-top: 4px; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .section-card {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .section-header h3 {
+      font-size: 16px;
+      color: #2d3436;
+    }
+    .btn-remove {
+      padding: 6px 12px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-add-section {
+      width: 100%;
+      padding: 12px;
+      background: #e9ecef;
+      color: #636e72;
+      border: 2px dashed #b2bec3;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .btn-add-section:hover {
+      background: #dfe6e9;
+      border-color: #74b9ff;
+      color: #0984e3;
+    }
+    .btn-generate {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(116, 185, 255, 0.4);
+    }
+    .output-section {
+      padding: 30px;
+      background: #f8f9fa;
+      border-top: 2px solid #e9ecef;
+      display: none;
+    }
+    .output-section.show { display: block; }
+    .instruction {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .instruction h3 { color: #1976d2; font-size: 16px; margin-bottom: 8px; }
+    .code-block { margin-bottom: 20px; }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #2d3436;
+      color: white;
+      border-radius: 8px 8px 0 0;
+    }
+    .code-title { font-weight: 600; font-size: 14px; }
+    .code-action { display: flex; gap: 8px; align-items: center; }
+    .badge { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .badge-new { background: #00b894; color: white; }
+    .badge-modify { background: #fdcb6e; color: #2d3436; }
+    .btn-copy {
+      padding: 6px 12px;
+      background: #74b9ff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-copy:hover { background: #0984e3; }
+    .btn-copy.copied { background: #00b894; }
+    .code-content {
+      background: #282c34;
+      color: #abb2bf;
+      padding: 16px;
+      border-radius: 0 0 8px 8px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📖 工具 4 - 新增教學內容</h1>
+      <p>為單元建立課程內容（概念說明、例題等）</p>
+    </div>
+    
+    <div class="form-section">
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>科目 ID</label>
+          <input type="text" id="subjectId" placeholder="math">
+        </div>
+        <div class="form-group">
+          <label>模組 ID</label>
+          <input type="text" id="moduleId" placeholder="arithmetic">
+        </div>
+        <div class="form-group">
+          <label>單元 ID</label>
+          <input type="text" id="topicId" placeholder="integer">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>運算/題型 ID（可選）</label>
+        <input type="text" id="operationId" placeholder="例如：addition, subtraction（若無則留空）">
+        <div class="hint">如果課程是針對特定題型（如加法），則填寫；否則留空</div>
+      </div>
+      
+      <div class="form-group">
+        <label>課程標題</label>
+        <input type="text" id="lessonTitle" placeholder="例如：整數加法、小數乘法">
+      </div>
+      
+      <div id="sectionsContainer">
+        <div class="section-card" data-index="0">
+          <div class="section-header">
+            <h3>章節 1</h3>
+            <button class="btn-remove" onclick="removeSection(0)" style="display:none;">移除</button>
+          </div>
+          <div class="form-group">
+            <label>章節標題</label>
+            <input type="text" class="section-title" placeholder="例如：基本概念">
+          </div>
+          <div class="form-group">
+            <label>章節內容</label>
+            <textarea class="section-content" placeholder="輸入教學內容..."></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <button class="btn-add-section" onclick="addSection()">+ 新增章節</button>
+      
+      <button class="btn-generate" onclick="generate()">✨ 生成代碼</button>
+    </div>
+    
+    <div class="output-section" id="output">
+      <div class="instruction">
+        <h3>📋 使用說明</h3>
+        <p>將下方代碼加入到 <code>src/data/{科目ID}/{模組ID}/lessons.js</code> 中</p>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title" id="title1">📁 修改 lessons.js</span>
+          <div class="code-action">
+            <span class="badge badge-modify">修改</span>
+            <button class="btn-copy" onclick="copyCode('code1')">複製</button>
+          </div>
+        </div>
+        <pre class="code-content" id="code1"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let sectionCount = 1;
+    
+    function addSection() {
+      const container = document.getElementById('sectionsContainer');
+      const index = sectionCount;
+      const card = document.createElement('div');
+      card.className = 'section-card';
+      card.dataset.index = index;
+      card.innerHTML = `
+        <div class="section-header">
+          <h3>章節 ${index + 1}</h3>
+          <button class="btn-remove" onclick="removeSection(${index})">移除</button>
+        </div>
+        <div class="form-group">
+          <label>章節標題</label>
+          <input type="text" class="section-title" placeholder="例如：進位規則">
+        </div>
+        <div class="form-group">
+          <label>章節內容</label>
+          <textarea class="section-content" placeholder="輸入教學內容..."></textarea>
+        </div>
+      `;
+      container.appendChild(card);
+      sectionCount++;
+      updateRemoveButtons();
+    }
+    
+    function removeSection(index) {
+      const card = document.querySelector(`.section-card[data-index="${index}"]`);
+      if (card) card.remove();
+      updateRemoveButtons();
+    }
+    
+    function updateRemoveButtons() {
+      const cards = document.querySelectorAll('.section-card');
+      cards.forEach((card, i) => {
+        const btn = card.querySelector('.btn-remove');
+        btn.style.display = cards.length > 1 ? 'block' : 'none';
+      });
+    }
+    
+    function generate() {
+      const subjectId = document.getElementById('subjectId').value.trim();
+      const moduleId = document.getElementById('moduleId').value.trim();
+      const topicId = document.getElementById('topicId').value.trim();
+      const operationId = document.getElementById('operationId').value.trim();
+      const lessonTitle = document.getElementById('lessonTitle').value.trim();
+      
+      if (!subjectId || !moduleId || !topicId || !lessonTitle) {
+        alert('請填寫所有必要欄位！');
+        return;
+      }
+      
+      // 收集章節
+      const sections = [];
+      document.querySelectorAll('.section-card').forEach(card => {
+        const title = card.querySelector('.section-title').value.trim();
+        const content = card.querySelector('.section-content').value.trim();
+        if (title && content) {
+          sections.push({ title, content });
+        }
+      });
+      
+      if (sections.length === 0) {
+        alert('請至少填寫一個章節！');
+        return;
+      }
+      
+      // 生成代碼
+      const sectionsCode = sections.map(s => `        {
+          title: '${s.title}',
+          content: \`${s.content}\`
+        }`).join(',\n');
+      
+      let code1;
+      if (operationId) {
+        code1 = `// 修改 src/data/${subjectId}/${moduleId}/lessons.js
+// 在 lessons 物件中，找到 ${topicId} 區塊，加入：
+
+  ${topicId}: {
+    ...// 其他運算課程
+    ${operationId}: {
+      title: '${lessonTitle}',
+      sections: [
+${sectionsCode}
+      ]
+    },
+  },`;
+      } else {
+        code1 = `// 修改 src/data/${subjectId}/${moduleId}/lessons.js
+// 在 lessons 物件中加入：
+
+  ${topicId}: {
+    title: '${lessonTitle}',
+    sections: [
+${sectionsCode}
+    ]
+  },`;
+      }
+      
+      document.getElementById('code1').textContent = code1;
+      document.getElementById('title1').textContent = `📁 修改 src/data/${subjectId}/${moduleId}/lessons.js`;
+      document.getElementById('output').classList.add('show');
+    }
+    
+    function copyCode(id) {
+      const code = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target;
+        btn.textContent = '✓ 已複製';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '複製';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

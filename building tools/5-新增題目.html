@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工具 5 - 新增題目</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #fdcb6e 0%, #f39c12 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #fdcb6e 0%, #f39c12 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 28px; margin-bottom: 8px; }
+    .header p { opacity: 0.9; font-size: 16px; }
+    .form-section { padding: 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2d3436;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #fdcb6e;
+    }
+    .hint { font-size: 12px; color: #636e72; margin-top: 4px; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .type-card {
+      padding: 20px;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    .type-card:hover {
+      border-color: #fdcb6e;
+    }
+    .type-card.active {
+      border-color: #f39c12;
+      background: #fffbf0;
+    }
+    .type-card h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .type-card p {
+      font-size: 13px;
+      color: #636e72;
+    }
+    .generator-section, .bank-section {
+      display: none;
+    }
+    .generator-section.show, .bank-section.show {
+      display: block;
+    }
+    .btn-generate {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #fdcb6e 0%, #f39c12 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(253, 203, 110, 0.4);
+    }
+    .output-section {
+      padding: 30px;
+      background: #f8f9fa;
+      border-top: 2px solid #e9ecef;
+      display: none;
+    }
+    .output-section.show { display: block; }
+    .instruction {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .instruction h3 { color: #f57c00; font-size: 16px; margin-bottom: 8px; }
+    .code-block { margin-bottom: 20px; }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #2d3436;
+      color: white;
+      border-radius: 8px 8px 0 0;
+    }
+    .code-title { font-weight: 600; font-size: 14px; }
+    .code-action { display: flex; gap: 8px; align-items: center; }
+    .badge { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .badge-new { background: #00b894; color: white; }
+    .badge-modify { background: #fdcb6e; color: #2d3436; }
+    .btn-copy {
+      padding: 6px 12px;
+      background: #fdcb6e;
+      color: #2d3436;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-copy:hover { background: #f39c12; color: white; }
+    .btn-copy.copied { background: #00b894; color: white; }
+    .code-content {
+      background: #282c34;
+      color: #abb2bf;
+      padding: 16px;
+      border-radius: 0 0 8px 8px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .example-box {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 8px;
+    }
+    .example-box h4 {
+      font-size: 13px;
+      color: #636e72;
+      margin-bottom: 8px;
+    }
+    .example-box pre {
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      color: #2d3436;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>❓ 工具 5 - 新增題目</h1>
+      <p>建立題庫或題目生成器</p>
+    </div>
+    
+    <div class="form-section">
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>科目 ID</label>
+          <input type="text" id="subjectId" placeholder="math">
+        </div>
+        <div class="form-group">
+          <label>模組 ID</label>
+          <input type="text" id="moduleId" placeholder="arithmetic">
+        </div>
+        <div class="form-group">
+          <label>單元 ID</label>
+          <input type="text" id="topicId" placeholder="integer">
+        </div>
+      </div>
+      
+      <label style="font-weight: 600; color: #2d3436; margin-bottom: 12px; display: block;">選擇題目類型</label>
+      <div class="type-selector">
+        <div class="type-card active" onclick="selectType('generator')" id="type-generator">
+          <h3>🎲 生成器型</h3>
+          <p>隨機生成題目<br>適合數學計算</p>
+        </div>
+        <div class="type-card" onclick="selectType('bank')" id="type-bank">
+          <h3>📚 題庫型</h3>
+          <p>固定題目庫<br>適合國語、選擇題</p>
+        </div>
+      </div>
+      
+      <!-- 生成器型表單 -->
+      <div class="generator-section show" id="generatorForm">
+        <div class="form-group">
+          <label>運算/題型 ID</label>
+          <input type="text" id="genOperationId" placeholder="例如：addition, subtraction">
+        </div>
+        
+        <div class="form-group">
+          <label>題目類型標籤</label>
+          <input type="text" id="genQuestionType" placeholder="例如：integer, decimal, fraction">
+          <div class="hint">用於前端判斷如何顯示答案輸入框</div>
+        </div>
+        
+        <div class="form-group">
+          <label>生成器邏輯（JavaScript）</label>
+          <textarea id="genLogic" placeholder="// 在這裡寫生成題目的邏輯
+const max = { easy: 99, medium: 999, hard: 9999 }[difficulty]
+const a = Math.floor(Math.random() * max) + 1
+const b = Math.floor(Math.random() * max) + 1
+return {
+  question: `${a} + ${b}`,
+  answer: a + b,
+  type: 'integer',
+  displayAnswer: (a + b).toString()
+}"></textarea>
+          <div class="example-box">
+            <h4>範例：整數加法生成器</h4>
+            <pre>const max = { easy: 99, medium: 999, hard: 9999 }[difficulty]
+const a = Math.floor(Math.random() * max) + 1
+const b = Math.floor(Math.random() * max) + 1
+return {
+  question: `${a} + ${b}`,
+  answer: a + b,
+  type: 'integer',
+  displayAnswer: (a + b).toString()
+}</pre>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 題庫型表單 -->
+      <div class="bank-section" id="bankForm">
+        <div class="form-group">
+          <label>難度</label>
+          <select id="bankDifficulty">
+            <option value="easy">簡單</option>
+            <option value="medium" selected>中等</option>
+            <option value="hard">困難</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>題目 JSON（陣列格式）</label>
+          <textarea id="bankQuestions" placeholder='[
+  {
+    "question": "題目文字",
+    "options": ["選項A", "選項B", "選項C", "選項D"],
+    "answer": 0
+  }
+]'></textarea>
+          <div class="example-box">
+            <h4>範例：選擇題題庫</h4>
+            <pre>[
+  {
+    "question": "「行」的正確讀音是？（銀行）",
+    "options": ["háng", "xíng", "hàng", "héng"],
+    "answer": 0
+  },
+  {
+    "question": "「樂」的正確讀音是？（音樂）",
+    "options": ["lè", "yuè", "yào", "luò"],
+    "answer": 1
+  }
+]</pre>
+          </div>
+        </div>
+      </div>
+      
+      <button class="btn-generate" onclick="generate()">✨ 生成代碼</button>
+    </div>
+    
+    <div class="output-section" id="output">
+      <div class="instruction">
+        <h3>📋 使用說明</h3>
+        <p id="instructionText">將下方代碼加入到對應的檔案中</p>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title" id="title1">📁 修改檔案</span>
+          <div class="code-action">
+            <span class="badge badge-modify">修改</span>
+            <button class="btn-copy" onclick="copyCode('code1')">複製</button>
+          </div>
+        </div>
+        <pre class="code-content" id="code1"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentType = 'generator';
+    
+    function selectType(type) {
+      currentType = type;
+      document.querySelectorAll('.type-card').forEach(card => card.classList.remove('active'));
+      document.getElementById(`type-${type}`).classList.add('active');
+      
+      document.getElementById('generatorForm').classList.toggle('show', type === 'generator');
+      document.getElementById('bankForm').classList.toggle('show', type === 'bank');
+    }
+    
+    function generate() {
+      const subjectId = document.getElementById('subjectId').value.trim();
+      const moduleId = document.getElementById('moduleId').value.trim();
+      const topicId = document.getElementById('topicId').value.trim();
+      
+      if (!subjectId || !moduleId || !topicId) {
+        alert('請填寫科目、模組、單元 ID！');
+        return;
+      }
+      
+      let code1, title1, instruction;
+      
+      if (currentType === 'generator') {
+        const operationId = document.getElementById('genOperationId').value.trim();
+        const questionType = document.getElementById('genQuestionType').value.trim();
+        const logic = document.getElementById('genLogic').value.trim();
+        
+        if (!operationId || !logic) {
+          alert('請填寫運算 ID 和生成器邏輯！');
+          return;
+        }
+        
+        title1 = `📁 修改 src/data/${subjectId}/${moduleId}/generators.js`;
+        instruction = `將代碼加入到 generators.js 中對應的生成器物件`;
+        
+        code1 = `// 修改 src/data/${subjectId}/${moduleId}/generators.js
+// 在 ${topicId}Generators 物件中加入：
+
+export const ${topicId}Generators = {
+  // ... 其他運算
+  ${operationId}: (difficulty = 'medium') => {
+    ${logic}
+  },
+}`;
+      } else {
+        const difficulty = document.getElementById('bankDifficulty').value;
+        const questions = document.getElementById('bankQuestions').value.trim();
+        
+        if (!questions) {
+          alert('請填寫題目 JSON！');
+          return;
+        }
+        
+        // 驗證 JSON
+        try {
+          JSON.parse(questions);
+        } catch (e) {
+          alert('題目 JSON 格式錯誤！請檢查語法。');
+          return;
+        }
+        
+        title1 = `📁 修改 src/data/${subjectId}/${moduleId}/questions.js`;
+        instruction = `將代碼加入到 questions.js 的 questionBank 物件中`;
+        
+        code1 = `// 修改 src/data/${subjectId}/${moduleId}/questions.js
+// 在 questionBank 物件中加入或更新：
+
+export const questionBank = {
+  // ... 其他單元
+  ${topicId}: {
+    // ... 其他難度
+    ${difficulty}: ${questions}
+  },
+}`;
+      }
+      
+      document.getElementById('code1').textContent = code1;
+      document.getElementById('title1').textContent = title1;
+      document.getElementById('instructionText').textContent = instruction;
+      document.getElementById('output').classList.add('show');
+    }
+    
+    function copyCode(id) {
+      const code = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target;
+        btn.textContent = '✓ 已複製';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '複製';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

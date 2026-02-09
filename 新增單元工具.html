@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增單元工具 v2 - 學期課程系統</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 28px; margin-bottom: 8px; }
+    .header p { opacity: 0.9; font-size: 16px; }
+    
+    .form-section { padding: 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2d3436;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .hint { font-size: 12px; color: #636e72; margin-top: 4px; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .form-row-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    
+    h3.section-heading {
+      color: #667eea;
+      margin: 30px 0 16px 0;
+      padding-top: 20px;
+      border-top: 2px solid #e9ecef;
+    }
+    h3.section-heading:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    
+    /* 單元卡片 */
+    .unit-card {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .unit-card.collapsed .unit-body { display: none; }
+    .unit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .unit-header h4 {
+      font-size: 16px;
+      color: #2d3436;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .unit-header-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-toggle {
+      padding: 4px 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-remove-unit {
+      padding: 4px 10px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .unit-body {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+    }
+    
+    /* 章節 */
+    .section-card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .section-header span { font-weight: 600; font-size: 14px; color: #555; }
+    .btn-remove {
+      padding: 4px 8px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    
+    .btn-add {
+      width: 100%;
+      padding: 10px;
+      background: #e9ecef;
+      color: #636e72;
+      border: 2px dashed #b2bec3;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .btn-add:hover {
+      background: #dfe6e9;
+      border-color: #667eea;
+      color: #667eea;
+    }
+    
+    .btn-add-unit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .btn-add-unit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 184, 148, 0.4);
+    }
+    
+    /* 練習題類型 */
+    .practice-type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .practice-type-card {
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    .practice-type-card:hover { border-color: #667eea; }
+    .practice-type-card.active {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+    .practice-type-card h5 { font-size: 14px; margin-bottom: 2px; }
+    .practice-type-card p { font-size: 11px; color: #636e72; margin: 0; }
+    
+    .generator-form, .bank-form { display: none; }
+    .generator-form.show, .bank-form.show { display: block; }
+    
+    .btn-generate {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .output-section {
+      padding: 30px;
+      background: #f8f9fa;
+      border-top: 2px solid #e9ecef;
+      display: none;
+    }
+    .output-section.show { display: block; }
+    
+    .instruction {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .instruction h3 { color: #1976d2; font-size: 16px; margin-bottom: 8px; }
+    .instruction p { font-size: 14px; margin: 4px 0; }
+    .instruction code {
+      background: #e0e0e0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    
+    .code-block { margin-bottom: 20px; }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #2d3436;
+      color: white;
+      border-radius: 8px 8px 0 0;
+    }
+    .code-title { font-weight: 600; font-size: 14px; }
+    .btn-copy {
+      padding: 6px 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-copy:hover { background: #5a67d8; }
+    .btn-copy.copied { background: #00b894; }
+    .code-content {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px;
+      border-radius: 0 0 8px 8px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: pre;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    
+    .example-box {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+    .example-box summary {
+      font-size: 13px;
+      color: #92400e;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .example-box pre {
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 11px;
+      color: #78350f;
+      white-space: pre-wrap;
+      margin: 8px 0 0 0;
+    }
+    
+    .summary-box {
+      background: #f0fdf4;
+      border: 2px solid #22c55e;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .summary-box h3 { color: #166534; margin-bottom: 12px; }
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #dcfce7;
+    }
+    .summary-item:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📚 新增單元工具 v2</h1>
+      <p>生成完整的每日課程檔案（支援多個單元）</p>
+    </div>
+    
+    <div class="form-section">
+      <!-- 基本資訊 -->
+      <h3 class="section-heading">📍 選擇位置</h3>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>週次</label>
+          <select id="weekId">
+            <option value="week01">第一週</option>
+            <option value="week02">第二週</option>
+            <option value="week03">第三週</option>
+            <option value="week04">第四週</option>
+            <option value="week05">第五週</option>
+            <option value="week06">第六週</option>
+            <option value="week07">第七週</option>
+            <option value="week08">第八週</option>
+            <option value="week09">第九週</option>
+            <option value="week10">第十週</option>
+            <option value="week11">第十一週</option>
+            <option value="week12">第十二週</option>
+            <option value="week13">第十三週</option>
+            <option value="week14">第十四週</option>
+            <option value="week15">第十五週</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>天數</label>
+          <select id="dayId">
+            <option value="1">第一天</option>
+            <option value="2">第二天</option>
+            <option value="3">第三天</option>
+            <option value="4">第四天</option>
+            <option value="5">第五天</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>當天主題</label>
+          <input type="text" id="dayTitle" placeholder="例如：整數加減法">
+        </div>
+      </div>
+      
+      <h3 class="section-heading">📖 單元列表</h3>
+      <div id="unitsContainer"></div>
+      <button class="btn-add-unit" onclick="addUnit()">➕ 新增單元</button>
+      
+      <button class="btn-generate" onclick="generate()">✨ 生成完整檔案</button>
+    </div>
+    
+    <div class="output-section" id="output">
+      <div class="summary-box">
+        <h3>📊 檔案摘要</h3>
+        <div id="summary"></div>
+      </div>
+      
+      <div class="instruction">
+        <h3>📋 使用說明</h3>
+        <p>將下方代碼<strong>完整覆蓋</strong> <code id="targetFile">src/data/weeks/weekXX/dayX.js</code></p>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title" id="codeTitle">📁 dayX.js</span>
+          <button class="btn-copy" onclick="copyCode()">複製</button>
+        </div>
+        <pre class="code-content" id="codeOutput"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let unitCount = 0
+    const dayColors = ['#FF6B6B', '#4ECDC4', '#A29BFE', '#FD79A8', '#00B894']
+    const dayNames = ['第一天', '第二天', '第三天', '第四天', '第五天']
+    
+    // 初始新增一個單元
+    window.onload = () => addUnit()
+    
+    // 新增單元
+    function addUnit() {
+      unitCount++
+      const container = document.getElementById('unitsContainer')
+      const unitDiv = document.createElement('div')
+      unitDiv.className = 'unit-card'
+      unitDiv.id = `unit-${unitCount}`
+      unitDiv.innerHTML = `
+        <div class="unit-header" onclick="toggleUnit(${unitCount})">
+          <h4><span class="unit-icon">📖</span> <span class="unit-title-display">單元 ${unitCount}</span></h4>
+          <div class="unit-header-actions">
+            <button class="btn-toggle" onclick="event.stopPropagation(); toggleUnit(${unitCount})">收合</button>
+            <button class="btn-remove-unit" onclick="event.stopPropagation(); removeUnit(${unitCount})">刪除</button>
+          </div>
+        </div>
+        <div class="unit-body">
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>單元 ID</label>
+              <input type="text" class="unit-id" value="unit${unitCount}" onchange="updateUnitDisplay(${unitCount})">
+            </div>
+            <div class="form-group">
+              <label>單元名稱</label>
+              <input type="text" class="unit-name" placeholder="例如：加法基本概念" onchange="updateUnitDisplay(${unitCount})">
+            </div>
+            <div class="form-group">
+              <label>圖示</label>
+              <input type="text" class="unit-icon-input" value="📖" onchange="updateUnitDisplay(${unitCount})">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>課程標題</label>
+            <input type="text" class="lesson-title" placeholder="例如：整數加法基本概念">
+          </div>
+          
+          <label style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;">課程章節</label>
+          <div class="sections-container" id="sections-${unitCount}">
+            <div class="section-card" data-section="1">
+              <div class="section-header">
+                <span>章節 1</span>
+                <button class="btn-remove" onclick="removeSection(${unitCount}, 1)" style="display:none;">移除</button>
+              </div>
+              <div class="form-group" style="margin-bottom:8px;">
+                <input type="text" class="section-title" placeholder="章節標題">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <textarea class="section-content" placeholder="章節內容..." style="min-height:80px;"></textarea>
+              </div>
+            </div>
+          </div>
+          <button class="btn-add" onclick="addSection(${unitCount})">+ 新增章節</button>
+          
+          <div style="margin-top: 20px;">
+            <label style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;">練習題設定</label>
+            <div class="form-row-4">
+              <div class="form-group">
+                <label>題數</label>
+                <input type="number" class="question-count" value="5" min="1" max="50">
+              </div>
+              <div class="form-group">
+                <label>難度</label>
+                <select class="difficulty">
+                  <option value="easy">簡單</option>
+                  <option value="medium" selected>中等</option>
+                  <option value="hard">困難</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>答案類型</label>
+                <select class="answer-type">
+                  <option value="integer">整數</option>
+                  <option value="decimal">小數</option>
+                  <option value="fraction">分數</option>
+                  <option value="division">除法</option>
+                  <option value="choice">選擇題</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>題目來源</label>
+                <select class="practice-type" onchange="togglePracticeForm(${unitCount})">
+                  <option value="generator">隨機生成</option>
+                  <option value="bank">題庫抽取</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="generator-form show" id="generator-form-${unitCount}">
+              <div class="form-group">
+                <label>生成器程式碼</label>
+                <textarea class="generator-code" style="font-family: Monaco, Menlo, monospace; min-height: 150px; font-size: 12px;">const max = { easy: 99, medium: 999, hard: 9999 }[difficulty]
+const a = Math.floor(Math.random() * max) + 1
+const b = Math.floor(Math.random() * max) + 1
+return {
+  question: \`\${a} + \${b} = ?\`,
+  answer: a + b,
+  type: 'integer',
+  displayAnswer: String(a + b)
+}</textarea>
+                <details class="example-box">
+                  <summary>💡 查看範例</summary>
+                  <pre>// 減法
+let a = Math.floor(Math.random() * max) + 1
+let b = Math.floor(Math.random() * max) + 1
+if (b > a) [a, b] = [b, a]
+return { question: \`\${a} - \${b} = ?\`, answer: a - b, type: 'integer', displayAnswer: String(a - b) }
+
+// 乘法
+const a = Math.floor(Math.random() * 12) + 1
+const b = Math.floor(Math.random() * 12) + 1
+return { question: \`\${a} × \${b} = ?\`, answer: a * b, type: 'integer', displayAnswer: String(a * b) }
+
+// 除法
+const b = Math.floor(Math.random() * 10) + 2
+const quotient = Math.floor(Math.random() * 20) + 1
+const remainder = Math.floor(Math.random() * b)
+const a = b * quotient + remainder
+return { question: \`\${a} ÷ \${b} = ?\`, answer: { quotient, remainder }, type: 'division', displayAnswer: remainder === 0 ? String(quotient) : \`\${quotient} ... \${remainder}\` }</pre>
+                </details>
+              </div>
+              <div class="form-group">
+                <label>驗證程式碼</label>
+                <textarea class="check-answer-code" style="font-family: Monaco, Menlo, monospace; min-height: 60px; font-size: 12px;">return parseInt(userAnswer) === question.answer</textarea>
+                <details class="example-box">
+                  <summary>💡 查看範例</summary>
+                  <pre>// 整數: return parseInt(userAnswer) === question.answer
+// 小數: return Math.abs(parseFloat(userAnswer) - question.answer) < 0.01
+// 除法: return parseInt(userAnswer.quotient) === question.answer.quotient && parseInt(userAnswer.remainder) === question.answer.remainder</pre>
+                </details>
+              </div>
+            </div>
+            
+            <div class="bank-form" id="bank-form-${unitCount}">
+              <div class="form-group">
+                <label>題庫 JSON</label>
+                <textarea class="question-bank" style="font-family: Monaco, Menlo, monospace; min-height: 150px; font-size: 12px;">[
+  { "id": "q1", "question": "題目1", "answer": 1, "type": "integer", "displayAnswer": "1" }
+]</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+      container.appendChild(unitDiv)
+      updateRemoveButtons()
+    }
+    
+    // 更新單元標題顯示
+    function updateUnitDisplay(unitId) {
+      const unitDiv = document.getElementById(`unit-${unitId}`)
+      const name = unitDiv.querySelector('.unit-name').value || `單元 ${unitId}`
+      const icon = unitDiv.querySelector('.unit-icon-input').value || '📖'
+      unitDiv.querySelector('.unit-icon').textContent = icon
+      unitDiv.querySelector('.unit-title-display').textContent = name
+    }
+    
+    // 收合/展開單元
+    function toggleUnit(unitId) {
+      const unitDiv = document.getElementById(`unit-${unitId}`)
+      unitDiv.classList.toggle('collapsed')
+      const btn = unitDiv.querySelector('.btn-toggle')
+      btn.textContent = unitDiv.classList.contains('collapsed') ? '展開' : '收合'
+    }
+    
+    // 移除單元
+    function removeUnit(unitId) {
+      if (document.querySelectorAll('.unit-card').length <= 1) {
+        alert('至少需要一個單元！')
+        return
+      }
+      document.getElementById(`unit-${unitId}`).remove()
+      updateRemoveButtons()
+    }
+    
+    // 新增章節
+    function addSection(unitId) {
+      const container = document.getElementById(`sections-${unitId}`)
+      const sectionCount = container.querySelectorAll('.section-card').length + 1
+      const sectionDiv = document.createElement('div')
+      sectionDiv.className = 'section-card'
+      sectionDiv.dataset.section = sectionCount
+      sectionDiv.innerHTML = `
+        <div class="section-header">
+          <span>章節 ${sectionCount}</span>
+          <button class="btn-remove" onclick="removeSection(${unitId}, ${sectionCount})">移除</button>
+        </div>
+        <div class="form-group" style="margin-bottom:8px;">
+          <input type="text" class="section-title" placeholder="章節標題">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <textarea class="section-content" placeholder="章節內容..." style="min-height:80px;"></textarea>
+        </div>
+      `
+      container.appendChild(sectionDiv)
+      updateSectionRemoveButtons(unitId)
+    }
+    
+    // 移除章節
+    function removeSection(unitId, sectionIndex) {
+      const container = document.getElementById(`sections-${unitId}`)
+      const sections = container.querySelectorAll('.section-card')
+      if (sections.length <= 1) return
+      sections.forEach(s => {
+        if (s.dataset.section == sectionIndex) s.remove()
+      })
+      updateSectionRemoveButtons(unitId)
+    }
+    
+    // 更新章節移除按鈕
+    function updateSectionRemoveButtons(unitId) {
+      const container = document.getElementById(`sections-${unitId}`)
+      const sections = container.querySelectorAll('.section-card')
+      sections.forEach(s => {
+        const btn = s.querySelector('.btn-remove')
+        btn.style.display = sections.length > 1 ? 'block' : 'none'
+      })
+    }
+    
+    // 更新單元移除按鈕
+    function updateRemoveButtons() {
+      const units = document.querySelectorAll('.unit-card')
+      units.forEach(u => {
+        const btn = u.querySelector('.btn-remove-unit')
+        btn.style.display = units.length > 1 ? 'block' : 'none'
+      })
+    }
+    
+    // 切換練習題表單
+    function togglePracticeForm(unitId) {
+      const unitDiv = document.getElementById(`unit-${unitId}`)
+      const type = unitDiv.querySelector('.practice-type').value
+      unitDiv.querySelector(`#generator-form-${unitId}`).classList.toggle('show', type === 'generator')
+      unitDiv.querySelector(`#bank-form-${unitId}`).classList.toggle('show', type === 'bank')
+    }
+    
+    // 生成代碼
+    function generate() {
+      const weekId = document.getElementById('weekId').value
+      const dayId = document.getElementById('dayId').value
+      const dayTitle = document.getElementById('dayTitle').value.trim()
+      
+      if (!dayTitle) {
+        alert('請填寫當天主題！')
+        return
+      }
+      
+      const units = []
+      let hasError = false
+      
+      document.querySelectorAll('.unit-card').forEach((unitDiv, idx) => {
+        const unitId = unitDiv.querySelector('.unit-id').value.trim()
+        const unitName = unitDiv.querySelector('.unit-name').value.trim()
+        const unitIcon = unitDiv.querySelector('.unit-icon-input').value.trim() || '📖'
+        const lessonTitle = unitDiv.querySelector('.lesson-title').value.trim()
+        
+        if (!unitId || !unitName || !lessonTitle) {
+          alert(`單元 ${idx + 1}：請填寫單元 ID、名稱和課程標題！`)
+          hasError = true
+          return
+        }
+        
+        // 收集章節
+        const sections = []
+        unitDiv.querySelectorAll('.section-card').forEach(sectionDiv => {
+          const title = sectionDiv.querySelector('.section-title').value.trim()
+          const content = sectionDiv.querySelector('.section-content').value.trim()
+          if (title || content) {
+            sections.push({ title, content })
+          }
+        })
+        
+        if (sections.length === 0) {
+          alert(`單元 ${idx + 1}：請至少填寫一個章節！`)
+          hasError = true
+          return
+        }
+        
+        // 練習題
+        const questionCount = unitDiv.querySelector('.question-count').value
+        const difficulty = unitDiv.querySelector('.difficulty').value
+        const practiceType = unitDiv.querySelector('.practice-type').value
+        
+        let practice = {}
+        if (practiceType === 'generator') {
+          const generatorCode = unitDiv.querySelector('.generator-code').value.trim()
+          const checkAnswerCode = unitDiv.querySelector('.check-answer-code').value.trim()
+          practice = { type: 'generator', questionCount, difficulty, generatorCode, checkAnswerCode }
+        } else {
+          const questionBank = unitDiv.querySelector('.question-bank').value.trim()
+          try {
+            JSON.parse(questionBank)
+          } catch (e) {
+            alert(`單元 ${idx + 1}：題庫 JSON 格式錯誤！`)
+            hasError = true
+            return
+          }
+          practice = { type: 'bank', questionCount, difficulty, questionBank }
+        }
+        
+        units.push({ unitId, unitName, unitIcon, lessonTitle, sections, practice })
+      })
+      
+      if (hasError) return
+      
+      // 生成代碼
+      const dayNum = dayId
+      const dayColor = dayColors[parseInt(dayId) - 1]
+      const dayName = dayNames[parseInt(dayId) - 1]
+      
+      let unitsCode = units.map(u => {
+        // 章節代碼
+        const sectionsCode = u.sections.map(s => `        {
+          title: '${s.title.replace(/'/g, "\\'")}',
+          content: \`${s.content.replace(/`/g, '\\`')}\`
+        }`).join(',\n')
+        
+        // 練習題代碼
+        let practiceCode
+        if (u.practice.type === 'generator') {
+          practiceCode = `      practice: {
+        type: 'generator',
+        questionCount: ${u.practice.questionCount},
+        difficulty: '${u.practice.difficulty}',
+        generator: (difficulty = '${u.practice.difficulty}') => {
+          ${u.practice.generatorCode.split('\n').join('\n          ')}
+        },
+        checkAnswer: (question, userAnswer) => {
+          ${u.practice.checkAnswerCode}
+        }
+      }`
+        } else {
+          practiceCode = `      practice: {
+        type: 'bank',
+        questionCount: ${u.practice.questionCount},
+        difficulty: '${u.practice.difficulty}',
+        questionBank: ${u.practice.questionBank.split('\n').join('\n        ')},
+        generator: function(difficulty) {
+          const shuffled = [...this.questionBank].sort(() => Math.random() - 0.5)
+          return shuffled[0]
+        },
+        checkAnswer: (question, userAnswer) => {
+          if (question.options) return parseInt(userAnswer) === question.answer
+          return String(userAnswer).trim() === String(question.answer).trim()
+        }
+      }`
+        }
+        
+        return `    {
+      id: '${u.unitId}',
+      name: '${u.unitName.replace(/'/g, "\\'")}',
+      icon: '${u.unitIcon}',
+      lesson: {
+        title: '${u.lessonTitle.replace(/'/g, "\\'")}',
+        sections: [
+${sectionsCode}
+        ]
+      },
+${practiceCode}
+    }`
+      }).join(',\n')
+      
+      const fullCode = `// src/data/weeks/${weekId}/day${dayNum}.js
+// ${weekId.replace('week', '第').replace(/^第0/, '第')}週 - ${dayName}
+
+const day${dayNum} = {
+  id: 'day${dayNum}',
+  name: '${dayName}',
+  icon: '📅',
+  color: '${dayColor}',
+  title: '${dayTitle.replace(/'/g, "\\'")}',
+  units: [
+${unitsCode}
+  ]
+}
+
+export default day${dayNum}
+`
+      
+      // 輸出
+      document.getElementById('targetFile').textContent = `src/data/weeks/${weekId}/day${dayNum}.js`
+      document.getElementById('codeTitle').textContent = `📁 day${dayNum}.js`
+      document.getElementById('codeOutput').textContent = fullCode
+      
+      // 摘要
+      let summaryHtml = `
+        <div class="summary-item"><span>檔案</span><strong>${weekId}/day${dayNum}.js</strong></div>
+        <div class="summary-item"><span>主題</span><strong>${dayTitle}</strong></div>
+        <div class="summary-item"><span>單元數</span><strong>${units.length} 個</strong></div>
+      `
+      units.forEach((u, i) => {
+        summaryHtml += `<div class="summary-item"><span>${u.unitIcon} ${u.unitName}</span><span>${u.sections.length} 章節 / ${u.practice.questionCount} 題</span></div>`
+      })
+      document.getElementById('summary').innerHTML = summaryHtml
+      
+      document.getElementById('output').classList.add('show')
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth' })
+    }
+    
+    // 複製代碼
+    function copyCode() {
+      const code = document.getElementById('codeOutput').textContent
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target
+        btn.textContent = '✓ 已複製'
+        btn.classList.add('copied')
+        setTimeout(() => {
+          btn.textContent = '複製'
+          btn.classList.remove('copied')
+        }, 2000)
+      })
+    }
+  </script>
+</body>
+</html>

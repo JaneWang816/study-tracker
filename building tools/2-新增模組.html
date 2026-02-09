@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工具 2 - 新增模組</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 28px; margin-bottom: 8px; }
+    .header p { opacity: 0.9; font-size: 16px; }
+    .form-section { padding: 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2d3436;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #00b894;
+    }
+    .hint { font-size: 12px; color: #636e72; margin-top: 4px; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .btn-generate {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 184, 148, 0.4);
+    }
+    .output-section {
+      padding: 30px;
+      background: #f8f9fa;
+      border-top: 2px solid #e9ecef;
+      display: none;
+    }
+    .output-section.show { display: block; }
+    .instruction {
+      background: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .instruction h3 { color: #2e7d32; font-size: 16px; margin-bottom: 8px; }
+    .code-block { margin-bottom: 20px; }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #2d3436;
+      color: white;
+      border-radius: 8px 8px 0 0;
+    }
+    .code-title { font-weight: 600; font-size: 14px; }
+    .code-action { display: flex; gap: 8px; align-items: center; }
+    .badge { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .badge-new { background: #00b894; color: white; }
+    .badge-modify { background: #fdcb6e; color: #2d3436; }
+    .btn-copy {
+      padding: 6px 12px;
+      background: #00b894;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-copy:hover { background: #00a187; }
+    .btn-copy.copied { background: #667eea; }
+    .code-content {
+      background: #282c34;
+      color: #abb2bf;
+      padding: 16px;
+      border-radius: 0 0 8px 8px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📦 工具 2 - 新增模組</h1>
+      <p>在科目下建立學習模組（如：四則運算、破音字）</p>
+    </div>
+    
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label>科目 ID</label>
+          <input type="text" id="subjectId" placeholder="例如：math, chinese">
+          <div class="hint">已存在的科目 ID</div>
+        </div>
+        <div class="form-group">
+          <label>模組 ID（英文）</label>
+          <input type="text" id="moduleId" placeholder="例如：arithmetic, phonetic">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>模組名稱（中文）</label>
+          <input type="text" id="moduleName" placeholder="例如：四則運算、破音字">
+        </div>
+        <div class="form-group">
+          <label>圖示 Emoji</label>
+          <input type="text" id="moduleIcon" placeholder="例如：➕、📝">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>模組描述</label>
+        <input type="text" id="moduleDesc" placeholder="簡短說明這個模組的內容">
+      </div>
+      
+      <div class="form-group">
+        <label>主題色</label>
+        <input type="color" id="moduleColor" value="#FF6B6B">
+      </div>
+      
+      <div class="form-group">
+        <label>題目類型</label>
+        <select id="questionType">
+          <option value="generator">生成器型（數學：隨機生成題目）</option>
+          <option value="bank">題庫型（國語：固定題目庫）</option>
+        </select>
+        <div class="hint">決定題目是隨機生成還是從題庫抽取</div>
+      </div>
+      
+      <button class="btn-generate" onclick="generate()">✨ 生成代碼</button>
+    </div>
+    
+    <div class="output-section" id="output">
+      <div class="instruction">
+        <h3>📋 使用說明</h3>
+        <p>1. 建立資料夾 <code>src/data/{科目ID}/{模組ID}/</code></p>
+        <p>2. 在該資料夾中建立 4 個檔案：config.js、generators.js（或 questions.js）、lessons.js、index.js</p>
+        <p>3. 修改科目的 index.js 加入新模組</p>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title" id="title1">📁 修改檔案</span>
+          <div class="code-action">
+            <span class="badge badge-modify">修改</span>
+            <button class="btn-copy" onclick="copyCode('code1')">複製</button>
+          </div>
+        </div>
+        <pre class="code-content" id="code1"></pre>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title" id="title2">📁 新增 config.js</span>
+          <div class="code-action">
+            <span class="badge badge-new">新增</span>
+            <button class="btn-copy" onclick="copyCode('code2')">複製</button>
+          </div>
+        </div>
+        <pre class="code-content" id="code2"></pre>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title" id="title3">📁 新增題目檔案</span>
+          <div class="code-action">
+            <span class="badge badge-new">新增</span>
+            <button class="btn-copy" onclick="copyCode('code3')">複製</button>
+          </div>
+        </div>
+        <pre class="code-content" id="code3"></pre>
+      </div>
+      
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title" id="title4">📁 新增 index.js</span>
+          <div class="code-action">
+            <span class="badge badge-new">新增</span>
+            <button class="btn-copy" onclick="copyCode('code4')">複製</button>
+          </div>
+        </div>
+        <pre class="code-content" id="code4"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generate() {
+      const subjectId = document.getElementById('subjectId').value.trim();
+      const moduleId = document.getElementById('moduleId').value.trim();
+      const moduleName = document.getElementById('moduleName').value.trim();
+      const moduleIcon = document.getElementById('moduleIcon').value.trim();
+      const moduleDesc = document.getElementById('moduleDesc').value.trim();
+      const moduleColor = document.getElementById('moduleColor').value;
+      const questionType = document.getElementById('questionType').value;
+      
+      if (!subjectId || !moduleId || !moduleName || !moduleIcon) {
+        alert('請填寫所有必要欄位！');
+        return;
+      }
+      
+      // 代碼 1：修改科目的 index.js
+      const code1 = `// 修改 src/data/${subjectId}/index.js
+
+// 在檔案頂部加入 import：
+import ${moduleId} from './${moduleId}'
+
+// 在 ${subjectId}Modules 物件中加入：
+  ${moduleId}: {
+    id: '${moduleId}',
+    name: '${moduleName}',
+    icon: '${moduleIcon}',
+    color: '${moduleColor}',
+    desc: '${moduleDesc}',
+    ...${moduleId}
+  },`;
+      
+      // 代碼 2：config.js
+      const code2 = `// src/data/${subjectId}/${moduleId}/config.js
+
+// 難度設定
+export const DIFFICULTY = {
+  easy: { label: '簡單' },
+  medium: { label: '中等' },
+  hard: { label: '困難' }
+}
+
+// 題數選項
+export const QUESTION_COUNTS = [5, 10, 20]
+
+// 單元列表（之後用工具 3 新增）
+export const topics = [
+  // { id: 'topic1', name: '單元1', icon: '📖' },
+]
+
+// 運算/題型列表（若需要）
+export const operations = [
+  // { id: 'type1', name: '題型1' },
+]`;
+      
+      // 代碼 3：generators.js 或 questions.js
+      let code3;
+      let title3;
+      if (questionType === 'generator') {
+        title3 = `📁 新增 src/data/${subjectId}/${moduleId}/generators.js`;
+        code3 = `// src/data/${subjectId}/${moduleId}/generators.js
+
+// 題目生成器範本
+export const createGenerators = (topicId) => ({
+  // 各種題型的生成器
+  default: (difficulty = 'medium') => {
+    // 根據難度生成題目
+    return {
+      question: '題目文字',
+      answer: '正確答案',
+      type: 'default',
+      displayAnswer: '顯示用答案'
+    }
+  }
+})
+
+// 取得生成器
+export const getGenerator = (topicId, operationType = 'default') => {
+  const generators = createGenerators(topicId)
+  return generators[operationType] || generators.default
+}
+
+// 驗證答案
+export const checkAnswer = (question, userAnswer) => {
+  // 根據題目類型驗證答案
+  return userAnswer === question.answer
+}`;
+      } else {
+        title3 = `📁 新增 src/data/${subjectId}/${moduleId}/questions.js`;
+        code3 = `// src/data/${subjectId}/${moduleId}/questions.js
+
+// 題庫結構
+export const questionBank = {
+  // 按單元分類
+  // topic1: {
+  //   easy: [
+  //     { question: '題目', options: ['A', 'B', 'C', 'D'], answer: 0 },
+  //   ],
+  //   medium: [],
+  //   hard: []
+  // }
+}
+
+// 從題庫抽取題目
+export const getQuestions = (topicId, difficulty, count) => {
+  const pool = questionBank[topicId]?.[difficulty] || []
+  // 隨機抽取指定數量
+  const shuffled = [...pool].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, count)
+}
+
+// 驗證答案
+export const checkAnswer = (question, userAnswer) => {
+  return parseInt(userAnswer) === question.answer
+}`;
+      }
+      
+      // 代碼 4：index.js
+      const importFile = questionType === 'generator' ? 'generators' : 'questions';
+      const code4 = `// src/data/${subjectId}/${moduleId}/index.js
+
+import { topics, operations, DIFFICULTY, QUESTION_COUNTS } from './config'
+import { ${questionType === 'generator' ? 'getGenerator, checkAnswer' : 'getQuestions, checkAnswer'} } from './${importFile}'
+import lessons from './lessons'
+
+export default {
+  topics,
+  operations,
+  DIFFICULTY,
+  QUESTION_COUNTS,
+  ${questionType === 'generator' ? 'getGenerator' : 'getQuestions'},
+  checkAnswer,
+  lessons
+}`;
+      
+      document.getElementById('code1').textContent = code1;
+      document.getElementById('code2').textContent = code2;
+      document.getElementById('code3').textContent = code3;
+      document.getElementById('code4').textContent = code4;
+      document.getElementById('title1').textContent = `📁 修改 src/data/${subjectId}/index.js`;
+      document.getElementById('title2').textContent = `📁 新增 src/data/${subjectId}/${moduleId}/config.js`;
+      document.getElementById('title3').textContent = title3;
+      document.getElementById('title4').textContent = `📁 新增 src/data/${subjectId}/${moduleId}/index.js`;
+      document.getElementById('output').classList.add('show');
+    }
+    
+    function copyCode(id) {
+      const code = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target;
+        btn.textContent = '✓ 已複製';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '複製';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
