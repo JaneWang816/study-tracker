@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { getLevel, getCategory, getQuestions } from '../data/daily-practice/phonics'
 import { speak } from '../utils/speech'
+import { getTaiwanISOString } from '../utils/timezone'
 
 export default function DailyPhonicsSession() {
   const navigate = useNavigate()
@@ -125,7 +126,8 @@ export default function DailyPhonicsSession() {
         total_questions: totalQuestions,
         correct_count: correctCount,
         score: score,
-        duration: duration
+        duration: duration,
+        created_at: getTaiwanISOString()
       })
     } catch (error) {
       console.error('儲存記錄失敗:', error)

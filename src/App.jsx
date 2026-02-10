@@ -20,6 +20,7 @@ import DailyFlashcards from './pages/DailyFlashcards'
 import DailyFlashcardsReview from './pages/DailyFlashcardsReview'
 import DailyPhonics from './pages/DailyPhonics'
 import DailyPhonicsSession from './pages/DailyPhonicsSession'
+import DailyMultiplication from './pages/DailyMultiplication'
 
 import './App.css'
 
@@ -61,6 +62,11 @@ function App() {
           
           <Route path="/daily/phonics/session" element={
             <ProtectedRoute><DailyPhonicsSession /></ProtectedRoute>
+          } />
+
+          {/* 每日練習 - 乘法速算 */}
+          <Route path="/daily/multiplication" element={
+            <ProtectedRoute><DailyMultiplication /></ProtectedRoute>
           } />
           
           {/* 週頁面 - 天數選擇 */}

@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import notoSansTCBase64 from '../utils/notoSansTC'
+import { getTaiwanISOString } from '../utils/timezone'
 
 export default function DayComplete() {
   const { weekId, dayId } = useParams()
@@ -60,7 +61,8 @@ export default function DayComplete() {
         total_questions: totalQuestions,
         correct_count: totalCorrect,
         score: overallScore,
-        duration: totalTime
+        duration: totalTime,
+        created_at: getTaiwanISOString()
       })
       
       if (error) throw error

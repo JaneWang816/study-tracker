@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import notoSansTCBase64 from '../utils/notoSansTC'
+import { getTaiwanISOString } from '../utils/timezone'
 
 export default function DailyArithmeticSession() {
   const navigate = useNavigate()
@@ -112,7 +113,8 @@ export default function DailyArithmeticSession() {
         total_questions: questions.length,
         correct_count: correctCount,
         score,
-        duration
+        duration,
+        created_at: getTaiwanISOString()
       })
     } catch (error) {
       console.error('儲存記錄失敗:', error)

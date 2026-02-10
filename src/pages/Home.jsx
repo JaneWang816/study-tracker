@@ -4,12 +4,138 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { weeks } from '../data'
+import { supabase } from '../lib/supabase'
+import jsPDF from 'jspdf'
+import notoSansTCBase64 from '../utils/notoSansTC'
 
 export default function Home() {
   const navigate = useNavigate()
   const { user, signOut } = useAuth()
 
   const weekList = Object.values(weeks)
+
+  // 匯出今日學習成果
+  const exportTodayReport = async () => {
+    try {
+      // 取得今日日期 (YYYY-MM-DD)
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = String(today.getMonth() + 1).padStart(2, '0')
+      const day = String(today.getDate()).padStart(2, '0')
+      const todayStr = `${year}-${month}-${day}`
+
+      // 查詢今日所有練習記錄
+      const { data: sessions, error } = await supabase
+        .from('practice_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('created_at', `${todayStr}T00:00:00`)
+        .lte('created_at', `${todayStr}T23:59:59`)
+        .order('created_at', { ascending: true })
+
+      if (error) throw error
+
+      if (!sessions || sessions.length === 0) {
+        alert('今天還沒有任何練習記錄喔！')
+        return
+      }
+
+      // 產生 PDF
+      const pdf = new jsPDF()
+      pdf.addFileToVFS('NotoSansTC.ttf', notoSansTCBase64)
+      pdf.addFont('NotoSansTC.ttf', 'NotoSansTC', 'normal')
+      pdf.setFont('NotoSansTC')
+
+      // 標題
+      pdf.setFontSize(20)
+      pdf.text('今日學習成果報告', 105, 20, { align: 'center' })
+
+      pdf.setFontSize(12)
+      pdf.text(`日期：${year}/${month}/${day}`, 105, 30, { align: 'center' })
+      pdf.text(`學習者：${user.email}`, 105, 38, { align: 'center' })
+
+      // 統計資料
+      const totalQuestions = sessions.reduce((sum, s) => sum + s.total_questions, 0)
+      const totalCorrect = sessions.reduce((sum, s) => sum + s.correct_count, 0)
+      const avgScore = Math.round(sessions.reduce((sum, s) => sum + s.score, 0) / sessions.length)
+      const totalDuration = sessions.reduce((sum, s) => sum + (s.duration || 0), 0)
+
+      pdf.setFontSize(14)
+      pdf.text('📊 今日統計', 20, 50)
+      
+      pdf.setFontSize(11)
+      pdf.text(`練習次數：${sessions.length} 次`, 30, 60)
+      pdf.text(`總題數：${totalQuestions} 題`, 30, 68)
+      pdf.text(`答對：${totalCorrect} 題`, 30, 76)
+      pdf.text(`平均分數：${avgScore} 分`, 30, 84)
+      pdf.text(`總時間：${Math.floor(totalDuration / 60)} 分 ${totalDuration % 60} 秒`, 30, 92)
+
+      // 詳細記錄
+      pdf.setFontSize(14)
+      pdf.text('📝 詳細記錄', 20, 108)
+
+      let yPos = 118
+      const moduleNames = {
+        'arithmetic': '四則運算',
+        'phonics': '自然發音',
+        'multiplication': '乘法速算',
+        'flashcards': '閃卡複習'
+      }
+
+      sessions.forEach((session, index) => {
+        // 檢查是否需要換頁
+        if (yPos > 270) {
+          pdf.addPage()
+          yPos = 20
+        }
+
+        const time = new Date(session.created_at).toLocaleTimeString('zh-TW', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        })
+        
+        const moduleName = moduleNames[session.module] || session.module
+        
+        pdf.setFontSize(11)
+        pdf.setFont('NotoSansTC', 'normal')
+        
+        // 練習標題
+        pdf.text(`${index + 1}. ${moduleName}`, 20, yPos)
+        pdf.text(`${time}`, 170, yPos)
+        
+        yPos += 8
+        
+        // 練習結果
+        pdf.setFontSize(10)
+        pdf.text(`   題數：${session.total_questions}   答對：${session.correct_count}   分數：${session.score}`, 25, yPos)
+        
+        if (session.duration) {
+          const min = Math.floor(session.duration / 60)
+          const sec = session.duration % 60
+          pdf.text(`時間：${min}m ${sec}s`, 150, yPos)
+        }
+        
+        yPos += 10
+      })
+
+      // 結語
+      if (yPos > 250) {
+        pdf.addPage()
+        yPos = 20
+      }
+      
+      yPos += 10
+      pdf.setFontSize(12)
+      pdf.text('🎉 今天辛苦了！繼續保持每日練習的好習慣！', 105, yPos, { align: 'center' })
+
+      // 儲存 PDF
+      pdf.save(`學習成果_${todayStr}.pdf`)
+      
+    } catch (error) {
+      console.error('匯出失敗:', error)
+      alert('匯出失敗，請稍後再試')
+    }
+  }
 
   return (
     <div className="page-container">
@@ -18,9 +144,18 @@ export default function Home() {
           <h1>📚 學期課程</h1>
           <p>歡迎回來，{user?.email}</p>
         </div>
-        <button className="btn btn-outline" onClick={signOut}>
-          登出
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            className="btn btn-secondary" 
+            onClick={exportTodayReport}
+            title="匯出今日所有練習記錄"
+          >
+            📄 今日成果
+          </button>
+          <button className="btn btn-outline" onClick={signOut}>
+            登出
+          </button>
+        </div>
       </header>
 
       <main className="main-content">
@@ -181,23 +316,34 @@ export default function Home() {
               <div style={{ fontSize: '24px', color: 'var(--text-light)' }}>→</div>
             </div>
 
-            {/* 預留：乘法速算 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '16px',
-              padding: '20px',
-              cursor: 'not-allowed',
-              boxShadow: 'var(--shadow)',
-              borderLeft: '4px solid #CBD5E1',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              opacity: 0.6
-            }}>
+            {/* 乘法速算 */}
+            <div
+              onClick={() => navigate('/daily/multiplication')}
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: 'var(--shadow)',
+                borderLeft: '4px solid #8B5CF6',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'var(--shadow)'
+              }}
+            >
               <div style={{
                 width: '60px',
                 height: '60px',
-                background: '#CBD5E1',
+                background: '#8B5CF6',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
@@ -212,10 +358,11 @@ export default function Home() {
                   乘法速算
                 </h3>
                 <p style={{ fontSize: '14px', color: 'var(--text-light)' }}>
-                  即將推出...
+                  20 題挑戰
                 </p>
               </div>
-            </div>            
+              <div style={{ fontSize: '24px', color: 'var(--text-light)' }}>→</div>
+            </div>
           </div>
         </section>
 

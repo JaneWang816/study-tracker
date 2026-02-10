@@ -2267,3 +2267,59 @@ body {
     fontSize: 20px !important;
   }
 }
+
+/* ========== 乘法速算 - 題號按鈕樣式 ========== */
+
+.question-number-btn {
+  min-width: 48px;
+  height: 48px;
+  border: 2px solid #E5E7EB;
+  background: white;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-dark);
+}
+
+.question-number-btn:hover {
+  border-color: #8B5CF6;
+  transform: translateY(-2px);
+}
+
+/* 當前題目 */
+.question-number-btn.current {
+  border-color: #8B5CF6;
+  border-width: 3px;
+  background: #F3E8FF;
+  color: #8B5CF6;
+}
+
+/* 已作答的題目 */
+.question-number-btn.answered {
+  background: #10B981;
+  border-color: #10B981;
+  color: white;
+}
+
+.question-number-btn.answered:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+/* 已作答且是當前題目 */
+.question-number-btn.answered.current {
+  background: #10B981;
+  border-color: #8B5CF6;
+  border-width: 3px;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .question-number-btn {
+    min-width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+}

@@ -1,9 +1,30 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { calculateSM2, qualityButtons, getNextReviewText } from '../utils/sm2'
 import { speak, stopSpeaking } from '../utils/speech'
+
+// 取得台灣時間的 ISO 字串 (UTC+8)
+const getTaiwanISOString = () => {
+  const now = new Date()
+  const taiwanOffset = 8 * 60 // UTC+8 的分鐘數
+  const localOffset = now.getTimezoneOffset() // 本地時區偏移（分鐘）
+  const taiwanTime = new Date(now.getTime() + (taiwanOffset + localOffset) * 60 * 1000)
+  return taiwanTime.toISOString()
+}
+
+// 取得台灣時間的日期字串 YYYY-MM-DD
+const getTaiwanDateString = () => {
+  const now = new Date()
+  const taiwanOffset = 8 * 60
+  const localOffset = now.getTimezoneOffset()
+  const taiwanTime = new Date(now.getTime() + (taiwanOffset + localOffset) * 60 * 1000)
+  const year = taiwanTime.getFullYear()
+  const month = String(taiwanTime.getMonth() + 1).padStart(2, '0')
+  const day = String(taiwanTime.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
 export default function DailyFlashcardsReview() {
   const navigate = useNavigate()
@@ -26,17 +47,14 @@ export default function DailyFlashcardsReview() {
 
   // 記錄本次 session 已評分的卡片 ID（避免重複計數）
   const [reviewedCardIds, setReviewedCardIds] = useState(new Set())
+  
+  // 記錄開始時間（用於計算 duration）
+  const startTimeRef = useRef(Date.now())
+  
+  // 用於防止重複提交 practice_session
+  const [sessionSaved, setSessionSaved] = useState(false)
 
   const currentCard = cards[currentIndex]
-
-  // 取得本地日期字串 YYYY-MM-DD
-  const getLocalDateString = () => {
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const day = String(now.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
 
   // 取得資料（只在初次載入時執行）
   useEffect(() => {
@@ -85,9 +103,9 @@ export default function DailyFlashcardsReview() {
     try {
       if (!user) return
 
-      const today = getLocalDateString()
+      const today = getTaiwanDateString()
 
-      // 嘗試查詢今日記錄（欄位名稱改為 study_date）
+      // 嘗試查詢今日記錄
       const { data: existing, error: selectError } = await supabase
         .from('study_logs')
         .select('*')
@@ -107,7 +125,7 @@ export default function DailyFlashcardsReview() {
           .from('study_logs')
           .update({ 
             flashcards_reviewed: (existing.flashcards_reviewed || 0) + count,
-            updated_at: new Date().toISOString()
+            updated_at: getTaiwanISOString()
           })
           .eq('id', existing.id)
         
@@ -124,7 +142,8 @@ export default function DailyFlashcardsReview() {
             flashcards_reviewed: count,
             study_minutes: 0,
             pomodoro_sessions: 0,
-            questions_practiced: 0
+            questions_practiced: 0,
+            created_at: getTaiwanISOString()
           })
         
         if (insertError) {
@@ -133,6 +152,42 @@ export default function DailyFlashcardsReview() {
       }
     } catch (error) {
       console.warn('學習記錄處理失敗，但不影響複習功能:', error)
+    }
+  }
+
+  // 儲存到 practice_sessions
+  const saveToPracticeSessions = async (finalStats) => {
+    try {
+      if (!user || finalStats.reviewed === 0 || sessionSaved) return
+
+      const accuracy = Math.round((finalStats.correct / finalStats.reviewed) * 100)
+      const duration = Math.floor((Date.now() - startTimeRef.current) / 1000)
+
+      const { error } = await supabase.from('practice_sessions').insert({
+        user_id: user.id,
+        subject: 'daily',
+        module: 'flashcards',
+        topic: deckId,
+        total_questions: finalStats.reviewed,
+        correct_count: finalStats.correct,
+        score: accuracy,
+        duration: duration,
+        created_at: getTaiwanISOString()
+      })
+
+      if (error) {
+        console.error('寫入 practice_sessions 失敗:', error)
+      } else {
+        console.log('practice_sessions 記錄成功:', {
+          reviewed: finalStats.reviewed,
+          correct: finalStats.correct,
+          accuracy,
+          duration
+        })
+        setSessionSaved(true)
+      }
+    } catch (error) {
+      console.error('寫入 practice_sessions 失敗:', error)
     }
   }
 
@@ -182,7 +237,7 @@ export default function DailyFlashcardsReview() {
         currentRepetitionCount: currentCard.repetition_count || 0,
       })
 
-      // 更新字卡
+      // 更新字卡（使用台灣時間）
       await supabase
         .from('flashcards')
         .update({
@@ -190,6 +245,7 @@ export default function DailyFlashcardsReview() {
           interval: result.interval,
           repetition_count: result.repetitions,
           next_review_at: result.nextReview.toISOString(),
+          updated_at: getTaiwanISOString()
         })
         .eq('id', currentCard.id)
 
@@ -200,11 +256,12 @@ export default function DailyFlashcardsReview() {
       }
 
       // 更新統計
-      setStats((prev) => ({
-        reviewed: prev.reviewed + 1,
-        correct: quality >= 2 ? prev.correct + 1 : prev.correct,
-        incorrect: quality < 2 ? prev.incorrect + 1 : prev.incorrect,
-      }))
+      const newStats = {
+        reviewed: stats.reviewed + 1,
+        correct: quality >= 2 ? stats.correct + 1 : stats.correct,
+        incorrect: quality < 2 ? stats.incorrect + 1 : stats.incorrect,
+      }
+      setStats(newStats)
 
       // 下一張卡
       if (currentIndex < cards.length - 1) {
@@ -212,7 +269,8 @@ export default function DailyFlashcardsReview() {
         setIsFlipped(false)
         stopSpeaking()
       } else {
-        // 完成
+        // 完成 - 寫入 practice_sessions
+        await saveToPracticeSessions(newStats)
         setIsComplete(true)
         stopSpeaking()
       }
@@ -290,7 +348,7 @@ export default function DailyFlashcardsReview() {
           <p>{currentIndex + 1} / {cards.length}</p>
         </div>
         <div className="stats-mini">
-          <span style={{ color: '#10B981' }}>✓ {stats.correct}</span>
+          <span style={{ color: '#10B981' }}>✔ {stats.correct}</span>
           <span style={{ color: '#EF4444' }}>✗ {stats.incorrect}</span>
         </div>
       </div>
