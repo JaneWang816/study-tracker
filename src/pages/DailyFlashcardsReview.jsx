@@ -1,18 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { calculateSM2, qualityButtons, getNextReviewText } from '../utils/sm2'
 import { speak, stopSpeaking } from '../utils/speech'
-
-// 取得台灣時間的 ISO 字串 (UTC+8)
-const getTaiwanISOString = () => {
-  const now = new Date()
-  const taiwanOffset = 8 * 60 // UTC+8 的分鐘數
-  const localOffset = now.getTimezoneOffset() // 本地時區偏移（分鐘）
-  const taiwanTime = new Date(now.getTime() + (taiwanOffset + localOffset) * 60 * 1000)
-  return taiwanTime.toISOString()
-}
 
 // 取得台灣時間的日期字串 YYYY-MM-DD
 const getTaiwanDateString = () => {
@@ -24,6 +15,15 @@ const getTaiwanDateString = () => {
   const month = String(taiwanTime.getMonth() + 1).padStart(2, '0')
   const day = String(taiwanTime.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
+}
+
+// 取得台灣時間的 ISO 字串
+const getTaiwanISOString = () => {
+  const now = new Date()
+  const taiwanOffset = 8 * 60
+  const localOffset = now.getTimezoneOffset()
+  const taiwanTime = new Date(now.getTime() + (taiwanOffset + localOffset) * 60 * 1000)
+  return taiwanTime.toISOString()
 }
 
 export default function DailyFlashcardsReview() {
@@ -48,20 +48,66 @@ export default function DailyFlashcardsReview() {
   // 記錄本次 session 已評分的卡片 ID（避免重複計數）
   const [reviewedCardIds, setReviewedCardIds] = useState(new Set())
   
-  // 記錄開始時間（用於計算 duration）
+  // 記錄開始時間
   const startTimeRef = useRef(Date.now())
   
-  // 用於防止重複提交 practice_session
-  const [sessionSaved, setSessionSaved] = useState(false)
+  // 防止重複提交
+  const sessionSavedRef = useRef(false)
+  
+  // 用 ref 追蹤最新的 stats（因為 useEffect cleanup 中拿不到最新的 state）
+  const statsRef = useRef(stats)
+  useEffect(() => {
+    statsRef.current = stats
+  }, [stats])
 
   const currentCard = cards[currentIndex]
 
-  // 取得資料（只在初次載入時執行）
+  // 儲存到 practice_sessions
+  const saveToPracticeSessions = useCallback(async (finalStats) => {
+    // 防止重複儲存
+    if (sessionSavedRef.current) {
+      return
+    }
+
+    if (!user) {
+      return
+    }
+    
+    if (!finalStats || finalStats.reviewed === 0) {
+      return
+    }
+
+    const accuracy = Math.round((finalStats.correct / finalStats.reviewed) * 100)
+    const duration = Math.floor((Date.now() - startTimeRef.current) / 1000)
+
+    try {
+      const { error } = await supabase.from('practice_sessions').insert({
+        user_id: user.id,
+        subject: 'daily',
+        module: 'flashcards',
+        topic: deckId,
+        total_questions: finalStats.reviewed,
+        correct_count: finalStats.correct,
+        score: accuracy,
+        duration: duration
+      })
+
+      if (error) {
+        console.error('寫入 practice_sessions 失敗:', error)
+      } else {
+        console.log('practice_sessions 記錄成功')
+        sessionSavedRef.current = true
+      }
+    } catch (err) {
+      console.error('寫入 practice_sessions 發生例外:', err)
+    }
+  }, [user, deckId])
+
+  // 取得資料
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return
 
-      // 取得 deck 資訊
       const { data: deckData } = await supabase
         .from('decks')
         .select('*')
@@ -72,7 +118,6 @@ export default function DailyFlashcardsReview() {
         setDeck(deckData)
       }
 
-      // 取得待複習字卡
       const { data: cardsData } = await supabase
         .from('flashcards')
         .select('*')
@@ -80,7 +125,6 @@ export default function DailyFlashcardsReview() {
         .lte('next_review_at', new Date().toISOString())
 
       if (cardsData && cardsData.length > 0) {
-        // 隨機排序（只在初次載入時排序一次）
         const shuffled = [...cardsData].sort(() => Math.random() - 0.5)
         setCards(shuffled)
       } else {
@@ -91,12 +135,18 @@ export default function DailyFlashcardsReview() {
     }
 
     fetchData()
-    
-    // 清理：離開頁面時停止語音
+  }, [deckId, user])
+
+  // 離開頁面時儲存記錄
+  useEffect(() => {
     return () => {
       stopSpeaking()
+      // 離開時，如果有複習過任何卡片，就儲存記錄
+      if (statsRef.current.reviewed > 0 && !sessionSavedRef.current) {
+        saveToPracticeSessions(statsRef.current)
+      }
     }
-  }, [deckId, user]) // 只在 deckId 或 user 改變時重新載入
+  }, [saveToPracticeSessions])
 
   // 更新 study_logs
   const updateStudyLog = async (count) => {
@@ -105,36 +155,23 @@ export default function DailyFlashcardsReview() {
 
       const today = getTaiwanDateString()
 
-      // 嘗試查詢今日記錄
-      const { data: existing, error: selectError } = await supabase
+      const { data: existing } = await supabase
         .from('study_logs')
         .select('*')
         .eq('user_id', user.id)
         .eq('study_date', today)
         .maybeSingle()
 
-      // 如果查詢出錯且不是「找不到」的錯誤，記錄並跳過
-      if (selectError && selectError.code !== 'PGRST116') {
-        console.warn('查詢學習記錄失敗，跳過更新:', selectError)
-        return
-      }
-
       if (existing) {
-        // 更新現有記錄（累加 flashcards_reviewed）
-        const { error: updateError } = await supabase
+        await supabase
           .from('study_logs')
           .update({ 
             flashcards_reviewed: (existing.flashcards_reviewed || 0) + count,
             updated_at: getTaiwanISOString()
           })
           .eq('id', existing.id)
-        
-        if (updateError) {
-          console.warn('更新學習記錄失敗:', updateError)
-        }
       } else {
-        // 新增記錄
-        const { error: insertError } = await supabase
+        await supabase
           .from('study_logs')
           .insert({
             user_id: user.id,
@@ -142,52 +179,11 @@ export default function DailyFlashcardsReview() {
             flashcards_reviewed: count,
             study_minutes: 0,
             pomodoro_sessions: 0,
-            questions_practiced: 0,
-            created_at: getTaiwanISOString()
+            questions_practiced: 0
           })
-        
-        if (insertError) {
-          console.warn('新增學習記錄失敗:', insertError)
-        }
       }
     } catch (error) {
-      console.warn('學習記錄處理失敗，但不影響複習功能:', error)
-    }
-  }
-
-  // 儲存到 practice_sessions
-  const saveToPracticeSessions = async (finalStats) => {
-    try {
-      if (!user || finalStats.reviewed === 0 || sessionSaved) return
-
-      const accuracy = Math.round((finalStats.correct / finalStats.reviewed) * 100)
-      const duration = Math.floor((Date.now() - startTimeRef.current) / 1000)
-
-      const { error } = await supabase.from('practice_sessions').insert({
-        user_id: user.id,
-        subject: 'daily',
-        module: 'flashcards',
-        topic: deckId,
-        total_questions: finalStats.reviewed,
-        correct_count: finalStats.correct,
-        score: accuracy,
-        duration: duration,
-        created_at: getTaiwanISOString()
-      })
-
-      if (error) {
-        console.error('寫入 practice_sessions 失敗:', error)
-      } else {
-        console.log('practice_sessions 記錄成功:', {
-          reviewed: finalStats.reviewed,
-          correct: finalStats.correct,
-          accuracy,
-          duration
-        })
-        setSessionSaved(true)
-      }
-    } catch (error) {
-      console.error('寫入 practice_sessions 失敗:', error)
+      console.warn('學習記錄處理失敗:', error)
     }
   }
 
@@ -195,7 +191,6 @@ export default function DailyFlashcardsReview() {
   const handleFlip = () => {
     if (!isFlipped && currentCard) {
       setIsFlipped(true)
-      // 翻到背面時播放語音
       if (deck?.back_lang && deck.back_lang !== 'none') {
         speak(currentCard.back, deck.back_lang).catch(console.error)
       }
@@ -206,7 +201,6 @@ export default function DailyFlashcardsReview() {
   const handleFlipBack = () => {
     if (isFlipped && currentCard) {
       setIsFlipped(false)
-      // 翻回正面時播放語音
       if (deck?.front_lang && deck.front_lang !== 'none') {
         speak(currentCard.front, deck.front_lang).catch(console.error)
       }
@@ -220,16 +214,23 @@ export default function DailyFlashcardsReview() {
     }
   }
 
+  // 返回（手動離開）
+  const handleBack = async () => {
+    stopSpeaking()
+    // 如果有複習過，先儲存記錄
+    if (stats.reviewed > 0 && !sessionSavedRef.current) {
+      await saveToPracticeSessions(stats)
+    }
+    navigate('/daily/flashcards')
+  }
+
   // 評分
   const handleRate = async (quality) => {
     if (!currentCard) return
-
-    // 防止重複點擊
     if (currentCard.isRating) return
     currentCard.isRating = true
 
     try {
-      // 計算新的 SM-2 參數
       const result = calculateSM2({
         quality,
         currentInterval: currentCard.interval || 0,
@@ -237,7 +238,6 @@ export default function DailyFlashcardsReview() {
         currentRepetitionCount: currentCard.repetition_count || 0,
       })
 
-      // 更新字卡（使用台灣時間）
       await supabase
         .from('flashcards')
         .update({
@@ -249,31 +249,31 @@ export default function DailyFlashcardsReview() {
         })
         .eq('id', currentCard.id)
 
-      // 更新學習記錄（只在第一次評分這張卡片時計數）
       if (!reviewedCardIds.has(currentCard.id)) {
         await updateStudyLog(1)
         setReviewedCardIds(prev => new Set([...prev, currentCard.id]))
       }
 
-      // 更新統計
       const newStats = {
         reviewed: stats.reviewed + 1,
         correct: quality >= 2 ? stats.correct + 1 : stats.correct,
         incorrect: quality < 2 ? stats.incorrect + 1 : stats.incorrect,
       }
+      
       setStats(newStats)
 
-      // 下一張卡
       if (currentIndex < cards.length - 1) {
         setCurrentIndex(currentIndex + 1)
         setIsFlipped(false)
         stopSpeaking()
       } else {
-        // 完成 - 寫入 practice_sessions
+        // 最後一張卡
         await saveToPracticeSessions(newStats)
         setIsComplete(true)
         stopSpeaking()
       }
+    } catch (error) {
+      console.error('handleRate 錯誤:', error)
     } finally {
       currentCard.isRating = false
     }
@@ -340,7 +340,7 @@ export default function DailyFlashcardsReview() {
     <div className="page-container flashcard-review">
       {/* 頁首 */}
       <div className="flashcard-header">
-        <button onClick={() => navigate('/daily/flashcards')} className="btn-back">
+        <button onClick={handleBack} className="btn-back">
           ← 返回
         </button>
         <div className="header-info">
@@ -458,7 +458,6 @@ export default function DailyFlashcardsReview() {
             <p className="rating-hint">你記得多少？</p>
             <div className="rating-buttons">
               {qualityButtons.map((btn) => {
-                // 預覽下次複習時間
                 const preview = calculateSM2({
                   quality: btn.value,
                   currentInterval: currentCard.interval || 0,
