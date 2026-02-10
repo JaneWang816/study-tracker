@@ -57,6 +57,59 @@ export default function Home() {
         'multiplication': { name: '乘法速算', icon: '⚡', color: [139, 92, 246] }
       }
 
+      // 四則運算難度名稱對照
+      const arithmeticLevelNames = {
+        'easy': '簡單',
+        'medium': '中等', 
+        'hard': '困難'
+      }
+      const arithmeticDiffNames = {
+        'easy': '1位數',
+        'medium': '2位數',
+        'hard': '3位數',
+        'veryHard': '4位數'
+      }
+
+      // 自然發音分類名稱對照
+      const phonicsCategoryNames = {
+        'short-a': '短母音 a',
+        'short-e': '短母音 e',
+        'short-i': '短母音 i',
+        'short-o': '短母音 o',
+        'short-u': '短母音 u',
+        'long-a': '長母音 a',
+        'long-e': '長母音 e',
+        'long-i': '長母音 i',
+        'long-o': '長母音 o',
+        'long-u': '長母音 u',
+        'level1-mixed': '基礎綜合',
+        'ch': '子音 ch',
+        'sh': '子音 sh',
+        'th': '子音 th',
+        'wh': '子音 wh',
+        'ph': '子音 ph',
+        'bl-cl-fl-pl': '子音組合 bl/cl/fl/pl',
+        'br-cr-dr-fr': '子音組合 br/cr/dr/fr',
+        'st-sp-sn-sm': '子音組合 st/sp/sn/sm',
+        'level2-mixed': '進階綜合'
+      }
+
+      // 解析難度標籤的函數
+      const getTopicLabel = (module, topic) => {
+        if (module === 'arithmetic' && topic) {
+          const parts = topic.split('_')
+          if (parts.length === 2) {
+            const levelName = arithmeticLevelNames[parts[0]] || parts[0]
+            const diffName = arithmeticDiffNames[parts[1]] || parts[1]
+            return `${levelName}/${diffName}`
+          }
+        }
+        if (module === 'phonics' && topic) {
+          return phonicsCategoryNames[topic] || topic
+        }
+        return ''
+      }
+
       // 依模組分組
       const groupedSessions = {}
       sessions.forEach(session => {
@@ -190,6 +243,9 @@ export default function Home() {
             hour12: false
           })
 
+          // 取得難度標籤
+          const topicLabel = getTopicLabel(moduleKey, session.topic)
+
           // 練習記錄行
           pdf.setFontSize(10)
           pdf.setTextColor(80, 80, 80)
@@ -198,8 +254,15 @@ export default function Home() {
           pdf.text(`  ${index + 1}.`, 22, yPos)
           pdf.text(`${time}`, 32, yPos)
           
-          // 題數與正確數
-          pdf.text(`${session.total_questions} 題`, 60, yPos)
+          // 難度標籤（如果有的話）
+          if (topicLabel) {
+            pdf.setTextColor(120, 120, 120)
+            pdf.text(`[${topicLabel}]`, 52, yPos)
+          }
+          
+          // 題數 - 調整位置
+          pdf.setTextColor(80, 80, 80)
+          pdf.text(`${session.total_questions} 題`, topicLabel ? 105 : 60, yPos)
           
           // 正確率顏色
           if (session.score >= 80) {
@@ -209,17 +272,17 @@ export default function Home() {
           } else {
             pdf.setTextColor(239, 68, 68) // 紅色
           }
-          pdf.text(`${session.correct_count} 對`, 85, yPos)
-          pdf.text(`${session.score} 分`, 115, yPos)
+          pdf.text(`${session.correct_count} 對`, topicLabel ? 125 : 85, yPos)
+          pdf.text(`${session.score} 分`, topicLabel ? 150 : 115, yPos)
           
           // 時間
           pdf.setTextColor(150, 150, 150)
           if (session.duration && session.duration > 0) {
             const min = Math.floor(session.duration / 60)
             const sec = session.duration % 60
-            pdf.text(`${min}m ${sec}s`, 145, yPos)
+            pdf.text(`${min}m ${sec}s`, topicLabel ? 175 : 145, yPos)
           } else {
-            pdf.text('-', 145, yPos)
+            pdf.text('-', topicLabel ? 175 : 145, yPos)
           }
 
           yPos += 7
