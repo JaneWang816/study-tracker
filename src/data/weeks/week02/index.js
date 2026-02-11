@@ -1,5 +1,4 @@
 // src/data/weeks/week02/index.js
-// 第2週課程資料
 
 import day1 from './day1'
 import day2 from './day2'
@@ -12,7 +11,7 @@ const week02 = {
   day2,
   day3,
   day4,
-  day5
+  day5,
 }
 
 export default week02

@@ -26,7 +26,7 @@ const weekColors = [
 
 export const weeks = {
   week01: { id: 'week01', name: '第一週', icon: '1️⃣', color: weekColors[0], desc: '基礎複習', days: week01 },
-  week02: { id: 'week02', name: '第二週', icon: '2️⃣', color: weekColors[1], desc: '', days: week02 },
+  week02: { id: 'week02', name: '第二週', icon: '2️⃣', color: weekColors[1], desc: '大地與規律', days: week02 },
   week03: { id: 'week03', name: '第三週', icon: '3️⃣', color: weekColors[2], desc: '', days: week03 },
   week04: { id: 'week04', name: '第四週', icon: '4️⃣', color: weekColors[3], desc: '', days: week04 },
   week05: { id: 'week05', name: '第五週', icon: '5️⃣', color: weekColors[4], desc: '', days: week05 },

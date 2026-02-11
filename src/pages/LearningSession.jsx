@@ -1,5 +1,5 @@
 // src/pages/LearningSession.jsx
-// 學習流程頁面 - 課程內容 → 練習題 → 下一單元
+// 學習流程頁面 - 課程內容 â†’ 練習題 → 下一單元
 
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -351,12 +351,21 @@ export default function LearningSession() {
         </div>
         
         <div className="lesson-actions">
-          <button 
-            className="btn btn-primary btn-large"
-            onClick={startPractice}
-          >
-            ✏️ 開始練習（{currentUnit.practice?.questionCount || 5} 題）
-          </button>
+          {currentUnit.practice?.questionCount > 0 ? (
+            <button 
+              className="btn btn-primary btn-large"
+              onClick={startPractice}
+            >
+              ✏️ 開始練習（{currentUnit.practice.questionCount} 題）
+            </button>
+          ) : (
+            <button 
+              className="btn btn-primary btn-large"
+              onClick={nextUnit}
+            >
+              {currentUnitIndex < units.length - 1 ? '繼續下一單元 →' : '完成今日學習 🎉'}
+            </button>
+          )}
         </div>
       </div>
     )
