@@ -25,20 +25,20 @@ const weekColors = [
 ]
 
 export const weeks = {
-  week01: { id: 'week01', name: '第一週', icon: '1️⃣', color: weekColors[0], desc: '基礎複習', days: week01 },
+  week01: { id: 'week01', name: '第一週', icon: '1️⃣', color: weekColors[0], desc: '定位與起源', days: week01 },
   week02: { id: 'week02', name: '第二週', icon: '2️⃣', color: weekColors[1], desc: '大地與規律', days: week02 },
   week03: { id: 'week03', name: '第三週', icon: '3️⃣', color: weekColors[2], desc: '水文與光陰', days: week03 },
   week04: { id: 'week04', name: '第四週', icon: '4️⃣', color: weekColors[3], desc: '比例與尺度', days: week04 },
   week05: { id: 'week05', name: '第五週', icon: '5️⃣', color: weekColors[4], desc: '構造與能量', days: week05 },
   week06: { id: 'week06', name: '第六週', icon: '6️⃣', color: weekColors[5], desc: '產業與空間', days: week06 },
-  week07: { id: 'week07', name: '第七週', icon: '7️⃣', color: weekColors[6], desc: '', days: week07 },
-  week08: { id: 'week08', name: '第八週', icon: '8️⃣', color: weekColors[7], desc: '期中複習', days: week08 },
-  week09: { id: 'week09', name: '第九週', icon: '9️⃣', color: weekColors[8], desc: '', days: week09 },
-  week10: { id: 'week10', name: '第十週', icon: '🔟', color: weekColors[9], desc: '', days: week10 },
-  week11: { id: 'week11', name: '第十一週', icon: '1️⃣1️⃣', color: weekColors[10], desc: '', days: week11 },
-  week12: { id: 'week12', name: '第十二週', icon: '1️⃣2️⃣', color: weekColors[11], desc: '', days: week12 },
-  week13: { id: 'week13', name: '第十三週', icon: '1️⃣3️⃣', color: weekColors[12], desc: '', days: week13 },
-  week14: { id: 'week14', name: '第十四週', icon: '1️⃣4️⃣', color: weekColors[13], desc: '', days: week14 },
+  week07: { id: 'week07', name: '第七週', icon: '7️⃣', color: weekColors[6], desc: '能量與移動', days: week07 },
+  week08: { id: 'week08', name: '第八週', icon: '8️⃣', color: weekColors[7], desc: '經濟與連結', days: week08 },
+  week09: { id: 'week09', name: '第九週', icon: '9️⃣', color: weekColors[8], desc: '民主與公民', days: week09 },
+  week10: { id: 'week10', name: '第十週', icon: '🔟', color: weekColors[9], desc: '能源與社會', days: week10 },
+  week11: { id: 'week11', name: '第十一週', icon: '1️⃣1️⃣', color: weekColors[10], desc: '保護與規律', days: week11 },
+  week12: { id: 'week12', name: '第十二週', icon: '1️⃣2️⃣', color: weekColors[11], desc: '永續與科技', days: week12 },
+  week13: { id: 'week13', name: '第十三週', icon: '1️⃣3️⃣', color: weekColors[12], desc: '變遷與挑戰', days: week13 },
+  week14: { id: 'week14', name: '第十四週', icon: '1️⃣4️⃣', color: weekColors[13], desc: '全球與未來', days: week14 },
   week15: { id: 'week15', name: '第十五週', icon: '1️⃣5️⃣', color: weekColors[14], desc: '期末複習', days: week15 },
 }
 

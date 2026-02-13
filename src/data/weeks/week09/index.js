@@ -1,11 +1,10 @@
-// src/data/weeks/week09/index.js
-// 第9週課程資料
+// week09/index.js - W9: 民主與公民
 
-import day1 from './day1'
-import day2 from './day2'
-import day3 from './day3'
-import day4 from './day4'
-import day5 from './day5'
+import day1 from './day1.js'
+import day2 from './day2.js'
+import day3 from './day3.js'
+import day4 from './day4.js'
+import day5 from './day5.js'
 
 const week09 = {
   day1,

@@ -1,5 +1,4 @@
 // src/data/weeks/week07/index.js
-// 第7週課程資料
 
 import day1 from './day1'
 import day2 from './day2'
