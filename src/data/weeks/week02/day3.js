@@ -1,131 +1,270 @@
 // src/data/weeks/week02/day3.js
 // W2 Day 3：與大地立約
 
-// ==========================================
-// 數學：質因數分解
-// ==========================================
-const generatePrimeFactorQuestion = () => {
-  const composites = [
-    { n: 12,  factors: '2² × 3',    display: '2×2×3' },
-    { n: 18,  factors: '2 × 3²',    display: '2×3×3' },
-    { n: 20,  factors: '2² × 5',    display: '2×2×5' },
-    { n: 24,  factors: '2³ × 3',    display: '2×2×2×3' },
-    { n: 28,  factors: '2² × 7',    display: '2×2×7' },
-    { n: 30,  factors: '2 × 3 × 5', display: '2×3×5' },
-    { n: 36,  factors: '2² × 3²',   display: '2×2×3×3' },
-    { n: 40,  factors: '2³ × 5',    display: '2×2×2×5' },
-    { n: 45,  factors: '3² × 5',    display: '3×3×5' },
-    { n: 50,  factors: '2 × 5²',    display: '2×5×5' },
-  ]
-  const item = composites[Math.floor(Math.random() * composites.length)]
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-  // 生成錯誤選項（修改一個因數）
-  const wrongOptions = composites
-    .filter(c => c.n !== item.n)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 3)
-    .map(c => c.display)
-
-  const options = [item.display, ...wrongOptions].sort(() => Math.random() - 0.5)
-  return {
-    question: `${item.n} 的質因數分解是？`,
-    options,
-    answer: item.display,
-    type: 'choice'
+// ==========================================
+// 數學:質因數分解
+// ==========================================
+const mathQuestions = [
+  // 質因數分解題型
+  {
+    type: 'options',
+    question: '12 的質因數分解是?',
+    options: ['2×2×3', '3×4', '2×6', '1×12'],
+    answer: 0,
+    displayAnswer: '2×2×3'
+  },
+  {
+    type: 'options',
+    question: '18 的質因數分解是?',
+    options: ['2×3×3', '3×6', '2×9', '1×18'],
+    answer: 0,
+    displayAnswer: '2×3×3'
+  },
+  {
+    type: 'options',
+    question: '20 的質因數分解是?',
+    options: ['2×2×5', '4×5', '2×10', '1×20'],
+    answer: 0,
+    displayAnswer: '2×2×5'
+  },
+  {
+    type: 'options',
+    question: '24 的質因數分解是?',
+    options: ['2×2×2×3', '3×8', '4×6', '2×12'],
+    answer: 0,
+    displayAnswer: '2×2×2×3'
+  },
+  {
+    type: 'options',
+    question: '28 的質因數分解是?',
+    options: ['2×2×7', '4×7', '2×14', '1×28'],
+    answer: 0,
+    displayAnswer: '2×2×7'
+  },
+  {
+    type: 'options',
+    question: '30 的質因數分解是?',
+    options: ['2×3×5', '5×6', '3×10', '2×15'],
+    answer: 0,
+    displayAnswer: '2×3×5'
+  },
+  {
+    type: 'options',
+    question: '36 的質因數分解是?',
+    options: ['2×2×3×3', '4×9', '6×6', '3×12'],
+    answer: 0,
+    displayAnswer: '2×2×3×3'
+  },
+  {
+    type: 'options',
+    question: '40 的質因數分解是?',
+    options: ['2×2×2×5', '5×8', '4×10', '2×20'],
+    answer: 0,
+    displayAnswer: '2×2×2×5'
+  },
+  {
+    type: 'options',
+    question: '45 的質因數分解是?',
+    options: ['3×3×5', '5×9', '3×15', '1×45'],
+    answer: 0,
+    displayAnswer: '3×3×5'
+  },
+  {
+    type: 'options',
+    question: '50 的質因數分解是?',
+    options: ['2×5×5', '5×10', '2×25', '1×50'],
+    answer: 0,
+    displayAnswer: '2×5×5'
+  },
+  // 質數判斷題型
+  {
+    type: 'options',
+    question: '2 是質數嗎?',
+    options: ['是質數', '不是質數', '是合數也是質數', '無法判斷'],
+    answer: 0,
+    displayAnswer: '是質數'
+  },
+  {
+    type: 'options',
+    question: '3 是質數嗎?',
+    options: ['是質數', '不是質數', '是合數也是質數', '無法判斷'],
+    answer: 0,
+    displayAnswer: '是質數'
+  },
+  {
+    type: 'options',
+    question: '4 是質數嗎?',
+    options: ['不是質數', '是質數', '是合數也是質數', '無法判斷'],
+    answer: 0,
+    displayAnswer: '不是質數'
+  },
+  {
+    type: 'options',
+    question: '5 是質數嗎?',
+    options: ['是質數', '不是質數', '是合數也是質數', '無法判斷'],
+    answer: 0,
+    displayAnswer: '是質數'
+  },
+  {
+    type: 'options',
+    question: '7 是質數嗎?',
+    options: ['是質數', '不是質數', '是合數也是質數', '無法判斷'],
+    answer: 0,
+    displayAnswer: '是質數'
+  },
+  {
+    type: 'options',
+    question: '9 是質數嗎?',
+    options: ['不是質數', '是質數', '是合數也是質數', '無法判斷'],
+    answer: 0,
+    displayAnswer: '不是質數'
+  },
+  {
+    type: 'options',
+    question: '11 是質數嗎?',
+    options: ['是質數', '不是質數', '是合數也是質數', '無法判斷'],
+    answer: 0,
+    displayAnswer: '是質數'
+  },
+  {
+    type: 'options',
+    question: '15 是質數嗎?',
+    options: ['不是質數', '是質數', '是合數也是質數', '無法判斷'],
+    answer: 0,
+    displayAnswer: '不是質數'
   }
-}
+]
 
-const generatePrimeQuestion = () => {
-  const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23]
-  const nonPrimes = [4, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 25]
-
-  if (Math.random() < 0.5) {
-    // 問：是否為質數
-    const isShowingPrime = Math.random() < 0.5
-    const n = isShowingPrime
-      ? primes[Math.floor(Math.random() * primes.length)]
-      : nonPrimes[Math.floor(Math.random() * nonPrimes.length)]
-    const options = ['是質數', '不是質數', '是合數也是質數', '無法判斷']
-    return {
-      question: `${n} 是質數嗎？`,
-      options: [...options].sort(() => Math.random() - 0.5),
-      answer: isShowingPrime ? '是質數' : '不是質數',
-      type: 'choice'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  } else {
-    return generatePrimeFactorQuestion()
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-}
+})()
 
 // ==========================================
-// 科學：植物的環境適應
+// 科學:植物的環境適應
 // ==========================================
-const scienceQBank = [
+const scienceQuestions = [
   {
-    question: '台灣高山植物（如玉山圓柏）為了適應強風，通常長成什麼樣子？',
+    type: 'options',
+    question: '台灣高山植物(如玉山圓柏)為了適應強風,通常長成什麼樣子?',
     options: ['矮小貼地、叢生密集', '高大挺直、葉片寬大', '爬藤攀附、向上生長', '莖部中空、重心高'],
-    answer: '矮小貼地、叢生密集'
+    answer: 0,
+    displayAnswer: '矮小貼地、叢生密集'
   },
   {
-    question: '台灣紅樹林（水筆仔）生長在海邊泥灘，它的根有什麼特殊構造？',
-    options: ['氣根裸露在外，幫助呼吸', '根部儲水抵抗乾旱', '根部分泌毒素防禦', '根向上生長收集雨水'],
-    answer: '氣根裸露在外，幫助呼吸'
+    type: 'options',
+    question: '台灣紅樹林(水筆仔)生長在海邊泥灘,它的根有什麼特殊構造?',
+    options: ['氣根裸露在外,幫助呼吸', '根部儲水抵抗乾旱', '根部分泌毒素防禦', '根向上生長收集雨水'],
+    answer: 0,
+    displayAnswer: '氣根裸露在外,幫助呼吸'
   },
   {
-    question: '生活在乾燥岩石上的苔蘚，為什麼乾燥時能暫時「死亡」，遇水又復活？',
-    options: ['細胞能進入休眠狀態，水分足夠時再恢復活性', '苔蘚沒有葉綠素，不需要水', '苔蘚會從岩石中直接吸收礦物質維生', '苔蘚能儲存大量水分在細胞壁中'],
-    answer: '細胞能進入休眠狀態，水分足夠時再恢復活性'
+    type: 'options',
+    question: '生活在乾燥岩石上的苔蘚,為什麼乾燥時能暫時「死亡」,遇水又復活?',
+    options: ['細胞能進入休眠狀態,水分足夠時再恢復活性', '苔蘚沒有葉綠素,不需要水', '苔蘚會從岩石中直接吸收礦物質維生', '苔蘚能儲存大量水分在細胞壁中'],
+    answer: 0,
+    displayAnswer: '細胞能進入休眠狀態,水分足夠時再恢復活性'
   },
   {
-    question: '植物的化石記錄告訴我們什麼？',
-    options: ['古代植物曾經存在的證據，以及環境變遷的線索', '植物可以變成石頭', '化石是植物的種子', '化石只在海底才找得到'],
-    answer: '古代植物曾經存在的證據，以及環境變遷的線索'
+    type: 'options',
+    question: '植物的化石記錄告訴我們什麼?',
+    options: ['古代植物曾經存在的證據,以及環境變遷的線索', '植物可以變成石頭', '化石是植物的種子', '化石只在海底才找得到'],
+    answer: 0,
+    displayAnswer: '古代植物曾經存在的證據,以及環境變遷的線索'
   },
   {
-    question: '食蟲植物（如豬籠草）為什麼演化出能捕捉昆蟲的構造？',
-    options: ['生長在缺乏氮素的土壤，以昆蟲補充養分', '昆蟲傷害植物，需要主動防衛', '昆蟲幫助植物傳播種子', '捕蟲是為了保護葉片的光合作用'],
-    answer: '生長在缺乏氮素的土壤，以昆蟲補充養分'
+    type: 'options',
+    question: '食蟲植物(如豬籠草)為什麼演化出能捕捉昆蟲的構造?',
+    options: ['生長在缺乏氮素的土壤,以昆蟲補充養分', '昆蟲傷害植物,需要主動防衛', '昆蟲幫助植物傳播種子', '捕蟲是為了保護葉片的光合作用'],
+    answer: 0,
+    displayAnswer: '生長在缺乏氮素的土壤,以昆蟲補充養分'
   },
   {
-    question: '台灣低海拔雨林的植物，葉片通常又大又薄，這是為了？',
-    options: ['增加光合作用面積，充分利用林下的散射光', '減少水分蒸發', '抵抗強風不容易折斷', '增加重量讓樹枝不搖晃'],
-    answer: '增加光合作用面積，充分利用林下的散射光'
-  },
+    type: 'options',
+    question: '台灣低海拔雨林的植物,葉片通常又大又薄,這是為了?',
+    options: ['增加光合作用面積,充分利用林下的散射光', '減少水分蒸發', '抵抗強風不容易折斷', '增加重量讓樹枝不搖晃'],
+    answer: 0,
+    displayAnswer: '增加光合作用面積,充分利用林下的散射光'
+  }
 ]
-const generateScienceQuestion = () => {
-  const q = scienceQBank[Math.floor(Math.random() * scienceQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // ==========================================
-// 閱讀理解：布農族
+// 閱讀理解:布農族
 // ==========================================
-const readingQBank = [
+const readingQuestions = [
   {
-    question: '布農族稱百步蛇為「Kavuaz」，這個詞的意思是？',
+    type: 'options',
+    question: '布農族稱百步蛇為「Kavuaz」,這個詞的意思是?',
     options: ['朋友', '祖先', '守護神', '國王'],
-    answer: '朋友'
+    answer: 0,
+    displayAnswer: '朋友'
   },
   {
-    question: '在「百步蛇的復仇」故事中，Qabus 為什麼向母百步蛇借小蛇？',
+    type: 'options',
+    question: '在「百步蛇的復仇」故事中,Qabus 為什麼向母百步蛇借小蛇?',
     options: ['想用蛇的花紋作為編織衣服的參考', '想把蛇養在家裡當寵物', '想把蛇製作成藥材', '想把蛇送給頭目當禮物'],
-    answer: '想用蛇的花紋作為編織衣服的參考'
+    answer: 0,
+    displayAnswer: '想用蛇的花紋作為編織衣服的參考'
   },
   {
-    question: '布農族人與百步蛇最後達成了什麼協議？',
-    options: ['百步蛇可供布農族織布參考，布農族則須尊敬百步蛇', '布農族每年獻祭給百步蛇', '百步蛇永遠離開布農族領地', '布農族不再編織帶有蛇紋的衣服'],
-    answer: '百步蛇可供布農族織布參考，布農族則須尊敬百步蛇'
+    type: 'options',
+    question: '布農族人與百步蛇最後達成了什麼協議?',
+    options: ['百步蛇可供布農族織布參考,布農族則須尊敬百步蛇', '布農族每年獻祭給百步蛇', '百步蛇永遠離開布農族領地', '布農族不再編織帶有蛇紋的衣服'],
+    answer: 0,
+    displayAnswer: '百步蛇可供布農族織布參考,布農族則須尊敬百步蛇'
   },
   {
-    question: '「百步蛇朋友」故事中，婦女的嬰兒消失後，最後在哪裡找到？',
-    options: ['地面的小洞裡，變成了百步蛇', '河邊的石頭下', '樹洞裡由老鷹看管', '被帶去了另一個部落'],
-    answer: '地面的小洞裡，變成了百步蛇'
-  },
+    type: 'options',
+    question: '「百步蛇朋友」故事中,婦女的嬰兒消失後,最後在哪裡找到?',
+    options: ['地面的小洞裡,變成了百步蛇', '河邊的石頭下', '樹洞裡由老鷹看管', '被帶去了另一個部落'],
+    answer: 0,
+    displayAnswer: '地面的小洞裡,變成了百步蛇'
+  }
 ]
-const generateReadingQuestion = () => {
-  const q = readingQBank[Math.floor(Math.random() * readingQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateReadingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(readingQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion, generateScienceQuestion, generateReadingQuestion }
 
 // ==========================================
 // Day 3 主體
@@ -188,7 +327,9 @@ const day3 = {
       practice: {
         questionCount: 4,
         generator: generateReadingQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -247,7 +388,9 @@ const day3 = {
       practice: {
         questionCount: 5,
         generator: generateScienceQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -301,8 +444,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        generator: generatePrimeQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

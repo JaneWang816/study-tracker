@@ -1,9 +1,12 @@
 // src/data/weeks/week01/day1.js
 // 第1週 - 第一天：我在哪裡？
 
+
 // ==========================================
-// 練習題生成器
+// 練習題生成器 - 改良版(使用洗牌機制)
 // ==========================================
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【數學】數線與負數練習題庫
 const mathQuestions = [
@@ -11,216 +14,266 @@ const mathQuestions = [
   {
     type: 'options',
     question: '海平面以下 15 公尺，用數線上的數字表示是？',
-    options: ['+15', '-15', '15', '0'],
-    answer: 1,
+    options: ['-15', '+15', '15', '0'],  // 正確答案放第一個
+    answer: 0,  // 改用索引值
     displayAnswer: '-15'
   },
   {
     type: 'options',
     question: '下列哪個數在數線上最靠近 0？',
-    options: ['-8', '+3', '-5', '+7'],
-    answer: 1,
+    options: ['+3', '-8', '-5', '+7'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '+3'
   },
   {
     type: 'options',
     question: '-3 和 -7，哪個數比較大？',
-    options: ['-7', '-3', '一樣大', '無法比較'],
-    answer: 1,
+    options: ['-3', '-7', '一樣大', '無法比較'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '-3'
   },
   {
-    type: 'fill',
+    type: 'options',
     question: '數線上，從 -8 移動到 +5，共移動了幾格？',
-    answer: '13',
+    options: ['13', '12', '14', '3'],
+    answer: 0,
     displayAnswer: '13'
   },
   {
-    type: 'fill',
+    type: 'options',
     question: '溫度從 -4°C 上升 9°C，現在是幾度？',
-    answer: '5',
-    displayAnswer: '5'
+    options: ['5°C', '13°C', '-13°C', '4°C'],
+    answer: 0,
+    displayAnswer: '5°C'
   },
   {
     type: 'options',
     question: '潛水員在海平面下 12 公尺（-12），上升 5 公尺後在哪裡？',
-    options: ['-17 公尺', '-7 公尺', '+7 公尺', '+17 公尺'],
-    answer: 1,
+    options: ['-7 公尺', '-17 公尺', '+7 公尺', '+17 公尺'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '-7 公尺'
   },
   {
     type: 'options',
     question: '下列數字由小到大排列，哪個順序正確？',
-    options: ['-1, -3, 0, 2', '-3, -1, 0, 2', '0, -1, -3, 2', '2, 0, -1, -3'],
-    answer: 1,
+    options: ['-3, -1, 0, 2', '-1, -3, 0, 2', '0, -1, -3, 2', '2, 0, -1, -3'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '-3, -1, 0, 2'
   },
   {
-    type: 'fill',
+    type: 'options',
     question: '在數線上，距離原點 4 格的位置有幾個數？',
-    answer: '2',
-    displayAnswer: '2（+4 和 -4）'
+    options: ['2 個（+4 和 -4）', '1 個', '4 個', '8 個'],
+    answer: 0,
+    displayAnswer: '2 個（+4 和 -4）'
   },
   {
     type: 'options',
     question: '蘭嶼某海溝深 180 公尺，用有號數表示是？',
-    options: ['+180', '-180', '180 公尺深', '0'],
-    answer: 1,
+    options: ['-180', '+180', '180 公尺深', '0'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '-180'
   },
   {
-    type: 'fill',
+    type: 'options',
     question: '數線上，-6 在 0 的哪個方向，距離幾格？',
-    answer: '左邊6格',
+    options: ['左邊 6 格', '右邊 6 格', '左邊 -6 格', '距離 0 格'],
+    answer: 0,
     displayAnswer: '左邊 6 格'
   }
 ]
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
+// 使用閉包維持洗牌狀態的生成器
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    // 如果題庫用完,重新洗牌
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    // 取出一題
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    // 如果是選擇題,洗牌選項;如果是填空題,直接返回
+    if (question.type === 'options') {
+      return shuffleOptions(question)
+    }
+    return { ...question }
+  }
+})()
 
 // 【社會】方位與經緯線練習題庫
 const socialQuestions = [
   {
     type: 'options',
     question: '經線的功能是什麼？',
-    options: ['連接東西方向', '連接南北兩極', '標示赤道位置', '表示海拔高度'],
-    answer: 1,
+    options: ['連接南北兩極', '連接東西方向', '標示赤道位置', '表示海拔高度'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '連接南北兩極'
   },
   {
     type: 'options',
     question: '赤道的緯度是幾度？',
-    options: ['90°N', '45°N', '0°', '23.5°N'],
-    answer: 2,
+    options: ['0°', '90°N', '45°N', '23.5°N'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '0°'
   },
   {
     type: 'options',
     question: '台灣大約位於東經幾度？',
-    options: ['90°E', '105°E', '120°E', '135°E'],
-    answer: 2,
+    options: ['120°E', '90°E', '105°E', '135°E'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '120°E'
   },
   {
     type: 'options',
     question: '台灣大約位於北緯幾度？',
-    options: ['10°N～15°N', '23°N～25°N', '35°N～40°N', '50°N～55°N'],
-    answer: 1,
+    options: ['23°N～25°N', '10°N～15°N', '35°N～40°N', '50°N～55°N'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '23°N～25°N'
   },
   {
     type: 'options',
     question: '蘭嶼在台灣本島的哪個方位？',
-    options: ['西北方', '東北方', '西南方', '東南方'],
-    answer: 3,
+    options: ['東南方', '西北方', '東北方', '西南方'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '東南方'
   },
   {
     type: 'options',
     question: '台灣位於哪個半球？',
-    options: ['南半球、西半球', '北半球、東半球', '南半球、東半球', '北半球、西半球'],
-    answer: 1,
+    options: ['北半球、東半球', '南半球、西半球', '南半球、東半球', '北半球、西半球'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '北半球、東半球'
   },
   {
     type: 'options',
     question: '地球上緯度最高的地方是？',
-    options: ['赤道（0°）', '北回歸線（23.5°N）', '北極（90°N）', '本初子午線（0°E）'],
-    answer: 2,
+    options: ['北極（90°N）', '赤道（0°）', '北回歸線（23.5°N）', '本初子午線（0°E）'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '北極（90°N）'
   },
   {
     type: 'options',
     question: '古代航海家用哪顆星星辨別北方？',
-    options: ['南十字星', '北極星', '織女星', '牛郎星'],
-    answer: 1,
+    options: ['北極星', '南十字星', '織女星', '牛郎星'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '北極星'
   },
   {
     type: 'options',
     question: '指北針指向的方向是？',
-    options: ['地理南極', '地理北極', '太陽升起的方向', '自己面對的方向'],
-    answer: 1,
+    options: ['地理北極', '地理南極', '太陽升起的方向', '自己面對的方向'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '地理北極'
   },
   {
     type: 'options',
     question: '下列哪項是「緯線」的特徵？',
-    options: ['通過南北兩極', '所有緯線長度相同', '平行於赤道', '只有一條'],
-    answer: 2,
+    options: ['平行於赤道', '通過南北兩極', '所有緯線長度相同', '只有一條'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '平行於赤道'
   }
 ]
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【科學】觀察與推測練習題庫
 const scienceQuestions = [
   {
     type: 'options',
     question: '「天空出現烏雲」這句話是？',
-    options: ['推測', '觀察', '假設', '結論'],
-    answer: 1,
+    options: ['觀察', '推測', '假設', '結論'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '觀察'
   },
   {
     type: 'options',
     question: '「今天應該會下雨」這句話是？',
-    options: ['觀察', '記錄', '推測', '測量'],
-    answer: 2,
+    options: ['推測', '觀察', '記錄', '測量'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '推測'
   },
   {
     type: 'options',
     question: '「溫度計顯示 28°C」這句話是？',
-    options: ['推測', '假設', '觀察（測量）', '結論'],
-    answer: 2,
+    options: ['觀察（測量）', '推測', '假設', '結論'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '觀察（測量）'
   },
   {
     type: 'options',
     question: '科學觀察記錄最重要的基本要素，下列哪項不需要？',
-    options: ['時間', '地點', '觀察者的喜好', '觀察描述'],
-    answer: 2,
+    options: ['觀察者的喜好', '時間', '地點', '觀察描述'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '觀察者的喜好'
   },
   {
     type: 'options',
     question: '「葉子上有水珠，所以昨晚下雨了」，哪個部分是觀察？',
-    options: ['昨晚下雨了', '葉子上有水珠', '兩者都是觀察', '兩者都是推測'],
-    answer: 1,
+    options: ['葉子上有水珠', '昨晚下雨了', '兩者都是觀察', '兩者都是推測'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '葉子上有水珠'
   },
   {
     type: 'options',
     question: '夏曼的小叔公說「今晚風浪大，不宜出海」，這是基於什麼？',
-    options: ['純粹猜測', '長期觀察自然的經驗', '天氣預報', '別人告訴他的'],
-    answer: 1,
+    options: ['長期觀察自然的經驗', '純粹猜測', '天氣預報', '別人告訴他的'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '長期觀察自然的經驗'
   },
   {
     type: 'options',
     question: '下列哪個是「用視覺」進行的觀察？',
-    options: ['聞到花香', '聽到海浪聲', '看見飛魚躍出水面', '感覺風很冷'],
-    answer: 2,
+    options: ['看見飛魚躍出水面', '聞到花香', '聽到海浪聲', '感覺風很冷'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '看見飛魚躍出水面'
   },
   {
     type: 'options',
     question: '寫觀察記錄時，應該優先記錄什麼？',
-    options: ['你認為會發生什麼事', '你實際看到、聽到、感受到的', '你希望結果是什麼', '別人的觀察結果'],
-    answer: 1,
+    options: ['你實際看到、聽到、感受到的', '你認為會發生什麼事', '你希望結果是什麼', '別人的觀察結果'],  // 正確答案放第一個
+    answer: 0,
     displayAnswer: '你實際看到、聽到、感受到的'
   }
 ]
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // ==========================================
 // Day 1 資料
@@ -302,11 +355,16 @@ const day1 = {
             blocks: [
               {
                 type: 'text',
-                content: '蘭嶼的海域有些地方深達 200 公尺。\n\n如果海平面是 0，水面上 10 公尺是 +10，那海平面「以下」10 公尺該怎麼寫？\n\n答案是：-10\n\n負號「-」代表方向相反——在數線上，0 的「左邊」。'
+                content: '數線現在長這樣：'
+              },
+              {
+                type: 'svg',
+                content: '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="120" viewBox="0 0 1000 120"><line x1="60" y1="60" x2="940" y2="60" stroke="#1E293B" stroke-width="2"/><path d="M 60 60 L 70 54 L 70 66 Z" fill="#1E293B"/><path d="M 940 60 L 930 54 L 930 66 Z" fill="#1E293B"/><line x1="60" y1="50" x2="60" y2="70" stroke="#1E293B" stroke-width="2"/><text x="60" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-10</text><line x1="104" y1="50" x2="104" y2="70" stroke="#1E293B" stroke-width="2"/><text x="104" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-9</text><line x1="148" y1="50" x2="148" y2="70" stroke="#1E293B" stroke-width="2"/><text x="148" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-8</text><line x1="192" y1="50" x2="192" y2="70" stroke="#1E293B" stroke-width="2"/><text x="192" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-7</text><line x1="236" y1="50" x2="236" y2="70" stroke="#1E293B" stroke-width="2"/><text x="236" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-6</text><line x1="280" y1="50" x2="280" y2="70" stroke="#1E293B" stroke-width="2"/><text x="280" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-5</text><line x1="324" y1="50" x2="324" y2="70" stroke="#1E293B" stroke-width="2"/><text x="324" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-4</text><line x1="368" y1="50" x2="368" y2="70" stroke="#1E293B" stroke-width="2"/><text x="368" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-3</text><line x1="412" y1="50" x2="412" y2="70" stroke="#1E293B" stroke-width="2"/><text x="412" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-2</text><line x1="456" y1="50" x2="456" y2="70" stroke="#1E293B" stroke-width="2"/><text x="456" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">-1</text><line x1="500" y1="50" x2="500" y2="70" stroke="#EF4444" stroke-width="3"/><text x="500" y="91" font-size="16" fill="#EF4444" text-anchor="middle" font-weight="bold">0</text><line x1="544" y1="50" x2="544" y2="70" stroke="#1E293B" stroke-width="2"/><text x="544" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+1</text><line x1="588" y1="50" x2="588" y2="70" stroke="#1E293B" stroke-width="2"/><text x="588" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+2</text><line x1="632" y1="50" x2="632" y2="70" stroke="#1E293B" stroke-width="2"/><text x="632" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+3</text><line x1="676" y1="50" x2="676" y2="70" stroke="#1E293B" stroke-width="2"/><text x="676" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+4</text><line x1="720" y1="50" x2="720" y2="70" stroke="#1E293B" stroke-width="2"/><text x="720" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+5</text><line x1="764" y1="50" x2="764" y2="70" stroke="#1E293B" stroke-width="2"/><text x="764" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+6</text><line x1="808" y1="50" x2="808" y2="70" stroke="#1E293B" stroke-width="2"/><text x="808" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+7</text><line x1="852" y1="50" x2="852" y2="70" stroke="#1E293B" stroke-width="2"/><text x="852" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+8</text><line x1="896" y1="50" x2="896" y2="70" stroke="#1E293B" stroke-width="2"/><text x="896" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+9</text><line x1="940" y1="50" x2="940" y2="70" stroke="#1E293B" stroke-width="2"/><text x="940" y="91" font-size="16" fill="#1E293B" text-anchor="middle" font-weight="normal">+10</text></svg>',
+                caption: '數線：負數在 0 的左邊，正數在 0 的右邊'
               },
               {
                 type: 'text',
-                content: '數線現在長這樣：\n\n← -5  -4  -3  -2  -1  0  +1  +2  +3  +4  +5 →\n\n• 0 的右邊是正數，越大越靠右\n• 0 的左邊是負數，越小越靠左\n• -3 比 -7 大（-3 在 -7 的右邊）'
+                content: '• 0 的右邊是正數，越大越靠右\n• 0 的左邊是負數，越小越靠左\n• -3 比 -7 大（-3 在 -7 的右邊）'
               }
             ]
           },

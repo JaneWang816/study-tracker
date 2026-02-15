@@ -2,96 +2,142 @@
 // W6 Day5：《無米樂》電影日
 // 貫穿文本：〈米的臺灣史〉最終段（戰後缺糧→有機米復興）
 
-// ===== 輕量複習題庫 =====
-const generateWarmupQuestion = () => {
-  const type = Math.floor(Math.random() * 4)
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-  if (type === 0) {
-    // 圓面積
-    const r = [6, 8, 10][Math.floor(Math.random() * 3)]
-    const area = (3.14 * r * r).toFixed(2)
-    const wrong1 = (2 * 3.14 * r).toFixed(2)
-    const wrong2 = (3.14 * r * r / 2).toFixed(2)
-    const wrong3 = (r * r).toFixed(2)
-    const options = [area, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `圓面積公式是 S = πr²。半徑 ${r} 公尺的圓形稻田面積是？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(area),
-      explanation: `S = 3.14 × ${r}² = 3.14 × ${r * r} = ${area} 平方公尺`
-    }
+// ==========================================
+// 輕量複習題庫(觀影前暖身)
+// ==========================================
+const warmupQuestions = [
+  // 圓面積
+  {
+    type: 'options',
+    question: '圓面積公式是 S = πr²。半徑 6 公尺的圓形稻田面積是?(π ≈ 3.14)',
+    options: ['113.04', '37.68', '56.52', '36'],
+    answer: 0,
+    displayAnswer: 'S = 3.14 × 6² = 3.14 × 36 = 113.04 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '圓面積公式是 S = πr²。半徑 8 公尺的圓形稻田面積是?(π ≈ 3.14)',
+    options: ['200.96', '50.24', '100.48', '64'],
+    answer: 0,
+    displayAnswer: 'S = 3.14 × 8² = 3.14 × 64 = 200.96 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '圓面積公式是 S = πr²。半徑 10 公尺的圓形稻田面積是?(π ≈ 3.14)',
+    options: ['314', '62.8', '157', '100'],
+    answer: 0,
+    displayAnswer: 'S = 3.14 × 10² = 3.14 × 100 = 314 平方公尺'
+  },
+  // 扇形面積
+  {
+    type: 'options',
+    question: '半徑 10 公尺、圓心角 90° 的扇形農田面積是?(π ≈ 3.14)',
+    options: ['78.5', '314', '8.73', '157'],
+    answer: 0,
+    displayAnswer: 'S = πr² × (θ/360°) = 3.14 × 10² × (90/360) = 78.5 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '半徑 10 公尺、圓心角 120° 的扇形農田面積是?(π ≈ 3.14)',
+    options: ['104.67', '314', '10.47', '209.33'],
+    answer: 0,
+    displayAnswer: 'S = πr² × (θ/360°) = 3.14 × 10² × (120/360) = 104.67 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '半徑 12 公尺、圓心角 90° 的扇形農田面積是?(π ≈ 3.14)',
+    options: ['113.04', '452.16', '11.78', '226.08'],
+    answer: 0,
+    displayAnswer: 'S = πr² × (θ/360°) = 3.14 × 12² × (90/360) = 113.04 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '半徑 12 公尺、圓心角 120° 的扇形農田面積是?(π ≈ 3.14)',
+    options: ['150.72', '452.16', '12.56', '301.44'],
+    answer: 0,
+    displayAnswer: 'S = πr² × (θ/360°) = 3.14 × 12² × (120/360) = 150.72 平方公尺'
+  },
+  // 影子測高
+  {
+    type: 'options',
+    question: '農民身高 150 公分,影長 100 公分。同時測到穀倉旁大榕樹影長 400 公分。這棵樹多高(公分)?',
+    options: ['600', '650', '375', '400'],
+    answer: 0,
+    displayAnswer: '相似比:150/100 = 樹高/400\n樹高 = 150 × 400 ÷ 100 = 600 公分'
+  },
+  {
+    type: 'options',
+    question: '農民身高 150 公分,影長 100 公分。同時測到穀倉旁大榕樹影長 480 公分。這棵樹多高(公分)?',
+    options: ['720', '770', '360', '480'],
+    answer: 0,
+    displayAnswer: '相似比:150/100 = 樹高/480\n樹高 = 150 × 480 ÷ 100 = 720 公分'
+  },
+  {
+    type: 'options',
+    question: '農民身高 150 公分,影長 120 公分。同時測到穀倉旁大榕樹影長 600 公分。這棵樹多高(公分)?',
+    options: ['750', '800', '360', '600'],
+    answer: 0,
+    displayAnswer: '相似比:150/120 = 樹高/600\n樹高 = 150 × 600 ÷ 120 = 750 公分'
+  },
+  {
+    type: 'options',
+    question: '農民身高 160 公分,影長 100 公分。同時測到穀倉旁大榕樹影長 400 公分。這棵樹多高(公分)?',
+    options: ['640', '690', '400', '400'],
+    answer: 0,
+    displayAnswer: '相似比:160/100 = 樹高/400\n樹高 = 160 × 400 ÷ 100 = 640 公分'
+  },
+  {
+    type: 'options',
+    question: '農民身高 160 公分,影長 120 公分。同時測到穀倉旁大榕樹影長 480 公分。這棵樹多高(公分)?',
+    options: ['640', '690', '384', '480'],
+    answer: 0,
+    displayAnswer: '相似比:160/120 = 樹高/480\n樹高 = 160 × 480 ÷ 120 = 640 公分'
+  },
+  // 產業鏈
+  {
+    type: 'options',
+    question: '一個農民種稻、碾米廠加工白米、超市賣給消費者,這三個環節分別屬於哪個產業?',
+    options: [
+      '一級產業、二級產業、三級產業',
+      '都屬於一級產業',
+      '都屬於三級產業',
+      '二級、一級、三級'
+    ],
+    answer: 0,
+    displayAnswer: '種稻 = 一級(從自然取得資源);碾米加工 = 二級(製造加工);超市銷售 = 三級(服務業)。這是完整的產業鏈三個層次。'
+  },
+  {
+    type: 'options',
+    question: '台灣哪個地區以「茶葉」聞名,和當地的山地氣候(涼爽多霧)直接相關?',
+    options: [
+      '北部丘陵山區(文山、坪林、三峽)和中部山區(南投凍頂、嘉義阿里山)',
+      '台南平原',
+      '高雄港口',
+      '花蓮海岸'
+    ],
+    answer: 0,
+    displayAnswer: '台灣茶葉主要集中在北部丘陵(包種茶、碧螺春)和中部山區(烏龍茶、高山茶),因為這些地區海拔適中、雲霧多、日夜溫差大,是茶樹生長的理想環境。'
   }
+]
 
-  if (type === 1) {
-    // 扇形面積
-    const r = [10, 12][Math.floor(Math.random() * 2)]
-    const angle = [90, 120][Math.floor(Math.random() * 2)]
-    const area = (3.14 * r * r * angle / 360).toFixed(2)
-    const wrong1 = (3.14 * r * r).toFixed(2)
-    const wrong2 = (3.14 * r * angle / 360).toFixed(2)
-    const wrong3 = (3.14 * r * r * angle / 180).toFixed(2)
-    const options = [area, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `半徑 ${r} 公尺、圓心角 ${angle}° 的扇形農田面積是？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(area),
-      explanation: `S = πr² × (θ/360°) = 3.14 × ${r}² × (${angle}/360) = ${area} 平方公尺`
+const generateWarmupQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(warmupQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  if (type === 2) {
-    // 影子測高
-    const myH = [150, 160][Math.floor(Math.random() * 2)]
-    const myS = [100, 120][Math.floor(Math.random() * 2)]
-    const treeS = [400, 480, 600][Math.floor(Math.random() * 3)]
-    const treeH = Math.round(myH * treeS / myS)
-    const w1 = treeH + 50
-    const w2 = Math.round(myS * treeS / myH)
-    const w3 = treeS
-    const options = [String(treeH), String(w1), String(w2), String(w3)]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `農民身高 ${myH} 公分，影長 ${myS} 公分。同時測到穀倉旁大榕樹影長 ${treeS} 公分。這棵樹多高（公分）？`,
-      options: shuffled,
-      answer: shuffled.indexOf(String(treeH)),
-      explanation: `相似比：${myH}/${myS} = 樹高/${treeS}\n樹高 = ${myH} × ${treeS} ÷ ${myS} = ${treeH} 公分`
-    }
-  }
-
-  // type === 3：產業鏈
-  const questions = [
-    {
-      question: '一個農民種稻、碾米廠加工白米、超市賣給消費者，這三個環節分別屬於哪個產業？',
-      options: [
-        '一級產業、二級產業、三級產業',
-        '都屬於一級產業',
-        '都屬於三級產業',
-        '二級、一級、三級'
-      ],
-      answer: 0,
-      explanation: '種稻 = 一級（從自然取得資源）；碾米加工 = 二級（製造加工）；超市銷售 = 三級（服務業）。這是完整的產業鏈三個層次。'
-    },
-    {
-      question: '台灣哪個地區以「茶葉」聞名，和當地的山地氣候（涼爽多霧）直接相關？',
-      options: [
-        '北部丘陵山區（文山、坪林、三峽）和中部山區（南投凍頂、嘉義阿里山）',
-        '台南平原',
-        '高雄港口',
-        '花蓮海岸'
-      ],
-      answer: 0,
-      explanation: '台灣茶葉主要集中在北部丘陵（包種茶、碧螺春）和中部山區（烏龍茶、高山茶），因為這些地區海拔適中、雲霧多、日夜溫差大，是茶樹生長的理想環境。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { type: 'choice', ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+export { generateWarmupQuestion }
 
 // ===== Day 5 主體 =====
 const day5 = {

@@ -2,266 +2,344 @@
 // W6 Day2：食物怎麼從農場到餐桌？
 // 貫穿文本：〈米的臺灣史〉第二段（荷蘭時期→清領）
 
-// ===== 社會：產業鏈（一、二、三級產業）=====
-const generateSocialQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「一級產業」指的是什麼？',
-      options: [
-        '直接從自然界取得資源的產業（農業、漁業、林業、礦業）',
-        '製造加工業（工廠生產）',
-        '服務業（餐廳、運輸、銷售）',
-        '科技業和金融業'
-      ],
-      answer: 0,
-      explanation: '一級產業是直接從自然界取得資源的產業，包括農業（種植）、漁業（捕魚）、林業（砍伐）、礦業（採礦）。台灣早期以農業為主，就是以一級產業為核心。'
-    },
-    {
-      type: 'choice',
-      question: '稻米從農田到我們碗裡的米飯，要經過哪些「產業」？',
-      options: [
-        '農民種稻（一級）→ 碾米廠加工（二級）→ 超市銷售或餐廳煮飯（三級）',
-        '只有農民種稻（一級）就夠了',
-        '直接從工廠生產（二級）就好',
-        '只需要超市（三級）即可'
-      ],
-      answer: 0,
-      explanation: '一粒米從田到碗需要三個層次：農民種稻是一級產業；碾米廠把稻穀去殼、加工成白米是二級產業；超市販賣或餐廳把米煮成飯是三級產業。這就是完整的「產業鏈」。'
-    },
-    {
-      type: 'choice',
-      question: '荷蘭人來台灣（1624-1662年）對台灣農業最重要的影響是什麼？',
-      options: [
-        '引進大量閩粵移民，帶來稻種和耕種技術，並從澎湖引進耕牛',
-        '教導原住民種水稻',
-        '建立了台灣第一座碾米廠',
-        '把台灣所有稻米都運走，造成饑荒'
-      ],
-      answer: 0,
-      explanation: '荷蘭東印度公司為了大量生產糧食外銷，從福建招攬大批閩粵漢人移民來台開墾，這些移民帶來了稻種、耕種技術和灌溉系統，並引進耕牛，奠定了台灣農業的基礎。'
-    },
-    {
-      type: 'choice',
-      question: '清代台灣的稻米不只供應島內，還銷往哪裡？',
-      options: [
-        '福建的漳州、泉州（中國大陸）',
-        '日本',
-        '荷蘭',
-        '台灣稻米只供應島內，不出口'
-      ],
-      answer: 0,
-      explanation: '清代台灣大量生產稻米，除了供應島內需求，還出口到福建的漳州、泉州。福建沿海地區人多地少，仰賴台灣稻米接濟，可見當時台灣已是重要的糧食出口地。'
-    },
-    {
-      type: 'choice',
-      question: '「二級產業」是指什麼？',
-      options: [
-        '以一級產業的原料為基礎，進行加工製造的產業（工廠、碾米廠、製糖廠）',
-        '直接採集自然資源',
-        '提供服務的行業',
-        '政府的行政機構'
-      ],
-      answer: 0,
-      explanation: '二級產業是製造加工業，把一級產業的原料（稻穀、甘蔗、木材）加工成產品（白米、砂糖、木料）。碾米廠把稻穀加工成白米、製糖廠把甘蔗製成砂糖，都是二級產業。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-// ===== 數學：圓面積應用 =====
-const generateMathQuestion = () => {
-  const type = Math.floor(Math.random() * 4)
-
-  if (type === 0) {
-    // 農田面積情境
-    const r = [8, 12, 15, 20][Math.floor(Math.random() * 4)]
-    const area = (3.14 * r * r).toFixed(2)
-    const wrong1 = (2 * 3.14 * r).toFixed(2)
-    const wrong2 = (3.14 * r * r / 2).toFixed(2)
-    const wrong3 = (3.14 * r * r + r).toFixed(2)
-    const options = [area, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `一塊圓形水田的半徑是 ${r} 公尺，這塊水田的面積是多少平方公尺？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(area),
-      explanation: `S = πr² = 3.14 × ${r}² = 3.14 × ${r * r} = ${area} 平方公尺`
-    }
+// ==========================================
+// 社會:產業鏈(一、二、三級產業)
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '「一級產業」指的是什麼?',
+    options: [
+      '直接從自然界取得資源的產業(農業、漁業、林業、礦業)',
+      '製造加工業(工廠生產)',
+      '服務業(餐廳、運輸、銷售)',
+      '科技業和金融業'
+    ],
+    answer: 0,
+    displayAnswer: '一級產業是直接從自然界取得資源的產業,包括農業(種植)、漁業(捕魚)、林業(砍伐)、礦業(採礦)。台灣早期以農業為主,就是以一級產業為核心。'
+  },
+  {
+    type: 'options',
+    question: '稻米從農田到我們碗裡的米飯,要經過哪些「產業」?',
+    options: [
+      '農民種稻(一級)→ 碾米廠加工(二級)→ 超市銷售或餐廳煮飯(三級)',
+      '只有農民種稻(一級)就夠了',
+      '直接從工廠生產(二級)就好',
+      '只需要超市(三級)即可'
+    ],
+    answer: 0,
+    displayAnswer: '一粒米從田到碗需要三個層次:農民種稻是一級產業;碾米廠把稻穀去殼、加工成白米是二級產業;超市販賣或餐廳把米煮成飯是三級產業。這就是完整的「產業鏈」。'
+  },
+  {
+    type: 'options',
+    question: '荷蘭人來台灣(1624-1662年)對台灣農業最重要的影響是什麼?',
+    options: [
+      '引進大量閩粵移民,帶來稻種和耕種技術,並從澎湖引進耕牛',
+      '教導原住民種水稻',
+      '建立了台灣第一座碾米廠',
+      '把台灣所有稻米都運走,造成饑荒'
+    ],
+    answer: 0,
+    displayAnswer: '荷蘭東印度公司為了大量生產糧食外銷,從福建招攬大批閩粵漢人移民來台開墾,這些移民帶來了稻種、耕種技術和灌溉系統,並引進耕牛,奠定了台灣農業的基礎。'
+  },
+  {
+    type: 'options',
+    question: '清代台灣的稻米不只供應島內,還銷往哪裡?',
+    options: [
+      '福建的漳州、泉州(中國大陸)',
+      '日本',
+      '荷蘭',
+      '台灣稻米只供應島內,不出口'
+    ],
+    answer: 0,
+    displayAnswer: '清代台灣大量生產稻米,除了供應島內需求,還出口到福建的漳州、泉州。福建沿海地區人多地少,仰賴台灣稻米接濟,可見當時台灣已是重要的糧食出口地。'
+  },
+  {
+    type: 'options',
+    question: '「二級產業」是指什麼?',
+    options: [
+      '以一級產業的原料為基礎,進行加工製造的產業(工廠、碾米廠、製糖廠)',
+      '直接採集自然資源',
+      '提供服務的行業',
+      '政府的行政機構'
+    ],
+    answer: 0,
+    displayAnswer: '二級產業是製造加工業,把一級產業的原料(稻穀、甘蔗、木材)加工成產品(白米、砂糖、木料)。碾米廠把稻穀加工成白米、製糖廠把甘蔗製成砂糖,都是二級產業。'
   }
+]
 
-  if (type === 1) {
-    // 兩塊農田面積差
-    const r1 = [5, 6, 8][Math.floor(Math.random() * 3)]
-    const r2 = r1 + [2, 3, 4][Math.floor(Math.random() * 3)]
-    const a1 = 3.14 * r1 * r1
-    const a2 = 3.14 * r2 * r2
-    const diff = (a2 - a1).toFixed(2)
-    const wrong1 = (3.14 * (r2 - r1) * (r2 - r1)).toFixed(2)
-    const wrong2 = (a2 + a1).toFixed(2)
-    const wrong3 = (a2 / a1).toFixed(2)
-    const options = [diff, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `農場有兩塊圓形稻田：A田半徑 ${r1} 公尺，B田半徑 ${r2} 公尺。B田比A田多出多少平方公尺？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(diff),
-      explanation: `A田面積 = 3.14 × ${r1}² = ${a1.toFixed(2)} 平方公尺\nB田面積 = 3.14 × ${r2}² = ${a2.toFixed(2)} 平方公尺\n差 = ${a2.toFixed(2)} - ${a1.toFixed(2)} = ${diff} 平方公尺`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  if (type === 2) {
-    // 圓形與正方形比較
-    const side = [10, 14, 20][Math.floor(Math.random() * 3)]
-    const r = side / 2
-    const squareArea = side * side
-    const circleArea = (3.14 * r * r).toFixed(2)
-    const diff = (squareArea - parseFloat(circleArea)).toFixed(2)
-    const options = [diff, circleArea, String(squareArea), (parseFloat(circleArea) - squareArea).toFixed(2)]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `農夫有一塊邊長 ${side} 公尺的正方形土地，在正中間挖了一個圓形水池（半徑 ${r} 公尺）。剩下的土地面積是多少平方公尺？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(diff),
-      explanation: `正方形面積 = ${side} × ${side} = ${squareArea} 平方公尺\n圓形水池面積 = 3.14 × ${r}² = ${circleArea} 平方公尺\n剩下土地 = ${squareArea} - ${circleArea} = ${diff} 平方公尺`
-    }
+// ==========================================
+// 數學:圓面積應用
+// ==========================================
+const mathQuestions = [
+  // 農田面積情境
+  {
+    type: 'options',
+    question: '一塊圓形水田的半徑是 8 公尺,這塊水田的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['200.96', '50.24', '100.48', '208.96'],
+    answer: 0,
+    displayAnswer: 'S = πr² = 3.14 × 8² = 3.14 × 64 = 200.96 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊圓形水田的半徑是 12 公尺,這塊水田的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['452.16', '75.36', '226.08', '464.16'],
+    answer: 0,
+    displayAnswer: 'S = πr² = 3.14 × 12² = 3.14 × 144 = 452.16 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊圓形水田的半徑是 15 公尺,這塊水田的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['706.5', '94.2', '353.25', '721.5'],
+    answer: 0,
+    displayAnswer: 'S = πr² = 3.14 × 15² = 3.14 × 225 = 706.5 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊圓形水田的半徑是 20 公尺,這塊水田的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['1256', '125.6', '628', '1276'],
+    answer: 0,
+    displayAnswer: 'S = πr² = 3.14 × 20² = 3.14 × 400 = 1256 平方公尺'
+  },
+  // 兩塊農田面積差
+  {
+    type: 'options',
+    question: '農場有兩塊圓形稻田:A田半徑 5 公尺,B田半徑 7 公尺。B田比A田多出多少平方公尺?(π ≈ 3.14)',
+    options: ['75.36', '12.56', '232', '3.01'],
+    answer: 0,
+    displayAnswer: 'A田面積 = 3.14 × 5² = 78.5 平方公尺\nB田面積 = 3.14 × 7² = 153.86 平方公尺\n差 = 153.86 - 78.5 = 75.36 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '農場有兩塊圓形稻田:A田半徑 6 公尺,B田半徑 9 公尺。B田比A田多出多少平方公尺?(π ≈ 3.14)',
+    options: ['141.3', '28.26', '367.38', '4.5'],
+    answer: 0,
+    displayAnswer: 'A田面積 = 3.14 × 6² = 113.04 平方公尺\nB田面積 = 3.14 × 9² = 254.34 平方公尺\n差 = 254.34 - 113.04 = 141.3 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '農場有兩塊圓形稻田:A田半徑 8 公尺,B田半徑 11 公尺。B田比A田多出多少平方公尺?(π ≈ 3.14)',
+    options: ['179.5', '28.26', '580.42', '3.77'],
+    answer: 0,
+    displayAnswer: 'A田面積 = 3.14 × 8² = 200.96 平方公尺\nB田面積 = 3.14 × 11² = 380.46 平方公尺\n差 = 380.46 - 200.96 = 179.5 平方公尺'
+  },
+  // 圓形與正方形比較
+  {
+    type: 'options',
+    question: '農夫有一塊邊長 10 公尺的正方形土地,在正中間挖了一個圓形水池(半徑 5 公尺)。剩下的土地面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['21.5', '78.5', '100', '-21.5'],
+    answer: 0,
+    displayAnswer: '正方形面積 = 10 × 10 = 100 平方公尺\n圓形水池面積 = 3.14 × 5² = 78.5 平方公尺\n剩下土地 = 100 - 78.5 = 21.5 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '農夫有一塊邊長 14 公尺的正方形土地,在正中間挖了一個圓形水池(半徑 7 公尺)。剩下的土地面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['42.14', '153.86', '196', '-42.14'],
+    answer: 0,
+    displayAnswer: '正方形面積 = 14 × 14 = 196 平方公尺\n圓形水池面積 = 3.14 × 7² = 153.86 平方公尺\n剩下土地 = 196 - 153.86 = 42.14 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '農夫有一塊邊長 20 公尺的正方形土地,在正中間挖了一個圓形水池(半徑 10 公尺)。剩下的土地面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['86', '314', '400', '-86'],
+    answer: 0,
+    displayAnswer: '正方形面積 = 20 × 20 = 400 平方公尺\n圓形水池面積 = 3.14 × 10² = 314 平方公尺\n剩下土地 = 400 - 314 = 86 平方公尺'
+  },
+  // 灌溉半徑與面積
+  {
+    type: 'options',
+    question: '一座傳統水車可以把水送到半徑 50 公尺範圍內的農田。這台水車能灌溉的最大面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['7850', '314', '157', '2500'],
+    answer: 0,
+    displayAnswer: '灌溉範圍是以水車為圓心、半徑 50 公尺的圓形\n面積 = 3.14 × 50² = 3.14 × 2500 = 7850 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一座傳統水車可以把水送到半徑 100 公尺範圍內的農田。這台水車能灌溉的最大面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['31400', '628', '314', '10000'],
+    answer: 0,
+    displayAnswer: '灌溉範圍是以水車為圓心、半徑 100 公尺的圓形\n面積 = 3.14 × 100² = 3.14 × 10000 = 31400 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一座傳統水車可以把水送到半徑 150 公尺範圍內的農田。這台水車能灌溉的最大面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['70650', '942', '471', '22500'],
+    answer: 0,
+    displayAnswer: '灌溉範圍是以水車為圓心、半徑 150 公尺的圓形\n面積 = 3.14 × 150² = 3.14 × 22500 = 70650 平方公尺'
   }
+]
 
-  // type === 3：灌溉半徑與面積
-  const r = [50, 100, 150][Math.floor(Math.random() * 3)]
-  const area = (3.14 * r * r).toFixed(0)
-  const wrong1 = (2 * 3.14 * r).toFixed(0)
-  const wrong2 = (3.14 * r).toFixed(0)
-  const wrong3 = (r * r).toFixed(0)
-  const options = [area, wrong1, wrong2, wrong3]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  return {
-    type: 'choice',
-    question: `一座傳統水車可以把水送到半徑 ${r} 公尺範圍內的農田。這台水車能灌溉的最大面積是多少平方公尺？（π ≈ 3.14）`,
-    options: shuffled,
-    answer: shuffled.indexOf(area),
-    explanation: `灌溉範圍是以水車為圓心、半徑 ${r} 公尺的圓形\n面積 = 3.14 × ${r}² = 3.14 × ${r * r} = ${area} 平方公尺`
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-}
+})()
 
-// ===== 科學：傳統水車與風車 =====
-const generateScienceQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '台灣傳統「筒仔水車」的主要用途是？',
-      options: [
-        '把低處的水提升到高處，灌溉農田',
-        '把穀物磨成粉',
-        '驅動船隻行進',
-        '發電'
-      ],
-      answer: 0,
-      explanation: '筒仔水車是台灣傳統農業的灌溉工具，利用人力踩踏或水流驅動，讓一排竹筒或木桶把水從低處（水溝、河流）提升到高處的農田。'
-    },
-    {
-      type: 'choice',
-      question: '傳統水車主要利用哪種簡單機械的原理？',
-      options: [
-        '輪軸（大輪帶動小軸，傳遞動力）',
-        '只靠重力，不需要任何機械原理',
-        '槓桿（支點在中間）',
-        '滑輪（繩子換方向）'
-      ],
-      answer: 0,
-      explanation: '水車的轉輪就是「輪軸」：人踩踏踏板帶動大輪旋轉，大輪再帶動中心軸，軸上連接著一排提水的筒子。這正是 W5 學的輪軸原理。'
-    },
-    {
-      type: 'choice',
-      question: '蘭陽平原（宜蘭）古早有「風車水車」，它和筒仔水車最大的不同是？',
-      options: [
-        '以風力代替人力驅動水車，不需要人踩踏',
-        '可以把水往下送（從高處往低處）',
-        '比筒仔水車更省力，因為沒有摩擦力',
-        '只能在晚上使用'
-      ],
-      answer: 0,
-      explanation: '風車水車利用宜蘭冬天強勁的東北季風驅動風車，再帶動水車提水灌溉。不需要人力踩踏，是利用自然能源的智慧設計。宜蘭有豐沛的季風，讓這種設計特別實用。'
-    },
-    {
-      type: 'choice',
-      question: '「機械效率」是什麼意思？',
-      options: [
-        '有效輸出的能量佔總輸入能量的比例（效率越高，浪費越少）',
-        '機器運轉的速度',
-        '機器的重量',
-        '機器能使用幾年'
-      ],
-      answer: 0,
-      explanation: '機械效率 = 有效功 ÷ 總功。例如，你踩水車輸入100單位的力，但因為摩擦力損失，只有80單位真正用來提水，效率就是80%。效率越高，浪費越少。任何機械的效率都不可能達到100%（因為一定有摩擦損耗）。'
-    },
-    {
-      type: 'choice',
-      question: '和傳統人力水車相比，現代電動抽水機的機械效率通常？',
-      options: [
-        '更高（電動馬達摩擦損耗更少，效率更高）',
-        '更低（電能比人力浪費更多）',
-        '完全相同',
-        '效率為100%（完全沒有損耗）'
-      ],
-      answer: 0,
-      explanation: '現代電動抽水機的機械效率比傳統水車高很多，因為電動馬達的零件精密、摩擦損耗小。但即使是現代機械，效率也不可能達到100%，因為能量守恆定律——任何機械運作都會有一部分能量以熱的形式散失。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+// ==========================================
+// 科學:傳統水車與風車
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '台灣傳統「筒仔水車」的主要用途是?',
+    options: [
+      '把低處的水提升到高處,灌溉農田',
+      '把穀物磨成粉',
+      '驅動船隻行進',
+      '發電'
+    ],
+    answer: 0,
+    displayAnswer: '筒仔水車是台灣傳統農業的灌溉工具,利用人力踩踏或水流驅動,讓一排竹筒或木桶把水從低處(水溝、河流)提升到高處的農田。'
+  },
+  {
+    type: 'options',
+    question: '傳統水車主要利用哪種簡單機械的原理?',
+    options: [
+      '輪軸(大輪帶動小軸,傳遞動力)',
+      '只靠重力,不需要任何機械原理',
+      '槓桿(支點在中間)',
+      '滑輪(繩子換方向)'
+    ],
+    answer: 0,
+    displayAnswer: '水車的轉輪就是「輪軸」:人踩踏踏板帶動大輪旋轉,大輪再帶動中心軸,軸上連接著一排提水的筒子。這正是 W5 學的輪軸原理。'
+  },
+  {
+    type: 'options',
+    question: '蘭陽平原(宜蘭)古早有「風車水車」,它和筒仔水車最大的不同是?',
+    options: [
+      '以風力代替人力驅動水車,不需要人踩踏',
+      '可以把水往下送(從高處往低處)',
+      '比筒仔水車更省力,因為沒有摩擦力',
+      '只能在晚上使用'
+    ],
+    answer: 0,
+    displayAnswer: '風車水車利用宜蘭冬天強勁的東北季風驅動風車,再帶動水車提水灌溉。不需要人力踩踏,是利用自然能源的智慧設計。宜蘭有豐沛的季風,讓這種設計特別實用。'
+  },
+  {
+    type: 'options',
+    question: '「機械效率」是什麼意思?',
+    options: [
+      '有效輸出的能量佔總輸入能量的比例(效率越高,浪費越少)',
+      '機器運轉的速度',
+      '機器的重量',
+      '機器能使用幾年'
+    ],
+    answer: 0,
+    displayAnswer: '機械效率 = 有效功 ÷ 總功。例如,你踩水車輸入100單位的力,但因為摩擦力損失,只有80單位真正用來提水,效率就是80%。效率越高,浪費越少。任何機械的效率都不可能達到100%(因為一定有摩擦損耗)。'
+  },
+  {
+    type: 'options',
+    question: '和傳統人力水車相比,現代電動抽水機的機械效率通常?',
+    options: [
+      '更高(電動馬達摩擦損耗更少,效率更高)',
+      '更低(電能比人力浪費更多)',
+      '完全相同',
+      '效率為100%(完全沒有損耗)'
+    ],
+    answer: 0,
+    displayAnswer: '現代電動抽水機的機械效率比傳統水車高很多,因為電動馬達的零件精密、摩擦損耗小。但即使是現代機械,效率也不可能達到100%,因為能量守恆定律——任何機械運作都會有一部分能量以熱的形式散失。'
+  }
+]
 
-// ===== 語文詞彙：產業鏈用語 =====
-const generateVocabQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「產業鏈」的意思是？',
-      options: [
-        '從原料生產到最終消費者使用，整個過程中各個環節的連結',
-        '只指工廠生產的過程',
-        '只指銷售和行銷',
-        '連接不同國家產業的鏈條'
-      ],
-      answer: 0,
-      explanation: '產業鏈描述一個產品從原材料到消費者手中的整個過程：種稻（一級）→ 碾米加工（二級）→ 販賣和烹煮（三級），每個環節都是鏈條的一環。'
-    },
-    {
-      type: 'choice',
-      question: '文章說荷蘭人「從澎湖引進耕牛」，為什麼要特別從澎湖引進牛，而不是從別的地方？',
-      options: [
-        '澎湖早有華人定居並養牛，台灣本島原本沒有牛',
-        '澎湖的牛比較大隻',
-        '澎湖的牛比較便宜',
-        '因為從中國進口牛太貴了'
-      ],
-      answer: 0,
-      explanation: '台灣原本沒有牛，原住民的語言裡也沒有「牛」這個詞（噶瑪蘭語的牛字借自西班牙語）。澎湖早有漢人定居並養牛，所以荷蘭人從澎湖把牛引進台灣本島，供農耕使用。'
-    },
-    {
-      type: 'choice',
-      question: '「加工」這個詞在「碾米廠把稻穀加工成白米」裡，意思是？',
-      options: [
-        '對原料進行處理或製造，使其變成另一種形式的產品',
-        '增加重量',
-        '增加數量',
-        '把東西分開'
-      ],
-      answer: 0,
-      explanation: '加工是工業中的重要概念：把原始的原料（稻穀）經過處理（去殼、精製），變成可以使用的產品（白米）。這是二級產業的核心工作。'
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 語文詞彙:產業鏈用語
+// ==========================================
+const vocabQuestions = [
+  {
+    type: 'options',
+    question: '「產業鏈」的意思是?',
+    options: [
+      '從原料生產到最終消費者使用,整個過程中各個環節的連結',
+      '只指工廠生產的過程',
+      '只指銷售和行銷',
+      '連接不同國家產業的鏈條'
+    ],
+    answer: 0,
+    displayAnswer: '產業鏈描述一個產品從原材料到消費者手中的整個過程:種稻(一級)→ 碾米加工(二級)→ 販賣和烹煮(三級),每個環節都是鏈條的一環。'
+  },
+  {
+    type: 'options',
+    question: '文章說荷蘭人「從澎湖引進耕牛」,為什麼要特別從澎湖引進牛,而不是從別的地方?',
+    options: [
+      '澎湖早有華人定居並養牛,台灣本島原本沒有牛',
+      '澎湖的牛比較大隻',
+      '澎湖的牛比較便宜',
+      '因為從中國進口牛太貴了'
+    ],
+    answer: 0,
+    displayAnswer: '台灣原本沒有牛,原住民的語言裡也沒有「牛」這個詞(噶瑪蘭語的牛字借自西班牙語)。澎湖早有漢人定居並養牛,所以荷蘭人從澎湖把牛引進台灣本島,供農耕使用。'
+  },
+  {
+    type: 'options',
+    question: '「加工」這個詞在「碾米廠把稻穀加工成白米」裡,意思是?',
+    options: [
+      '對原料進行處理或製造,使其變成另一種形式的產品',
+      '增加重量',
+      '增加數量',
+      '把東西分開'
+    ],
+    answer: 0,
+    displayAnswer: '加工是工業中的重要概念:把原始的原料(稻穀)經過處理(去殼、精製),變成可以使用的產品(白米)。這是二級產業的核心工作。'
+  }
+]
+
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion, generateVocabQuestion }
 
 // ===== Day 2 主體 =====
 const day2 = {

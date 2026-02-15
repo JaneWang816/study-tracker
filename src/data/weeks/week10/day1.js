@@ -1,259 +1,366 @@
 // src/data/weeks/week10/day1.js
 // W10 Day1：發現問題
 
+// 改寫後的題庫 - 使用標準洗牌機制
+
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 練習題庫
+// ==========================================
+
 // ── 社會科題庫（探究五步驟）────────────────────
 const socialPool = [
   {
+    type: 'options',
     question: '探究的第一步是什麼？',
-    options: ['蒐集資料', '發現問題', '得出結論', '提出建議'],
-    answer: 1
+    options: ['發現問題', '蒐集資料', '得出結論', '提出建議'],
+    answer: 0,
+    displayAnswer: '發現問題'
   },
   {
+    type: 'options',
     question: '下列哪個是可信的資料來源？',
-    options: ['匿名論壇的文章', '內容農場的標題', '經濟部能源局網站', '沒有註明來源的圖片'],
-    answer: 2
+    options: ['經濟部能源局網站', '匿名論壇的文章', '內容農場的標題', '沒有註明來源的圖片'],
+    answer: 0,
+    displayAnswer: '經濟部能源局網站'
   },
   {
+    type: 'options',
     question: '「三源交叉法」是什麼意思？',
-    options: ['找三個朋友問', '同一數據查三個來源', '看三遍文章', '寫三份報告'],
-    answer: 1
+    options: ['同一數據查三個來源', '找三個朋友問', '看三遍文章', '寫三份報告'],
+    answer: 0,
+    displayAnswer: '同一數據查三個來源'
   },
   {
+    type: 'options',
     question: '探究的第三步是什麼？',
-    options: ['發現問題', '蒐集資料', '分析資料', '得出結論'],
-    answer: 2
+    options: ['分析資料', '發現問題', '蒐集資料', '得出結論'],
+    answer: 0,
+    displayAnswer: '分析資料'
   },
   {
+    type: 'options',
     question: '好的建議應該具備什麼特質？',
-    options: ['很誇張', '具體可行', '只考慮一方', '沒有證據'],
-    answer: 1
+    options: ['具體可行', '很誇張', '只考慮一方', '沒有證據'],
+    answer: 0,
+    displayAnswer: '具體可行'
   },
   {
+    type: 'options',
     question: '探究的第二步是什麼？',
-    options: ['發現問題', '蒐集資料', '分析資料', '得出結論'],
-    answer: 1
+    options: ['蒐集資料', '發現問題', '分析資料', '得出結論'],
+    answer: 0,
+    displayAnswer: '蒐集資料'
   },
   {
+    type: 'options',
     question: '為什麼要記錄資料來源？',
-    options: ['讓報告看起來比較長', '方便查證和確認可信度', '老師規定的', '沒有特別原因'],
-    answer: 1
+    options: ['方便查證和確認可信度', '讓報告看起來比較長', '老師規定的', '沒有特別原因'],
+    answer: 0,
+    displayAnswer: '方便查證和確認可信度'
   },
   {
+    type: 'options',
     question: '下列哪個「不是」探究的步驟？',
-    options: ['發現問題', '猜測答案就好', '蒐集資料', '分析資料'],
-    answer: 1
+    options: ['猜測答案就好', '發現問題', '蒐集資料', '分析資料'],
+    answer: 0,
+    displayAnswer: '猜測答案就好'
   }
 ]
 
-function generateSocialQuestion() {
-  const q = socialPool[Math.floor(Math.random() * socialPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialPool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 數學科題庫（平均數）──────────────────────────
 const mathPool = [
   {
+    type: 'options',
     question: '計算平均數：80, 90, 85, 75',
-    options: ['82', '82.5', '83', '83.5'],
-    answer: 1
+    options: ['82.5', '82', '83', '83.5'],
+    answer: 0,
+    displayAnswer: '82.5'
   },
   {
+    type: 'options',
     question: '小華三次考試分數是85分、90分、88分，平均分數大約是多少？',
-    options: ['86分', '87分', '88分', '89分'],
-    answer: 2
+    options: ['88分', '86分', '87分', '89分'],
+    answer: 0,
+    displayAnswer: '88分'
   },
   {
+    type: 'options',
     question: '有5個數字，平均數是80，這5個數字的總和是多少？',
-    options: ['75', '380', '400', '405'],
-    answer: 2
+    options: ['400', '75', '380', '405'],
+    answer: 0,
+    displayAnswer: '400'
   },
   {
+    type: 'options',
     question: '下列哪個情況「不適合」用平均數來分析？',
     options: [
+      '5個人的收入，其中1人是億萬富翁',
       '班上30個同學的身高',
       '一週7天的氣溫',
-      '5個人的收入，其中1人是億萬富翁',
       '10次考試的成績'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '5個人的收入，其中1人是億萬富翁'
   },
   {
+    type: 'options',
     question: '計算平均數的公式是什麼？',
-    options: ['總和 × 個數', '總和 ÷ 個數', '最大值 ÷ 2', '最大值 + 最小值'],
-    answer: 1
+    options: ['總和 ÷ 個數', '總和 × 個數', '最大值 ÷ 2', '最大值 + 最小值'],
+    answer: 0,
+    displayAnswer: '總和 ÷ 個數'
   },
   {
+    type: 'options',
     question: '4個數字是60, 70, 80, 90，平均數是多少？',
-    options: ['70', '75', '80', '85'],
-    answer: 1
+    options: ['75', '70', '80', '85'],
+    answer: 0,
+    displayAnswer: '75'
   },
   {
+    type: 'options',
     question: '平均數80分，共考了4次，總分是多少？',
-    options: ['280', '300', '320', '340'],
-    answer: 2
+    options: ['320', '280', '300', '340'],
+    answer: 0,
+    displayAnswer: '320'
   },
   {
+    type: 'options',
     question: '三個數字的總和是240，平均數是多少？',
-    options: ['60', '70', '80', '90'],
-    answer: 2
+    options: ['80', '60', '70', '90'],
+    answer: 0,
+    displayAnswer: '80'
   }
 ]
 
-function generateMathQuestion() {
-  const q = mathPool[Math.floor(Math.random() * mathPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathPool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 科學題庫（電與磁）────────────────────────────
 const sciencePool = [
   {
+    type: 'options',
     question: '奧斯特發現了什麼？',
-    options: ['磁鐵產生電流', '電流產生磁場', '光產生電流', '熱產生磁場'],
-    answer: 1
+    options: ['電流產生磁場', '磁鐵產生電流', '光產生電流', '熱產生磁場'],
+    answer: 0,
+    displayAnswer: '電流產生磁場'
   },
   {
+    type: 'options',
     question: '下列哪個現象是「電流產生磁場」？',
-    options: ['冰箱磁鐵吸住鐵門', '電磁鐵通電後吸起鐵釘', '指南針指向北方', '太陽照射產生熱'],
-    answer: 1
+    options: ['電磁鐵通電後吸起鐵釘', '冰箱磁鐵吸住鐵門', '指南針指向北方', '太陽照射產生熱'],
+    answer: 0,
+    displayAnswer: '電磁鐵通電後吸起鐵釘'
   },
   {
+    type: 'options',
     question: '電磁鐵和永久磁鐵的差別是什麼？',
     options: [
-      '電磁鐵比較貴',
       '電磁鐵可以控制磁力的有無',
+      '電磁鐵比較貴',
       '永久磁鐵比較大',
       '沒有差別'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '電磁鐵可以控制磁力的有無'
   },
   {
+    type: 'options',
     question: '喇叭如何發出聲音？',
     options: [
+      '用變化的磁場推動振膜',
       '用電流加熱空氣',
       '用磁鐵吸引空氣',
-      '用變化的磁場推動振膜',
       '用光線震動空氣'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '用變化的磁場推動振膜'
   },
   {
+    type: 'options',
     question: '下列哪個「不是」利用電磁原理的裝置？',
-    options: ['電磁爐', '喇叭', '電磁鐵', '太陽能板'],
-    answer: 3
+    options: ['太陽能板', '電磁爐', '喇叭', '電磁鐵'],
+    answer: 0,
+    displayAnswer: '太陽能板'
   },
   {
+    type: 'options',
     question: '電流通過導線時，周圍會產生什麼？',
-    options: ['熱能', '磁場', '光線', '聲音'],
-    answer: 1
+    options: ['磁場', '熱能', '光線', '聲音'],
+    answer: 0,
+    displayAnswer: '磁場'
   },
   {
+    type: 'options',
     question: '電磁鐵斷電後會怎樣？',
     options: ['磁力消失', '磁力變強', '磁力不變', '會爆炸'],
-    answer: 0
+    answer: 0,
+    displayAnswer: '磁力消失'
   },
   {
+    type: 'options',
     question: '奧斯特實驗中，指南針為什麼會偏轉？',
     options: [
-      '因為地球磁場改變',
       '因為電線產生了磁場',
+      '因為地球磁場改變',
       '因為溫度升高',
       '因為風吹動了'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '因為電線產生了磁場'
   }
 ]
 
-function generateScienceQuestion() {
-  const q = sciencePool[Math.floor(Math.random() * sciencePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(sciencePool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 語文題庫（探究詞彙）──────────────────────────
 const chinesePool = [
   {
+    type: 'options',
     question: '「______」是指用實驗或數據來證明假設。',
-    options: ['探究', '驗證', '假設', '觀察'],
-    answer: 1
+    options: ['驗證', '探究', '假設', '觀察'],
+    answer: 0,
+    displayAnswer: '驗證'
   },
   {
+    type: 'options',
     question: '「客觀性」的意思是什麼？',
-    options: ['很主觀', '只看事實不受情緒影響', '很快速', '很複雜'],
-    answer: 1
+    options: ['只看事實不受情緒影響', '很主觀', '很快速', '很複雜'],
+    answer: 0,
+    displayAnswer: '只看事實不受情緒影響'
   },
   {
+    type: 'options',
     question: '下列哪個「不是」好的資料來源？',
-    options: ['政府網站', '學術論文', '匿名論壇', '專業媒體'],
-    answer: 2
+    options: ['匿名論壇', '政府網站', '學術論文', '專業媒體'],
+    answer: 0,
+    displayAnswer: '匿名論壇'
   },
   {
+    type: 'options',
     question: '「我想探究手機使用時間，因為想改善睡眠品質。」這個句子缺少什麼？',
-    options: ['主題', '原因', '都有了', '動詞'],
-    answer: 2
+    options: ['都有了', '主題', '原因', '動詞'],
+    answer: 0,
+    displayAnswer: '都有了'
   },
   {
+    type: 'options',
     question: '「假設」是什麼意思？',
-    options: ['確定的答案', '推測可能的答案', '錯誤的想法', '別人的意見'],
-    answer: 1
+    options: ['推測可能的答案', '確定的答案', '錯誤的想法', '別人的意見'],
+    answer: 0,
+    displayAnswer: '推測可能的答案'
   },
   {
+    type: 'options',
     question: '探究時為什麼要保持「客觀性」？',
     options: [
-      '讓報告看起來比較專業',
       '避免個人偏見影響結論',
+      '讓報告看起來比較專業',
       '老師規定的',
       '沒有特別原因'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '避免個人偏見影響結論'
   },
   {
+    type: 'options',
     question: '「資料來源」包含哪些資訊？',
     options: [
-      '只要網站名稱就好',
       '網站名稱、發布日期、作者',
+      '只要網站名稱就好',
       '只要日期就好',
       '不用記錄'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '網站名稱、發布日期、作者'
   },
   {
+    type: 'options',
     question: '下列哪個句子正確使用了探究詞彙？',
     options: [
-      '我猜測答案是這樣',
       '根據能源局數據，我發現綠能占比很低',
+      '我猜測答案是這樣',
       '我覺得應該是這樣',
       '大家都說是這樣'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '根據能源局數據，我發現綠能占比很低'
   }
 ]
 
-function generateChineseQuestion() {
-  const q = chinesePool[Math.floor(Math.random() * chinesePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateChineseQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(chinesePool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
+})()
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export {
+  generateSocialQuestion,
+  generateMathQuestion,
+  generateScienceQuestion,
+  generateChineseQuestion
 }
 
 // ── Day 資料 ──────────────────────────────────────

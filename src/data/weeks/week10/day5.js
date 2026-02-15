@@ -1,120 +1,163 @@
 // src/data/weeks/week10/day5.js
 // W10 Day5：完成反思
 
-// ── 複習題庫（本週重點）────────────────────
+// 改寫後的複習題庫 - 使用標準洗牌機制
+
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 複習題庫（本週重點）
+// ==========================================
+
 const reviewPool = [
   {
+    type: 'options',
     question: '探究五步驟的順序是什麼？',
     options: [
-      '蒐集→發現→分析→結論→建議',
       '發現→蒐集→分析→結論→建議',
+      '蒐集→發現→分析→結論→建議',
       '分析→蒐集→發現→建議→結論',
       '建議→結論→分析→蒐集→發現'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '發現→蒐集→分析→結論→建議'
   },
   {
+    type: 'options',
     question: '台灣2020年發電結構中占比最高的是？',
-    options: ['太陽能', '風力', '火力', '核能'],
-    answer: 2
+    options: ['火力', '太陽能', '風力', '核能'],
+    answer: 0,
+    displayAnswer: '火力'
   },
   {
+    type: 'options',
     question: '再生能源包括哪些？',
     options: [
-      '煤炭、石油',
       '太陽能、風力、水力',
+      '煤炭、石油',
       '核能',
       '天然氣'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '太陽能、風力、水力'
   },
   {
+    type: 'options',
     question: '綠能最大的問題是什麼？',
-    options: ['太貴', '不穩定', '太危險', '沒有用'],
-    answer: 1
+    options: ['不穩定', '太貴', '太危險', '沒有用'],
+    answer: 0,
+    displayAnswer: '不穩定'
   },
   {
+    type: 'options',
     question: '儲能系統的功能是什麼？',
     options: [
-      '儲存水',
       '解決綠能不穩定的問題',
+      '儲存水',
       '發電',
       '儲存垃圾'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '解決綠能不穩定的問題'
   },
   {
+    type: 'options',
     question: '奧斯特發現了什麼？',
     options: [
-      '磁場產生電流',
       '電流產生磁場',
+      '磁場產生電流',
       '光產生電',
       '熱產生磁'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '電流產生磁場'
   },
   {
+    type: 'options',
     question: '法拉第發現了什麼？',
     options: [
-      '電流產生磁場',
       '磁場變化產生電流',
+      '電流產生磁場',
       '水力發電',
       '太陽能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '磁場變化產生電流'
   },
   {
+    type: 'options',
     question: '平均數的計算公式是？',
     options: [
-      '總和 × 個數',
       '總和 ÷ 個數',
+      '總和 × 個數',
       '最大值 - 最小值',
       '中間的數'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '總和 ÷ 個數'
   },
   {
+    type: 'options',
     question: '中位數適合用在什麼情況？',
     options: [
-      '數字都差不多',
       '有極端值的時候',
+      '數字都差不多',
       '只有一個數字',
       '隨時都可以'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '有極端值的時候'
   },
   {
+    type: 'options',
     question: '圓形圖適合表示什麼？',
-    options: ['趨勢變化', '占比', '溫度', '時間'],
-    answer: 1
+    options: ['占比', '趨勢變化', '溫度', '時間'],
+    answer: 0,
+    displayAnswer: '占比'
   },
   {
+    type: 'options',
     question: '折線圖適合表示什麼？',
-    options: ['占比', '趨勢變化', '分類', '沒規則的數字'],
-    answer: 1
+    options: ['趨勢變化', '占比', '分類', '沒規則的數字'],
+    answer: 0,
+    displayAnswer: '趨勢變化'
   },
   {
+    type: 'options',
     question: '論證的三要素是？',
     options: [
-      '開頭、中間、結尾',
       '主張、理由、證據',
+      '開頭、中間、結尾',
       '標題、內容、圖片',
       '問題、答案、例子'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '主張、理由、證據'
   }
 ]
 
-function generateReviewQuestion() {
-  const q = reviewPool[Math.floor(Math.random() * reviewPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateReviewQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(reviewPool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export { generateReviewQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day5 = {

@@ -1,167 +1,180 @@
 // src/data/weeks/week03/day4.js
 // W3 Day4：動筆日
 
-// ===== 數學綜合：比值＋化簡＋分數除法 =====
-const generateComprehensiveMathQuestion = () => {
-  const types = ['ratio_context', 'simplify_context', 'fraction_div_context', 'mixed']
-  const t = types[Math.floor(Math.random() * types.length)]
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-  if (t === 'ratio_context') {
-    const scenarios = [
-      {
-        question: '嘉南大圳南幹線每日輸水 240 公噸，北幹線每日輸水 160 公噸。兩條幹線水量的最簡比是多少？',
-        options: ['3：2', '2：3', '4：3', '6：4'],
-        answer: 0,
-        explanation: '240：160，最大公因數是80，240÷80=3，160÷80=2，最簡比是 3：2。'
-      },
-      {
-        question: '一塊農田長 450 公尺，寬 300 公尺，長與寬的最簡比是多少？',
-        options: ['3：2', '2：3', '9：6', '45：30'],
-        answer: 0,
-        explanation: '450：300，最大公因數是150，450÷150=3，300÷150=2，最簡比是 3：2。'
-      },
-      {
-        question: '台灣早稻產量 1500 公噸，晚稻產量 900 公噸，早稻對晚稻的最簡比是多少？',
-        options: ['5：3', '3：5', '15：9', '5：2'],
-        answer: 0,
-        explanation: '1500：900，最大公因數是300，1500÷300=5，900÷300=3，最簡比是 5：3。'
-      }
-    ]
-    const s = scenarios[Math.floor(Math.random() * scenarios.length)]
-    return { type: 'choice', ...s }
+// ==========================================
+// W3D4: 數學綜合(比值+化簡+分數除法)
+// ==========================================
+const mathQuestions = [
+  // 比值情境
+  {
+    type: 'options',
+    question: '嘉南大圳南幹線每日輸水 240 公噸,北幹線每日輸水 160 公噸。兩條幹線水量的最簡比是多少?',
+    options: ['3:2', '2:3', '4:3', '6:4'],
+    answer: 0,
+    displayAnswer: '240:160,最大公因數是80,240÷80=3,160÷80=2,最簡比是 3:2。'
+  },
+  {
+    type: 'options',
+    question: '一塊農田長 450 公尺,寬 300 公尺,長與寬的最簡比是多少?',
+    options: ['3:2', '2:3', '9:6', '45:30'],
+    answer: 0,
+    displayAnswer: '450:300,最大公因數是150,450÷150=3,300÷150=2,最簡比是 3:2。'
+  },
+  {
+    type: 'options',
+    question: '台灣早稻產量 1500 公噸,晚稻產量 900 公噸,早稻對晚稻的最簡比是多少?',
+    options: ['5:3', '3:5', '15:9', '5:2'],
+    answer: 0,
+    displayAnswer: '1500:900,最大公因數是300,1500÷300=5,900÷300=3,最簡比是 5:3。'
+  },
+  // 分數除法情境
+  {
+    type: 'options',
+    question: '圳路A每天送水 3/4 公噸,圳路B每天送水 3/8 公噸,A的水量是B的幾倍?',
+    options: ['2倍', '1.5倍', '0.5倍', '3倍'],
+    answer: 0,
+    displayAnswer: '3/4 ÷ 3/8 = 3/4 × 8/3 = 24/12 = 2,A的水量是B的2倍。'
+  },
+  {
+    type: 'options',
+    question: '農夫有 2/3 公頃的農地,想分成每塊 1/6 公頃的小田,可以分成幾塊?',
+    options: ['4塊', '3塊', '2塊', '6塊'],
+    answer: 0,
+    displayAnswer: '2/3 ÷ 1/6 = 2/3 × 6/1 = 12/3 = 4,可以分成4塊小田。'
+  },
+  // 比例分配
+  {
+    type: 'options',
+    question: '嘉南大圳今天供水 5/6 萬公噸,按照 1:2 分給南區和北區,北區得到多少萬公噸?',
+    options: ['5/9', '5/18', '10/18', '5/6'],
+    answer: 0,
+    displayAnswer: '總份數1+2=3份,北區2份:5/6 × 2/3 = 10/18 = 5/9 萬公噸。'
+  },
+  {
+    type: 'options',
+    question: '一塊農田面積是 7/8 公頃,按照 3:4 分給兩兄弟,哥哥分到多少公頃?',
+    options: ['3/8', '4/8', '7/24', '3/7'],
+    answer: 0,
+    displayAnswer: '總份數3+4=7份,哥哥3份:7/8 × 3/7 = 21/56 = 3/8 公頃。'
+  },
+  // 綜合多步驟
+  {
+    type: 'options',
+    question: '濁水溪流量是大肚溪的 3/2 倍,大肚溪每秒流量是 40 公升,若要蓄滿一個 360 公升的水桶,濁水溪需要幾秒?',
+    options: ['6秒', '9秒', '4秒', '12秒'],
+    answer: 0,
+    displayAnswer: '濁水溪流量 = 40 × 3/2 = 60 公升/秒,360 ÷ 60 = 6秒。'
+  },
+  {
+    type: 'options',
+    question: '農田A和B的面積比是 2:3,兩塊農田合計 5/2 公頃,農田A的面積是多少公頃?',
+    options: ['1公頃', '3/2公頃', '2/3公頃', '5/4公頃'],
+    answer: 0,
+    displayAnswer: '總份數2+3=5份,每份 = 5/2 ÷ 5 = 1/2 公頃,A是2份 = 1/2 × 2 = 1公頃。'
   }
+]
 
-  if (t === 'simplify_context') {
-    const scenarios = [
-      {
-        question: '圳路A每天送水 3/4 公噸，圳路B每天送水 3/8 公噸，A的水量是B的幾倍？',
-        options: ['2倍', '1.5倍', '0.5倍', '3倍'],
-        answer: 0,
-        explanation: '3/4 ÷ 3/8 = 3/4 × 8/3 = 24/12 = 2，A的水量是B的2倍。'
-      },
-      {
-        question: '農夫有 2/3 公頃的農地，想分成每塊 1/6 公頃的小田，可以分成幾塊？',
-        options: ['4塊', '3塊', '2塊', '6塊'],
-        answer: 0,
-        explanation: '2/3 ÷ 1/6 = 2/3 × 6/1 = 12/3 = 4，可以分成4塊小田。'
-      }
-    ]
-    const s = scenarios[Math.floor(Math.random() * scenarios.length)]
-    return { type: 'choice', ...s }
-  }
-
-  if (t === 'fraction_div_context') {
-    const scenarios = [
-      {
-        question: '嘉南大圳今天供水 5/6 萬公噸，按照 1：2 分給南區和北區，北區得到多少萬公噸？',
-        options: ['5/9', '5/18', '10/18', '5/6'],
-        answer: 0,
-        explanation: '總份數1+2=3份，北區2份：5/6 × 2/3 = 10/18 = 5/9 萬公噸。'
-      },
-      {
-        question: '一塊農田面積是 7/8 公頃，按照 3：4 分給兩兄弟，哥哥分到多少公頃？',
-        options: ['3/8', '4/8', '7/24', '3/7'],
-        answer: 0,
-        explanation: '總份數3+4=7份，哥哥3份：7/8 × 3/7 = 21/56 = 3/8 公頃。'
-      }
-    ]
-    const s = scenarios[Math.floor(Math.random() * scenarios.length)]
-    return { type: 'choice', ...s }
-  }
-
-  // mixed：綜合情境（多步驟）
-  const scenarios = [
-    {
-      question: '濁水溪流量是大肚溪的 3/2 倍，大肚溪每秒流量是 40 公升，若要蓄滿一個 360 公升的水桶，濁水溪需要幾秒？',
-      options: ['6秒', '9秒', '4秒', '12秒'],
-      answer: 0,
-      explanation: '濁水溪流量 = 40 × 3/2 = 60 公升/秒，360 ÷ 60 = 6秒。'
-    },
-    {
-      question: '農田A和B的面積比是 2：3，兩塊農田合計 5/2 公頃，農田A的面積是多少公頃？',
-      options: ['1公頃', '3/2公頃', '2/3公頃', '5/4公頃'],
-      answer: 0,
-      explanation: '總份數2+3=5份，每份 = 5/2 ÷ 5 = 1/2 公頃，A是2份 = 1/2 × 2 = 1公頃。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const s = scenarios[Math.floor(Math.random() * scenarios.length)]
-  return { type: 'choice', ...s }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkComprehensiveMathAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
+// ==========================================
+// W3D4: 科學延伸(水資源與生態)
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '河流生態系中,上游、中游和下游的生物分布有什麼特點?',
+    options: [
+      '上游溶氧多、水清,中游多樣,下游廣闊,各有不同生物',
+      '所有河段的生物都一樣',
+      '只有下游才有生物,上游太急了',
+      '上游最多魚,下游沒有魚'
+    ],
+    answer: 0,
+    displayAnswer: '上游水急清涼、溶氧高,適合耐急流的生物;中游水流平穩多樣;下游寬廣,河口有豐富的養分,孕育河口生態系。'
+  },
+  {
+    type: 'options',
+    question: '濁水溪的泥沙雖然讓水看起來混濁,但對農業有什麼好處?',
+    options: [
+      '泥沙中含有豐富礦物質,沉積後使農地更肥沃',
+      '讓河水不容易結冰',
+      '讓魚類更容易捕捉',
+      '讓圳路不容易阻塞'
+    ],
+    answer: 0,
+    displayAnswer: '濁水溪帶下來的泥沙富含礦物質,歷代沉積在嘉南平原,形成了肥沃的農業土壤,是「天然施肥」。'
+  },
+  {
+    type: 'options',
+    question: '台灣的河川生態面臨的主要挑戰是什麼?',
+    options: [
+      '人類取水、水泥化河床、污染,讓河流生態受損',
+      '河流太多,水資源過剩',
+      '台灣沒有河流生態問題',
+      '因為台灣太小,所以沒有河流'
+    ],
+    answer: 0,
+    displayAnswer: '台灣河川面臨人類取水(水資源競爭)、河床水泥化(破壞生物棲地)、農業和工業污染等問題,生態保育越來越重要。'
+  },
+  {
+    type: 'options',
+    question: '「河口濕地」對生態的重要性是什麼?',
+    options: [
+      '是高生產力的生態系,提供鳥類、魚類、蝦蟹等生物棲地',
+      '河口濕地沒有生態功能,只是淤泥',
+      '河口濕地會阻礙船隻航行,應該填平',
+      '只有候鳥需要河口濕地'
+    ],
+    answer: 0,
+    displayAnswer: '河口濕地是世界上生物多樣性最高的生態系之一,豐富的有機質養育了大量生物,也是候鳥遷徙的重要補給站。'
+  },
+  {
+    type: 'options',
+    question: '人類灌溉農業「取水」和河流生態「留水」之間,最好的解決方式是什麼?',
+    options: [
+      '制定「最低生態流量」,保留河流最基本的水量,剩餘才能取用',
+      '全部留給農業,不需要考慮生態',
+      '全部留給生態,農業不需要灌溉水',
+      '把河流全部改成水泥渠道,效率最高'
+    ],
+    answer: 0,
+    displayAnswer: '現代水資源管理重視「生態流量」,確保河流保有最低水量以維持生態,剩餘水源才供人類使用,兼顧農業與生態。'
+  }
+]
 
-// ===== 科學延伸：水資源與生態 =====
-const generateWaterEcologyQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '河流生態系中，上游、中游和下游的生物分布有什麼特點？',
-      options: [
-        '所有河段的生物都一樣',
-        '上游溶氧多、水清，中游多樣，下游廣闊，各有不同生物',
-        '只有下游才有生物，上游太急了',
-        '上游最多魚，下游沒有魚'
-      ],
-      answer: 1,
-      explanation: '上游水急清涼、溶氧高，適合耐急流的生物；中游水流平穩多樣；下游寬廣，河口有豐富的養分，孕育河口生態系。'
-    },
-    {
-      type: 'choice',
-      question: '濁水溪的泥沙雖然讓水看起來混濁，但對農業有什麼好處？',
-      options: [
-        '讓河水不容易結冰',
-        '泥沙中含有豐富礦物質，沉積後使農地更肥沃',
-        '讓魚類更容易捕捉',
-        '讓圳路不容易阻塞'
-      ],
-      answer: 1,
-      explanation: '濁水溪帶下來的泥沙富含礦物質，歷代沉積在嘉南平原，形成了肥沃的農業土壤，是「天然施肥」。'
-    },
-    {
-      type: 'choice',
-      question: '台灣的河川生態面臨的主要挑戰是什麼？',
-      options: [
-        '河流太多，水資源過剩',
-        '人類取水、水泥化河床、污染，讓河流生態受損',
-        '台灣沒有河流生態問題',
-        '因為台灣太小，所以沒有河流'
-      ],
-      answer: 1,
-      explanation: '台灣河川面臨人類取水（水資源競爭）、河床水泥化（破壞生物棲地）、農業和工業污染等問題，生態保育越來越重要。'
-    },
-    {
-      type: 'choice',
-      question: '「河口濕地」對生態的重要性是什麼？',
-      options: [
-        '河口濕地沒有生態功能，只是淤泥',
-        '是高生產力的生態系，提供鳥類、魚類、蝦蟹等生物棲地',
-        '河口濕地會阻礙船隻航行，應該填平',
-        '只有候鳥需要河口濕地'
-      ],
-      answer: 1,
-      explanation: '河口濕地是世界上生物多樣性最高的生態系之一，豐富的有機質養育了大量生物，也是候鳥遷徙的重要補給站。'
-    },
-    {
-      type: 'choice',
-      question: '人類灌溉農業「取水」和河流生態「留水」之間，最好的解決方式是什麼？',
-      options: [
-        '全部留給農業，不需要考慮生態',
-        '全部留給生態，農業不需要灌溉水',
-        '制定「最低生態流量」，保留河流最基本的水量，剩餘才能取用',
-        '把河流全部改成水泥渠道，效率最高'
-      ],
-      answer: 2,
-      explanation: '現代水資源管理重視「生態流量」，確保河流保有最低水量以維持生態，剩餘水源才供人類使用，兼顧農業與生態。'
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkWaterEcologyAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
+export { 
+  generateMathQuestion,  
+  generateScienceQuestion
 }
 
 // ===== 組合成 Day 4 =====
@@ -210,8 +223,10 @@ const day4 = {
       },
       practice: {
         questionCount: 6,
-        generator: generateComprehensiveMathQuestion,
-        checkAnswer: checkComprehensiveMathAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -262,8 +277,10 @@ const day4 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateWaterEcologyQuestion,
-        checkAnswer: checkWaterEcologyAnswer
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

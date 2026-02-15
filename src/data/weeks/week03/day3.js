@@ -1,250 +1,269 @@
 // src/data/weeks/week03/day3.js
 // W3 Day3：時間怎麼流動？
 
-// ===== 社會：農曆與節氣 =====
-const generateCalendarQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '農曆是一種什麼樣的曆法？',
-      options: [
-        '純粹依照太陽運行設計的曆法',
-        '純粹依照月亮圓缺設計的曆法',
-        '同時考慮月亮圓缺和太陽運行的「陰陽合曆」',
-        '依照星座位置設計的曆法'
-      ],
-      answer: 2,
-      explanation: '農曆以月相決定每個月的日期（陰曆），同時以閏月校正和太陽年的差距（陽曆），所以是「陰陽合曆」。'
-    },
-    {
-      type: 'choice',
-      question: '二十四節氣中，「穀雨」這個節氣和農業有什麼關係？',
-      options: [
-        '表示開始收割穀物',
-        '表示雨水滋潤穀物播種的時節，是春天播種的重要節氣',
-        '表示穀物需要開始澆水',
-        '表示穀倉要開始清理'
-      ],
-      answer: 1,
-      explanation: '穀雨在農曆春季，「雨生百穀」，是春播的關鍵節氣，此時降雨增多，非常適合播種。'
-    },
-    {
-      type: 'choice',
-      question: '農曆為什麼需要設置「閏月」？',
-      options: [
-        '因為有些年份雨量太多，需要加一個月',
-        '因為農曆以月相為基礎，每年比太陽年短約11天，累積後需加閏月校正',
-        '因為皇帝的命令，每隔幾年加一個月慶祝',
-        '閏月只是傳統習俗，沒有科學根據'
-      ],
-      answer: 1,
-      explanation: '農曆一年12個月約354天，太陽年約365天，每年差約11天，三年累積約33天，因此每2-3年加一個閏月來補足差距。'
-    },
-    {
-      type: 'choice',
-      question: '嘉南大圳的「輪灌制度」是按照什麼來決定灌溉時程？',
-      options: [
-        '按照地主的財富多寡',
-        '完全隨機決定',
-        '按照農曆節氣與作物生長需求，有固定的輪灌時程表',
-        '只有在下雨時才灌溉'
-      ],
-      answer: 2,
-      explanation: '嘉南大圳的水量有限，農業單位按照節氣和作物需求制定輪灌時程，讓每塊農田都能在適當時機得到水源。'
-    },
-    {
-      type: 'choice',
-      question: '以下哪個節氣是在夏天？',
-      options: ['清明', '立春', '芒種', '冬至'],
-      answer: 2,
-      explanation: '芒種在農曆五月前後，是夏季節氣，意指「有芒的麥子快收，有芒的稻子快種」，是台灣早稻收割、晚稻插秧的重要時節。'
-    },
-    {
-      type: 'choice',
-      question: '農曆和節氣對傳統農民最重要的功能是什麼？',
-      options: [
-        '讓農民知道今天是星期幾',
-        '幫助農民掌握農耕時機，知道何時播種、灌溉、收割',
-        '用來預測下個月的天氣',
-        '計算農民應該繳多少稅'
-      ],
-      answer: 1,
-      explanation: '農曆結合了月相（決定日期）和節氣（反映太陽位置、氣候變化），讓農民能夠掌握最佳的耕作時機。'
-    }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-const checkCalendarAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
-
-// ===== 數學：分數除法 =====
-const generateFractionDivisionQuestion = () => {
-  const types = ['concept', 'calculate', 'story']
-  const t = types[Math.floor(Math.random() * types.length)]
-
-  if (t === 'concept') {
-    const questions = [
-      {
-        question: '分數除法 3/4 ÷ 1/2，計算結果是多少？',
-        options: ['3/8', '3/2', '6/4', '1/2'],
-        answer: 1,
-        explanation: '分數除法：除以一個分數等於乘以它的倒數。3/4 ÷ 1/2 = 3/4 × 2/1 = 6/4 = 3/2'
-      },
-      {
-        question: '分數除法 2/3 ÷ 1/3，計算結果是多少？',
-        options: ['2/9', '2', '2/6', '3/2'],
-        answer: 1,
-        explanation: '2/3 ÷ 1/3 = 2/3 × 3/1 = 6/3 = 2'
-      },
-      {
-        question: '1/2 ÷ 1/4 的計算方式是？',
-        options: ['1/2 × 1/4', '1/2 × 4/1', '2/1 × 1/4', '1/2 + 1/4'],
-        answer: 1,
-        explanation: '除以 1/4 等於乘以 1/4 的倒數 4/1，所以 1/2 ÷ 1/4 = 1/2 × 4/1 = 4/2 = 2'
-      },
-      {
-        question: '5/6 ÷ 5/3 等於多少？',
-        options: ['25/18', '1/2', '1', '3/6'],
-        answer: 1,
-        explanation: '5/6 ÷ 5/3 = 5/6 × 3/5 = 15/30 = 1/2'
-      }
-    ]
-    const q = questions[Math.floor(Math.random() * questions.length)]
-    return { type: 'choice', ...q }
+// ==========================================
+// 社會:農曆與節氣
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '農曆是一種什麼樣的曆法?',
+    options: [
+      '同時考慮月亮圓缺和太陽運行的「陰陽合曆」',
+      '純粹依照太陽運行設計的曆法',
+      '純粹依照月亮圓缺設計的曆法',
+      '依照星座位置設計的曆法'
+    ],
+    answer: 0,
+    displayAnswer: '農曆以月相決定每個月的日期(陰曆),同時以閏月校正和太陽年的差距(陽曆),所以是「陰陽合曆」。'
+  },
+  {
+    type: 'options',
+    question: '二十四節氣中,「穀雨」這個節氣和農業有什麼關係?',
+    options: [
+      '表示雨水滋潤穀物播種的時節,是春天播種的重要節氣',
+      '表示開始收割穀物',
+      '表示穀物需要開始澆水',
+      '表示穀倉要開始清理'
+    ],
+    answer: 0,
+    displayAnswer: '穀雨在農曆春季,「雨生百穀」,是春播的關鍵節氣,此時降雨增多,非常適合播種。'
+  },
+  {
+    type: 'options',
+    question: '農曆為什麼需要設置「閏月」?',
+    options: [
+      '因為農曆以月相為基礎,每年比太陽年短約11天,累積後需加閏月校正',
+      '因為有些年份雨量太多,需要加一個月',
+      '因為皇帝的命令,每隔幾年加一個月慶祝',
+      '閏月只是傳統習俗,沒有科學根據'
+    ],
+    answer: 0,
+    displayAnswer: '農曆一年12個月約354天,太陽年約365天,每年差約11天,三年累積約33天,因此每2-3年加一個閏月來補足差距。'
+  },
+  {
+    type: 'options',
+    question: '嘉南大圳的「輪灌制度」是按照什麼來決定灌溉時程?',
+    options: [
+      '按照農曆節氣與作物生長需求,有固定的輪灌時程表',
+      '按照地主的財富多寡',
+      '完全隨機決定',
+      '只有在下雨時才灌溉'
+    ],
+    answer: 0,
+    displayAnswer: '嘉南大圳的水量有限,農業單位按照節氣和作物需求制定輪灌時程,讓每塊農田都能在適當時機得到水源。'
+  },
+  {
+    type: 'options',
+    question: '以下哪個節氣是在夏天?',
+    options: ['芒種', '清明', '立春', '冬至'],
+    answer: 0,
+    displayAnswer: '芒種在農曆五月前後,是夏季節氣,意指「有芒的麥子快收,有芒的稻子快種」,是台灣早稻收割、晚稻插秧的重要時節。'
+  },
+  {
+    type: 'options',
+    question: '農曆和節氣對傳統農民最重要的功能是什麼?',
+    options: [
+      '幫助農民掌握農耕時機,知道何時播種、灌溉、收割',
+      '讓農民知道今天是星期幾',
+      '用來預測下個月的天氣',
+      '計算農民應該繳多少稅'
+    ],
+    answer: 0,
+    displayAnswer: '農曆結合了月相(決定日期)和節氣(反映太陽位置、氣候變化),讓農民能夠掌握最佳的耕作時機。'
   }
+]
 
-  if (t === 'calculate') {
-    const problems = [
-      { num: 3, den: 4, dnum: 3, dden: 8, ans_num: 2, ans_den: 1 },
-      { num: 5, den: 6, dnum: 5, dden: 12, ans_num: 2, ans_den: 1 },
-      { num: 2, den: 3, dnum: 4, dden: 9, ans_num: 3, ans_den: 2 },
-      { num: 7, den: 8, dnum: 7, dden: 16, ans_num: 2, ans_den: 1 }
-    ]
-    const p = problems[Math.floor(Math.random() * problems.length)]
-    const correctAns = p.ans_den === 1 ? `${p.ans_num}` : `${p.ans_num}/${p.ans_den}`
-    const options = [
-      correctAns,
-      `${p.num * p.dnum}/${p.den * p.dden}`,
-      `${p.dnum}/${p.dden}`,
-      `${p.den}/${p.num}`
-    ]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    const correct = shuffled.indexOf(correctAns)
-    return {
-      type: 'choice',
-      question: `計算：${p.num}/${p.den} ÷ ${p.dnum}/${p.dden} = ？`,
-      options: shuffled,
-      answer: correct,
-      explanation: `${p.num}/${p.den} ÷ ${p.dnum}/${p.dden} = ${p.num}/${p.den} × ${p.dden}/${p.dnum} = ${p.num * p.dden}/${p.den * p.dnum} = ${correctAns}`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  // story：圳路情境
-  const stories = [
-    {
-      question: '一條圳路每小時輸水 3/4 公噸，灌滿一塊水田需要 3/8 公噸，可以灌幾塊田？',
-      num: 3, den: 4, dnum: 3, dden: 8, ans: 2,
-      explanation: '3/4 ÷ 3/8 = 3/4 × 8/3 = 24/12 = 2，可以灌2塊田。'
-    },
-    {
-      question: '農夫有 5/6 公頃的農地，每塊農地需要 5/12 公頃，可以分成幾塊？',
-      num: 5, den: 6, dnum: 5, dden: 12, ans: 2,
-      explanation: '5/6 ÷ 5/12 = 5/6 × 12/5 = 60/30 = 2，可以分成2塊。'
-    },
-    {
-      question: '嘉南大圳一天輸水 3/2 萬公噸，每個灌區需要 3/4 萬公噸，可以供應幾個灌區？',
-      num: 3, den: 2, dnum: 3, dden: 4, ans: 2,
-      explanation: '3/2 ÷ 3/4 = 3/2 × 4/3 = 12/6 = 2，可以供應2個灌區。'
-    }
-  ]
-  const s = stories[Math.floor(Math.random() * stories.length)]
-  const options = [String(s.ans), String(s.ans + 1), String(s.ans - 1), `${s.num * s.dnum}/${s.den * s.dden}`]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  const correct = shuffled.indexOf(String(s.ans))
-  return {
-    type: 'choice',
-    question: s.question,
-    options: shuffled,
-    answer: correct,
-    explanation: s.explanation
+// ==========================================
+// 數學:分數除法
+// ==========================================
+const mathQuestions = [
+  // 基本概念
+  {
+    type: 'options',
+    question: '分數除法 3/4 ÷ 1/2,計算結果是多少?',
+    options: ['3/2', '3/8', '6/4', '1/2'],
+    answer: 0,
+    displayAnswer: '分數除法:除以一個分數等於乘以它的倒數。3/4 ÷ 1/2 = 3/4 × 2/1 = 6/4 = 3/2'
+  },
+  {
+    type: 'options',
+    question: '分數除法 2/3 ÷ 1/3,計算結果是多少?',
+    options: ['2', '2/9', '2/6', '3/2'],
+    answer: 0,
+    displayAnswer: '2/3 ÷ 1/3 = 2/3 × 3/1 = 6/3 = 2'
+  },
+  {
+    type: 'options',
+    question: '1/2 ÷ 1/4 的計算方式是?',
+    options: ['1/2 × 4/1', '1/2 × 1/4', '2/1 × 1/4', '1/2 + 1/4'],
+    answer: 0,
+    displayAnswer: '除以 1/4 等於乘以 1/4 的倒數 4/1,所以 1/2 ÷ 1/4 = 1/2 × 4/1 = 4/2 = 2'
+  },
+  {
+    type: 'options',
+    question: '5/6 ÷ 5/3 等於多少?',
+    options: ['1/2', '25/18', '1', '3/6'],
+    answer: 0,
+    displayAnswer: '5/6 ÷ 5/3 = 5/6 × 3/5 = 15/30 = 1/2'
+  },
+  // 計算題
+  {
+    type: 'options',
+    question: '計算:3/4 ÷ 3/8 = ?',
+    options: ['2', '9/32', '3/8', '4/3'],
+    answer: 0,
+    displayAnswer: '3/4 ÷ 3/8 = 3/4 × 8/3 = 24/12 = 2'
+  },
+  {
+    type: 'options',
+    question: '計算:5/6 ÷ 5/12 = ?',
+    options: ['2', '25/72', '5/12', '6/5'],
+    answer: 0,
+    displayAnswer: '5/6 ÷ 5/12 = 5/6 × 12/5 = 60/30 = 2'
+  },
+  {
+    type: 'options',
+    question: '計算:2/3 ÷ 4/9 = ?',
+    options: ['3/2', '8/27', '4/9', '9/6'],
+    answer: 0,
+    displayAnswer: '2/3 ÷ 4/9 = 2/3 × 9/4 = 18/12 = 3/2'
+  },
+  // 應用題
+  {
+    type: 'options',
+    question: '一條圳路每小時輸水 3/4 公噸,灌滿一塊水田需要 3/8 公噸,可以灌幾塊田?',
+    options: ['2塊', '1塊', '3塊', '4塊'],
+    answer: 0,
+    displayAnswer: '3/4 ÷ 3/8 = 3/4 × 8/3 = 24/12 = 2,可以灌2塊田。'
+  },
+  {
+    type: 'options',
+    question: '農夫有 5/6 公頃的農地,每塊農地需要 5/12 公頃,可以分成幾塊?',
+    options: ['2塊', '1塊', '3塊', '4塊'],
+    answer: 0,
+    displayAnswer: '5/6 ÷ 5/12 = 5/6 × 12/5 = 60/30 = 2,可以分成2塊。'
+  },
+  {
+    type: 'options',
+    question: '嘉南大圳一天輸水 3/2 萬公噸,每個灌區需要 3/4 萬公噸,可以供應幾個灌區?',
+    options: ['2個', '1個', '3個', '4個'],
+    answer: 0,
+    displayAnswer: '3/2 ÷ 3/4 = 3/2 × 4/3 = 12/6 = 2,可以供應2個灌區。'
   }
-}
+]
 
-const checkFractionDivisionAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
-
-// ===== 科學：月亮高度角觀測 =====
-const generateMoonAngleQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「高度角」（仰角）是什麼？',
-      options: [
-        '物體的高度（公尺）',
-        '從地面水平線到觀測目標的仰視角度',
-        '物體到觀測者的距離',
-        '物體在地圖上的位置角度'
-      ],
-      answer: 1,
-      explanation: '高度角（仰角）是從地平線（水平方向）算起，到觀測目標（如月亮）的角度。地平線是0°，正頭頂是90°。'
-    },
-    {
-      type: 'choice',
-      question: '月亮剛從東方地平線升起時，高度角大約是多少？',
-      options: ['0°（地平線）', '45°（斜上方）', '90°（正頭頂）', '180°（地平線以下）'],
-      answer: 0,
-      explanation: '月亮（或太陽）剛從地平線升起時，高度角接近0°，然後隨著時間升高，到最高點後再漸漸降低。'
-    },
-    {
-      type: 'choice',
-      question: '滿月在傍晚從東方升起，大約到幾點鐘會到達天空最高點？',
-      options: ['晚上9點左右', '晚上12點（午夜）左右', '清晨3點左右', '清晨6點（日出）左右'],
-      answer: 1,
-      explanation: '滿月在傍晚（約日落）從東方升起，到午夜時升到最高點（正南方天空），清晨在西方落下，這是地球自轉造成的視覺效果。'
-    },
-    {
-      type: 'choice',
-      question: '為什麼不同月份的同一個月相，月亮的高度角不完全一樣？',
-      options: [
-        '因為月亮越來越小',
-        '因為月亮的軌道面和地球赤道有夾角，加上季節變化',
-        '因為每個月的天氣不同',
-        '因為地球在不同月份的大小不一樣'
-      ],
-      answer: 1,
-      explanation: '月亮的軌道面和地球赤道有約5度的夾角，加上地球自轉軸的傾斜，使得不同季節同一月相的月亮高度略有不同。'
-    },
-    {
-      type: 'choice',
-      question: '用「手指估量法」觀測高度角時，一根手指寬（手臂伸直時）大約代表多少角度？',
-      options: ['約1度', '約2度', '約5度', '約10度'],
-      answer: 1,
-      explanation: '手臂伸直時，一根手指寬約代表2度，三根手指約6度，整個拳頭約10度，這是天文觀測的實用估量方法。'
-    },
-    {
-      type: 'choice',
-      question: '一位同學在同一個地點，分別在三天後觀測月亮在同一時間的高度，發現月亮的位置每天往東移一點點。這是因為什麼？',
-      options: [
-        '月亮越來越大',
-        '月亮在繞地球公轉，每天相對於星空的位置向東移動約13度',
-        '觀測者的位置改變了',
-        '因為這三天氣溫不一樣'
-      ],
-      answer: 1,
-      explanation: '月亮每天繞地球公轉約13度（360度÷27.3天），所以每天在同一時間看，月亮相對於背景星空往東偏移一些，這也讓月出時間每天推遲約50分鐘。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkMoonAngleAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
+// ==========================================
+// 科學:月亮高度角觀測
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '「高度角」(仰角)是什麼?',
+    options: [
+      '從地面水平線到觀測目標的仰視角度',
+      '物體的高度(公尺)',
+      '物體到觀測者的距離',
+      '物體在地圖上的位置角度'
+    ],
+    answer: 0,
+    displayAnswer: '高度角(仰角)是從地平線(水平方向)算起,到觀測目標(如月亮)的角度。地平線是0°,正頭頂是90°。'
+  },
+  {
+    type: 'options',
+    question: '月亮剛從東方地平線升起時,高度角大約是多少?',
+    options: ['0°(地平線)', '45°(斜上方)', '90°(正頭頂)', '180°(地平線以下)'],
+    answer: 0,
+    displayAnswer: '月亮(或太陽)剛從地平線升起時,高度角接近0°,然後隨著時間升高,到最高點後再漸漸降低。'
+  },
+  {
+    type: 'options',
+    question: '滿月在傍晚從東方升起,大約到幾點鐘會到達天空最高點?',
+    options: ['晚上12點(午夜)左右', '晚上9點左右', '清晨3點左右', '清晨6點(日出)左右'],
+    answer: 0,
+    displayAnswer: '滿月在傍晚(約日落)從東方升起,到午夜時升到最高點(正南方天空),清晨在西方落下,這是地球自轉造成的視覺效果。'
+  },
+  {
+    type: 'options',
+    question: '為什麼不同月份的同一個月相,月亮的高度角不完全一樣?',
+    options: [
+      '因為月亮的軌道面和地球赤道有夾角,加上季節變化',
+      '因為月亮越來越小',
+      '因為每個月的天氣不同',
+      '因為地球在不同月份的大小不一樣'
+    ],
+    answer: 0,
+    displayAnswer: '月亮的軌道面和地球赤道有約5度的夾角,加上地球自轉軸的傾斜,使得不同季節同一月相的月亮高度略有不同。'
+  },
+  {
+    type: 'options',
+    question: '用「手指估量法」觀測高度角時,一根手指寬(手臂伸直時)大約代表多少角度?',
+    options: ['約2度', '約1度', '約5度', '約10度'],
+    answer: 0,
+    displayAnswer: '手臂伸直時,一根手指寬約代表2度,三根手指約6度,整個拳頭約10度,這是天文觀測的實用估量方法。'
+  },
+  {
+    type: 'options',
+    question: '一位同學在同一個地點,分別在三天後觀測月亮在同一時間的高度,發現月亮的位置每天往東移一點點。這是因為什麼?',
+    options: [
+      '月亮在繞地球公轉,每天相對於星空的位置向東移動約13度',
+      '月亮越來越大',
+      '觀測者的位置改變了',
+      '因為這三天氣溫不一樣'
+    ],
+    answer: 0,
+    displayAnswer: '月亮每天繞地球公轉約13度(360度÷27.3天),所以每天在同一時間看,月亮相對於背景星空往東偏移一些,這也讓月出時間每天推遲約50分鐘。'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion }
 
 // ===== 組合成 Day 3 =====
 const day3 = {
@@ -336,8 +355,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateCalendarQuestion,
-        checkAnswer: checkCalendarAnswer
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -388,8 +409,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateFractionDivisionQuestion,
-        checkAnswer: checkFractionDivisionAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -444,8 +467,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateMoonAngleQuestion,
-        checkAnswer: checkMoonAngleAnswer
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

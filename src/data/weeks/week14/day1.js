@@ -1,67 +1,67 @@
 // src/data/weeks/week14/day1.js
 // 第14週 - 第一天：AI是什麼？
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W14D1 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【社會】SDGs基礎概念練習題庫
 const socialQuestions = [
   {
     type: 'options',
-    question: 'SDGs的全名是什麼？',
+    question: 'SDGs的全名是什麼?',
     options: [
-      'Sustainable Development Goals（永續發展目標）',
-      'Scientific Development Goals（科學發展目標）',
-      'Social Development Goals（社會發展目標）',
-      'Special Digital Goals（特殊數位目標）'
+      'Sustainable Development Goals(永續發展目標)',
+      'Scientific Development Goals(科學發展目標)',
+      'Social Development Goals(社會發展目標)',
+      'Special Digital Goals(特殊數位目標)'
     ],
     answer: 0,
-    displayAnswer: 'Sustainable Development Goals（永續發展目標）'
+    displayAnswer: 'Sustainable Development Goals(永續發展目標)'
   },
   {
     type: 'options',
-    question: 'SDGs一共有幾個目標？',
+    question: 'SDGs一共有幾個目標?',
     options: ['10個', '15個', '17個', '20個'],
     answer: 2,
     displayAnswer: '17個'
   },
   {
     type: 'options',
-    question: 'SDGs是由哪個國際組織提出的？',
+    question: 'SDGs是由哪個國際組織提出的?',
     options: ['世界銀行', '聯合國', 'WHO世界衛生組織', 'UNESCO聯合國教科文組織'],
     answer: 1,
     displayAnswer: '聯合國'
   },
   {
     type: 'options',
-    question: '下列哪一項「不是」SDGs的目標？',
+    question: '下列哪一項「不是」SDGs的目標?',
     options: ['消除貧窮', '消除飢餓', '優質教育', '增加軍事力量'],
     answer: 3,
     displayAnswer: '增加軍事力量'
   },
   {
     type: 'options',
-    question: 'SDG 13是關於什麼議題？',
+    question: 'SDG 13是關於什麼議題?',
     options: ['健康福祉', '氣候行動', '性別平等', '清潔能源'],
     answer: 1,
     displayAnswer: '氣候行動'
   },
   {
     type: 'options',
-    question: '台灣雖然不是聯合國會員國，但政府仍然推動SDGs。這說明了什麼？',
+    question: '台灣雖然不是聯合國會員國,但政府仍然推動SDGs。這說明了什麼?',
     options: [
       '台灣只是做做樣子',
-      '永續發展是全球共同責任，不分國家身分',
+      '永續發展是全球共同責任,不分國家身分',
       '台灣被強迫執行',
       '只有聯合國會員才需要做SDGs'
     ],
     answer: 1,
-    displayAnswer: '永續發展是全球共同責任，不分國家身分'
+    displayAnswer: '永續發展是全球共同責任,不分國家身分'
   },
   {
     type: 'options',
-    question: 'SDGs的17個目標中，哪些面向是主要關注的？',
+    question: 'SDGs的17個目標中,哪些面向是主要關注的?',
     options: [
       '只關注環境保護',
       '只關注經濟發展',
@@ -73,27 +73,40 @@ const socialQuestions = [
   },
   {
     type: 'options',
-    question: '六年級學生可以為SDGs做什麼？',
+    question: '六年級學生可以為SDGs做什麼?',
     options: [
-      '什麼都不能做，這是大人的事',
+      '什麼都不能做,這是大人的事',
       '只能等長大後才能做',
-      '可以從日常生活做起，例如節約用水、減少浪費',
+      '可以從日常生活做起,例如節約用水、減少浪費',
       '只有政府官員才能推動SDGs'
     ],
     answer: 2,
-    displayAnswer: '可以從日常生活做起，例如節約用水、減少浪費'
+    displayAnswer: '可以從日常生活做起,例如節約用水、減少浪費'
   }
 ]
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【科學】AI基礎概念練習題庫
 const scienceQuestions = [
   {
     type: 'options',
-    question: 'AI（人工智慧）最基本的定義是什麼？',
+    question: 'AI(人工智慧)最基本的定義是什麼?',
     options: [
       '讓機器像人一樣思考和學習',
       '讓機器變得更快',
@@ -105,26 +118,26 @@ const scienceQuestions = [
   },
   {
     type: 'options',
-    question: '機器學習的基本原理是什麼？',
+    question: '機器學習的基本原理是什麼?',
     options: [
       '機器自己會思考',
-      '給大量資料，讓機器找出規律',
+      '給大量資料,讓機器找出規律',
       '程式設計師告訴機器每個答案',
       '機器會讀書'
     ],
     answer: 1,
-    displayAnswer: '給大量資料，讓機器找出規律'
+    displayAnswer: '給大量資料,讓機器找出規律'
   },
   {
     type: 'options',
-    question: '下列哪個「不是」生活中常見的AI應用？',
-    options: ['語音助理（Siri、Google助理）', '人臉辨識解鎖', '電風扇', '推薦系統（YouTube推薦影片）'],
+    question: '下列哪個「不是」生活中常見的AI應用?',
+    options: ['語音助理(Siri、Google助理)', '人臉辨識解鎖', '電風扇', '推薦系統(YouTube推薦影片)'],
     answer: 2,
-    displayAnswer: '電風扇（這是傳統電器，沒有AI功能）'
+    displayAnswer: '電風扇(這是傳統電器,沒有AI功能)'
   },
   {
     type: 'options',
-    question: 'AI可以做什麼？',
+    question: 'AI可以做什麼?',
     options: [
       '辨識圖片中的物體',
       '理解人類的所有情感',
@@ -136,7 +149,7 @@ const scienceQuestions = [
   },
   {
     type: 'options',
-    question: 'AI「不能」做什麼？',
+    question: 'AI「不能」做什麼?',
     options: [
       '快速計算數學',
       '下棋',
@@ -144,135 +157,167 @@ const scienceQuestions = [
       '翻譯語言'
     ],
     answer: 2,
-    displayAnswer: '真正理解文字的「意義」（AI只是找統計規律，不是真正理解）'
+    displayAnswer: '真正理解文字的「意義」(AI只是找統計規律,不是真正理解)'
   },
   {
     type: 'options',
-    question: 'ChatGPT為什麼有時候會說錯或產生「幻覺」？',
+    question: 'ChatGPT為什麼有時候會說錯或產生「幻覺」?',
     options: [
       '因為它故意騙人',
-      '因為它是根據機率預測下一個字，不是真的理解',
+      '因為它是根據機率預測下一個字,不是真的理解',
       '因為它太笨了',
       '因為它沒有網路'
     ],
     answer: 1,
-    displayAnswer: '因為它是根據機率預測下一個字，不是真的理解'
+    displayAnswer: '因為它是根據機率預測下一個字,不是真的理解'
   },
   {
     type: 'options',
-    question: '如果你問AI：「台灣最高的山是什麼？」AI回答「富士山」，這代表什麼？',
+    question: '如果你問AI:「台灣最高的山是什麼?」AI回答「富士山」,這代表什麼?',
     options: [
       '富士山真的在台灣',
-      'AI產生了幻覺（錯誤資訊）',
+      'AI產生了幻覺(錯誤資訊)',
       'AI一定是對的',
       '台灣有兩座最高的山'
     ],
     answer: 1,
-    displayAnswer: 'AI產生了幻覺（錯誤資訊），正確答案是玉山'
+    displayAnswer: 'AI產生了幻覺(錯誤資訊),正確答案是玉山'
   },
   {
     type: 'options',
-    question: 'AI時代，人類最需要具備什麼能力？',
+    question: 'AI時代,人類最需要具備什麼能力?',
     options: [
-      '完全不用學習，因為AI都會',
-      '批判思考，能判斷AI給的答案對不對',
+      '完全不用學習,因為AI都會',
+      '批判思考,能判斷AI給的答案對不對',
       '背誦更多知識',
       '學會寫程式就好'
     ],
     answer: 1,
-    displayAnswer: '批判思考，能判斷AI給的答案對不對'
+    displayAnswer: '批判思考,能判斷AI給的答案對不對'
   }
 ]
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【數學】W1-W3綜合複習練習題庫
 const mathQuestions = [
   {
     type: 'options',
-    question: '在數線上，下列哪個數最小？',
+    question: '在數線上,下列哪個數最小?',
     options: ['-8', '-3', '0', '+2'],
     answer: 0,
     displayAnswer: '-8'
   },
   {
-    type: 'fill',
-    question: '溫度從-5°C上升12°C後，現在是幾度？',
-    answer: '7',
+    type: 'options',
+    question: '溫度從-5°C上升12°C後,現在是幾度?',
+    options: ['3°C', '7°C', '17°C', '-17°C'],
+    answer: 1,
     displayAnswer: '7°C'
   },
   {
     type: 'options',
-    question: '12和18的最大公因數是多少？',
+    question: '12和18的最大公因數是多少?',
     options: ['2', '3', '6', '12'],
     answer: 2,
     displayAnswer: '6'
   },
   {
-    type: 'fill',
-    question: '24和36的最大公因數是多少？',
-    answer: '12',
+    type: 'options',
+    question: '24和36的最大公因數是多少?',
+    options: ['4', '6', '12', '24'],
+    answer: 2,
     displayAnswer: '12'
   },
   {
     type: 'options',
-    question: '比3:5等值的比是？',
+    question: '比3:5等值的比是?',
     options: ['6:10', '6:15', '9:10', '5:3'],
     answer: 0,
     displayAnswer: '6:10'
   },
   {
     type: 'options',
-    question: '比12:18化成最簡比是？',
+    question: '比12:18化成最簡比是?',
     options: ['6:9', '4:6', '3:2', '2:3'],
     answer: 3,
     displayAnswer: '2:3'
   },
   {
-    type: 'fill',
-    question: '2/3 ÷ 1/4 = ？（填分數或小數）',
-    answer: '8/3',
-    displayAnswer: '8/3 或 2.667'
+    type: 'options',
+    question: '2/3 ÷ 1/4 = ?',
+    options: ['2/12', '8/3', '1/6', '3/8'],
+    answer: 1,
+    displayAnswer: '8/3'
   },
   {
     type: 'options',
-    question: '地圖比例尺1:50000，圖上3公分代表實際多少公尺？',
+    question: '地圖比例尺1:50000,圖上3公分代表實際多少公尺?',
     options: ['1500公尺', '15000公尺', '150公尺', '150000公尺'],
     answer: 0,
     displayAnswer: '1500公尺'
   }
 ]
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    if (question.type === 'options') {
+      return shuffleOptions(question)
+    }
+    return { ...question }
+  }
+})()
 
 // 【語文】科技與永續詞彙練習題庫
 const vocabQuestions = [
   {
     type: 'options',
-    question: '「人工智慧」的英文縮寫是？',
+    question: '「人工智慧」的英文縮寫是?',
     options: ['AI', 'IT', 'IE', 'IC'],
     answer: 0,
-    displayAnswer: 'AI（Artificial Intelligence）'
+    displayAnswer: 'AI(Artificial Intelligence)'
   },
   {
     type: 'options',
-    question: '「永續發展」的意思是？',
+    question: '「永續發展」的意思是?',
     options: [
       '持續不斷地發展經濟',
-      '滿足當代需求，同時不損害後代滿足需求的能力',
+      '滿足當代需求,同時不損害後代滿足需求的能力',
       '只關注環境保護',
       '讓企業永遠賺錢'
     ],
     answer: 1,
-    displayAnswer: '滿足當代需求，同時不損害後代滿足需求的能力'
+    displayAnswer: '滿足當代需求,同時不損害後代滿足需求的能力'
   },
   {
     type: 'options',
-    question: '「機器學習」是指？',
+    question: '「機器學習」是指?',
     options: [
       '機器人去學校上課',
       '教機器使用工具',
@@ -284,7 +329,7 @@ const vocabQuestions = [
   },
   {
     type: 'options',
-    question: '「演算法」最簡單的解釋是？',
+    question: '「演算法」最簡單的解釋是?',
     options: [
       '很難的數學計算',
       '解決問題的步驟和規則',
@@ -296,7 +341,7 @@ const vocabQuestions = [
   },
   {
     type: 'options',
-    question: '「訓練資料」在AI中的作用是？',
+    question: '「訓練資料」在AI中的作用是?',
     options: [
       '讓AI變得更強壯',
       '提供給AI學習的範例和經驗',
@@ -308,7 +353,7 @@ const vocabQuestions = [
   },
   {
     type: 'options',
-    question: '「偏見」在AI的脈絡下是指？',
+    question: '「偏見」在AI的脈絡下是指?',
     options: [
       'AI討厭某些人',
       'AI因訓練資料不平衡而產生不公平的判斷',
@@ -320,8 +365,28 @@ const vocabQuestions = [
   }
 ]
 
-const generateVocabQuestion = () => {
-  return vocabQuestions[Math.floor(Math.random() * vocabQuestions.length)]
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateSocialQuestion,
+  generateScienceQuestion,
+  generateMathQuestion,
+  generateVocabQuestion
 }
 
 // ==========================================

@@ -1,6 +1,308 @@
 // week09/day3.js - W9 Day 3: 我能做什麼?
 
-import { generateChartTrapQuestion, checkChartTrapAnswer } from './generators.js'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 練習題庫
+// ==========================================
+
+// 【數學】圖表陷阱練習題庫
+const mathQuestions = [
+  {
+    type: 'options',
+    question: '某圖表 Y 軸從 90 開始而不是 0,這會造成什麼錯覺?',
+    options: ['讓小差距看起來很大', '讓大差距看起來很小', '沒有影響', '更清楚'],
+    answer: 0,
+    displayAnswer: '讓小差距看起來很大'
+  },
+  {
+    type: 'options',
+    question: '某產品廣告說「95%滿意度!」但只調查了 20 人。這是什麼問題?',
+    options: ['樣本數太少,不具代表性', '百分比太高', '問卷太長', '價格太貴'],
+    answer: 0,
+    displayAnswer: '樣本數太少,不具代表性'
+  },
+  {
+    type: 'options',
+    question: '某政治人物只展示對自己有利的數據,隱藏不利的部分。這叫做?',
+    options: ['選擇性呈現', '完整報告', '誠實數據', '科學分析'],
+    answer: 0,
+    displayAnswer: '選擇性呈現'
+  },
+  {
+    type: 'options',
+    question: '標題寫「銷量暴增300%!」但實際是從 1 件增加到 4 件。這是什麼問題?',
+    options: ['誇大標題,忽略基數很小', '計算錯誤', '標題太短', '沒有問題'],
+    answer: 0,
+    displayAnswer: '誇大標題,忽略基數很小'
+  },
+  {
+    type: 'options',
+    question: '看到統計圖表時,我們應該先檢查什麼?',
+    options: ['Y軸是否從0開始、樣本數、數據來源', '圖表顏色', '字體大小', '紙張品質'],
+    answer: 0,
+    displayAnswer: 'Y軸是否從0開始、樣本數、數據來源'
+  },
+  {
+    type: 'options',
+    question: '某折線圖顯示「房價暴漲」,但仔細看 Y 軸只從 950 萬到 1000 萬。實際漲幅是?',
+    options: ['約5%,並不算暴漲', '100%', '500%', '1000%'],
+    answer: 0,
+    displayAnswer: '約5%,並不算暴漲'
+  },
+  {
+    type: 'options',
+    question: '某圓形圖只顯示「支持」和「反對」,但隱藏了「不表態」。這會造成什麼問題?',
+    options: ['無法看到完整民意分布', '圓形太小', '顏色不夠', '字太多'],
+    answer: 0,
+    displayAnswer: '無法看到完整民意分布'
+  },
+  {
+    type: 'options',
+    question: '一個好的統計圖表應該包含什麼資訊?',
+    options: ['標題、數據來源、樣本數、清楚的軸標示', '漂亮的顏色', '複雜的設計', '很多照片'],
+    answer: 0,
+    displayAnswer: '標題、數據來源、樣本數、清楚的軸標示'
+  },
+  {
+    type: 'options',
+    question: '某產品比較圖用不同尺度的 Y 軸讓自家產品看起來更好。這是?',
+    options: ['不誠實的比較', '科學分析', '客觀呈現', '標準做法'],
+    answer: 0,
+    displayAnswer: '不誠實的比較'
+  },
+  {
+    type: 'options',
+    question: '看到圖表時,為什麼要問「這個圖表想說服我什麼」?',
+    options: ['了解製作者的意圖,保持批判思考', '因為很無聊', '因為考試要考', '因為老師說的'],
+    answer: 0,
+    displayAnswer: '了解製作者的意圖,保持批判思考'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// 【社會】公民參與練習題庫
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '在民主社會中,哪一種不是公民參與的方式?',
+    options: ['暴力抗議', '投票選舉', '連署陳情', '和平社會運動'],
+    answer: 0,
+    displayAnswer: '暴力抗議'
+  },
+  {
+    type: 'options',
+    question: '台灣的投票年齡在 2023 年降為幾歲?',
+    options: ['18歲', '16歲', '20歲', '21歲'],
+    answer: 0,
+    displayAnswer: '18歲'
+  },
+  {
+    type: 'options',
+    question: '什麼是「公民投票」?',
+    options: [
+      '人民對重大議題直接投票表決',
+      '選舉總統的投票',
+      '選舉立法委員的投票',
+      '只有公務員才能投票'
+    ],
+    answer: 0,
+    displayAnswer: '人民對重大議題直接投票表決'
+  },
+  {
+    type: 'options',
+    question: '中世紀歐洲的「政教合一」是指什麼?',
+    options: [
+      '宗教領袖同時掌握政治權力',
+      '教會和政府合作',
+      '國王信仰宗教',
+      '政府補助教會'
+    ],
+    answer: 0,
+    displayAnswer: '宗教領袖同時掌握政治權力'
+  },
+  {
+    type: 'options',
+    question: '為什麼歐洲最終走向「政教分離」?',
+    options: [
+      '因為人們發現權力集中會限制自由、壓制思想',
+      '因為教會太窮',
+      '因為國王不信教',
+      '因為戰爭失敗'
+    ],
+    answer: 0,
+    displayAnswer: '因為人們發現權力集中會限制自由、壓制思想'
+  },
+  {
+    type: 'options',
+    question: '柳營村民拯救老榕樹,展現了公民參與的哪個特徵?',
+    options: [
+      '主動陳情、集體決策、實際行動、多方協作',
+      '完全聽專家的',
+      '只靠政府',
+      '什麼都不做'
+    ],
+    answer: 0,
+    displayAnswer: '主動陳情、集體決策、實際行動、多方協作'
+  },
+  {
+    type: 'options',
+    question: '1990年的野百合學運要求什麼?',
+    options: ['國會全面改選、廢除萬年國代', '降低學費', '延長假期', '改善伙食'],
+    answer: 0,
+    displayAnswer: '國會全面改選、廢除萬年國代'
+  },
+  {
+    type: 'options',
+    question: '社會運動的基本原則是什麼?',
+    options: ['和平、理性、非暴力', '越激烈越好', '一定要破壞', '不需要訴求'],
+    answer: 0,
+    displayAnswer: '和平、理性、非暴力'
+  },
+  {
+    type: 'options',
+    question: '君主專制的最大缺點是什麼?',
+    options: ['人民沒有發聲權,君主昏庸國家就衰敗', '決策太慢', '太民主', '太複雜'],
+    answer: 0,
+    displayAnswer: '人民沒有發聲權,君主昏庸國家就衰敗'
+  },
+  {
+    type: 'options',
+    question: '民主制度雖然有時緩慢吵雜,但提供了什麼優勢?',
+    options: ['容錯機制、權力制衡、人權保障、社會彈性', '最快決策', '最便宜', '最安靜'],
+    answer: 0,
+    displayAnswer: '容錯機制、權力制衡、人權保障、社會彈性'
+  }
+]
+
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// 【科學】混合電路練習題庫
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '什麼是混合電路?',
+    options: [
+      '同時包含串聯和並聯的電路',
+      '只有串聯的電路',
+      '只有並聯的電路',
+      '沒有電源的電路'
+    ],
+    answer: 0,
+    displayAnswer: '同時包含串聯和並聯的電路'
+  },
+  {
+    type: 'options',
+    question: '家庭照明系統的總開關屬於?',
+    options: ['串聯設計', '並聯設計', '混合設計', '沒有設計'],
+    answer: 0,
+    displayAnswer: '串聯設計'
+  },
+  {
+    type: 'options',
+    question: '台灣的中央政府與地方政府的權力配置,像哪種電路?',
+    options: ['混合電路', '串聯電路', '並聯電路', '斷路'],
+    answer: 0,
+    displayAnswer: '混合電路'
+  },
+  {
+    type: 'options',
+    question: '為什麼混合電路是最實用的設計?',
+    options: [
+      '因為既有統一控制,又有獨立運作,兼顧效率與彈性',
+      '因為最便宜',
+      '因為最複雜',
+      '因為最漂亮'
+    ],
+    answer: 0,
+    displayAnswer: '因為既有統一控制,又有獨立運作,兼顧效率與彈性'
+  },
+  {
+    type: 'options',
+    question: '柳營村民救樹的過程,哪一點展現「混合電路」的精神?',
+    options: [
+      '有專業領導統籌,也有各方獨立分工,靈活應變',
+      '完全聽樹醫師的,村民什麼都不做',
+      '每個人各做各的,完全不協調',
+      '只靠政府,不靠村民'
+    ],
+    answer: 0,
+    displayAnswer: '有專業領導統籌,也有各方獨立分工,靈活應變'
+  },
+  {
+    type: 'options',
+    question: '混合電路中,需要統一控制的部分用什麼連接方式?',
+    options: ['串聯', '並聯', '不連接', '隨便'],
+    answer: 0,
+    displayAnswer: '串聯'
+  },
+  {
+    type: 'options',
+    question: '混合電路中,需要獨立運作的部分用什麼連接方式?',
+    options: ['並聯', '串聯', '不連接', '隨便'],
+    answer: 0,
+    displayAnswer: '並聯'
+  },
+  {
+    type: 'options',
+    question: '台灣COVID-19疫情期間,中央統籌防疫、地方因地制宜執行。這像什麼電路?',
+    options: ['混合電路', '只有串聯', '只有並聯', '沒有電路'],
+    answer: 0,
+    displayAnswer: '混合電路'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 課程內容
+// ==========================================
 
 const day3 = {
   id: 'day3',
@@ -218,83 +520,35 @@ const day3 = {
       },
       practice: {
         questionCount: 6,
-        questions: [
-          {
-            question: '在民主社會中,哪一種不是公民參與的方式?',
-            options: ['投票選舉', '連署陳情', '暴力抗議', '和平社會運動'],
-            answer: 2
-          },
-          {
-            question: '台灣的投票年齡在 2023 年降為幾歲?',
-            options: ['16 歲', '18 歲', '20 歲', '21 歲'],
-            answer: 1
-          },
-          {
-            question: '什麼是「公民投票」?',
-            options: [
-              '選舉總統的投票',
-              '選舉立法委員的投票',
-              '人民對重大議題直接投票表決',
-              '只有公務員才能投票'
-            ],
-            answer: 2
-          },
-          {
-            question: '中世紀歐洲的「政教合一」是指什麼?',
-            options: [
-              '教會和政府合作',
-              '宗教領袖同時掌握政治權力',
-              '國王信仰宗教',
-              '政府補助教會'
-            ],
-            answer: 1
-          },
-          {
-            question: '為什麼歐洲最終走向「政教分離」?',
-            options: [
-              '因為教會太窮',
-              '因為人們發現權力集中會限制自由、壓制思想',
-              '因為國王不信教',
-              '因為戰爭失敗'
-            ],
-            answer: 1
-          },
-          {
-            question: '柳營村民拯救老榕樹,展現了公民參與的哪個特徵?',
-            options: [
-              '只能投票',
-              '必須上街遊行',
-              '主動行動、集體決策、實際參與、多方協作',
-              '完全依賴政府'
-            ],
-            answer: 2
-          }
-        ]
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
-    // ========== 數學單元:圖表解讀陷阱 ==========
+    // ========== 數學單元:圖表如何說謊 ==========
     {
       id: 'w9d3-math',
       name: '數學:圖表陷阱',
       icon: '📊',
       lesson: {
-        title: '統計圖表如何「說謊」?',
+        title: '統計圖表:圖表如何「說謊」?',
         sections: [
           {
             title: '一、為什麼要學會辨識圖表陷阱?',
             blocks: [
               {
                 type: 'text',
-                content: '在民主社會中,我們每天都會接觸到各種圖表:新聞報導的民調、政府公布的經濟數據、公司的業績報告。這些圖表看起來「很科學」,但有時候它們會**誤導**我們。'
+                content: '統計圖表是一種強大的溝通工具,可以讓複雜的數據變得容易理解。但是,圖表也可能被刻意設計來誤導讀者,讓人得出錯誤的結論。'
               },
               {
                 type: 'text',
-                content: '就像選舉時,不同政黨會用不同的圖表來「證明」自己的政績很好——但他們可能都在用同一組數據!關鍵在於:他們選擇**怎麼呈現**這些數據。'
+                content: '在民主社會中,政治人物、廣告商、媒體都會使用圖表來說服我們。如果我們不懂得辨識圖表的陷阱,就很容易被操縱。'
               },
               {
                 type: 'text',
-                content: '學會辨識圖表陷阱,就像學會分辨假新聞一樣重要——它能幫助我們做出更明智的判斷。'
+                content: '就像柳營村民不盲目相信第一個專家說的「樹癌」,而是尋求更專業的診斷——我們看圖表時,也要保持批判性思考。'
               }
             ]
           },
@@ -307,15 +561,11 @@ const day3 = {
               },
               {
                 type: 'text',
-                content: '**例子**:\n某新聞標題:「房價暴漲!」,配上一張折線圖:\n• Y 軸從 95 萬開始,到 100 萬結束\n• 折線看起來非常陡峭,好像漲了很多'
+                content: '**例子**:\n某候選人的民調支持度從 45% 升到 47%。如果 Y 軸從 40% 開始,折線圖看起來會有巨大的上升;但如果從 0% 開始,就會發現其實只上升了 2%。'
               },
               {
                 type: 'text',
-                content: '**真相**:\n房價從 95 萬漲到 100 萬,實際上只漲了 5 萬,漲幅約 5.3%。但因為 Y 軸不從 0 開始,視覺上看起來好像漲了一倍!'
-              },
-              {
-                type: 'text',
-                content: '**識破方法**:\n看到折線圖很陡時,先檢查 Y 軸的起點。如果不從 0 開始,要自己計算實際變化幅度。'
+                content: '**如何辨識**:\n檢查 Y 軸的起點。如果不是從 0 開始,要特別小心,因為視覺效果可能被放大了。'
               },
               {
                 type: 'text',
@@ -323,93 +573,52 @@ const day3 = {
               },
               {
                 type: 'text',
-                content: '**例子**:\n某民調:「80% 民眾支持某政策!」\n(小字:樣本數 10 人)'
+                content: '**例子**:\n「95% 的人都推薦這個產品!」但仔細一看,原來只調查了 20 個人,而且都是廠商的員工。'
               },
               {
                 type: 'text',
-                content: '**真相**:\n10 個人中有 8 個人支持,但 10 人根本不能代表「全體民眾」。如果調查 1000 人,結果可能完全不同。'
+                content: '**如何辨識**:\n檢查樣本數(調查了多少人)和樣本來源(是隨機抽樣還是特定群體)。一般來說,至少需要幾百人的樣本才有代表性。'
               },
               {
                 type: 'text',
-                content: '**識破方法**:\n看到百分比時,要問:「樣本數是多少?」通常至少要幾百人以上,才有代表性。'
+                content: '**陷阱 3:選擇性呈現**'
               },
               {
                 type: 'text',
-                content: '**陷阱 3:選擇性呈現數據**'
+                content: '**例子**:\n某政治人物只展示經濟成長的數據,但隱藏失業率上升的數據。或者,某公司只展示「滿意」和「非常滿意」的比例,隱藏「不滿意」的部分。'
               },
               {
                 type: 'text',
-                content: '**例子**:\n某候選人的競選廣告:「我在 A 區的支持率高達 70%!」\n(但沒說:全國支持率只有 30%)'
+                content: '**如何辨識**:\n問自己:「有沒有其他重要的數據被隱藏了?」如果圓形圖只有兩個選項,可能省略了「不表態」或「其他」。'
               },
               {
                 type: 'text',
-                content: '**真相**:\nA 區可能是候選人的「鐵票區」,當然支持率高。但只看這個區,會誤以為候選人很受歡迎。'
+                content: '**陷阱 4:誇大標題**'
               },
               {
                 type: 'text',
-                content: '**識破方法**:\n問自己:「有沒有其他數據被隱藏?」完整的資訊應該包含全國數據、不同地區對比。'
+                content: '**例子**:\n「銷量暴增 300%!」聽起來很驚人,但仔細一看,原來是從 1 件增加到 4 件。雖然百分比很高,但基數太小,實際意義不大。'
               },
               {
                 type: 'text',
-                content: '**陷阱 4:誇大的標題 vs 溫和的數據**'
+                content: '**如何辨識**:\n看標題時,也要看實際數字。百分比的增長要配合基數來判斷是否真的「暴增」。'
               },
               {
                 type: 'text',
-                content: '**例子**:\n標題:「經濟大崩盤!」\n圖表顯示:失業率從 3.5% 升到 3.8%'
+                content: '**陷阱 5:不一致的比較基準**'
               },
               {
                 type: 'text',
-                content: '**真相**:\n失業率只升高 0.3%,這是正常波動範圍。標題卻用「大崩盤」這種誇張詞彙,製造恐慌。'
+                content: '**例子**:\n某產品比較圖中,A 產品用「每 100 克的營養成分」,B 產品用「每份的營養成分」,讓 A 產品看起來更好,但其實比較基準不同。'
               },
               {
                 type: 'text',
-                content: '**識破方法**:\n不要只看標題,要看實際數據。問自己:「這個變化真的很大嗎?」'
-              },
-              {
-                type: 'text',
-                content: '**陷阱 5:比較基準不一致**'
-              },
-              {
-                type: 'text',
-                content: '**例子**:\n某政黨:「我們任內經濟成長 5%!」\n反對黨:「但前任政府成長 3%,你們只多 2%。」\n某政黨:「可是前任的起點更高,我們難度更大!」'
-              },
-              {
-                type: 'text',
-                content: '**真相**:\n同樣是「成長」,起點不同、時空背景不同,直接比較不公平。例如:疫情後經濟反彈 vs 平時穩定成長,性質完全不同。'
-              },
-              {
-                type: 'text',
-                content: '**識破方法**:\n比較數據時,要看「基準點」是否一致、背景是否相同。'
+                content: '**如何辨識**:\n確認比較的單位、時間範圍、條件是否一致。如果不一致,就無法公平比較。'
               }
             ]
           },
           {
-            title: '三、實際案例分析',
-            blocks: [
-              {
-                type: 'text',
-                content: '**案例:某縣市長選舉**'
-              },
-              {
-                type: 'text',
-                content: '**候選人 A 的廣告**:\n圓形圖顯示:「A 候選人支持率 51%,B 候選人 49%」\n標題:「A 候選人獲得絕對多數支持!」'
-              },
-              {
-                type: 'text',
-                content: '**候選人 B 的廣告**:\n折線圖顯示:「B 候選人支持度近兩週持續上升!」\n(從 45% 升到 49%,Y 軸從 40% 開始,看起來很陡)'
-              },
-              {
-                type: 'text',
-                content: '**分析**:\n• A 的「絕對多數」其實只領先 2%,差距很小\n• B 的折線圖因為 Y 軸不從 0 開始,視覺上誇大了上升幅度\n• 兩邊都沒說:還有 20% 的人「未表態」'
-              },
-              {
-                type: 'text',
-                content: '**教訓**:\n看圖表時,要看實際數字,不要被「絕對多數」、「大幅上升」這些詞彙誤導。'
-              }
-            ]
-          },
-          {
-            title: '四、如何成為聰明的圖表讀者?',
+            title: '三、如何保護自己不被圖表誤導?',
             blocks: [
               {
                 type: 'text',
@@ -429,8 +638,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateChartTrapQuestion,
-        checkAnswer: checkChartTrapAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -568,48 +779,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        questions: [
-          {
-            question: '什麼是混合電路?',
-            options: [
-              '只有串聯的電路',
-              '只有並聯的電路',
-              '同時包含串聯和並聯的電路',
-              '沒有電源的電路'
-            ],
-            answer: 2
-          },
-          {
-            question: '家庭照明系統的總開關屬於?',
-            options: ['串聯設計', '並聯設計', '混合設計', '沒有設計'],
-            answer: 0
-          },
-          {
-            question: '台灣的中央政府與地方政府的權力配置,像哪種電路?',
-            options: ['串聯電路', '並聯電路', '混合電路', '斷路'],
-            answer: 2
-          },
-          {
-            question: '為什麼混合電路是最實用的設計?',
-            options: [
-              '因為最便宜',
-              '因為既有統一控制,又有獨立運作,兼顧效率與彈性',
-              '因為最複雜',
-              '因為最漂亮'
-            ],
-            answer: 1
-          },
-          {
-            question: '柳營村民救樹的過程,哪一點展現「混合電路」的精神?',
-            options: [
-              '完全聽樹醫師的,村民什麼都不做',
-              '每個人各做各的,完全不協調',
-              '有專業領導統籌,也有各方獨立分工,靈活應變',
-              '只靠政府,不靠村民'
-            ],
-            answer: 2
-          }
-        ]
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

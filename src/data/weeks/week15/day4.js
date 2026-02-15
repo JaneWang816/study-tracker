@@ -1,51 +1,51 @@
 // src/data/weeks/week15/day4.js
 // 第15週 - 第四天：建立連結
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W15D4 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【知識連結】記憶網絡練習題庫
 const knowledgeConnectionQuestions = [
   {
     type: 'options',
-    question: '記憶為什麼是「網絡」而不是「倉庫」？',
+    question: '記憶為什麼是「網絡」而不是「倉庫」?',
     options: [
       '因為大腦像網路',
-      '因為知識之間有連結，一個知識會連到其他知識',
+      '因為知識之間有連結,一個知識會連到其他知識',
       '因為記憶需要上網',
       '因為記憶會壞掉'
     ],
     answer: 1,
-    displayAnswer: '因為知識之間有連結，一個知識會連到其他知識'
+    displayAnswer: '因為知識之間有連結,一個知識會連到其他知識'
   },
   {
     type: 'options',
-    question: '為什麼「腦中同時有A和B」才能看出兩者關係？',
+    question: '為什麼「腦中同時有A和B」才能看出兩者關係?',
     options: [
       '因為A和B要比較',
-      '因為思考需要即時調用知識，查詢會中斷思路',
+      '因為思考需要即時調用知識,查詢會中斷思路',
       '因為記憶力好',
       '因為要考試'
     ],
     answer: 1,
-    displayAnswer: '因為思考需要即時調用知識，查詢會中斷思路'
+    displayAnswer: '因為思考需要即時調用知識,查詢會中斷思路'
   },
   {
     type: 'options',
-    question: '「垂直連結」是指？',
+    question: '「垂直連結」是指?',
     options: [
       '上下樓梯',
-      '同一領域內，基礎概念和進階概念的連結',
+      '同一領域內,基礎概念和進階概念的連結',
       '不同學科的連結',
       '過去和未來的連結'
     ],
     answer: 1,
-    displayAnswer: '同一領域內，基礎概念和進階概念的連結'
+    displayAnswer: '同一領域內,基礎概念和進階概念的連結'
   },
   {
     type: 'options',
-    question: '「水平連結」是指？',
+    question: '「水平連結」是指?',
     options: [
       '左右移動',
       '同一層級的知識之間的連結',
@@ -57,7 +57,7 @@ const knowledgeConnectionQuestions = [
   },
   {
     type: 'options',
-    question: '「對角連結」是指？',
+    question: '「對角連結」是指?',
     options: [
       '斜著走',
       '跨學科、跨領域的知識連結',
@@ -69,31 +69,31 @@ const knowledgeConnectionQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼「邊查邊寫」效率低、深度淺？',
+    question: '為什麼「邊查邊寫」效率低、深度淺?',
     options: [
       '因為網路很慢',
-      '因為查詢會中斷思考流程，無法同時調用多個知識點建立連結',
+      '因為查詢會中斷思考流程,無法同時調用多個知識點建立連結',
       '因為AI不準',
       '因為打字很慢'
     ],
     answer: 1,
-    displayAnswer: '因為查詢會中斷思考流程，無法同時調用多個知識點建立連結'
+    displayAnswer: '因為查詢會中斷思考流程,無法同時調用多個知識點建立連結'
   },
   {
     type: 'options',
-    question: '連結如何產生「理解」？',
+    question: '連結如何產生「理解」?',
     options: [
       '記得多就理解',
-      '當你能把新知識和舊知識連結，你就真正理解了',
+      '當你能把新知識和舊知識連結,你就真正理解了',
       'AI會幫你理解',
       '理解不需要連結'
     ],
     answer: 1,
-    displayAnswer: '當你能把新知識和舊知識連結，你就真正理解了'
+    displayAnswer: '當你能把新知識和舊知識連結,你就真正理解了'
   },
   {
     type: 'options',
-    question: '連結如何產生「創意」？',
+    question: '連結如何產生「創意」?',
     options: [
       '創意是天生的',
       '創意來自重組和連結不同的知識',
@@ -105,51 +105,64 @@ const knowledgeConnectionQuestions = [
   }
 ]
 
-const generateKnowledgeConnectionQuestion = () => {
-  return knowledgeConnectionQuestions[Math.floor(Math.random() * knowledgeConnectionQuestions.length)]
-}
+const generateKnowledgeConnectionQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(knowledgeConnectionQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【14週知識地圖】連結發現練習題庫
 const knowledgeMapQuestions = [
   {
     type: 'options',
-    question: 'W1的「數線」和W4的「經緯線」有什麼共同點？',
+    question: 'W1的「數線」和W4的「經緯線」有什麼共同點?',
     options: [
       '都是線',
-      '都是用數字定位（坐標系統）',
+      '都是用數字定位(坐標系統)',
       '都很難',
       '都要背'
     ],
     answer: 1,
-    displayAnswer: '都是用數字定位（坐標系統）'
+    displayAnswer: '都是用數字定位(坐標系統)'
   },
   {
     type: 'options',
-    question: 'W11的「等式平衡」和W11的「生態平衡」有什麼連結？',
+    question: 'W11的「等式平衡」和W11的「生態平衡」有什麼連結?',
     options: [
       '沒有連結',
-      '都強調「平衡」的概念：改變一邊，另一邊也要調整',
+      '都強調「平衡」的概念:改變一邊,另一邊也要調整',
       '都很重要',
       '都要考'
     ],
     answer: 1,
-    displayAnswer: '都強調「平衡」的概念：改變一邊，另一邊也要調整'
+    displayAnswer: '都強調「平衡」的概念:改變一邊,另一邊也要調整'
   },
   {
     type: 'options',
-    question: 'W13的「氣候變遷」和W8的「百分比成長率」有什麼連結？',
+    question: 'W13的「氣候變遷」和W8的「百分比成長率」有什麼連結?',
     options: [
       '沒有連結',
-      '氣候資料（CO₂濃度、溫度）用百分比和成長率來表示變化',
+      '氣候資料(CO₂濃度、溫度)用百分比和成長率來表示變化',
       '都很難',
       '都要記'
     ],
     answer: 1,
-    displayAnswer: '氣候資料（CO₂濃度、溫度）用百分比和成長率來表示變化'
+    displayAnswer: '氣候資料(CO₂濃度、溫度)用百分比和成長率來表示變化'
   },
   {
     type: 'options',
-    question: 'W9的「民主」和W14的「AI倫理」有什麼連結？',
+    question: 'W9的「民主」和W14的「AI倫理」有什麼連結?',
     options: [
       '沒有連結',
       '都涉及「誰決定」「如何確保公平」的問題',
@@ -161,51 +174,64 @@ const knowledgeMapQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼14週的課程設計是「跨學科」的？',
+    question: '為什麼14週的課程設計是「跨學科」的?',
     options: [
       '因為比較難',
-      '因為真實世界的問題都是跨學科的，需要整合不同知識',
+      '因為真實世界的問題都是跨學科的,需要整合不同知識',
       '因為要考很多科',
       '因為老師喜歡'
     ],
     answer: 1,
-    displayAnswer: '因為真實世界的問題都是跨學科的，需要整合不同知識'
+    displayAnswer: '因為真實世界的問題都是跨學科的,需要整合不同知識'
   }
 ]
 
-const generateKnowledgeMapQuestion = () => {
-  return knowledgeMapQuestions[Math.floor(Math.random() * knowledgeMapQuestions.length)]
-}
+const generateKnowledgeMapQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(knowledgeMapQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【對比實驗】邊查邊寫 vs 從記憶出發練習題庫
 const comparisonExperimentQuestions = [
   {
     type: 'options',
-    question: '「邊查邊寫」的最大問題是？',
+    question: '「邊查邊寫」的最大問題是?',
     options: [
       '網路太慢',
-      '查詢會中斷思考流程，無法建立深度連結',
+      '查詢會中斷思考流程,無法建立深度連結',
       'AI不準',
       '太累'
     ],
     answer: 1,
-    displayAnswer: '查詢會中斷思考流程，無法建立深度連結'
+    displayAnswer: '查詢會中斷思考流程,無法建立深度連結'
   },
   {
     type: 'options',
-    question: '「從記憶出發」的優勢是？',
+    question: '「從記憶出發」的優勢是?',
     options: [
       '比較快',
-      '能同時調用多個知識點，流暢地建立連結和洞察',
+      '能同時調用多個知識點,流暢地建立連結和洞察',
       '不用網路',
       '比較輕鬆'
     ],
     answer: 1,
-    displayAnswer: '能同時調用多個知識點，流暢地建立連結和洞察'
+    displayAnswer: '能同時調用多個知識點,流暢地建立連結和洞察'
   },
   {
     type: 'options',
-    question: '對比實驗顯示，邊查邊寫40分鐘 vs 從記憶出發15分鐘，結果是？',
+    question: '對比實驗顯示,邊查邊寫40分鐘 vs 從記憶出發15分鐘,結果是?',
     options: [
       '邊查邊寫比較好',
       '從記憶出發更快、深度更深、連結更豐富',
@@ -217,20 +243,39 @@ const comparisonExperimentQuestions = [
   },
   {
     type: 'options',
-    question: '這個實驗告訴我們什麼？',
+    question: '這個實驗告訴我們什麼?',
     options: [
       '不要用AI',
-      '記憶讓思考流暢，查詢會中斷思考',
+      '記憶讓思考流暢,查詢會中斷思考',
       '記憶不重要',
       'AI比較好'
     ],
     answer: 1,
-    displayAnswer: '記憶讓思考流暢，查詢會中斷思考'
+    displayAnswer: '記憶讓思考流暢,查詢會中斷思考'
   }
 ]
 
-const generateComparisonExperimentQuestion = () => {
-  return comparisonExperimentQuestions[Math.floor(Math.random() * comparisonExperimentQuestions.length)]
+const generateComparisonExperimentQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(comparisonExperimentQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateKnowledgeConnectionQuestion,
+  generateKnowledgeMapQuestion,
+  generateComparisonExperimentQuestion
 }
 
 // ==========================================

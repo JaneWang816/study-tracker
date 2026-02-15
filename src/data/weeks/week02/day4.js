@@ -1,147 +1,217 @@
 // src/data/weeks/week02/day4.js
 // W2 Day 4：動筆日
 
-// ==========================================
-// 數學：W2 綜合應用
-// ==========================================
-const generateComprehensiveQuestion = () => {
-  const problems = [
-    // 公因數情境
-    {
-      question: '部落有 24 塊木材和 36 塊石板，要分給幾個工作小組，每組分到的木材和石板數量相同且平均分完，最多可以分幾組？',
-      options: ['12 組', '6 組', '4 組', '8 組'],
-      answer: '12 組'
-    },
-    {
-      question: '排灣族要製作石板屋，有 18 片大石板和 30 片小石板，想分成幾排堆放，每排大小石板數量各自相等且用完，最多可以排幾排？',
-      options: ['6 排', '3 排', '9 排', '15 排'],
-      answer: '6 排'
-    },
-    // 公倍數情境
-    {
-      question: '布農族每隔 4 天舉行一次祭典，魯凱族每隔 6 天舉行一次，今天兩族同時舉行，下次同時舉行要等幾天？',
-      options: ['12 天', '24 天', '10 天', '18 天'],
-      answer: '12 天'
-    },
-    {
-      question: '部落用鼓每隔 3 分鐘敲一次，用號角每隔 5 分鐘吹一次，同時發出後，下次同時發出要等幾分鐘？',
-      options: ['15 分鐘', '8 分鐘', '30 分鐘', '10 分鐘'],
-      answer: '15 分鐘'
-    },
-    // 質因數情境
-    {
-      question: '一塊 48 平方公尺的土地要平均分割成正方形小塊，每塊邊長最大可以是幾公尺（需整除）？提示：48 = 2⁴ × 3',
-      options: ['4 公尺', '6 公尺', '8 公尺', '12 公尺'],
-      answer: '4 公尺'
-    },
-    {
-      question: '一條蛇身上有 60 個鱗片花紋，60 的質因數分解是什麼？',
-      options: ['2² × 3 × 5', '2 × 3 × 10', '4 × 15', '2³ × 7'],
-      answer: '2² × 3 × 5'
-    },
-    // 綜合
-    {
-      question: '有 36 個蘋果和 48 個橘子，要分成若干袋，每袋蘋果和橘子數量整除，且每袋蘋果比橘子少。每袋最多幾個蘋果？（先求最大公因數）',
-      options: ['3 個', '4 個', '6 個', '12 個'],
-      answer: '3 個'
-    },
-    {
-      question: '族人每 6 天採一次野菜，每 8 天打獵一次，今天同時進行，下次同時進行要等幾天？',
-      options: ['24 天', '48 天', '14 天', '16 天'],
-      answer: '24 天'
-    },
-  ]
-  const p = problems[Math.floor(Math.random() * problems.length)]
-  return {
-    question: p.question,
-    options: [...p.options].sort(() => Math.random() - 0.5),
-    answer: p.answer,
-    type: 'choice'
-  }
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // ==========================================
-// 語文：閱讀理解——邵族＋泰雅族
+// 數學:W2 綜合應用
 // ==========================================
-const readingQBank = [
+const mathQuestions = [
+  // 公因數情境
+  {
+    type: 'options',
+    question: '部落有 24 塊木材和 36 塊石板,要分給幾個工作小組,每組分到的木材和石板數量相同且平均分完,最多可以分幾組?',
+    options: ['12 組', '6 組', '4 組', '8 組'],
+    answer: 0,
+    displayAnswer: '12 組'
+  },
+  {
+    type: 'options',
+    question: '排灣族要製作石板屋,有 18 片大石板和 30 片小石板,想分成幾排堆放,每排大小石板數量各自相等且用完,最多可以排幾排?',
+    options: ['6 排', '3 排', '9 排', '15 排'],
+    answer: 0,
+    displayAnswer: '6 排'
+  },
+  // 公倍數情境
+  {
+    type: 'options',
+    question: '布農族每隔 4 天舉行一次祭典,魯凱族每隔 6 天舉行一次,今天兩族同時舉行,下次同時舉行要等幾天?',
+    options: ['12 天', '24 天', '10 天', '18 天'],
+    answer: 0,
+    displayAnswer: '12 天'
+  },
+  {
+    type: 'options',
+    question: '部落用鼓每隔 3 分鐘敲一次,用號角每隔 5 分鐘吹一次,同時發出後,下次同時發出要等幾分鐘?',
+    options: ['15 分鐘', '8 分鐘', '30 分鐘', '10 分鐘'],
+    answer: 0,
+    displayAnswer: '15 分鐘'
+  },
+  // 質因數情境
+  {
+    type: 'options',
+    question: '一塊 48 平方公尺的土地要平均分割成正方形小塊,每塊邊長最大可以是幾公尺(需整除)?提示:48 = 2⁴ × 3',
+    options: ['4 公尺', '6 公尺', '8 公尺', '12 公尺'],
+    answer: 0,
+    displayAnswer: '4 公尺'
+  },
+  {
+    type: 'options',
+    question: '一條蛇身上有 60 個鱗片花紋,60 的質因數分解是什麼?',
+    options: ['2² × 3 × 5', '2 × 3 × 10', '4 × 15', '2³ × 7'],
+    answer: 0,
+    displayAnswer: '2² × 3 × 5'
+  },
+  // 綜合
+  {
+    type: 'options',
+    question: '有 36 個蘋果和 48 個橘子,要分成若干袋,每袋蘋果和橘子數量整除,且每袋蘋果比橘子少。每袋最多幾個蘋果?(先求最大公因數)',
+    options: ['3 個', '4 個', '6 個', '12 個'],
+    answer: 0,
+    displayAnswer: '3 個'
+  },
+  {
+    type: 'options',
+    question: '族人每 6 天採一次野菜,每 8 天打獵一次,今天同時進行,下次同時進行要等幾天?',
+    options: ['24 天', '48 天', '14 天', '16 天'],
+    answer: 0,
+    displayAnswer: '24 天'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 科學延伸:化石
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '化石是如何形成的?',
+    options: ['生物死亡後被泥沙掩埋,礦物質逐漸取代有機物而保存', '生物冰凍在冰河中永久保存', '生物身體自然乾燥後變硬', '生物被火山熔岩包覆後保存'],
+    answer: 0,
+    displayAnswer: '生物死亡後被泥沙掩埋,礦物質逐漸取代有機物而保存'
+  },
+  {
+    type: 'options',
+    question: '科學家透過研究植物化石,最不可能獲得哪方面的資訊?',
+    options: ['古代植物的顏色', '古代的氣候條件', '古代植物的葉形和構造', '某種植物的存在年代'],
+    answer: 0,
+    displayAnswer: '古代植物的顏色'
+  },
+  {
+    type: 'options',
+    question: '在台灣山區有時能發現古代海洋生物的化石,這說明了什麼?',
+    options: ['台灣的山地在遠古曾是海底,後來地殼隆起形成山脈', '這些海洋生物曾經爬上山', '台灣的山是人工堆砌的', '海洋曾經比現在高很多'],
+    answer: 0,
+    displayAnswer: '台灣的山地在遠古曾是海底,後來地殼隆起形成山脈'
+  },
+  {
+    type: 'options',
+    question: '「活化石」是指什麼?',
+    options: ['現存的物種與其很久以前的化石形態幾乎相同,幾乎沒有演化', '還活著的恐龍', '最近剛被發現的化石', '人工製造的化石'],
+    answer: 0,
+    displayAnswer: '現存的物種與其很久以前的化石形態幾乎相同,幾乎沒有演化'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 語文:閱讀理解——邵族＋泰雅族
+// ==========================================
+const readingQuestions = [
   // 邵族
   {
-    question: '邵族「蟒甲」是什麼意思？',
+    type: 'options',
+    question: '邵族「蟒甲」是什麼意思?',
     options: ['獨木舟', '部落名稱', '祭典儀式', '大型水壺'],
-    answer: '獨木舟'
+    answer: 0,
+    displayAnswer: '獨木舟'
   },
   {
-    question: '邵族製作獨木舟的靈感來自哪裡？',
+    type: 'options',
+    question: '邵族製作獨木舟的靈感來自哪裡?',
     options: ['猿猴用樹枝渡河和蟒蛇泅水的方式', '老鷹飛翔的形態', '魚兒游泳的姿勢', '大石頭漂浮在水面'],
-    answer: '猿猴用樹枝渡河和蟒蛇泅水的方式'
+    answer: 0,
+    displayAnswer: '猿猴用樹枝渡河和蟒蛇泅水的方式'
   },
   {
-    question: '邵族壯士追趕白鹿時，白鹿最後跑去了哪裡？',
+    type: 'options',
+    question: '邵族壯士追趕白鹿時,白鹿最後跑去了哪裡?',
     options: ['跳入大湖游向湖心浮島', '消失在深山密林中', '躲入地底的洞穴', '飛升到天空中'],
-    answer: '跳入大湖游向湖心浮島'
+    answer: 0,
+    displayAnswer: '跳入大湖游向湖心浮島'
   },
   // 泰雅族
   {
-    question: '泰雅族傳說中，彩虹橋通往哪裡？',
-    options: ['美好的境地（祖靈之地）', '另一個部落', '太陽的國度', '海洋的深處'],
-    answer: '美好的境地（祖靈之地）'
+    type: 'options',
+    question: '泰雅族傳說中,彩虹橋通往哪裡?',
+    options: ['美好的境地(祖靈之地)', '另一個部落', '太陽的國度', '海洋的深處'],
+    answer: 0,
+    displayAnswer: '美好的境地(祖靈之地)'
   },
   {
-    question: '泰雅族彩虹橋傳說中，哪種人無法順利通過橋到達美好之地？',
-    options: ['做了壞事的人（惡者）', '沒有刺青的人', '生病而死的人', '在戰爭中犧牲的人'],
-    answer: '做了壞事的人（惡者）'
+    type: 'options',
+    question: '泰雅族彩虹橋傳說中,哪種人無法順利通過橋到達美好之地?',
+    options: ['做了壞事的人(惡者)', '沒有刺青的人', '生病而死的人', '在戰爭中犧牲的人'],
+    answer: 0,
+    displayAnswer: '做了壞事的人(惡者)'
   },
   {
-    question: '根據本週閱讀的五個族群故事，蛇在台灣原住民族文化中扮演著怎樣的共通角色？',
+    type: 'options',
+    question: '根據本週閱讀的五個族群故事,蛇在台灣原住民族文化中扮演著怎樣的共通角色?',
     options: ['連結人與自然、祖先與後代的神聖使者', '只代表危險和死亡', '是獵人的主要獵物', '只是普通的野生動物'],
-    answer: '連結人與自然、祖先與後代的神聖使者'
+    answer: 0,
+    displayAnswer: '連結人與自然、祖先與後代的神聖使者'
   },
   // 跨文章比較
   {
-    question: '比較排灣族和布農族的蛇故事，兩者最大的不同點是什麼？',
+    type: 'options',
+    question: '比較排灣族和布農族的蛇故事,兩者最大的不同點是什麼?',
     options: [
-      '排灣族蛇代表神聖起源與建築智慧，布農族蛇的故事強調人與自然的約定與承諾',
-      '排灣族害怕蛇，布農族崇拜蛇',
-      '排灣族的蛇會說話，布農族的蛇不會',
+      '排灣族蛇代表神聖起源與建築智慧,布農族蛇的故事強調人與自然的約定與承諾',
+      '排灣族害怕蛇,布農族崇拜蛇',
+      '排灣族的蛇會說話,布農族的蛇不會',
       '兩者的故事其實沒有什麼不同'
     ],
-    answer: '排灣族蛇代表神聖起源與建築智慧，布農族蛇的故事強調人與自然的約定與承諾'
-  },
+    answer: 0,
+    displayAnswer: '排灣族蛇代表神聖起源與建築智慧,布農族蛇的故事強調人與自然的約定與承諾'
+  }
 ]
-const generateReadingQuestion = () => {
-  const q = readingQBank[Math.floor(Math.random() * readingQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
 
-// ==========================================
-// 科學延伸：化石
-// ==========================================
-const scienceQBank = [
-  {
-    question: '化石是如何形成的？',
-    options: ['生物死亡後被泥沙掩埋，礦物質逐漸取代有機物而保存', '生物冰凍在冰河中永久保存', '生物身體自然乾燥後變硬', '生物被火山熔岩包覆後保存'],
-    answer: '生物死亡後被泥沙掩埋，礦物質逐漸取代有機物而保存'
-  },
-  {
-    question: '科學家透過研究植物化石，最不可能獲得哪方面的資訊？',
-    options: ['古代植物的顏色', '古代的氣候條件', '古代植物的葉形和構造', '某種植物的存在年代'],
-    answer: '古代植物的顏色'
-  },
-  {
-    question: '在台灣山區有時能發現古代海洋生物的化石，這說明了什麼？',
-    options: ['台灣的山地在遠古曾是海底，後來地殼隆起形成山脈', '這些海洋生物曾經爬上山', '台灣的山是人工堆砌的', '海洋曾經比現在高很多'],
-    answer: '台灣的山地在遠古曾是海底，後來地殼隆起形成山脈'
-  },
-  {
-    question: '「活化石」是指什麼？',
-    options: ['現存的物種與其很久以前的化石形態幾乎相同，幾乎沒有演化', '還活著的恐龍', '最近剛被發現的化石', '人工製造的化石'],
-    answer: '現存的物種與其很久以前的化石形態幾乎相同，幾乎沒有演化'
-  },
-]
-const generateScienceQuestion = () => {
-  const q = scienceQBank[Math.floor(Math.random() * scienceQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+const generateReadingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(readingQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion, generateScienceQuestion, generateReadingQuestion }
 
 // ==========================================
 // Day 4 主體
@@ -191,7 +261,9 @@ const day4 = {
       practice: {
         questionCount: 5,
         generator: generateReadingQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -236,8 +308,10 @@ const day4 = {
       },
       practice: {
         questionCount: 6,
-        generator: generateComprehensiveQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        generator: generateReadingQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -321,7 +395,9 @@ const day4 = {
       practice: {
         questionCount: 4,
         generator: generateScienceQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     }
   ]

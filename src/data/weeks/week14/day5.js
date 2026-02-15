@@ -1,23 +1,23 @@
 // src/data/weeks/week14/day5.js
 // 第14週 - 第五天：我的未來選擇
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W14D5 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【綜合】W14總複習練習題庫
 const comprehensiveQuestions = [
   // SDGs相關
   {
     type: 'options',
-    question: 'SDGs的17個目標，目標年是哪一年？',
+    question: 'SDGs的17個目標,目標年是哪一年?',
     options: ['2025年', '2030年', '2040年', '2050年'],
     answer: 1,
     displayAnswer: '2030年'
   },
   {
     type: 'options',
-    question: 'AI可以幫助實現SDGs，但也可能造成什麼問題？',
+    question: 'AI可以幫助實現SDGs,但也可能造成什麼問題?',
     options: [
       'AI會毀滅世界',
       '加劇數位落差和不平等',
@@ -31,7 +31,7 @@ const comprehensiveQuestions = [
   // AI基礎
   {
     type: 'options',
-    question: 'AI的「幻覺」是指什麼？',
+    question: 'AI的「幻覺」是指什麼?',
     options: [
       'AI看到不存在的東西',
       'AI產生錯誤或不存在的資訊',
@@ -43,7 +43,7 @@ const comprehensiveQuestions = [
   },
   {
     type: 'options',
-    question: 'AI無法做到下列哪一項？',
+    question: 'AI無法做到下列哪一項?',
     options: [
       '快速計算',
       '辨識圖片',
@@ -57,33 +57,33 @@ const comprehensiveQuestions = [
   // 記憶與學習
   {
     type: 'options',
-    question: '為什麼「記憶」在AI時代仍然重要？',
+    question: '為什麼「記憶」在AI時代仍然重要?',
     options: [
       '為了考試',
       '為了炫耀',
-      '沒有知識基礎，無法判斷AI對錯，也不知道該問什麼',
+      '沒有知識基礎,無法判斷AI對錯,也不知道該問什麼',
       '因為老師規定'
     ],
     answer: 2,
-    displayAnswer: '沒有知識基礎，無法判斷AI對錯，也不知道該問什麼'
+    displayAnswer: '沒有知識基礎,無法判斷AI對錯,也不知道該問什麼'
   },
   {
     type: 'options',
-    question: '「依賴AI」和「善用AI」的差別是什麼？',
+    question: '「依賴AI」和「善用AI」的差別是什麼?',
     options: [
       '沒有差別',
-      '依賴=不思考只抄答案；善用=自己思考後用AI輔助',
+      '依賴=不思考只抄答案;善用=自己思考後用AI輔助',
       '依賴比較好',
       '善用比較累'
     ],
     answer: 1,
-    displayAnswer: '依賴=不思考只抄答案；善用=自己思考後用AI輔助'
+    displayAnswer: '依賴=不思考只抄答案;善用=自己思考後用AI輔助'
   },
   
   // 能力培養
   {
     type: 'options',
-    question: 'AI時代最重要的能力是什麼？',
+    question: 'AI時代最重要的能力是什麼?',
     options: [
       '背很多知識',
       '計算很快',
@@ -95,21 +95,21 @@ const comprehensiveQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼「終身學習」在AI時代特別重要？',
+    question: '為什麼「終身學習」在AI時代特別重要?',
     options: [
       '因為學校規定',
-      '因為世界變化快，今天的知識明天可能過時',
+      '因為世界變化快,今天的知識明天可能過時',
       '因為要跟AI比賽',
       '因為考試會考'
     ],
     answer: 1,
-    displayAnswer: '因為世界變化快，今天的知識明天可能過時'
+    displayAnswer: '因為世界變化快,今天的知識明天可能過時'
   },
   
   // 倫理與責任
   {
     type: 'options',
-    question: 'AI出錯時，誰該負責？',
+    question: 'AI出錯時,誰該負責?',
     options: [
       'AI自己',
       '設計AI的人、使用AI的人、制定政策的政府都有責任',
@@ -121,72 +121,89 @@ const comprehensiveQuestions = [
   },
   {
     type: 'options',
-    question: '「數位落差」如何影響SDG 10（減少不平等）？',
+    question: '「數位落差」如何影響SDG 10(減少不平等)?',
     options: [
       '沒有影響',
-      'AI讓有資源的人更強，沒資源的人更弱，加劇不平等',
+      'AI讓有資源的人更強,沒資源的人更弱,加劇不平等',
       'AI會自動解決不平等',
       '只影響有錢人'
     ],
     answer: 1,
-    displayAnswer: 'AI讓有資源的人更強，沒資源的人更弱，加劇不平等'
+    displayAnswer: 'AI讓有資源的人更強,沒資源的人更弱,加劇不平等'
   },
   
   // 世界公民
   {
     type: 'options',
-    question: '「世界公民」的核心是什麼？',
+    question: '「世界公民」的核心是什麼?',
     options: [
       '擁有很多國家護照',
       '經常出國',
-      '關心全球議題，願意為世界更好而努力',
+      '關心全球議題,願意為世界更好而努力',
       '會說很多語言'
     ],
     answer: 2,
-    displayAnswer: '關心全球議題，願意為世界更好而努力'
+    displayAnswer: '關心全球議題,願意為世界更好而努力'
   },
   {
     type: 'options',
-    question: '台灣雖然不是聯合國會員，但仍推動SDGs。這說明了什麼？',
+    question: '台灣雖然不是聯合國會員,但仍推動SDGs。這說明了什麼?',
     options: [
       '台灣只是做做樣子',
-      '永續發展是全球共同責任，不分國家身分',
+      '永續發展是全球共同責任,不分國家身分',
       '台灣被迫這樣做',
       '台灣想加入聯合國'
     ],
     answer: 1,
-    displayAnswer: '永續發展是全球共同責任，不分國家身分'
+    displayAnswer: '永續發展是全球共同責任,不分國家身分'
   },
   
   // 自我認識
   {
     type: 'options',
-    question: '這14週的學習，最重要的收穫是什麼？',
+    question: '這14週的學習,最重要的收穫是什麼?',
     options: [
       '記住很多知識',
       '學會用AI',
-      '建立學習能力和批判思考，成為終身學習者',
+      '建立學習能力和批判思考,成為終身學習者',
       '考試考高分'
     ],
     answer: 2,
-    displayAnswer: '建立學習能力和批判思考，成為終身學習者'
+    displayAnswer: '建立學習能力和批判思考,成為終身學習者'
   },
   {
     type: 'options',
-    question: '面對AI時代，我們應該？',
+    question: '面對AI時代,我們應該?',
     options: [
       '完全依賴AI',
       '拒絕使用AI',
-      '善用AI，培養AI做不到的能力，保持人的主體性',
+      '善用AI,培養AI做不到的能力,保持人的主體性',
       '和AI競爭'
     ],
     answer: 2,
-    displayAnswer: '善用AI，培養AI做不到的能力，保持人的主體性'
+    displayAnswer: '善用AI,培養AI做不到的能力,保持人的主體性'
   }
 ]
 
-const generateComprehensiveQuestion = () => {
-  return comprehensiveQuestions[Math.floor(Math.random() * comprehensiveQuestions.length)]
+const generateComprehensiveQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(comprehensiveQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateComprehensiveQuestion
 }
 
 // ==========================================

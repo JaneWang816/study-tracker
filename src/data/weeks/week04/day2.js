@@ -1,234 +1,314 @@
 // src/data/weeks/week04/day2.js
 // W4 Day2：清朝人怎麼開發台灣？
 
-// ===== 社會：清領時期土地開發 =====
-const generateQingTaiwanQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '清朝正式將台灣納入版圖是在哪一年？',
-      options: ['1624年（荷蘭統治時期）', '1662年（鄭成功驅逐荷蘭）', '1683年（施琅攻台）', '1895年（馬關條約割讓日本）'],
-      answer: 2,
-      explanation: '1683年，清朝將領施琅攻台，鄭克塽降清，清朝正式將台灣納入版圖，設台灣府隸屬福建省。'
-    },
-    {
-      type: 'choice',
-      question: '清朝初期對台灣的移民採取什麼政策？',
-      options: [
-        '鼓勵大量移民，給予土地獎勵',
-        '嚴格限制移民，設有渡台禁令（禁止攜帶家眷）',
-        '強迫中國人移民台灣',
-        '完全開放，任何人都可以移民'
-      ],
-      answer: 1,
-      explanation: '清初實行嚴格的渡台禁令，禁止攜帶家眷、限制移民人數，主要是防止台灣成為反清勢力的基地。'
-    },
-    {
-      type: 'choice',
-      question: '清朝開墾台灣西部平原，主要以哪個方式取得農地？',
-      options: [
-        '全部由政府分配',
-        '漢人向原住民購買或租用土地，或向清廷申請開墾執照（墾照）',
-        '純靠武力強奪原住民土地',
-        '只開發海邊的土地'
-      ],
-      answer: 1,
-      explanation: '清領時期，漢人向原住民租地或購地，或向官府申請墾照，成為地主（墾首），再招募佃農開墾，形成複雜的土地關係。'
-    },
-    {
-      type: 'choice',
-      question: '「番界」是清朝設立的什麼？',
-      options: [
-        '外國領土的邊界',
-        '漢人聚落的邊界牆',
-        '劃分漢人開墾區和原住民土地的界線，以土牛溝或木柵為標記',
-        '台灣和中國大陸之間的海上邊界'
-      ],
-      answer: 2,
-      explanation: '清朝設立「番界」，以土牛溝（人工挖掘的溝渠）為界，東側屬原住民地（「番地」），西側為漢人開墾區，旨在減少漢番衝突。'
-    },
-    {
-      type: 'choice',
-      question: '清朝時期，台灣最重要的出口農產品是什麼？',
-      options: ['茶葉和蔗糖', '稻米和小麥', '玉米和高粱', '棉花和絲綢'],
-      answer: 0,
-      explanation: '清朝中後期，台灣北部盛產茶葉（尤其是烏龍茶），中南部盛產蔗糖，是主要出口商品，也推動了台灣的商業發展。'
-    },
-    {
-      type: 'choice',
-      question: '清領台灣後期（1885年），台灣被提升為什麼地位？',
-      options: [
-        '維持隸屬福建省的台灣府',
-        '升格為台灣省，成為中國的第20個省',
-        '改為直轄市，由皇帝直接管轄',
-        '賣給英國作為租界'
-      ],
-      answer: 1,
-      explanation: '1885年，清廷意識到台灣的戰略重要性（尤其是中法戰爭後），將台灣升格為省，首任巡撫劉銘傳積極推動現代化建設。'
-    },
-    {
-      type: 'choice',
-      question: '清領時期的台灣，漢人最先開墾的區域是？',
-      options: [
-        '高山深處的山地',
-        '台灣東部太平洋沿岸',
-        '西部沿海平原（台南、彰化、新竹一帶）',
-        '澎湖群島'
-      ],
-      answer: 2,
-      explanation: '漢人先由台南鹿耳門登陸（明鄭時期），再逐漸向北、向東擴展，西部沿海平原因地勢平坦、土地肥沃，是最早也最密集開墾的區域。'
-    }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-const checkQingTaiwanAnswer = (q, a) => parseInt(a) === q.answer
-
-// ===== 數學：縮圖與擴圖 =====
-const generateScaleDrawingQuestion = () => {
-  const types = ['enlarge', 'reduce', 'find_scale']
-  const t = types[Math.floor(Math.random() * types.length)]
-
-  if (t === 'enlarge') {
-    const problems = [
-      { orig: 3, factor: 4, result: 12, label: '線段' },
-      { orig: 5, factor: 3, result: 15, label: '邊長' },
-      { orig: 8, factor: 2, result: 16, label: '距離' },
-      { orig: 6, factor: 5, result: 30, label: '長度' },
-      { orig: 4, factor: 6, result: 24, label: '寬度' }
-    ]
-    const p = problems[Math.floor(Math.random() * problems.length)]
-    const opts = [p.result, p.result + p.orig, p.orig + p.factor, p.orig * 2]
-      .map(String).sort(() => Math.random() - 0.5)
-    const ans = opts.indexOf(String(p.result))
-    return {
-      type: 'choice',
-      question: `將一條長 ${p.orig} 公分的${p.label}放大為 ${p.factor} 倍，結果是多少公分？`,
-      options: opts,
-      answer: ans,
-      explanation: `放大 ${p.factor} 倍：${p.orig} × ${p.factor} = ${p.result} 公分。`
-    }
+// ==========================================
+// 社會:清領時期土地開發
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '清朝正式將台灣納入版圖是在哪一年?',
+    options: ['1683年(施琅攻台)', '1624年(荷蘭統治時期)', '1662年(鄭成功驅逐荷蘭)', '1895年(馬關條約割讓日本)'],
+    answer: 0,
+    displayAnswer: '1683年,清朝將領施琅攻台,鄭克塽降清,清朝正式將台灣納入版圖,設台灣府隸屬福建省。'
+  },
+  {
+    type: 'options',
+    question: '清朝初期對台灣的移民採取什麼政策?',
+    options: [
+      '嚴格限制移民,設有渡台禁令(禁止攜帶家眷)',
+      '鼓勵大量移民,給予土地獎勵',
+      '強迫中國人移民台灣',
+      '完全開放,任何人都可以移民'
+    ],
+    answer: 0,
+    displayAnswer: '清初實行嚴格的渡台禁令,禁止攜帶家眷、限制移民人數,主要是防止台灣成為反清勢力的基地。'
+  },
+  {
+    type: 'options',
+    question: '清朝開墾台灣西部平原,主要以哪個方式取得農地?',
+    options: [
+      '漢人向原住民購買或租用土地,或向清廷申請開墾執照(墾照)',
+      '全部由政府分配',
+      '純靠武力強奪原住民土地',
+      '只開發海邊的土地'
+    ],
+    answer: 0,
+    displayAnswer: '清領時期,漢人向原住民租地或購地,或向官府申請墾照,成為地主(墾首),再招募佃農開墾,形成複雜的土地關係。'
+  },
+  {
+    type: 'options',
+    question: '「番界」是清朝設立的什麼?',
+    options: [
+      '劃分漢人開墾區和原住民土地的界線,以土牛溝或木柵為標記',
+      '外國領土的邊界',
+      '漢人聚落的邊界牆',
+      '台灣和中國大陸之間的海上邊界'
+    ],
+    answer: 0,
+    displayAnswer: '清朝設立「番界」,以土牛溝(人工挖掘的溝渠)為界,東側屬原住民地(「番地」),西側為漢人開墾區,旨在減少漢番衝突。'
+  },
+  {
+    type: 'options',
+    question: '清朝時期,台灣最重要的出口農產品是什麼?',
+    options: ['茶葉和蔗糖', '稻米和小麥', '玉米和高粱', '棉花和絲綢'],
+    answer: 0,
+    displayAnswer: '清朝中後期,台灣北部盛產茶葉(尤其是烏龍茶),中南部盛產蔗糖,是主要出口商品,也推動了台灣的商業發展。'
+  },
+  {
+    type: 'options',
+    question: '清領台灣後期(1885年),台灣被提升為什麼地位?',
+    options: [
+      '升格為台灣省,成為中國的第20個省',
+      '維持隸屬福建省的台灣府',
+      '改為直轄市,由皇帝直接管轄',
+      '賣給英國作為租界'
+    ],
+    answer: 0,
+    displayAnswer: '1885年,清廷意識到台灣的戰略重要性(尤其是中法戰爭後),將台灣升格為省,首任巡撫劉銘傳積極推動現代化建設。'
+  },
+  {
+    type: 'options',
+    question: '清領時期的台灣,漢人最先開墾的區域是?',
+    options: [
+      '西部沿海平原(台南、彰化、新竹一帶)',
+      '高山深處的山地',
+      '台灣東部太平洋沿岸',
+      '澎湖群島'
+    ],
+    answer: 0,
+    displayAnswer: '漢人先由台南鹿耳門登陸(明鄭時期),再逐漸向北、向東擴展,西部沿海平原因地勢平坦、土地肥沃,是最早也最密集開墾的區域。'
   }
+]
 
-  if (t === 'reduce') {
-    const problems = [
-      { orig: 24, factor: 4, result: 6 },
-      { orig: 30, factor: 5, result: 6 },
-      { orig: 20, factor: 4, result: 5 },
-      { orig: 18, factor: 3, result: 6 },
-      { orig: 40, factor: 8, result: 5 }
-    ]
-    const p = problems[Math.floor(Math.random() * problems.length)]
-    const opts = [p.result, p.result + 2, p.orig / 2, p.orig - p.factor]
-      .map(String).sort(() => Math.random() - 0.5)
-    const ans = opts.indexOf(String(p.result))
-    return {
-      type: 'choice',
-      question: `一張地圖把實際 ${p.orig} 公尺的距離縮小為原來的 1/${p.factor}，地圖上應畫多少公尺？`,
-      options: opts,
-      answer: ans,
-      explanation: `縮小為 1/${p.factor}：${p.orig} ÷ ${p.factor} = ${p.result} 公尺。`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  // find_scale
-  const problems = [
-    { map: 4, real: 200, scaleStr: '1：50', exp: '比例尺 = 圖上÷實際 = 4÷200 = 1/50，即 1：50' },
-    { map: 3, real: 300, scaleStr: '1：100', exp: '比例尺 = 3÷300 = 1/100，即 1：100' },
-    { map: 5, real: 500, scaleStr: '1：100', exp: '比例尺 = 5÷500 = 1/100，即 1：100' },
-    { map: 2, real: 400, scaleStr: '1：200', exp: '比例尺 = 2÷400 = 1/200，即 1：200' }
-  ]
-  const p = problems[Math.floor(Math.random() * problems.length)]
-  const opts = [p.scaleStr, '1：25', '1：500', '2：100'].sort(() => Math.random() - 0.5)
-  const ans = opts.indexOf(p.scaleStr)
-  return {
-    type: 'choice',
-    question: `圖上距離 ${p.map} 公分代表實際距離 ${p.real} 公分，這張圖的比例尺是多少？`,
-    options: opts,
-    answer: ans,
-    explanation: p.exp
+// ==========================================
+// 數學:縮圖與擴圖
+// ==========================================
+const mathQuestions = [
+  // 放大
+  {
+    type: 'options',
+    question: '將一條長 3 公分的線段放大為 4 倍,結果是多少公分?',
+    options: ['12', '7', '16', '6'],
+    answer: 0,
+    displayAnswer: '放大 4 倍:3 × 4 = 12 公分。'
+  },
+  {
+    type: 'options',
+    question: '將一條長 5 公分的邊長放大為 3 倍,結果是多少公分?',
+    options: ['15', '8', '10', '20'],
+    answer: 0,
+    displayAnswer: '放大 3 倍:5 × 3 = 15 公分。'
+  },
+  {
+    type: 'options',
+    question: '將一條長 8 公分的距離放大為 2 倍,結果是多少公分?',
+    options: ['16', '10', '12', '4'],
+    answer: 0,
+    displayAnswer: '放大 2 倍:8 × 2 = 16 公分。'
+  },
+  {
+    type: 'options',
+    question: '將一條長 6 公分的長度放大為 5 倍,結果是多少公分?',
+    options: ['30', '11', '12', '25'],
+    answer: 0,
+    displayAnswer: '放大 5 倍:6 × 5 = 30 公分。'
+  },
+  {
+    type: 'options',
+    question: '將一條長 4 公分的寬度放大為 6 倍,結果是多少公分?',
+    options: ['24', '10', '20', '18'],
+    answer: 0,
+    displayAnswer: '放大 6 倍:4 × 6 = 24 公分。'
+  },
+  // 縮小
+  {
+    type: 'options',
+    question: '一張地圖把實際 24 公尺的距離縮小為原來的 1/4,地圖上應畫多少公尺?',
+    options: ['6', '8', '12', '20'],
+    answer: 0,
+    displayAnswer: '縮小為 1/4:24 ÷ 4 = 6 公尺。'
+  },
+  {
+    type: 'options',
+    question: '一張地圖把實際 30 公尺的距離縮小為原來的 1/5,地圖上應畫多少公尺?',
+    options: ['6', '8', '5', '25'],
+    answer: 0,
+    displayAnswer: '縮小為 1/5:30 ÷ 5 = 6 公尺。'
+  },
+  {
+    type: 'options',
+    question: '一張地圖把實際 20 公尺的距離縮小為原來的 1/4,地圖上應畫多少公尺?',
+    options: ['5', '7', '10', '16'],
+    answer: 0,
+    displayAnswer: '縮小為 1/4:20 ÷ 4 = 5 公尺。'
+  },
+  {
+    type: 'options',
+    question: '一張地圖把實際 18 公尺的距離縮小為原來的 1/3,地圖上應畫多少公尺?',
+    options: ['6', '9', '12', '15'],
+    answer: 0,
+    displayAnswer: '縮小為 1/3:18 ÷ 3 = 6 公尺。'
+  },
+  {
+    type: 'options',
+    question: '一張地圖把實際 40 公尺的距離縮小為原來的 1/8,地圖上應畫多少公尺?',
+    options: ['5', '8', '10', '32'],
+    answer: 0,
+    displayAnswer: '縮小為 1/8:40 ÷ 8 = 5 公尺。'
+  },
+  // 求比例尺
+  {
+    type: 'options',
+    question: '圖上距離 4 公分代表實際距離 200 公分,這張圖的比例尺是多少?',
+    options: ['1:50', '1:25', '1:500', '2:100'],
+    answer: 0,
+    displayAnswer: '比例尺 = 圖上÷實際 = 4÷200 = 1/50,即 1:50'
+  },
+  {
+    type: 'options',
+    question: '圖上距離 3 公分代表實際距離 300 公分,這張圖的比例尺是多少?',
+    options: ['1:100', '1:50', '1:200', '3:300'],
+    answer: 0,
+    displayAnswer: '比例尺 = 3÷300 = 1/100,即 1:100'
+  },
+  {
+    type: 'options',
+    question: '圖上距離 5 公分代表實際距離 500 公分,這張圖的比例尺是多少?',
+    options: ['1:100', '1:50', '1:200', '5:500'],
+    answer: 0,
+    displayAnswer: '比例尺 = 5÷500 = 1/100,即 1:100'
+  },
+  {
+    type: 'options',
+    question: '圖上距離 2 公分代表實際距離 400 公分,這張圖的比例尺是多少?',
+    options: ['1:200', '1:100', '1:50', '2:400'],
+    answer: 0,
+    displayAnswer: '比例尺 = 2÷400 = 1/200,即 1:200'
   }
-}
+]
 
-const checkScaleDrawingAnswer = (q, a) => parseInt(a) === q.answer
-
-// ===== 科學：熱的對流 =====
-const generateHeatConvectionQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '熱的「對流」是指什麼？',
-      options: [
-        '熱透過固體直接接觸傳遞',
-        '熱以電磁波形式在空間傳播',
-        '熱隨著流體（液體或氣體）的流動而移動，熱的流體上升、冷的下沉形成循環',
-        '熱只能在真空中傳播'
-      ],
-      answer: 2,
-      explanation: '對流是熱量透過流體（液體或氣體）的流動傳遞。受熱的流體體積膨脹、密度減小而上升；冷的流體密度大而下沉，形成對流循環。'
-    },
-    {
-      type: 'choice',
-      question: '為什麼熱空氣會往上升？',
-      options: [
-        '因為熱空氣比較輕（密度較小），浮力大於重力',
-        '因為熱空氣溫度高，往溫度低的地方移動',
-        '因為熱空氣裡的分子比較大',
-        '因為地球磁場的影響'
-      ],
-      answer: 0,
-      explanation: '空氣受熱後體積膨脹，同體積的質量減少，密度降低，浮力大於重力，因此上升。冷空氣密度大，下沉補充，形成對流循環。'
-    },
-    {
-      type: 'choice',
-      question: '台灣夏天的海陸風是對流現象嗎？',
-      options: [
-        '不是，海陸風和對流無關',
-        '是的，白天陸地比海面熱，陸地熱空氣上升、海面涼空氣補入，形成海風',
-        '是的，夜晚陸地比海面熱，形成陸風',
-        '海陸風只發生在冬天'
-      ],
-      answer: 1,
-      explanation: '白天陸地比海面升溫快，陸地熱空氣上升，海面較涼的空氣補入，形成從海面吹向陸地的「海風」。夜晚相反（陸地冷卻快，海面暖，吹「陸風」）。這是對流的大尺度應用。'
-    },
-    {
-      type: 'choice',
-      question: '燒開水時，看到鍋底的水泡往上升，這是什麼現象？',
-      options: ['傳導', '對流', '輻射', '蒸發'],
-      answer: 1,
-      explanation: '鍋底水受熱，密度減小向上移動；上層較冷的水下沉到鍋底再被加熱，形成對流循環，這樣整鍋水都能被均勻加熱。'
-    },
-    {
-      type: 'choice',
-      question: '台灣夏天的午後雷陣雨，主要是哪種對流現象造成的？',
-      options: [
-        '海水對流形成的',
-        '地面受太陽輻射強烈加熱，熱空氣快速上升，形成對流雲（積雨雲），帶來雷陣雨',
-        '山脈反射太陽光造成的',
-        '颱風帶來的固定降雨模式'
-      ],
-      answer: 1,
-      explanation: '台灣夏天太陽強烈，地面溫度急升，大量熱空氣快速上升，攜帶大量水汽形成積雨雲，在午後（地面最熱的時段）爆發為雷陣雨。這是典型的「熱對流」降雨。'
-    },
-    {
-      type: 'choice',
-      question: '冷氣機（空調）的冷空氣通常從上方吹出，暖氣機的熱風通常從下方或地面附近吹出。這是利用了什麼原理？',
-      options: [
-        '電氣工程的設計習慣，和物理無關',
-        '對流：冷空氣密度大會下沉，從上方吹出可擴散整個空間；熱空氣密度小會上升，從下方吹出可均勻加熱空間',
-        '只是為了安全，防止觸電',
-        '對流和這個設計無關'
-      ],
-      answer: 1,
-      explanation: '冷空氣從上方吹，利用其密度大下沉的特性，自然地冷卻整個空間；熱空氣從下方吹，利用其密度小上升的特性，均勻加熱空間。這是工程師應用對流原理的設計。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkHeatConvectionAnswer = (q, a) => parseInt(a) === q.answer
+// ==========================================
+// 科學:熱的對流
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '熱的「對流」是指什麼?',
+    options: [
+      '熱隨著流體(液體或氣體)的流動而移動,熱的流體上升、冷的下沉形成循環',
+      '熱透過固體直接接觸傳遞',
+      '熱以電磁波形式在空間傳播',
+      '熱只能在真空中傳播'
+    ],
+    answer: 0,
+    displayAnswer: '對流是熱量透過流體(液體或氣體)的流動傳遞。受熱的流體體積膨脹、密度減小而上升;冷的流體密度大而下沉,形成對流循環。'
+  },
+  {
+    type: 'options',
+    question: '為什麼熱空氣會往上升?',
+    options: [
+      '因為熱空氣比較輕(密度較小),浮力大於重力',
+      '因為熱空氣溫度高,往溫度低的地方移動',
+      '因為熱空氣裡的分子比較大',
+      '因為地球磁場的影響'
+    ],
+    answer: 0,
+    displayAnswer: '空氣受熱後體積膨脹,同體積的質量減少,密度降低,浮力大於重力,因此上升。冷空氣密度大,下沉補充,形成對流循環。'
+  },
+  {
+    type: 'options',
+    question: '台灣夏天的海陸風是對流現象嗎?',
+    options: [
+      '是的,白天陸地比海面熱,陸地熱空氣上升、海面涼空氣補入,形成海風',
+      '不是,海陸風和對流無關',
+      '是的,夜晚陸地比海面熱,形成陸風',
+      '海陸風只發生在冬天'
+    ],
+    answer: 0,
+    displayAnswer: '白天陸地比海面升溫快,陸地熱空氣上升,海面較涼的空氣補入,形成從海面吹向陸地的「海風」。夜晚相反(陸地冷卻快,海面暖,吹「陸風」)。這是對流的大尺度應用。'
+  },
+  {
+    type: 'options',
+    question: '燒開水時,看到鍋底的水泡往上升,這是什麼現象?',
+    options: ['對流', '傳導', '輻射', '蒸發'],
+    answer: 0,
+    displayAnswer: '鍋底水受熱,密度減小向上移動;上層較冷的水下沉到鍋底再被加熱,形成對流循環,這樣整鍋水都能被均勻加熱。'
+  },
+  {
+    type: 'options',
+    question: '台灣夏天的午後雷陣雨,主要是哪種對流現象造成的?',
+    options: [
+      '地面受太陽輻射強烈加熱,熱空氣快速上升,形成對流雲(積雨雲),帶來雷陣雨',
+      '海水對流形成的',
+      '山脈反射太陽光造成的',
+      '颱風帶來的固定降雨模式'
+    ],
+    answer: 0,
+    displayAnswer: '台灣夏天太陽強烈,地面溫度急升,大量熱空氣快速上升,攜帶大量水汽形成積雨雲,在午後(地面最熱的時段)爆發為雷陣雨。這是典型的「熱對流」降雨。'
+  },
+  {
+    type: 'options',
+    question: '冷氣機(空調)的冷空氣通常從上方吹出,暖氣機的熱風通常從下方或地面附近吹出。這是利用了什麼原理?',
+    options: [
+      '對流:冷空氣密度大會下沉,從上方吹出可擴散整個空間;熱空氣密度小會上升,從下方吹出可均勻加熱空間',
+      '電氣工程的設計習慣,和物理無關',
+      '只是為了安全,防止觸電',
+      '對流和這個設計無關'
+    ],
+    answer: 0,
+    displayAnswer: '冷空氣從上方吹,利用其密度大下沉的特性,自然地冷卻整個空間;熱空氣從下方吹,利用其密度小上升的特性,均勻加熱空間。這是工程師應用對流原理的設計。'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion }
 
 // ===== 組合成 Day 2 =====
 const day2 = {
@@ -327,8 +407,10 @@ const day2 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateQingTaiwanQuestion,
-        checkAnswer: checkQingTaiwanAnswer
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -374,8 +456,10 @@ const day2 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateScaleDrawingQuestion,
-        checkAnswer: checkScaleDrawingAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -426,8 +510,10 @@ const day2 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateHeatConvectionQuestion,
-        checkAnswer: checkHeatConvectionAnswer
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

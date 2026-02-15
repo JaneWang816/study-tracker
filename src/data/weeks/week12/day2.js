@@ -2,332 +2,390 @@
 // 第12週 - 第二天：飛魚的價值 / 價值怎麼改變？
 
 // ==========================================
-// 練習題生成器
+// Week 14 Day 4 練習題庫
+// 主題：等量公理二(兩步驟)、半導體產業、生鏽現象
 // ==========================================
 
+// 使用 Fisher-Yates 洗牌算法
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// ==========================================
 // 【數學】等量公理二兩步驟練習題庫
-const mathQuestions = [
-  // 2x÷3 = 8 型（先乘後除）
+// ==========================================
+
+const mathQuestionsPool = [
+  // 2x÷3 = 8 型(先乘後除)
   {
     type: 'options',
-    question: '2x ÷ 3 = 6，x 是多少？',
+    question: '2x ÷ 3 = 6,x 是多少?',
     options: ['4', '9', '12', '18'],
-    answer: 1,
-    displayAnswer: '9',
-    explanation: '先兩邊乘 3：2x = 18；再兩邊除 2：x = 9'
+    correctAnswer: '9',
+    explanation: '先兩邊乘 3:2x = 18;再兩邊除 2:x = 9'
   },
   {
     type: 'options',
-    question: '3x ÷ 2 = 12，x 是多少？',
+    question: '3x ÷ 2 = 12,x 是多少?',
     options: ['6', '8', '18', '24'],
-    answer: 1,
-    displayAnswer: '8',
-    explanation: '先兩邊乘 2：3x = 24；再兩邊除 3：x = 8'
+    correctAnswer: '8',
+    explanation: '先兩邊乘 2:3x = 24;再兩邊除 3:x = 8'
   },
-  {
-    type: 'fill',
-    question: '4x ÷ 5 = 8，x = ？',
-    answer: '10',
-    displayAnswer: '10',
-    explanation: '先兩邊乘 5：4x = 40；再兩邊除 4：x = 10'
-  },
-  // x/2 + 3 = 8 型（混合加減乘除）
   {
     type: 'options',
-    question: 'x ÷ 2 + 3 = 8，x 是多少？',
+    question: '4x ÷ 5 = 8,x 是多少?',
+    options: ['6', '10', '16', '20'],
+    correctAnswer: '10',
+    explanation: '先兩邊乘 5:4x = 40;再兩邊除 4:x = 10'
+  },
+  // x/2 + 3 = 8 型(混合加減乘除)
+  {
+    type: 'options',
+    question: 'x ÷ 2 + 3 = 8,x 是多少?',
     options: ['5', '10', '16', '22'],
-    answer: 1,
-    displayAnswer: '10',
-    explanation: '先兩邊減 3：x ÷ 2 = 5；再兩邊乘 2：x = 10'
+    correctAnswer: '10',
+    explanation: '先兩邊減 3:x ÷ 2 = 5;再兩邊乘 2:x = 10'
   },
   {
     type: 'options',
-    question: 'x ÷ 3 + 5 = 9，x 是多少？',
+    question: 'x ÷ 3 + 5 = 9,x 是多少?',
     options: ['4', '12', '27', '42'],
-    answer: 1,
-    displayAnswer: '12',
-    explanation: '先兩邊減 5：x ÷ 3 = 4；再兩邊乘 3：x = 12'
+    correctAnswer: '12',
+    explanation: '先兩邊減 5:x ÷ 3 = 4;再兩邊乘 3:x = 12'
   },
   {
-    type: 'fill',
-    question: 'x ÷ 4 + 6 = 10，x = ？',
-    answer: '16',
-    displayAnswer: '16',
-    explanation: '先兩邊減 6：x ÷ 4 = 4；再兩邊乘 4：x = 16'
+    type: 'options',
+    question: 'x ÷ 4 + 6 = 10,x 是多少?',
+    options: ['8', '16', '24', '32'],
+    correctAnswer: '16',
+    explanation: '先兩邊減 6:x ÷ 4 = 4;再兩邊乘 4:x = 16'
   },
   // 2x - 5 = 9 型
   {
     type: 'options',
-    question: '3x - 4 = 11，x 是多少？',
+    question: '3x - 4 = 11,x 是多少?',
     options: ['3', '5', '7', '9'],
-    answer: 1,
-    displayAnswer: '5',
-    explanation: '先兩邊加 4：3x = 15；再兩邊除 3：x = 5'
+    correctAnswer: '5',
+    explanation: '先兩邊加 4:3x = 15;再兩邊除 3:x = 5'
   },
   {
-    type: 'fill',
-    question: '2x - 6 = 10，x = ？',
-    answer: '8',
-    displayAnswer: '8',
-    explanation: '先兩邊加 6：2x = 16；再兩邊除 2：x = 8'
+    type: 'options',
+    question: '2x - 6 = 10,x 是多少?',
+    options: ['4', '8', '12', '16'],
+    correctAnswer: '8',
+    explanation: '先兩邊加 6:2x = 16;再兩邊除 2:x = 8'
   },
   // 綜合題
   {
     type: 'options',
-    question: '5x ÷ 2 = 15，x 是多少？',
+    question: '5x ÷ 2 = 15,x 是多少?',
     options: ['3', '6', '12', '30'],
-    answer: 1,
-    displayAnswer: '6',
-    explanation: '先兩邊乘 2：5x = 30；再兩邊除 5：x = 6'
+    correctAnswer: '6',
+    explanation: '先兩邊乘 2:5x = 30;再兩邊除 5:x = 6'
   },
   {
     type: 'options',
-    question: '下列哪個步驟正確解出 4x ÷ 3 = 8？',
+    question: '下列哪個步驟正確解出 4x ÷ 3 = 8?',
     options: [
-      '先加 3，再除 4',
-      '先乘 3，再除 4',
-      '先除 4，再乘 3',
-      '先減 3，再除 4'
+      '先加 3,再除 4',
+      '先乘 3,再除 4',
+      '先除 4,再乘 3',
+      '先減 3,再除 4'
     ],
-    answer: 1,
-    displayAnswer: '先乘 3，再除 4',
+    correctAnswer: '先乘 3,再除 4',
     explanation: '4x ÷ 3 × 3 = 8 × 3 → 4x = 24 → x = 6'
   }
-]
+];
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
-
+// ==========================================
 // 【社會】半導體產業與科技轉型練習題庫
-const socialQuestions = [
+// ==========================================
+
+const socialQuestionsPool = [
   {
     type: 'options',
-    question: '新竹科學園區成立的主要目的是？',
+    question: '新竹科學園區成立的主要目的是?',
     options: [
       '發展農業技術',
       '發展高科技產業',
       '保護自然環境',
       '建設住宅區'
     ],
-    answer: 1,
-    displayAnswer: '發展高科技產業'
+    correctAnswer: '發展高科技產業',
+    explanation: '新竹科學園區是台灣發展高科技產業的重要基地'
   },
   {
     type: 'options',
-    question: '台積電（TSMC）的主要業務是？',
+    question: '台積電(TSMC)的主要業務是?',
     options: [
       '製造電腦',
       '晶圓代工',
       '生產手機',
       '設計軟體'
     ],
-    answer: 1,
-    displayAnswer: '晶圓代工'
+    correctAnswer: '晶圓代工',
+    explanation: '台積電專注於晶圓代工,為客戶製造晶片'
   },
   {
     type: 'options',
-    question: '「晶圓代工」是什麼意思？',
+    question: '「晶圓代工」是什麼意思?',
     options: [
       '替別人設計晶片',
       '替別人製造晶片',
       '替別人賣晶片',
       '替別人修理晶片'
     ],
-    answer: 1,
-    displayAnswer: '替別人製造晶片'
+    correctAnswer: '替別人製造晶片',
+    explanation: '代工是指接受委託進行製造,不負責設計或銷售'
   },
   {
     type: 'options',
-    question: '台灣被稱為「矽島」，「矽」指的是？',
+    question: '台灣被稱為「矽島」,「矽」指的是?',
     options: [
       '一種金屬礦產',
       '製造晶片的材料',
       '一種能源',
       '一種塑膠'
     ],
-    answer: 1,
-    displayAnswer: '製造晶片的材料'
+    correctAnswer: '製造晶片的材料',
+    explanation: '矽是製造半導體晶片的主要材料'
   },
   {
     type: 'options',
-    question: '台灣半導體產業成功的關鍵因素，下列何者「不是」？',
+    question: '台灣半導體產業成功的關鍵因素,下列何者「不是」?',
     options: [
       '政府投資設立科學園區',
       '人才培育與技術研發',
       '豐富的石油資源',
       '國際分工與代工模式'
     ],
-    answer: 2,
-    displayAnswer: '豐富的石油資源'
+    correctAnswer: '豐富的石油資源',
+    explanation: '台灣缺乏天然資源,靠的是人才和技術'
   },
   {
     type: 'options',
-    question: '「產業群聚效應」是指？',
+    question: '「產業群聚效應」是指?',
     options: [
       '工廠蓋在一起比較便宜',
-      '相關產業集中，互相支援合作',
+      '相關產業集中,互相支援合作',
       '產業數量很多',
       '產業規模很大'
     ],
-    answer: 1,
-    displayAnswer: '相關產業集中，互相支援合作'
+    correctAnswer: '相關產業集中,互相支援合作',
+    explanation: '產業聚集可以共享資源、技術和人才'
   },
   {
     type: 'options',
-    question: '半導體產業的特色是？',
+    question: '半導體產業的特色是?',
     options: [
       '勞力密集、附加價值低',
       '技術密集、附加價值高',
       '資源密集、污染嚴重',
       '土地密集、佔地廣大'
     ],
-    answer: 1,
-    displayAnswer: '技術密集、附加價值高'
+    correctAnswer: '技術密集、附加價值高',
+    explanation: '半導體產業需要高度技術,產品附加價值很高'
   },
   {
     type: 'options',
-    question: '為什麼台灣要發展高科技產業？',
+    question: '為什麼台灣要發展高科技產業?',
     options: [
       '因為台灣土地多',
       '因為台灣人口多',
-      '因為台灣缺乏天然資源，需要高附加價值產業',
+      '因為台灣缺乏天然資源,需要高附加價值產業',
       '因為台灣氣候適合'
     ],
-    answer: 2,
-    displayAnswer: '因為台灣缺乏天然資源，需要高附加價值產業'
+    correctAnswer: '因為台灣缺乏天然資源,需要高附加價值產業',
+    explanation: '台灣資源有限,必須發展高附加價值產業才能生存'
   },
   {
     type: 'options',
-    question: '台灣科技產業面臨的挑戰是？',
+    question: '台灣科技產業面臨的挑戰是?',
     options: [
       '人才外流、國際競爭',
       '工廠太多',
       '產品賣不出去',
       '員工太多'
     ],
-    answer: 0,
-    displayAnswer: '人才外流、國際競爭'
+    correctAnswer: '人才外流、國際競爭',
+    explanation: '人才流失和國際競爭是台灣科技業的主要挑戰'
   },
   {
     type: 'options',
-    question: '從飛魚漁業到半導體產業，台灣產業轉型的核心是？',
+    question: '從飛魚漁業到半導體產業,台灣產業轉型的核心是?',
     options: [
       '從海洋到陸地',
       '從南部到北部',
       '從低附加價值到高附加價值',
       '從傳統到現代'
     ],
-    answer: 2,
-    displayAnswer: '從低附加價值到高附加價值'
+    correctAnswer: '從低附加價值到高附加價值',
+    explanation: '產業轉型的本質是追求更高的附加價值'
   }
-]
+];
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
-
+// ==========================================
 // 【科學】生鏽現象練習題庫
-const scienceQuestions = [
+// ==========================================
+
+const scienceQuestionsPool = [
   {
     type: 'options',
-    question: '鐵生鏽是什麼變化？',
+    question: '鐵生鏽是什麼變化?',
     options: ['物理變化', '化學變化', '兩者都是', '兩者都不是'],
-    answer: 1,
-    displayAnswer: '化學變化'
+    correctAnswer: '化學變化',
+    explanation: '鐵生鏽產生氧化鐵,是新物質,屬於化學變化'
   },
   {
     type: 'options',
-    question: '鐵生鏽需要哪些條件？',
+    question: '鐵生鏽需要哪些條件?',
     options: [
       '只要有空氣',
       '只要有水',
       '需要空氣和水',
       '需要高溫'
     ],
-    answer: 2,
-    displayAnswer: '需要空氣和水'
+    correctAnswer: '需要空氣和水',
+    explanation: '鐵需要同時接觸空氣(氧氣)和水才會生鏽'
   },
   {
     type: 'options',
-    question: '鐵鏽的主要成分是？',
+    question: '鐵鏽的主要成分是?',
     options: ['鐵', '氧化鐵', '鐵和水的混合物', '鐵和空氣的混合物'],
-    answer: 1,
-    displayAnswer: '氧化鐵'
+    correctAnswer: '氧化鐵',
+    explanation: '鐵鏽是鐵與氧氣反應產生的氧化鐵'
   },
   {
     type: 'options',
-    question: '生鏽是一種什麼反應？',
+    question: '生鏽是一種什麼反應?',
     options: ['溶解反應', '氧化反應', '中和反應', '分解反應'],
-    answer: 1,
-    displayAnswer: '氧化反應'
+    correctAnswer: '氧化反應',
+    explanation: '鐵與氧氣結合的過程稱為氧化反應'
   },
   {
     type: 'options',
-    question: '為什麼生鏽是化學變化？',
+    question: '為什麼生鏽是化學變化?',
     options: [
       '因為鐵變色了',
       '因為鐵變硬了',
       '因為產生了氧化鐵這種新物質',
       '因為鐵變脆了'
     ],
-    answer: 2,
-    displayAnswer: '因為產生了氧化鐵這種新物質'
+    correctAnswer: '因為產生了氧化鐵這種新物質',
+    explanation: '化學變化的判斷標準是產生新物質'
   },
   {
     type: 'options',
-    question: '下列哪個環境最容易讓鐵生鏽？',
+    question: '下列哪個環境最容易讓鐵生鏽?',
     options: [
       '乾燥的沙漠',
       '真空環境',
       '潮濕的海邊',
       '寒冷的冰庫'
     ],
-    answer: 2,
-    displayAnswer: '潮濕的海邊'
+    correctAnswer: '潮濕的海邊',
+    explanation: '海邊既潮濕又有空氣,最容易讓鐵生鏽'
   },
   {
     type: 'options',
-    question: '鐵鏽能還原成鐵嗎？',
+    question: '鐵鏽能還原成鐵嗎?',
     options: [
-      '可以，用水洗就好',
-      '可以，但需要化學方法',
-      '不可以，化學變化不可逆',
+      '可以,用水洗就好',
+      '可以,但需要化學方法',
+      '不可以,化學變化不可逆',
       '看情況而定'
     ],
-    answer: 1,
-    displayAnswer: '可以，但需要化學方法',
-    explanation: '化學變化雖然不能輕易復原，但可以用另一個化學反應還原'
+    correctAnswer: '可以,但需要化學方法',
+    explanation: '化學變化雖然不能輕易復原,但可以用另一個化學反應還原'
   },
   {
     type: 'options',
-    question: '「氧化」是指？',
+    question: '「氧化」是指?',
     options: [
       '物質失去氧氣',
       '物質與氧氣結合',
       '物質變成氣體',
       '物質溶解在水中'
     ],
-    answer: 1,
-    displayAnswer: '物質與氧氣結合'
+    correctAnswer: '物質與氧氣結合',
+    explanation: '氧化是指物質與氧氣發生化學反應'
   },
   {
     type: 'options',
-    question: '文章中「飛魚腥鮮轉化為腐味」和「鐵生鏽」的共同點是？',
+    question: '文章中「飛魚腥鮮轉化為腐味」和「鐵生鏽」的共同點是?',
     options: [
       '都是物理變化',
-      '都是化學變化，產生新物質',
+      '都是化學變化,產生新物質',
       '都可以輕易復原',
       '都需要高溫'
     ],
-    answer: 1,
-    displayAnswer: '都是化學變化，產生新物質'
+    correctAnswer: '都是化學變化,產生新物質',
+    explanation: '兩者都產生了新物質,都是化學變化'
+  },
+  {
+    type: 'options',
+    question: '下列哪種方法「不能」防止鐵生鏽?',
+    options: [
+      '塗上油漆',
+      '鍍上其他金屬',
+      '保持乾燥',
+      '增加溫度'
+    ],
+    correctAnswer: '增加溫度',
+    explanation: '防鏽的關鍵是隔絕空氣或水分,溫度不是主要因素'
   }
-]
+];
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+// ==========================================
+// 題目生成器(使用閉包實現不重複)
+// ==========================================
+
+const createQuestionGenerator = (questionsPool) => {
+  let shuffledQuestions = [];
+  let currentIndex = 0;
+
+  const regenerate = () => {
+    shuffledQuestions = shuffleArray(questionsPool);
+    currentIndex = 0;
+  };
+
+  // 初始化
+  regenerate();
+
+  return () => {
+    if (currentIndex >= shuffledQuestions.length) {
+      regenerate();
+    }
+
+    const question = shuffledQuestions[currentIndex];
+    currentIndex++;
+
+    // 洗牌選項並記錄正確答案的新位置
+    const shuffledOptions = shuffleArray(question.options);
+    const answerIndex = shuffledOptions.indexOf(question.correctAnswer);
+
+    return {
+      type: question.type,
+      question: question.question,
+      options: shuffledOptions,
+      answer: answerIndex,
+      explanation: question.explanation
+    };
+  };
+};
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export const generateMathQuestion = createQuestionGenerator(mathQuestionsPool);
+export const generateSocialQuestion = createQuestionGenerator(socialQuestionsPool);
+export const generateScienceQuestion = createQuestionGenerator(scienceQuestionsPool);
 
 // ==========================================
 // Day 2 資料

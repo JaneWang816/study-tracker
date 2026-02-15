@@ -1,235 +1,319 @@
 // src/data/weeks/week08/day2.js
 // W8 Day2：為什麼小店會消失？
 
-// ── 社會科題庫（十大建設、大型資本）─────────────
-const socialPool = [
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 社會:十大建設、大型資本
+// ==========================================
+const socialQuestions = [
   {
-    question: '「十大建設」是哪位總統任內推動的？',
-    options: ['蔣介石', '蔣經國', '李登輝', '陳水扁'],
-    answer: 1
+    type: 'options',
+    question: '「十大建設」是哪位總統任內推動的?',
+    options: ['蔣經國', '蔣介石', '李登輝', '陳水扁'],
+    answer: 0,
+    displayAnswer: '十大建設是蔣經國擔任行政院長時期(1972-1978年)推動的重大公共建設計畫,包括中山高速公路、桃園國際機場、台中港等。'
   },
   {
-    question: '十大建設中，哪一項是為了解決台灣交通問題？',
+    type: 'options',
+    question: '十大建設中,哪一項是為了解決台灣交通問題?',
     options: ['中山高速公路', '台中港', '核能發電廠', '中油煉油廠'],
-    answer: 0
+    answer: 0,
+    displayAnswer: '中山高速公路(1978年通車)是十大建設中最重要的交通建設,連接基隆到高雄,大幅縮短南北交通時間,促進經濟發展。'
   },
   {
-    question: '十大建設大約是在哪個年代完成的？',
-    options: ['1950年代', '1970年代', '1990年代', '2010年代'],
-    answer: 1
+    type: 'options',
+    question: '十大建設大約是在哪個年代完成的?',
+    options: ['1970年代', '1950年代', '1990年代', '2010年代'],
+    answer: 0,
+    displayAnswer: '十大建設主要在1970年代完成,是台灣從農業社會轉型為工業社會的重要基礎建設,奠定了經濟起飛的基礎。'
   },
   {
-    question: '為什麼大型連鎖店容易打敗傳統小店？',
+    type: 'options',
+    question: '為什麼大型連鎖店容易打敗傳統小店?',
     options: [
-      '小店的東西比較貴',
       '大型連鎖店有規模經濟、資金多、行銷強',
+      '小店的東西比較貴',
       '小店的老闆比較懶',
       '政府只幫助大企業'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '大型連鎖店有規模經濟優勢(大量採購成本低)、資金充足、行銷能力強、品牌知名度高,這些優勢讓傳統小店難以競爭。'
   },
   {
-    question: '1998年信義威秀（當時的華納威秀）進駐台北，帶來了什麼改變？',
+    type: 'options',
+    question: '1998年信義威秀(當時的華納威秀)進駐台北,帶來了什麼改變?',
     options: [
-      '電影票變便宜了',
       '美式影城的聲光效果和複合式商場',
+      '電影票變便宜了',
       '台灣人不再看電影',
       '所有戲院都變成連鎖店'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '華納威秀(現信義威秀)引進美式多廳影城概念,提供先進的聲光設備、舒適座椅和複合式商場,改變了台灣人看電影的習慣和體驗。'
   },
   {
-    question: '「規模經濟」是什麼意思？',
+    type: 'options',
+    question: '「規模經濟」是什麼意思?',
     options: [
-      '公司越大，員工越多',
-      '生產數量越多，每一件的成本越低',
-      '店面越大，生意越好',
+      '生產數量越多,每一件的成本越低',
+      '公司越大,員工越多',
+      '店面越大,生意越好',
       '連鎖店一定比小店賺錢'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '規模經濟(Economies of Scale)是指生產規模擴大後,單位產品的平均成本下降。例如大量採購原料可以壓低價格,分攤固定成本。'
   },
   {
-    question: '傳統社區戲院在1990年代末期面臨什麼困境？',
+    type: 'options',
+    question: '傳統社區戲院在1990年代末期面臨什麼困境?',
     options: [
+      '大型連鎖影城搶走客源,無法競爭',
       '電影變得不好看',
-      '大型連鎖影城搶走客源，無法競爭',
       '政府禁止開戲院',
       '所有人都改看電視'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '1990年代末期,大型連鎖影城以更好的設備、環境和服務吸引觀眾,傳統社區戲院因設備老舊、資金不足,逐漸失去競爭力而關閉。'
   },
   {
-    question: '十大建設對台灣經濟最大的貢獻是什麼？',
+    type: 'options',
+    question: '十大建設對台灣經濟最大的貢獻是什麼?',
     options: [
+      '建立了現代化的基礎建設,幫助工業發展',
       '讓農業變得更發達',
-      '建立了現代化的基礎建設，幫助工業發展',
       '讓台灣的米可以出口',
       '讓所有人都有工作'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '十大建設建立了現代化的交通、港口、能源等基礎建設,為台灣工業化和經濟起飛提供了必要條件,是台灣從農業轉型工業的關鍵。'
   }
 ]
 
-function generateSocialQuestion() {
-  const q = socialPool[Math.floor(Math.random() * socialPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
-// ── 數學題庫（成長率）─────────────────────────
-function generateMathQuestion() {
-  const type = Math.floor(Math.random() * 3)
-
-  if (type === 0) {
-    // 計算成長率
-    const old = (Math.floor(Math.random() * 4) + 2) * 50  // 100, 150, 200, 250
-    const increase = [10, 20, 25, 50][Math.floor(Math.random() * 4)]
-    const newVal = old + increase
-    const rate = Math.round((increase / old) * 100)
-    const wrong1 = increase
-    const wrong2 = rate + 10
-    const wrong3 = Math.round((newVal / old) * 100)
-    const options = [String(rate), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(rate)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `去年營業額 ${old} 萬元，今年 ${newVal} 萬元，成長率約是多少%？（成長率 = 增加量 ÷ 原本數量 × 100%）`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 1) {
-    // 已知成長率，求新數值
-    const old = (Math.floor(Math.random() * 4) + 2) * 100  // 200, 300, 400, 500
-    const rate = [10, 20, 25, 50][Math.floor(Math.random() * 4)]
-    const newVal = old * (1 + rate / 100)
-    const wrong1 = old + rate
-    const wrong2 = old * (rate / 100)
-    const wrong3 = old - (old * rate / 100)
-    const options = [String(newVal), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(newVal)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `一家店去年營業額 ${old} 萬元，今年成長 ${rate}%，今年營業額是多少萬元？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else {
-    // 求原本數量
-    const rate = [20, 25, 50][Math.floor(Math.random() * 3)]
-    const increase = (Math.floor(Math.random() * 4) + 2) * 10  // 20, 30, 40, 50
-    const old = Math.round(increase / (rate / 100))
-    const wrong1 = increase * (rate / 100)
-    const wrong2 = increase + rate
-    const wrong3 = increase * rate
-    const options = [String(old), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(old)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `一家店今年比去年多賺 ${increase} 萬元，成長率是 ${rate}%，去年營業額是多少萬元？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  }
-}
-
-// ── 科學題庫（交通工具能源轉換）────────────────
-const sciencePool = [
+// ==========================================
+// 數學:成長率
+// ==========================================
+const mathQuestions = [
+  // 計算成長率
   {
-    question: '汽油車的能源轉換過程是？',
+    type: 'options',
+    question: '去年營業額 100 萬元,今年 110 萬元,成長率約是多少%?(成長率 = 增加量 ÷ 原本數量 × 100%)',
+    options: ['10', '10', '20', '110'],
+    answer: 0,
+    displayAnswer: '增加量 = 110 - 100 = 10萬元\n成長率 = (10 ÷ 100) × 100% = 10%'
+  },
+  {
+    type: 'options',
+    question: '去年營業額 150 萬元,今年 170 萬元,成長率約是多少%?(成長率 = 增加量 ÷ 原本數量 × 100%)',
+    options: ['13', '20', '23', '113'],
+    answer: 0,
+    displayAnswer: '增加量 = 170 - 150 = 20萬元\n成長率 = (20 ÷ 150) × 100% ≈ 13%'
+  },
+  {
+    type: 'options',
+    question: '去年營業額 200 萬元,今年 225 萬元,成長率約是多少%?(成長率 = 增加量 ÷ 原本數量 × 100%)',
+    options: ['13', '25', '23', '113'],
+    answer: 0,
+    displayAnswer: '增加量 = 225 - 200 = 25萬元\n成長率 = (25 ÷ 200) × 100% = 12.5% ≈ 13%'
+  },
+  {
+    type: 'options',
+    question: '去年營業額 200 萬元,今年 250 萬元,成長率約是多少%?(成長率 = 增加量 ÷ 原本數量 × 100%)',
+    options: ['25', '50', '35', '125'],
+    answer: 0,
+    displayAnswer: '增加量 = 250 - 200 = 50萬元\n成長率 = (50 ÷ 200) × 100% = 25%'
+  },
+  // 已知成長率,求新數值
+  {
+    type: 'options',
+    question: '一家店去年營業額 200 萬元,今年成長 10%,今年營業額是多少萬元?',
+    options: ['220', '210', '20', '180'],
+    answer: 0,
+    displayAnswer: '今年營業額 = 200 × (1 + 10%) = 200 × 1.1 = 220萬元'
+  },
+  {
+    type: 'options',
+    question: '一家店去年營業額 300 萬元,今年成長 20%,今年營業額是多少萬元?',
+    options: ['360', '320', '60', '240'],
+    answer: 0,
+    displayAnswer: '今年營業額 = 300 × (1 + 20%) = 300 × 1.2 = 360萬元'
+  },
+  {
+    type: 'options',
+    question: '一家店去年營業額 400 萬元,今年成長 25%,今年營業額是多少萬元?',
+    options: ['500', '425', '100', '300'],
+    answer: 0,
+    displayAnswer: '今年營業額 = 400 × (1 + 25%) = 400 × 1.25 = 500萬元'
+  },
+  {
+    type: 'options',
+    question: '一家店去年營業額 200 萬元,今年成長 50%,今年營業額是多少萬元?',
+    options: ['300', '250', '100', '100'],
+    answer: 0,
+    displayAnswer: '今年營業額 = 200 × (1 + 50%) = 200 × 1.5 = 300萬元'
+  },
+  // 求原本數量
+  {
+    type: 'options',
+    question: '一家店今年比去年多賺 20 萬元,成長率是 20%,去年營業額是多少萬元?',
+    options: ['100', '4', '40', '400'],
+    answer: 0,
+    displayAnswer: '去年營業額 = 增加量 ÷ 成長率 = 20 ÷ 20% = 20 ÷ 0.2 = 100萬元'
+  },
+  {
+    type: 'options',
+    question: '一家店今年比去年多賺 30 萬元,成長率是 25%,去年營業額是多少萬元?',
+    options: ['120', '7.5', '55', '750'],
+    answer: 0,
+    displayAnswer: '去年營業額 = 增加量 ÷ 成長率 = 30 ÷ 25% = 30 ÷ 0.25 = 120萬元'
+  },
+  {
+    type: 'options',
+    question: '一家店今年比去年多賺 40 萬元,成長率是 50%,去年營業額是多少萬元?',
+    options: ['80', '20', '90', '2000'],
+    answer: 0,
+    displayAnswer: '去年營業額 = 增加量 ÷ 成長率 = 40 ÷ 50% = 40 ÷ 0.5 = 80萬元'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 科學:交通工具能源轉換
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '汽油車的能源轉換過程是?',
     options: [
-      '電能 → 動能',
       '化學能 → 熱能 → 動能',
+      '電能 → 動能',
       '太陽能 → 電能 → 動能',
       '動能 → 化學能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '汽油車燃燒汽油(化學能)產生熱能,熱能推動活塞產生動能,驅動車輪前進。能源轉換:化學能 → 熱能 → 動能。'
   },
   {
-    question: '電動車的能源轉換過程是？',
+    type: 'options',
+    question: '電動車的能源轉換過程是?',
     options: [
-      '化學能 → 動能',
       '電能 → 動能',
+      '化學能 → 動能',
       '熱能 → 動能',
       '太陽能 → 動能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '電動車使用電池的電能直接驅動馬達產生動能,沒有燃燒過程。能源轉換:電能 → 動能,比汽油車的轉換過程簡單,效率較高。'
   },
   {
-    question: '為什麼電動車被認為比汽油車環保？',
+    type: 'options',
+    question: '為什麼電動車被認為比汽油車環保?',
     options: [
+      '電動車行駛時不直接排放廢氣,且能源轉換效率較高',
       '電動車完全不需要能源',
-      '電動車行駛時不直接排放廢氣，且能源轉換效率較高',
       '電動車速度比較慢',
       '電動車比較便宜'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '電動車行駛時不排放廢氣,且電動馬達的能源轉換效率(約85-90%)遠高於汽油引擎(約20-30%),所以被認為更環保。'
   },
   {
-    question: '汽油燃燒時，主要產生什麼氣體造成空氣污染？',
-    options: ['氧氣', '氮氣', '二氧化碳、一氧化碳、氮氧化物', '氫氣'],
-    answer: 2
+    type: 'options',
+    question: '汽油燃燒時,主要產生什麼氣體造成空氣污染?',
+    options: ['二氧化碳、一氧化碳、氮氧化物', '氧氣', '氮氣', '氫氣'],
+    answer: 0,
+    displayAnswer: '汽油燃燒會產生二氧化碳(溫室氣體)、一氧化碳(有毒氣體)、氮氧化物(造成酸雨和霧霾),這些都是空氣污染的主要來源。'
   },
   {
-    question: '捷運和高鐵使用的能源是？',
-    options: ['汽油', '柴油', '電力', '煤炭'],
-    answer: 2
+    type: 'options',
+    question: '捷運和高鐵使用的能源是?',
+    options: ['電力', '汽油', '柴油', '煤炭'],
+    answer: 0,
+    displayAnswer: '捷運和高鐵都使用電力驅動,透過電力網供電給列車的馬達,轉換為動能。這比柴油火車更乾淨、效率更高。'
   },
   {
-    question: '能源轉換的效率是什麼意思？',
+    type: 'options',
+    question: '能源轉換的效率是什麼意思?',
     options: [
-      '速度有多快',
       '有用的能量 ÷ 投入的總能量',
+      '速度有多快',
       '消耗了多少燃料',
       '車子有多重'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '能源轉換效率 = 有用的輸出能量 ÷ 投入的總能量。例如汽油引擎效率約25%,表示只有25%的汽油能量變成動能,其餘75%變成熱能散失。'
   },
   {
-    question: '為什麼大眾運輸（捷運、公車）比私人汽車更節能？',
+    type: 'options',
+    question: '為什麼大眾運輸(捷運、公車)比私人汽車更節能?',
     options: [
+      '一次載很多人,平均每人消耗的能源較少',
       '大眾運輸速度更快',
-      '一次載很多人，平均每人消耗的能源較少',
       '大眾運輸不需要能源',
       '政府補助大眾運輸'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '大眾運輸一次可載數十到數百人,平均每人消耗的能源遠低於私人汽車。例如捷運平均每人每公里消耗的能源只有汽車的1/10。'
   },
   {
-    question: '腳踏車的能源來源是？',
+    type: 'options',
+    question: '腳踏車的能源來源是?',
     options: [
+      '人的肌肉(食物的化學能 → 動能)',
       '汽油',
       '電力',
-      '人的肌肉（食物的化學能 → 動能）',
       '太陽能'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '腳踏車的能源來自人的肌肉。人吃食物獲得化學能,儲存在肌肉中,踩踏板時將化學能轉換為動能。能源轉換:食物化學能 → 肌肉動能。'
   }
 ]
 
-function generateScienceQuestion() {
-  const q = sciencePool[Math.floor(Math.random() * sciencePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day2 = {

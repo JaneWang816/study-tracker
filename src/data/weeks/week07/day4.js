@@ -1,135 +1,176 @@
 // src/data/weeks/week07/day4.js
 // W7 Day4：動筆日
 
-// ── 數學綜合題庫（W7 所有知識點串連）────────────
-function generateMathQuestion() {
-  const type = Math.floor(Math.random() * 5)
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-  if (type === 0) {
-    // 速率三量互求（求速率）
-    const scenarios = [
-      { name: '高鐵台北→高雄', d: 335, t: 1.5, label: '高鐵' },
-      { name: '自強號台北→台中', d: 160, t: 2, label: '自強號' },
-      { name: '捷運跑一段', d: 30, t: 0.5, label: '捷運' }
-    ]
-    const s = scenarios[Math.floor(Math.random() * scenarios.length)]
-    const v = Math.round(s.d / s.t)
-    const wrong1 = v + 20
-    const wrong2 = v - 20 > 0 ? v - 20 : v + 40
-    const wrong3 = s.d * s.t
-    const options = [String(v), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(v)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `${s.name}距離 ${s.d} 公里，車程 ${s.t} 小時，平均速率約是多少 km/h？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 1) {
-    // 單位換算
-    const pairs = [
-      { kmh: 36, ms: 10 },
-      { kmh: 72, ms: 20 },
-      { kmh: 108, ms: 30 },
-      { kmh: 144, ms: 40 }
-    ]
-    const p = pairs[Math.floor(Math.random() * pairs.length)]
-    const isToMs = Math.random() > 0.5
-    if (isToMs) {
-      const wrong1 = p.ms + 8
-      const wrong2 = p.ms - 5 > 0 ? p.ms - 5 : p.ms + 15
-      const wrong3 = p.kmh / 3
-      const options = [String(p.ms), String(wrong1), String(wrong2), String(Math.round(wrong3))]
-      const correctText = String(p.ms)
-      for (let i = options.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[options[i], options[j]] = [options[j], options[i]]
-      }
-      return {
-        question: `時速 ${p.kmh} km/h 換算成 m/s 是多少？`,
-        options,
-        answer: options.indexOf(correctText)
-      }
-    } else {
-      const wrong1 = p.kmh + 18
-      const wrong2 = p.kmh - 18 > 0 ? p.kmh - 18 : p.kmh + 36
-      const wrong3 = p.ms * 3
-      const options = [String(p.kmh), String(wrong1), String(wrong2), String(wrong3)]
-      const correctText = String(p.kmh)
-      for (let i = options.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[options[i], options[j]] = [options[j], options[i]]
-      }
-      return {
-        question: `速率 ${p.ms} m/s 換算成 km/h 是多少？`,
-        options,
-        answer: options.indexOf(correctText)
-      }
-    }
-  } else if (type === 2) {
-    // 相遇情境
-    const vA = (Math.floor(Math.random() * 4) + 3) * 20   // 60–120
-    const vB = (Math.floor(Math.random() * 4) + 3) * 20
-    const total = (vA + vB) * 2
-    const t = 2
-    const wrong1 = vA * t
-    const wrong2 = vB * t
-    const wrong3 = total + 40
-    const options = [String(total), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(total)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `兩列火車從兩端同時相向出發，A車時速 ${vA} km/h，B車時速 ${vB} km/h，${t} 小時後相遇，兩站相距多少公里？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 3) {
-    // 求距離（YouBike情境）
-    const v = Math.floor(Math.random() * 5) + 10           // 10–14
-    const min = (Math.floor(Math.random() * 4) + 1) * 15  // 15, 30, 45, 60
-    const tHour = min / 60
-    const d = Math.round(v * tHour * 10) / 10
-    const wrong1 = Math.round((d + 3) * 10) / 10
-    const wrong2 = Math.round((d - 2) * 10) / 10 > 0 ? Math.round((d - 2) * 10) / 10 : d + 2
-    const wrong3 = v * min
-    const options = [String(d), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(d)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `騎 YouBike 時速約 ${v} km/h，騎了 ${min} 分鐘（${tHour} 小時），約騎了幾公里？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else {
-    // 求時間
-    const v = (Math.floor(Math.random() * 5) + 4) * 30    // 120–270
-    const t = Math.floor(Math.random() * 3) + 1            // 1–3
-    const d = v * t
-    const wrong1 = t + 1
-    const wrong2 = t > 1 ? t - 1 : t + 2
-    const wrong3 = d / (v + 30)
-    const options = [String(t), String(wrong1), String(wrong2), String(Math.round(wrong3 * 10) / 10)]
-    const correctText = String(t)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `台北到某站距離 ${d} 公里，高鐵時速 ${v} km/h，幾小時後到站？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
+// ==========================================
+// 數學綜合:W7所有知識點串連
+// ==========================================
+const mathQuestions = [
+  // 速率三量互求(求速率)
+  {
+    type: 'options',
+    question: '高鐵台北→高雄距離 335 公里,車程 1.5 小時,平均速率約是多少 km/h?',
+    options: ['223', '243', '203', '502.5'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 335 ÷ 1.5 ≈ 223 km/h'
+  },
+  {
+    type: 'options',
+    question: '自強號台北→台中距離 160 公里,車程 2 小時,平均速率約是多少 km/h?',
+    options: ['80', '100', '60', '320'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 160 ÷ 2 = 80 km/h'
+  },
+  {
+    type: 'options',
+    question: '捷運跑一段距離 30 公里,車程 0.5 小時,平均速率約是多少 km/h?',
+    options: ['60', '80', '40', '15'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 30 ÷ 0.5 = 60 km/h'
+  },
+  // 單位換算(km/h → m/s)
+  {
+    type: 'options',
+    question: '時速 36 km/h 換算成 m/s 是多少?',
+    options: ['10', '18', '5', '12'],
+    answer: 0,
+    displayAnswer: '36 km/h ÷ 3.6 = 10 m/s'
+  },
+  {
+    type: 'options',
+    question: '時速 72 km/h 換算成 m/s 是多少?',
+    options: ['20', '28', '15', '24'],
+    answer: 0,
+    displayAnswer: '72 km/h ÷ 3.6 = 20 m/s'
+  },
+  {
+    type: 'options',
+    question: '時速 108 km/h 換算成 m/s 是多少?',
+    options: ['30', '38', '25', '36'],
+    answer: 0,
+    displayAnswer: '108 km/h ÷ 3.6 = 30 m/s'
+  },
+  {
+    type: 'options',
+    question: '時速 144 km/h 換算成 m/s 是多少?',
+    options: ['40', '48', '35', '48'],
+    answer: 0,
+    displayAnswer: '144 km/h ÷ 3.6 = 40 m/s'
+  },
+  // 單位換算(m/s → km/h)
+  {
+    type: 'options',
+    question: '速率 10 m/s 換算成 km/h 是多少?',
+    options: ['36', '54', '18', '30'],
+    answer: 0,
+    displayAnswer: '10 m/s × 3.6 = 36 km/h'
+  },
+  {
+    type: 'options',
+    question: '速率 20 m/s 換算成 km/h 是多少?',
+    options: ['72', '90', '54', '60'],
+    answer: 0,
+    displayAnswer: '20 m/s × 3.6 = 72 km/h'
+  },
+  {
+    type: 'options',
+    question: '速率 30 m/s 換算成 km/h 是多少?',
+    options: ['108', '126', '90', '90'],
+    answer: 0,
+    displayAnswer: '30 m/s × 3.6 = 108 km/h'
+  },
+  {
+    type: 'options',
+    question: '速率 40 m/s 換算成 km/h 是多少?',
+    options: ['144', '162', '126', '120'],
+    answer: 0,
+    displayAnswer: '40 m/s × 3.6 = 144 km/h'
+  },
+  // 相遇情境
+  {
+    type: 'options',
+    question: '兩列火車從兩端同時相向出發,A車時速 60 km/h,B車時速 80 km/h,2 小時後相遇,兩站相距多少公里?',
+    options: ['280', '120', '160', '320'],
+    answer: 0,
+    displayAnswer: '總距離 = (60 + 80) × 2 = 140 × 2 = 280公里'
+  },
+  {
+    type: 'options',
+    question: '兩列火車從兩端同時相向出發,A車時速 80 km/h,B車時速 100 km/h,2 小時後相遇,兩站相距多少公里?',
+    options: ['360', '160', '200', '400'],
+    answer: 0,
+    displayAnswer: '總距離 = (80 + 100) × 2 = 180 × 2 = 360公里'
+  },
+  {
+    type: 'options',
+    question: '兩列火車從兩端同時相向出發,A車時速 100 km/h,B車時速 120 km/h,2 小時後相遇,兩站相距多少公里?',
+    options: ['440', '200', '240', '480'],
+    answer: 0,
+    displayAnswer: '總距離 = (100 + 120) × 2 = 220 × 2 = 440公里'
+  },
+  // 求距離(YouBike情境)
+  {
+    type: 'options',
+    question: '騎 YouBike 時速約 10 km/h,騎了 15 分鐘(0.25 小時),約騎了幾公里?',
+    options: ['2.5', '5.5', '0.5', '150'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 10 × 0.25 = 2.5公里'
+  },
+  {
+    type: 'options',
+    question: '騎 YouBike 時速約 12 km/h,騎了 30 分鐘(0.5 小時),約騎了幾公里?',
+    options: ['6', '9', '4', '360'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 12 × 0.5 = 6公里'
+  },
+  {
+    type: 'options',
+    question: '騎 YouBike 時速約 14 km/h,騎了 45 分鐘(0.75 小時),約騎了幾公里?',
+    options: ['10.5', '13.5', '8.5', '630'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 14 × 0.75 = 10.5公里'
+  },
+  // 求時間
+  {
+    type: 'options',
+    question: '台北到某站距離 120 公里,高鐵時速 120 km/h,幾小時後到站?',
+    options: ['1', '2', '0', '0.5'],
+    answer: 0,
+    displayAnswer: '時間 = 距離 ÷ 速率 = 120 ÷ 120 = 1小時'
+  },
+  {
+    type: 'options',
+    question: '台北到某站距離 300 公里,高鐵時速 150 km/h,幾小時後到站?',
+    options: ['2', '3', '1', '1.7'],
+    answer: 0,
+    displayAnswer: '時間 = 距離 ÷ 速率 = 300 ÷ 150 = 2小時'
+  },
+  {
+    type: 'options',
+    question: '台北到某站距離 540 公里,高鐵時速 180 km/h,幾小時後到站?',
+    options: ['3', '4', '2', '2.8'],
+    answer: 0,
+    displayAnswer: '時間 = 距離 ÷ 速率 = 540 ÷ 180 = 3小時'
   }
-}
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day4 = {

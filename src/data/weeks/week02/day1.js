@@ -1,137 +1,277 @@
 // src/data/weeks/week02/day1.js
 // W2 Day 1：大地的輪廓
 
-// ==========================================
-// 數學：公因數
-// ==========================================
-const generateGCFQuestion = () => {
-  const pairs = [
-    { a: 12, b: 18, gcf: 6 },
-    { a: 8,  b: 12, gcf: 4 },
-    { a: 6,  b: 9,  gcf: 3 },
-    { a: 15, b: 10, gcf: 5 },
-    { a: 4,  b: 6,  gcf: 2 },
-    { a: 9,  b: 12, gcf: 3 },
-    { a: 14, b: 21, gcf: 7 },
-    { a: 8,  b: 20, gcf: 4 },
-    { a: 12, b: 16, gcf: 4 },
-    { a: 18, b: 24, gcf: 6 },
-    { a: 20, b: 30, gcf: 10 },
-    { a: 16, b: 24, gcf: 8 },
-  ]
-  const pair = pairs[Math.floor(Math.random() * pairs.length)]
-  const wrong = [pair.gcf + 1, pair.gcf * 2, Math.max(1, pair.gcf - 1)]
-  const options = [String(pair.gcf), ...wrong.map(String)].sort(() => Math.random() - 0.5)
-  return {
-    question: `${pair.a} 和 ${pair.b} 的最大公因數是多少？`,
-    options,
-    answer: String(pair.gcf),
-    type: 'choice'
-  }
-}
-
-const generateCommonFactorQuestion = () => {
-  const sets = [
-    { a: 12, b: 18, common: [2, 3, 6],  notCommon: [4, 5, 9] },
-    { a: 8,  b: 12, common: [2, 4],     notCommon: [3, 6, 8] },
-    { a: 15, b: 20, common: [5],         notCommon: [3, 4, 10] },
-    { a: 9,  b: 12, common: [3],         notCommon: [4, 6, 9] },
-    { a: 10, b: 15, common: [5],         notCommon: [2, 3, 10] },
-  ]
-  const set = sets[Math.floor(Math.random() * sets.length)]
-  const correct = set.common[Math.floor(Math.random() * set.common.length)]
-  const wrongs = set.notCommon.sort(() => Math.random() - 0.5).slice(0, 3)
-  const options = [String(correct), ...wrongs.map(String)].sort(() => Math.random() - 0.5)
-  return {
-    question: `以下哪個數是 ${set.a} 和 ${set.b} 的公因數？`,
-    options,
-    answer: String(correct),
-    type: 'choice'
-  }
-}
-
-const generateMathQuestion = () =>
-  Math.random() < 0.5 ? generateGCFQuestion() : generateCommonFactorQuestion()
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // ==========================================
-// 社會：台灣地形
+// 數學:公因數
 // ==========================================
-const terrainQBank = [
+const mathQuestions = [
+  // 最大公因數題型
   {
-    question: '台灣地形分布的主要特徵是什麼？',
-    options: ['東高西低，山脈縱貫南北', '西高東低，平原廣布', '中部低窪，四周高山', '全島地勢平坦'],
-    answer: '東高西低，山脈縱貫南北'
+    type: 'options',
+    question: '12 和 18 的最大公因數是多少?',
+    options: ['6', '7', '12', '5'],
+    answer: 0,
+    displayAnswer: '6'
   },
   {
-    question: '台灣面積最大的平原是哪一個？',
+    type: 'options',
+    question: '8 和 12 的最大公因數是多少?',
+    options: ['4', '2', '6', '8'],
+    answer: 0,
+    displayAnswer: '4'
+  },
+  {
+    type: 'options',
+    question: '6 和 9 的最大公因數是多少?',
+    options: ['3', '2', '6', '9'],
+    answer: 0,
+    displayAnswer: '3'
+  },
+  {
+    type: 'options',
+    question: '15 和 10 的最大公因數是多少?',
+    options: ['5', '3', '10', '15'],
+    answer: 0,
+    displayAnswer: '5'
+  },
+  {
+    type: 'options',
+    question: '4 和 6 的最大公因數是多少?',
+    options: ['2', '1', '3', '4'],
+    answer: 0,
+    displayAnswer: '2'
+  },
+  {
+    type: 'options',
+    question: '9 和 12 的最大公因數是多少?',
+    options: ['3', '4', '6', '9'],
+    answer: 0,
+    displayAnswer: '3'
+  },
+  {
+    type: 'options',
+    question: '14 和 21 的最大公因數是多少?',
+    options: ['7', '14', '3', '21'],
+    answer: 0,
+    displayAnswer: '7'
+  },
+  {
+    type: 'options',
+    question: '8 和 20 的最大公因數是多少?',
+    options: ['4', '2', '8', '10'],
+    answer: 0,
+    displayAnswer: '4'
+  },
+  {
+    type: 'options',
+    question: '12 和 16 的最大公因數是多少?',
+    options: ['4', '2', '8', '12'],
+    answer: 0,
+    displayAnswer: '4'
+  },
+  {
+    type: 'options',
+    question: '18 和 24 的最大公因數是多少?',
+    options: ['6', '3', '9', '12'],
+    answer: 0,
+    displayAnswer: '6'
+  },
+  {
+    type: 'options',
+    question: '20 和 30 的最大公因數是多少?',
+    options: ['10', '5', '15', '20'],
+    answer: 0,
+    displayAnswer: '10'
+  },
+  {
+    type: 'options',
+    question: '16 和 24 的最大公因數是多少?',
+    options: ['8', '4', '12', '16'],
+    answer: 0,
+    displayAnswer: '8'
+  },
+  // 公因數判斷題型
+  {
+    type: 'options',
+    question: '以下哪個數是 12 和 18 的公因數?',
+    options: ['6', '4', '5', '9'],
+    answer: 0,
+    displayAnswer: '6'
+  },
+  {
+    type: 'options',
+    question: '以下哪個數是 8 和 12 的公因數?',
+    options: ['4', '3', '6', '8'],
+    answer: 0,
+    displayAnswer: '4'
+  },
+  {
+    type: 'options',
+    question: '以下哪個數是 15 和 20 的公因數?',
+    options: ['5', '3', '4', '10'],
+    answer: 0,
+    displayAnswer: '5'
+  },
+  {
+    type: 'options',
+    question: '以下哪個數是 9 和 12 的公因數?',
+    options: ['3', '4', '6', '9'],
+    answer: 0,
+    displayAnswer: '3'
+  },
+  {
+    type: 'options',
+    question: '以下哪個數是 10 和 15 的公因數?',
+    options: ['5', '2', '3', '10'],
+    answer: 0,
+    displayAnswer: '5'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 社會:台灣地形
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '台灣地形分布的主要特徵是什麼?',
+    options: ['東高西低,山脈縱貫南北', '西高東低,平原廣布', '中部低窪,四周高山', '全島地勢平坦'],
+    answer: 0,
+    displayAnswer: '東高西低,山脈縱貫南北'
+  },
+  {
+    type: 'options',
+    question: '台灣面積最大的平原是哪一個?',
     options: ['嘉南平原', '屏東平原', '台北盆地', '宜蘭平原'],
-    answer: '嘉南平原'
+    answer: 0,
+    displayAnswer: '嘉南平原'
   },
   {
-    question: '台灣五大山脈中，最西邊的是哪一條？',
+    type: 'options',
+    question: '台灣五大山脈中,最西邊的是哪一條?',
     options: ['阿里山山脈', '中央山脈', '玉山山脈', '海岸山脈'],
-    answer: '阿里山山脈'
+    answer: 0,
+    displayAnswer: '阿里山山脈'
   },
   {
-    question: '台灣最高峰玉山高度約為多少公尺？',
+    type: 'options',
+    question: '台灣最高峰玉山高度約為多少公尺?',
     options: ['3952 公尺', '3886 公尺', '3797 公尺', '4000 公尺'],
-    answer: '3952 公尺'
+    answer: 0,
+    displayAnswer: '3952 公尺'
   },
   {
-    question: '台灣東部海岸的地形以什麼為主？',
+    type: 'options',
+    question: '台灣東部海岸的地形以什麼為主?',
     options: ['斷崖與礫石海岸', '廣闊沙灘', '泥灘與紅樹林', '廣闊平原'],
-    answer: '斷崖與礫石海岸'
+    answer: 0,
+    displayAnswer: '斷崖與礫石海岸'
   },
   {
-    question: '台灣的「花東縱谷」位於哪兩條山脈之間？',
+    type: 'options',
+    question: '台灣的「花東縱谷」位於哪兩條山脈之間?',
     options: ['中央山脈與海岸山脈', '玉山山脈與中央山脈', '阿里山山脈與玉山山脈', '雪山山脈與中央山脈'],
-    answer: '中央山脈與海岸山脈'
+    answer: 0,
+    displayAnswer: '中央山脈與海岸山脈'
   },
   {
-    question: '台灣西部平原主要是由什麼作用形成的？',
+    type: 'options',
+    question: '台灣西部平原主要是由什麼作用形成的?',
     options: ['河流沖積', '火山噴發', '海浪侵蝕', '地殼上升'],
-    answer: '河流沖積'
+    answer: 0,
+    displayAnswer: '河流沖積'
   },
   {
-    question: '台灣的山脈大多呈什麼方向延伸？',
+    type: 'options',
+    question: '台灣的山脈大多呈什麼方向延伸?',
     options: ['南北走向', '東西走向', '東北到西南', '西北到東南'],
-    answer: '南北走向'
-  },
+    answer: 0,
+    displayAnswer: '南北走向'
+  }
 ]
-const generateTerrainQuestion = () => {
-  const q = terrainQBank[Math.floor(Math.random() * terrainQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // ==========================================
-// 閱讀理解：排灣族
+// 閱讀理解:排灣族
 // ==========================================
-const readingQBank = [
+const readingQuestions = [
   {
-    question: '排灣族的「百步蛇」在族人心中代表什麼？',
+    type: 'options',
+    question: '排灣族的「百步蛇」在族人心中代表什麼?',
     options: ['祖靈與尊崇的象徵', '危險與邪惡的象徵', '豐收與喜悅的象徵', '雨水與河流的象徵'],
-    answer: '祖靈與尊崇的象徵'
+    answer: 0,
+    displayAnswer: '祖靈與尊崇的象徵'
   },
   {
-    question: '排灣族石板屋的建築技法，據說是從哪裡得到啟示的？',
+    type: 'options',
+    question: '排灣族石板屋的建築技法,據說是從哪裡得到啟示的?',
     options: ['百步蛇身上鱗片的排列', '大武山的岩層排列', '竹子的節節生長', '太陽光的照射方向'],
-    answer: '百步蛇身上鱗片的排列'
+    answer: 0,
+    displayAnswer: '百步蛇身上鱗片的排列'
   },
   {
-    question: '在「太陽卵生說」中，排灣族的祖先是如何誕生的？',
+    type: 'options',
+    question: '在「太陽卵生說」中,排灣族的祖先是如何誕生的?',
     options: ['蛇卵經太陽照射孵化出人', '神靈從大海中創造人', '大洪水後從山中誕生', '竹子裂開後生出人'],
-    answer: '蛇卵經太陽照射孵化出人'
+    answer: 0,
+    displayAnswer: '蛇卵經太陽照射孵化出人'
   },
   {
-    question: '「蛇生說」中，排灣族牡丹社的祖先是怎麼來的？',
-    options: ['竹子裂開生出蛇，成長後化為人', '蛇蛋孵化出人形嬰兒', '太陽光照在山石上生出人', '女神從天而降生下後代'],
-    answer: '竹子裂開生出蛇，成長後化為人'
-  },
+    type: 'options',
+    question: '「蛇生說」中,排灣族牡丹社的祖先是怎麼來的?',
+    options: ['竹子裂開生出蛇,成長後化為人', '蛇蛋孵化出人形嬰兒', '太陽光照在山石上生出人', '女神從天而降生下後代'],
+    answer: 0,
+    displayAnswer: '竹子裂開生出蛇,成長後化為人'
+  }
 ]
-const generateReadingQuestion = () => {
-  const q = readingQBank[Math.floor(Math.random() * readingQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateReadingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(readingQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion, generateSocialQuestion, generateReadingQuestion }
 
 // ==========================================
 // Day 1 主體
@@ -159,7 +299,7 @@ const day1 = {
                 content: '這週我們要一起閱讀一篇介紹臺灣原住民族蛇文化的文章。臺灣有許多族群，每個族群都有關於蛇的神話傳說，這些故事不只是想像力的產物，更藏著祖先對大自然的深刻觀察與智慧。'
               },
               {
-                type: 'quote',
+                type: 'text',
                 content: '對大自然充滿好奇的臺灣原住民族祖先，將生活中的事物化為想像力豐富的故事；其中透露出來的共通原則是：人類透過這些神話、傳說故事，不斷尋求與蛇和平共存的原則。',
                 author: '《臺灣原住民族與蛇》，《原住民族》雜誌 580 期，2013'
               }
@@ -207,7 +347,9 @@ const day1 = {
       practice: {
         questionCount: 4,
         generator: generateReadingQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -261,8 +403,10 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateTerrainQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -313,7 +457,9 @@ const day1 = {
       practice: {
         questionCount: 5,
         generator: generateMathQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -336,7 +482,7 @@ const day1 = {
                 content: '📌 閱讀：排灣族百步蛇是祖靈象徵，石板屋技法來自蛇鱗啟示。\n📌 社會：台灣地形東高西低，五大山脈由西向東排列，西部平原由河流沖積而成。\n📌 數學：公因數是兩個數共同的因數，最大公因數可用短除法快速求得。'
               },
               {
-                type: 'quote',
+                type: 'text',
                 content: '百步蛇告訴族人，屋頂需用其身上鱗片的排列方式建築……依循著蛇鱗的排列，井然有序地堆砌石板，這項技法與啟示便流傳至今。',
                 author: '《臺灣原住民族與蛇》'
               },

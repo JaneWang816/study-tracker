@@ -1,312 +1,370 @@
 // W11 Day1: 為什麼要保護自然?
 // 核心概念: 國家公園的誕生、等量公理概念、酸鹼指示劑
 
-// ==================== 題目生成器 ====================
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-// 社會科: 國家公園配對題
-const generateNationalParkQuestion = () => {
-  const parks = [
-    {
-      name: '墾丁國家公園',
-      year: 1984,
-      feature: '台灣第一座國家公園',
-      location: '屏東恆春半島',
-      special: '熱帶珊瑚礁生態、候鳥遷徙'
-    },
-    {
-      name: '玉山國家公園',
-      year: 1985,
-      feature: '東北亞第一高峰',
-      location: '中央山脈',
-      special: '高山生態系統'
-    },
-    {
-      name: '陽明山國家公園',
-      year: 1985,
-      feature: '火山地形',
-      location: '台北近郊',
-      special: '溫泉、北降植物'
-    },
-    {
-      name: '太魯閣國家公園',
-      year: 1985,
-      feature: '大理石峽谷',
-      location: '花蓮',
-      special: '地質奇觀、立霧溪'
-    },
-    {
-      name: '雪霸國家公園',
-      year: 1992,
-      feature: '冰河遺跡',
-      location: '苗栗、台中、新竹',
-      special: '櫻花鉤吻鮭棲地'
-    }
-  ]
+// ==========================================
+// 練習題庫
+// ==========================================
 
-  const questionTypes = [
-    {
-      type: 'year',
-      generate: (park) => ({
-        question: `${park.name}成立於哪一年?`,
-        options: [park.year, park.year - 1, park.year + 1, park.year + 7],
-        answer: 0
-      })
-    },
-    {
-      type: 'feature',
-      generate: (park) => {
-        const allFeatures = parks.map(p => p.feature)
-        const wrongFeatures = allFeatures.filter(f => f !== park.feature)
-        const shuffleWrong = wrongFeatures.sort(() => Math.random() - 0.5).slice(0, 3)
-        const options = [park.feature, ...shuffleWrong]
-        const shuffled = options.sort(() => Math.random() - 0.5)
-        return {
-          question: `${park.name}的主要特色是?`,
-          options: shuffled,
-          answer: shuffled.indexOf(park.feature)
-        }
-      }
-    },
-    {
-      type: 'first',
-      generate: () => ({
-        question: '台灣第一座國家公園是?',
-        options: ['墾丁國家公園', '玉山國家公園', '陽明山國家公園', '太魯閣國家公園'],
-        answer: 0
-      })
-    },
-    {
-      type: 'count1985',
-      generate: () => ({
-        question: '1985年同時成立了幾座國家公園?',
-        options: [3, 1, 2, 4],
-        answer: 0
-      })
-    }
-  ]
+// ── 社會科題庫:國家公園 ──
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '墾丁國家公園成立於哪一年?',
+    options: ['1984', '1983', '1985', '1991'],
+    answer: 0,
+    displayAnswer: '1984'
+  },
+  {
+    type: 'options',
+    question: '玉山國家公園成立於哪一年?',
+    options: ['1985', '1984', '1986', '1992'],
+    answer: 0,
+    displayAnswer: '1985'
+  },
+  {
+    type: 'options',
+    question: '陽明山國家公園成立於哪一年?',
+    options: ['1985', '1984', '1986', '1992'],
+    answer: 0,
+    displayAnswer: '1985'
+  },
+  {
+    type: 'options',
+    question: '太魯閣國家公園成立於哪一年?',
+    options: ['1985', '1984', '1986', '1992'],
+    answer: 0,
+    displayAnswer: '1985'
+  },
+  {
+    type: 'options',
+    question: '雪霸國家公園成立於哪一年?',
+    options: ['1992', '1985', '1993', '1999'],
+    answer: 0,
+    displayAnswer: '1992'
+  },
+  {
+    type: 'options',
+    question: '墾丁國家公園的主要特色是?',
+    options: ['台灣第一座國家公園', '東北亞第一高峰', '火山地形', '大理石峽谷'],
+    answer: 0,
+    displayAnswer: '台灣第一座國家公園'
+  },
+  {
+    type: 'options',
+    question: '玉山國家公園的主要特色是?',
+    options: ['東北亞第一高峰', '台灣第一座國家公園', '火山地形', '熱帶珊瑚礁生態、候鳥遷徙'],
+    answer: 0,
+    displayAnswer: '東北亞第一高峰'
+  },
+  {
+    type: 'options',
+    question: '陽明山國家公園的主要特色是?',
+    options: ['火山地形', '東北亞第一高峰', '大理石峽谷', '冰河遺跡'],
+    answer: 0,
+    displayAnswer: '火山地形'
+  },
+  {
+    type: 'options',
+    question: '太魯閣國家公園的主要特色是?',
+    options: ['大理石峽谷', '火山地形', '冰河遺跡', '熱帶珊瑚礁生態、候鳥遷徙'],
+    answer: 0,
+    displayAnswer: '大理石峽谷'
+  },
+  {
+    type: 'options',
+    question: '雪霸國家公園的主要特色是?',
+    options: ['冰河遺跡', '大理石峽谷', '火山地形', '東北亞第一高峰'],
+    answer: 0,
+    displayAnswer: '冰河遺跡'
+  },
+  {
+    type: 'options',
+    question: '台灣第一座國家公園是?',
+    options: ['墾丁國家公園', '玉山國家公園', '陽明山國家公園', '太魯閣國家公園'],
+    answer: 0,
+    displayAnswer: '墾丁國家公園'
+  },
+  {
+    type: 'options',
+    question: '1985年同時成立了幾座國家公園?',
+    options: ['3', '1', '2', '4'],
+    answer: 0,
+    displayAnswer: '3'
+  }
+]
 
-  const park = parks[Math.floor(Math.random() * parks.length)]
-  const qType = questionTypes[Math.floor(Math.random() * questionTypes.length)]
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
   
-  return qType.generate(park)
-}
-
-// 數學科: 等式判斷題
-const generateEquationQuestion = () => {
-  const questionTypes = [
-    {
-      type: 'true_false',
-      generate: () => {
-        const isTrue = Math.random() > 0.5
-        if (isTrue) {
-          const a = Math.floor(Math.random() * 10) + 1
-          const b = Math.floor(Math.random() * 10) + 1
-          const ops = ['+', '-']
-          const op = ops[Math.floor(Math.random() * ops.length)]
-          const result = op === '+' ? a + b : a - b
-          return {
-            question: `${a} ${op} ${b} = ${result} 這個等式是對的嗎?`,
-            options: ['對的', '錯的'],
-            answer: 0,
-            explanation: `因為 ${a} ${op} ${b} 確實等於 ${result}`
-          }
-        } else {
-          const a = Math.floor(Math.random() * 10) + 1
-          const b = Math.floor(Math.random() * 10) + 1
-          const result = a + b + (Math.random() > 0.5 ? 1 : -1)
-          return {
-            question: `${a} + ${b} = ${result} 這個等式是對的嗎?`,
-            options: ['對的', '錯的'],
-            answer: 1,
-            explanation: `因為 ${a} + ${b} = ${a + b}，不等於 ${result}`
-          }
-        }
-      }
-    },
-    {
-      type: 'balance',
-      generate: () => {
-        const left = Math.floor(Math.random() * 15) + 5
-        const options = [left, left + 1, left - 1, left + 2]
-        return {
-          question: `如果天秤左邊是 ${left}，要保持平衡，右邊應該是多少?`,
-          options: options.sort(() => Math.random() - 0.5),
-          answer: options.indexOf(left),
-          explanation: '天秤平衡時，兩邊的重量必須相等'
-        }
-      }
-    },
-    {
-      type: 'equal_sign',
-      generate: () => {
-        const a = Math.floor(Math.random() * 8) + 2
-        const b = Math.floor(Math.random() * 8) + 2
-        const sum = a + b
-        return {
-          question: `等號 = 的意思是什麼?`,
-          options: [
-            '左右兩邊永遠相等',
-            '左邊比右邊大',
-            '右邊比左邊大',
-            '左右兩邊可以不相等'
-          ],
-          answer: 0,
-          explanation: '等號表示兩邊的值完全相同'
-        }
-      }
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
-  ]
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
-  const qType = questionTypes[Math.floor(Math.random() * questionTypes.length)]
-  return qType.generate()
-}
+// ── 數學科題庫:等式判斷 ──
+const mathQuestions = [
+  {
+    type: 'options',
+    question: '5 + 3 = 8 這個等式是對的嗎?',
+    options: ['對的', '錯的'],
+    answer: 0,
+    displayAnswer: '對的'
+  },
+  {
+    type: 'options',
+    question: '7 - 2 = 5 這個等式是對的嗎?',
+    options: ['對的', '錯的'],
+    answer: 0,
+    displayAnswer: '對的'
+  },
+  {
+    type: 'options',
+    question: '6 + 1 = 9 這個等式是對的嗎?',
+    options: ['錯的', '對的'],
+    answer: 0,
+    displayAnswer: '錯的'
+  },
+  {
+    type: 'options',
+    question: '8 - 3 = 6 這個等式是對的嗎?',
+    options: ['錯的', '對的'],
+    answer: 0,
+    displayAnswer: '錯的'
+  },
+  {
+    type: 'options',
+    question: '4 + 5 = 9 這個等式是對的嗎?',
+    options: ['對的', '錯的'],
+    answer: 0,
+    displayAnswer: '對的'
+  },
+  {
+    type: 'options',
+    question: '10 - 4 = 5 這個等式是對的嗎?',
+    options: ['錯的', '對的'],
+    answer: 0,
+    displayAnswer: '錯的'
+  },
+  {
+    type: 'options',
+    question: '如果天秤左邊是10，要保持平衡，右邊應該是多少?',
+    options: ['10', '11', '9', '12'],
+    answer: 0,
+    displayAnswer: '10'
+  },
+  {
+    type: 'options',
+    question: '如果天秤左邊是15，要保持平衡，右邊應該是多少?',
+    options: ['15', '16', '14', '17'],
+    answer: 0,
+    displayAnswer: '15'
+  },
+  {
+    type: 'options',
+    question: '等號 = 的意思是什麼?',
+    options: ['左右兩邊永遠相等', '左邊比右邊大', '右邊比左邊大', '左右兩邊可以不相等'],
+    answer: 0,
+    displayAnswer: '左右兩邊永遠相等'
+  },
+  {
+    type: 'options',
+    question: '天秤平衡時，兩邊的重量必須如何?',
+    options: ['相等', '左邊較重', '右邊較重', '不一定'],
+    answer: 0,
+    displayAnswer: '相等'
+  }
+]
 
-// 科學科: 酸鹼指示劑題
-const generateIndicatorQuestion = () => {
-  const questionTypes = [
-    {
-      type: 'litmus_acid',
-      generate: () => ({
-        question: '檸檬汁是酸性的，會讓藍色石蕊試紙變成什麼顏色?',
-        options: ['紅色', '藍色', '綠色', '黃色'],
-        answer: 0,
-        explanation: '酸性物質會讓藍色石蕊試紙變紅'
-      })
-    },
-    {
-      type: 'litmus_base',
-      generate: () => ({
-        question: '肥皂水是鹼性的，會讓紅色石蕊試紙變成什麼顏色?',
-        options: ['藍色', '紅色', '綠色', '黃色'],
-        answer: 0,
-        explanation: '鹼性物質會讓紅色石蕊試紙變藍'
-      })
-    },
-    {
-      type: 'indicator_definition',
-      generate: () => ({
-        question: '什麼是「指示劑」?',
-        options: [
-          '遇到酸鹼會變色的物質',
-          '只能測酸性的物質',
-          '只能測鹼性的物質',
-          '用來測溫度的物質'
-        ],
-        answer: 0,
-        explanation: '指示劑是遇到酸性或鹼性物質會改變顏色的化學物質'
-      })
-    },
-    {
-      type: 'natural_indicator',
-      generate: () => ({
-        question: '哪一種是天然指示劑?',
-        options: ['紫色高麗菜汁', '清水', '食鹽水', '糖水'],
-        answer: 0,
-        explanation: '紫色高麗菜汁含有花青素，遇酸鹼會變色'
-      })
-    },
-    {
-      type: 'litmus_rule',
-      generate: () => ({
-        question: '石蕊試紙的變色規則是?',
-        options: [
-          '遇酸變紅、遇鹼變藍',
-          '遇酸變藍、遇鹼變紅',
-          '遇酸變綠、遇鹼變黃',
-          '遇酸變黃、遇鹼變綠'
-        ],
-        answer: 0,
-        explanation: '記憶口訣: 酸紅鹼藍'
-      })
-    }
-  ]
-
-  const qType = questionTypes[Math.floor(Math.random() * questionTypes.length)]
-  return qType.generate()
-}
-
-// 語文科: 詞彙配對題
-const generateVocabularyQuestion = () => {
-  const vocabulary = [
-    {
-      word: '保育',
-      definition: '保護並培育自然資源和生物',
-      example: '國家公園的設立是為了保育台灣的珍貴生態',
-      wrong: ['破壞環境', '開發資源', '砍伐森林']
-    },
-    {
-      word: '生態系',
-      definition: '生物與環境形成的互動系統',
-      example: '高山生態系包含植物、動物和氣候環境',
-      wrong: ['單一物種', '人造環境', '工業區域']
-    },
-    {
-      word: '特有種',
-      definition: '只在某個地區生存的物種',
-      example: '台灣黑熊是台灣特有種',
-      wrong: ['外來種', '普遍物種', '滅絕物種']
-    },
-    {
-      word: '棲地',
-      definition: '生物生活的環境',
-      example: '珊瑚礁是熱帶魚的棲地',
-      wrong: ['食物', '天敵', '氣候']
-    },
-    {
-      word: '多樣性',
-      definition: '物種的豐富程度',
-      example: '台灣的生物多樣性非常高',
-      wrong: ['單一性', '相似性', '重複性']
-    }
-  ]
-
-  const item = vocabulary[Math.floor(Math.random() * vocabulary.length)]
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
   
-  const questionTypes = [
-    {
-      type: 'definition',
-      generate: (item) => {
-        const allDefinitions = vocabulary.map(v => v.definition)
-        const wrongDefs = allDefinitions.filter(d => d !== item.definition)
-        const shuffleWrong = wrongDefs.sort(() => Math.random() - 0.5).slice(0, 3)
-        const options = [item.definition, ...shuffleWrong]
-        const shuffled = options.sort(() => Math.random() - 0.5)
-        return {
-          question: `「${item.word}」的意思是?`,
-          options: shuffled,
-          answer: shuffled.indexOf(item.definition)
-        }
-      }
-    },
-    {
-      type: 'usage',
-      generate: (item) => {
-        const sentences = [
-          `國家公園的設立是為了${item.word}台灣的珍貴生態`,
-          `台灣的${item.word}非常豐富`,
-          `我們要重視環境${item.word}`,
-          `${item.word}是環境保護的重要工作`
-        ]
-        const sentence = sentences[Math.floor(Math.random() * sentences.length)]
-        return {
-          question: `下列哪個句子正確使用了「${item.word}」?`,
-          options: [
-            sentence,
-            sentence.replace(item.word, '破壞'),
-            sentence.replace(item.word, '污染'),
-            sentence.replace(item.word, '開發')
-          ],
-          answer: 0
-        }
-      }
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
-  const qType = questionTypes[Math.floor(Math.random() * questionTypes.length)]
-  return qType.generate(item)
-}
+// ── 科學科題庫:酸鹼指示劑 ──
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '檸檬汁是酸性的，會讓藍色石蕊試紙變成什麼顏色?',
+    options: ['紅色', '藍色', '綠色', '黃色'],
+    answer: 0,
+    displayAnswer: '紅色'
+  },
+  {
+    type: 'options',
+    question: '肥皂水是鹼性的，會讓紅色石蕊試紙變成什麼顏色?',
+    options: ['藍色', '紅色', '綠色', '黃色'],
+    answer: 0,
+    displayAnswer: '藍色'
+  },
+  {
+    type: 'options',
+    question: '什麼是「指示劑」?',
+    options: ['遇到酸鹼會變色的物質', '只能測酸性的物質', '只能測鹼性的物質', '用來測溫度的物質'],
+    answer: 0,
+    displayAnswer: '遇到酸鹼會變色的物質'
+  },
+  {
+    type: 'options',
+    question: '哪一種是天然指示劑?',
+    options: ['紫色高麗菜汁', '清水', '食鹽水', '糖水'],
+    answer: 0,
+    displayAnswer: '紫色高麗菜汁'
+  },
+  {
+    type: 'options',
+    question: '石蕊試紙的變色規則是?',
+    options: ['遇酸變紅、遇鹼變藍', '遇酸變藍、遇鹼變紅', '遇酸變綠、遇鹼變黃', '遇酸變黃、遇鹼變綠'],
+    answer: 0,
+    displayAnswer: '遇酸變紅、遇鹼變藍'
+  },
+  {
+    type: 'options',
+    question: '酸性物質會讓藍色石蕊試紙變成什麼顏色?',
+    options: ['紅色', '藍色', '綠色', '不變色'],
+    answer: 0,
+    displayAnswer: '紅色'
+  },
+  {
+    type: 'options',
+    question: '鹼性物質會讓紅色石蕊試紙變成什麼顏色?',
+    options: ['藍色', '紅色', '綠色', '不變色'],
+    answer: 0,
+    displayAnswer: '藍色'
+  },
+  {
+    type: 'options',
+    question: '紫色高麗菜汁含有什麼物質，所以能當指示劑?',
+    options: ['花青素', '葉綠素', '維生素C', '蛋白質'],
+    answer: 0,
+    displayAnswer: '花青素'
+  }
+]
 
-// ==================== Day 結構 ====================
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// ── 語文科題庫:保育詞彙 ──
+const chineseQuestions = [
+  {
+    type: 'options',
+    question: '「保育」的意思是?',
+    options: ['保護並培育自然資源和生物', '破壞環境', '開發資源', '砍伐森林'],
+    answer: 0,
+    displayAnswer: '保護並培育自然資源和生物'
+  },
+  {
+    type: 'options',
+    question: '「生態系」的意思是?',
+    options: ['生物與環境形成的互動系統', '單一物種', '人造環境', '工業區域'],
+    answer: 0,
+    displayAnswer: '生物與環境形成的互動系統'
+  },
+  {
+    type: 'options',
+    question: '「特有種」的意思是?',
+    options: ['只在某個地區生存的物種', '外來種', '普遍物種', '滅絕物種'],
+    answer: 0,
+    displayAnswer: '只在某個地區生存的物種'
+  },
+  {
+    type: 'options',
+    question: '「棲地」的意思是?',
+    options: ['生物生活的環境', '食物', '天敵', '氣候'],
+    answer: 0,
+    displayAnswer: '生物生活的環境'
+  },
+  {
+    type: 'options',
+    question: '「多樣性」的意思是?',
+    options: ['物種的豐富程度', '單一性', '相似性', '重複性'],
+    answer: 0,
+    displayAnswer: '物種的豐富程度'
+  },
+  {
+    type: 'options',
+    question: '下列哪個句子正確使用了「保育」?',
+    options: [
+      '國家公園的設立是為了保育台灣的珍貴生態',
+      '國家公園的設立是為了破壞台灣的珍貴生態',
+      '國家公園的設立是為了污染台灣的珍貴生態',
+      '國家公園的設立是為了開發台灣的珍貴生態'
+    ],
+    answer: 0,
+    displayAnswer: '國家公園的設立是為了保育台灣的珍貴生態'
+  },
+  {
+    type: 'options',
+    question: '台灣黑熊是台灣的什麼?',
+    options: ['特有種', '外來種', '普通物種', '滅絕物種'],
+    answer: 0,
+    displayAnswer: '特有種'
+  },
+  {
+    type: 'options',
+    question: '珊瑚礁是熱帶魚的什麼?',
+    options: ['棲地', '食物', '天敵', '同類'],
+    answer: 0,
+    displayAnswer: '棲地'
+  }
+]
+
+const generateChineseQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(chineseQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// Day 結構
+// ==========================================
 
 const day1 = {
   id: 'day1',
@@ -443,7 +501,7 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateNationalParkQuestion,
+        generator: generateSocialQuestion,
         checkAnswer: (q, a) => parseInt(a) === q.answer
       }
     },
@@ -499,65 +557,19 @@ const day1 = {
             ]
           },
           {
-            title: '三、判斷等式的真假',
+            title: '三、等式與生態平衡',
             blocks: [
               {
                 type: 'text',
-                content: '我們可以透過計算來判斷一個等式是對的還是錯的:'
+                content: '等式的概念其實和生態平衡很像:'
               },
               {
                 type: 'text',
-                content: '**步驟1**:計算等號左邊的值\n**步驟2**:計算等號右邊的值\n**步驟3**:比較兩邊是否相等'
+                content: '• **生態系統** = 一個平衡的天秤\n• **動植物數量** = 天秤兩邊的重量\n• **環境破壞** = 打破天秤平衡'
               },
               {
                 type: 'text',
-                content: '例如:判斷「8 + 4 = 12」是否正確?'
-              },
-              {
-                type: 'text',
-                content: '• 左邊: 8 + 4 = 12\n• 右邊: 12\n• 12 = 12 ✓ 所以這個等式是對的!'
-              }
-            ]
-          },
-          {
-            title: '四、等式與天秤的對照',
-            blocks: [
-              {
-                type: 'text',
-                content: '我們可以把等式想像成天秤:'
-              },
-              {
-                type: 'text',
-                content: '• **等號左邊** = 天秤左邊的重量\n• **等號右邊** = 天秤右邊的重量\n• **等式成立** = 天秤保持平衡'
-              },
-              {
-                type: 'text',
-                content: '例如: 3 + 5 = 8'
-              },
-              {
-                type: 'text',
-                content: '想像天秤左邊放了3個蘋果和5個蘋果(共8個)，右邊放了8個蘋果，這樣天秤就會平衡。'
-              },
-              {
-                type: 'text',
-                content: '下一次課程，我們會學到:如果在天秤兩邊同時加上或減去相同的重量，天秤還會保持平衡嗎?這就是「等量公理」的核心概念!'
-              }
-            ]
-          },
-          {
-            title: '五、生活中的等式思維',
-            blocks: [
-              {
-                type: 'text',
-                content: '保護自然環境，也需要「平衡」的思維:'
-              },
-              {
-                type: 'text',
-                content: '• **生態平衡**:掠食者與被掠食者的數量要平衡\n• **資源平衡**:人類使用的資源 = 自然能恢復的速度\n• **保育與發展的平衡**:在保護環境的同時，也要滿足人們的生活需求'
-              },
-              {
-                type: 'text',
-                content: '就像等式兩邊必須相等一樣，自然界也需要保持平衡，生態系統才能健康運作。'
+                content: '當我們過度砍伐森林、捕捉動物，就像在天秤的一邊拿走重量，生態系統就失去平衡了。國家公園的設立，就是要維持這個平衡。'
               }
             ]
           }
@@ -565,7 +577,7 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateEquationQuestion,
+        generator: generateMathQuestion,
         checkAnswer: (q, a) => parseInt(a) === q.answer
       }
     },
@@ -574,7 +586,7 @@ const day1 = {
     {
       id: 'w11d1-science',
       name: '科學',
-      icon: '🧪',
+      icon: '🔬',
       lesson: {
         title: '酸鹼指示劑',
         sections: [
@@ -583,111 +595,74 @@ const day1 = {
             blocks: [
               {
                 type: 'text',
-                content: '在化學世界裡，有些物質非常特別，它們會因為遇到「酸性」或「鹼性」物質而改變顏色。我們把這種會變色的物質叫做**指示劑**。'
+                content: '**指示劑**:遇到酸性或鹼性物質會改變顏色的化學物質。'
               },
               {
                 type: 'text',
-                content: '**指示劑的功用**:幫助我們判斷一種物質是酸性還是鹼性。'
-              },
-              {
-                type: 'text',
-                content: '就像交通號誌用紅綠燈告訴我們「停止」或「通行」，指示劑用顏色變化告訴我們「酸性」或「鹼性」。'
+                content: '指示劑就像是化學世界的「偵探」，可以幫助我們判斷一個物質是酸性還是鹼性。'
               }
             ]
           },
           {
-            title: '二、石蕊試紙 - 最常用的指示劑',
+            title: '二、石蕊試紙',
             blocks: [
               {
                 type: 'text',
-                content: '**石蕊試紙**是實驗室最常用的指示劑，它有兩種顏色:'
+                content: '**石蕊試紙**是最常見的指示劑，分為藍色和紅色兩種。'
               },
               {
                 type: 'text',
-                content: '• **藍色石蕊試紙**:遇到酸性物質會變紅色\n• **紅色石蕊試紙**:遇到鹼性物質會變藍色'
+                content: '**變色規則**:'
               },
               {
                 type: 'text',
-                content: '**記憶口訣**:「酸紅鹼藍」'
+                content: '• **遇到酸性物質**:藍色石蕊試紙變紅\n• **遇到鹼性物質**:紅色石蕊試紙變藍'
               },
               {
                 type: 'text',
-                content: '• 酸性 → 變紅色\n• 鹼性 → 變藍色'
+                content: '**記憶口訣**:酸紅鹼藍'
+              },
+              {
+                type: 'text',
+                content: '例如:\n• 檸檬汁(酸性) → 藍色試紙變紅\n• 肥皂水(鹼性) → 紅色試紙變藍'
               }
             ]
           },
           {
-            title: '三、實驗範例',
+            title: '三、天然指示劑',
             blocks: [
               {
                 type: 'text',
-                content: '**實驗1:檢測檸檬汁**'
+                content: '除了人工製作的石蕊試紙，大自然中也有很多植物可以當作指示劑!'
               },
               {
                 type: 'text',
-                content: '• 檸檬汁是酸性的(含有檸檬酸)\n• 用藍色石蕊試紙接觸檸檬汁\n• 試紙會從藍色變成紅色 ✓'
+                content: '**紫色高麗菜汁**就是一種很好的天然指示劑:'
               },
               {
                 type: 'text',
-                content: '**實驗2:檢測肥皂水**'
+                content: '• 遇到酸性 → 變成粉紅色或紅色\n• 遇到鹼性 → 變成藍綠色或黃綠色'
               },
               {
                 type: 'text',
-                content: '• 肥皂水是鹼性的\n• 用紅色石蕊試紙接觸肥皂水\n• 試紙會從紅色變成藍色 ✓'
+                content: '這是因為紫色高麗菜含有一種叫做「花青素」的物質，遇到不同酸鹼值會改變顏色。'
               }
             ]
           },
           {
-            title: '四、天然指示劑 - 紫色高麗菜汁',
+            title: '四、指示劑與環境保護',
             blocks: [
               {
                 type: 'text',
-                content: '除了石蕊試紙，大自然中也有指示劑!最有名的就是**紫色高麗菜汁**。'
+                content: '指示劑在環境保護上也很重要:'
               },
               {
                 type: 'text',
-                content: '紫色高麗菜含有一種叫做「花青素」的色素，這種色素會因為酸鹼不同而變色:'
+                content: '• **河川水質檢測**:用指示劑測試河水是否被污染\n• **土壤酸鹼測試**:農夫用指示劑測試土壤，決定種植什麼作物\n• **雨水酸鹼測試**:檢測是否有酸雨問題'
               },
               {
                 type: 'text',
-                content: '• 遇到酸性:變成粉紅色或紅色\n• 保持中性:維持紫色\n• 遇到鹼性:變成藍綠色或黃綠色'
-              },
-              {
-                type: 'text',
-                content: '**動手做**:你可以在家裡試試看!'
-              },
-              {
-                type: 'text',
-                content: '1. 切一些紫色高麗菜，用熱水煮出紫色的汁液\n2. 把汁液倒入幾個透明杯子\n3. 分別加入檸檬汁(酸)、清水(中性)、小蘇打水(鹼)\n4. 觀察顏色變化!'
-              }
-            ]
-          },
-          {
-            title: '五、為什麼要學指示劑?',
-            blocks: [
-              {
-                type: 'text',
-                content: '**1. 環境保護**'
-              },
-              {
-                type: 'text',
-                content: '科學家用指示劑檢測河水、土壤的酸鹼度，判斷環境是否受到污染。例如:酸雨會讓土壤變酸，影響植物生長。'
-              },
-              {
-                type: 'text',
-                content: '**2. 農業應用**'
-              },
-              {
-                type: 'text',
-                content: '不同植物喜歡的土壤酸鹼度不同，農夫會測量土壤的酸鹼度，決定要種什麼作物。'
-              },
-              {
-                type: 'text',
-                content: '**3. 生活安全**'
-              },
-              {
-                type: 'text',
-                content: '游泳池的水需要保持適當的酸鹼度，太酸或太鹼都會傷害皮膚。管理員會定期用指示劑檢測水質。'
+                content: '在國家公園裡，科學家也會定期用指示劑監測水質和土壤，確保生態環境健康。'
               },
               {
                 type: 'text',
@@ -699,7 +674,7 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateIndicatorQuestion,
+        generator: generateScienceQuestion,
         checkAnswer: (q, a) => parseInt(a) === q.answer
       }
     },
@@ -791,7 +766,7 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateVocabularyQuestion,
+        generator: generateChineseQuestion,
         checkAnswer: (q, a) => parseInt(a) === q.answer
       }
     },

@@ -1,268 +1,307 @@
 // src/data/weeks/week01/day4.js
 // 第1週 - 第四天：動筆寫——我的家鄉定位
 
+import { shuffleArray, shuffleOptions } from '../../utils'
+
 // ==========================================
 // 練習題生成器
 // ==========================================
 
-// 【數學】W1 綜合應用題庫（整合數線、時差、比例）
+// 【數學】W1 綜合應用題庫(整合數線、時差、比例)
 const mathQuestions = [
-  // ── 數線與負數（Day 1 複習）──
+  // ── 數線與負數(Day 1 複習)──
   {
     type: 'options',
-    question: '玉山海拔 3,952 公尺，馬里亞納海溝最深處約海面以下 11,034 公尺。兩者在數線上的距離是幾公尺？',
-    options: ['7,082 公尺', '11,034 公尺', '14,986 公尺', '3,952 公尺'],
-    answer: 2,
-    displayAnswer: '14,986 公尺（3,952 + 11,034 = 14,986）'
+    question: '玉山海拔 3,952 公尺,馬里亞納海溝最深處約海面以下 11,034 公尺。兩者在數線上的距離是幾公尺？',
+    options: ['14,986 公尺', '7,082 公尺', '11,034 公尺', '3,952 公尺'],
+    answer: 0,
+    displayAnswer: '14,986 公尺(3,952 + 11,034 = 14,986)'
   },
   {
     type: 'options',
-    question: '冬天某天台北氣溫 8°C，同一天哈爾濱（中國北方）氣溫 -22°C，兩地溫差幾度？',
-    options: ['14°C', '22°C', '30°C', '38°C'],
-    answer: 2,
-    displayAnswer: '30°C（8 - (-22) = 8 + 22 = 30）'
+    question: '冬天某天台北氣溫 8°C,同一天哈爾濱(中國北方)氣溫 -22°C,兩地溫差幾度？',
+    options: ['30°C', '14°C', '22°C', '38°C'],
+    answer: 0,
+    displayAnswer: '30°C(8 - (-22) = 8 + 22 = 30)'
   },
   {
     type: 'options',
-    question: '-7 和 -3，哪個在數線上更靠近 0？',
-    options: ['-7', '-3', '一樣近', '無法比較'],
-    answer: 1,
-    displayAnswer: '-3（|-3| = 3 < |-7| = 7）'
+    question: '-7 和 -3,哪個在數線上更靠近 0？',
+    options: ['-3', '-7', '一樣近', '無法比較'],
+    answer: 0,
+    displayAnswer: '-3(|-3| = 3 < |-7| = 7)'
   },
-  // ── 時差計算（Day 2 複習）──
+  // ── 時差計算(Day 2 複習)──
   {
     type: 'options',
-    question: '台灣（東經 120°）的時間是早上 9:00，同一時刻，東經 75° 的印度（UTC+5.5）是幾點？（台灣 UTC+8）',
+    question: '台灣(東經 120°)的時間是早上 9:00,同一時刻,東經 75° 的印度(UTC+5.5)是幾點？(台灣 UTC+8)',
     options: ['早上 6:30', '早上 11:30', '中午 12:00', '下午 3:00'],
     answer: 0,
-    displayAnswer: '早上 6:30（台灣 9:00 - 2.5 小時 = 6:30）'
+    displayAnswer: '早上 6:30(台灣 9:00 - 2.5 小時 = 6:30)'
   },
   {
-    type: 'fill',
+    type: 'options',
     question: '每 15° 經度 = 1 小時時差。東經 105° 和東經 120° 相差幾小時？',
-    answer: '1',
-    displayAnswer: '1 小時（120 - 105 = 15°，15 ÷ 15 = 1）'
+    options: ['1 小時', '2 小時', '0.5 小時', '1.5 小時'],
+    answer: 0,
+    displayAnswer: '1 小時(120 - 105 = 15°,15 ÷ 15 = 1)'
   },
   {
     type: 'options',
-    question: '台灣現在是下午 2:00，紐西蘭（UTC+13）比台灣早 5 小時，紐西蘭現在是幾點？',
-    options: ['上午 9:00', '下午 7:00', '晚上 8:00', '隔天早上 1:00'],
-    answer: 1,
-    displayAnswer: '下午 7:00（14:00 + 5 = 19:00 = 下午 7:00）'
+    question: '台灣現在是下午 2:00,紐西蘭(UTC+13)比台灣早 5 小時,紐西蘭現在是幾點？',
+    options: ['下午 7:00', '上午 9:00', '晚上 8:00', '隔天早上 1:00'],
+    answer: 0,
+    displayAnswer: '下午 7:00(14:00 + 5 = 19:00 = 下午 7:00)'
   },
-  // ── 距離與比例（Day 3 複習）──
+  // ── 距離與比例(Day 3 複習)──
   {
     type: 'options',
-    question: '地圖比例尺 1:2,000,000，圖上量到兩城市距離 4.5 公分，實際距離是幾公里？',
-    options: ['45 公里', '90 公里', '900 公里', '9,000 公里'],
-    answer: 1,
-    displayAnswer: '90 公里（4.5 × 20 = 90 公里）'
+    question: '地圖比例尺 1:2,000,000,圖上量到兩城市距離 4.5 公分,實際距離是幾公里？',
+    options: ['90 公里', '45 公里', '900 公里', '9,000 公里'],
+    answer: 0,
+    displayAnswer: '90 公里(4.5 × 20 = 90 公里)'
   },
   {
     type: 'options',
-    question: '台灣到紐西蘭約 9,000 公里，台灣到日本約 2,000 公里。台灣到紐西蘭是到日本的幾倍？',
-    options: ['3 倍', '4 倍', '4.5 倍', '5 倍'],
-    answer: 2,
-    displayAnswer: '4.5 倍（9,000 ÷ 2,000 = 4.5）'
+    question: '台灣到紐西蘭約 9,000 公里,台灣到日本約 2,000 公里。台灣到紐西蘭是到日本的幾倍？',
+    options: ['4.5 倍', '3 倍', '4 倍', '5 倍'],
+    answer: 0,
+    displayAnswer: '4.5 倍(9,000 ÷ 2,000 = 4.5)'
   },
   // ── W1 綜合情境題 ──
   {
     type: 'options',
-    question: '台灣在東經 121°，馬達加斯加在東經 47°，相差幾度？需要幾小時時差？',
-    options: ['74°，約 5 小時', '74°，約 7 小時', '168°，約 11 小時', '168°，約 8 小時'],
+    question: '台灣在東經 121°,馬達加斯加在東經 47°,相差幾度？需要幾小時時差？',
+    options: ['74°,約 5 小時', '74°,約 7 小時', '168°,約 11 小時', '168°,約 8 小時'],
     answer: 0,
-    displayAnswer: '74°，約 5 小時（121 - 47 = 74，74 ÷ 15 ≈ 4.9 小時）'
+    displayAnswer: '74°,約 5 小時(121 - 47 = 74,74 ÷ 15 ≈ 4.9 小時)'
   },
   {
     type: 'options',
-    question: '南島民族的船一天走 120 公里。如果從台灣出發，需要幾天才能到達馬達加斯加（距離約 10,000 公里）？',
-    options: ['約 30 天', '約 50 天', '約 83 天', '約 120 天'],
-    answer: 2,
-    displayAnswer: '約 83 天（10,000 ÷ 120 ≈ 83.3）'
+    question: '南島民族的船一天走 120 公里。如果從台灣出發,需要幾天才能到達馬達加斯加(距離約 10,000 公里)？',
+    options: ['約 83 天', '約 30 天', '約 50 天', '約 120 天'],
+    answer: 0,
+    displayAnswer: '約 83 天(10,000 ÷ 120 ≈ 83.3)'
   },
   {
-    type: 'fill',
-    question: '台灣面積 36,000 平方公里，全世界陸地面積約 1.5 億平方公里。台灣佔全球陸地面積的萬分之幾？（取整數）',
-    answer: '24',
-    displayAnswer: '約 24/10000（36,000 ÷ 15,000,000 ≈ 0.0024 = 24/10,000）'
+    type: 'options',
+    question: '台灣面積 36,000 平方公里,全世界陸地面積約 1.5 億平方公里。台灣佔全球陸地面積的萬分之幾？(取整數)',
+    options: ['約 24/10000', '約 20/10000', '約 30/10000', '約 36/10000'],
+    answer: 0,
+    displayAnswer: '約 24/10000(36,000 ÷ 15,000,000 ≈ 0.0024 = 24/10,000)'
   }
 ]
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-// 【科學】觀察記錄活動題庫（引導學生觀察自己的生活環境）
+// 【科學】觀察記錄活動題庫(引導學生觀察自己的生活環境)
 const scienceQuestions = [
   {
     type: 'options',
-    question: '記錄觀察時，「今天天氣很好」和「今天氣溫 28°C，無雲」，哪個記錄更符合科學規範？',
+    question: '記錄觀察時,「今天天氣很好」和「今天氣溫 28°C,無雲」,哪個記錄更符合科學規範？',
     options: [
-      '今天天氣很好（簡短清楚）',
-      '今天氣溫 28°C，無雲（有數字和具體描述）',
+      '今天氣溫 28°C,無雲(有數字和具體描述)',
+      '今天天氣很好(簡短清楚)',
       '兩個都一樣好',
       '科學記錄不需要記天氣'
     ],
-    answer: 1,
-    displayAnswer: '今天氣溫 28°C，無雲（量化且具體，才能比較和重現）'
+    answer: 0,
+    displayAnswer: '今天氣溫 28°C,無雲(量化且具體,才能比較和重現)'
   },
   {
     type: 'options',
-    question: '你觀察家附近的一棵樹，下列哪個記錄最完整？',
+    question: '你觀察家附近的一棵樹,下列哪個記錄最完整？',
     options: [
-      '那棵樹很高，葉子是綠的',
-      '榕樹，高約 5 公尺，葉長約 8 公分，觀察時間：2 月，葉色深綠',
-      '樹，綠色，很漂亮',
+      '榕樹,高約 5 公尺,葉長約 8 公分,觀察時間:2 月,葉色深綠',
+      '那棵樹很高,葉子是綠的',
+      '樹,綠色,很漂亮',
       '這棵樹長在路邊'
     ],
-    answer: 1,
-    displayAnswer: '完整的觀察記錄包含：物種、量化尺寸、時間、顏色等'
+    answer: 0,
+    displayAnswer: '完整的觀察記錄包含:物種、量化尺寸、時間、顏色等'
   },
   {
     type: 'options',
-    question: '同一地點，你在早上 7:00 和下午 3:00 各觀察一次太陽位置，這個實驗設計的目的是？',
+    question: '同一地點,你在早上 7:00 和下午 3:00 各觀察一次太陽位置,這個實驗設計的目的是？',
     options: [
+      '觀察太陽在一天中的移動方向(東升西落)',
       '測試溫度計準不準',
-      '觀察太陽在一天中的移動方向（東升西落）',
       '看天空有幾朵雲',
       '測量空氣品質'
     ],
-    answer: 1,
-    displayAnswer: '觀察太陽的方向變化，驗證東升西落的規律'
+    answer: 0,
+    displayAnswer: '觀察太陽的方向變化,驗證東升西落的規律'
   },
   {
     type: 'options',
-    question: '你記錄家附近一週的天氣，發現每次颱風前都有特定的雲出現。這是哪一種科學推論？',
+    question: '你記錄家附近一週的天氣,發現每次颱風前都有特定的雲出現。這是哪一種科學推論？',
     options: [
-      '假設',
       '根據觀察規律做出的預測',
+      '假設',
       '感官直覺',
       '別人告訴你的'
     ],
-    answer: 1,
-    displayAnswer: '根據長期觀察找到的規律進行預測，這就是科學的核心'
+    answer: 0,
+    displayAnswer: '根據長期觀察找到的規律進行預測,這就是科學的核心'
   },
   {
     type: 'options',
-    question: '你想知道家鄉的正北方向，但沒有指南針，可以怎麼做？',
+    question: '你想知道家鄉的正北方向,但沒有指南針,可以怎麼做？',
     options: [
+      '在晴天正午,觀察太陽的方位,正午太陽在正南方(台灣),背對太陽就是北方',
       '用手機的地圖 app',
-      '在晴天正午，觀察太陽的方位，正午太陽在正南方（台灣），背對太陽就是北方',
       '問別人',
       '看哪邊比較亮'
     ],
-    answer: 1,
-    displayAnswer: '正午太陽在正南（台灣位在北回歸線附近），背對太陽就是北方——這是古老的天然指北方法'
+    answer: 0,
+    displayAnswer: '正午太陽在正南(台灣位在北回歸線附近),背對太陽就是北方——這是古老的天然指北方法'
   },
   {
     type: 'options',
-    question: '觀察記錄要做「重複測量」，主要是為了什麼？',
+    question: '觀察記錄要做「重複測量」,主要是為了什麼？',
     options: [
+      '避免單次誤差,讓結果更可靠',
       '讓老師覺得你很認真',
-      '避免單次誤差，讓結果更可靠',
       '比較哪次測量最快',
       '記錄越多越好'
     ],
-    answer: 1,
-    displayAnswer: '重複測量可以發現誤差，讓結果更可靠（取平均值更準確）'
+    answer: 0,
+    displayAnswer: '重複測量可以發現誤差,讓結果更可靠(取平均值更準確)'
   }
 ]
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // 【語文】說明文寫作技巧題庫
 const writingQuestions = [
   {
     type: 'options',
-    question: '說明文的第一段（主題段）最重要的功能是？',
+    question: '說明文的第一段(主題段)最重要的功能是？',
     options: [
-      '讓讀者感動',
       '說清楚文章要說明的主題和範圍',
+      '讓讀者感動',
       '提出問題讓讀者思考',
       '介紹作者自己'
     ],
-    answer: 1,
-    displayAnswer: '說清楚文章要說明的主題和範圍，讓讀者知道接下來要讀什麼'
+    answer: 0,
+    displayAnswer: '說清楚文章要說明的主題和範圍,讓讀者知道接下來要讀什麼'
   },
   {
     type: 'options',
     question: '下列哪個句子適合作為「我的家鄉定位」說明文的第一句？',
     options: [
-      '我很愛我的家鄉，那裡有很多好吃的食物。',
-      '台南市位於台灣西南部，北緯約 23°，東經約 120°，是台灣最早開發的城市之一。',
-      '有一天，我和家人一起去看夕陽，那是我對家鄉最美的記憶。',
+      '台南市位於台灣西南部,北緯約 23°,東經約 120°,是台灣最早開發的城市之一。',
+      '我很愛我的家鄉,那裡有很多好吃的食物。',
+      '有一天,我和家人一起去看夕陽,那是我對家鄉最美的記憶。',
       '家鄉是一個讓人想念的地方。'
     ],
-    answer: 1,
-    displayAnswer: '說明文開頭應直接點出主題（地名、位置），而非抒情或記敘'
+    answer: 0,
+    displayAnswer: '說明文開頭應直接點出主題(地名、位置),而非抒情或記敘'
   },
   {
     type: 'options',
-    question: '「台東縣在台灣東部，東臨太平洋，面積約 3,515 平方公里。」這是哪種說明方式？',
+    question: '「台東縣在台灣東部,東臨太平洋,面積約 3,515 平方公里。」這是哪種說明方式？',
     options: [
+      '定義說明(直接說明事物的特性和數據)',
       '舉例說明',
-      '定義說明（直接說明事物的特性和數據）',
       '比較說明',
       '因果說明'
     ],
-    answer: 1,
-    displayAnswer: '定義說明：直接陳述地點的屬性和數據'
+    answer: 0,
+    displayAnswer: '定義說明:直接陳述地點的屬性和數據'
   },
   {
     type: 'options',
-    question: '「高雄市的面積是台北市的 6 倍以上」，這是哪種說明方式？',
+    question: '「高雄市的面積是台北市的 6 倍以上」,這是哪種說明方式？',
     options: [
+      '比較說明(透過比較讓讀者理解大小)',
       '定義說明',
       '舉例說明',
-      '比較說明（透過比較讓讀者理解大小）',
       '因果說明'
     ],
-    answer: 2,
-    displayAnswer: '比較說明：用讀者熟悉的參照物來表達大小關係'
+    answer: 0,
+    displayAnswer: '比較說明:用讀者熟悉的參照物來表達大小關係'
   },
   {
     type: 'options',
-    question: '說明文的段落之間，常常用「連接詞」來讓文章流暢。下列哪個連接詞適合用來「補充說明」？',
+    question: '說明文的段落之間,常常用「連接詞」來讓文章流暢。下列哪個連接詞適合用來「補充說明」？',
     options: [
+      '除此之外,值得一提的是……',
       '但是',
-      '除此之外，值得一提的是……',
       '雖然如此',
       '由此可知'
     ],
-    answer: 1,
+    answer: 0,
     displayAnswer: '「除此之外」「值得一提的是」用來補充更多相關資訊'
   },
   {
     type: 'options',
-    question: '說明文最後一段（結尾段）的最佳功能是？',
+    question: '說明文最後一段(結尾段)的最佳功能是？',
     options: [
+      '濃縮全文重點,或提出這個地方的獨特意義',
       '再把所有細節重複一遍',
       '提出一個新的問題讓讀者繼續想',
-      '濃縮全文重點，或提出這個地方的獨特意義',
       '寫下作者的個人心情'
     ],
-    answer: 2,
-    displayAnswer: '結尾段應濃縮重點或提出意義，讓讀者有完整感'
+    answer: 0,
+    displayAnswer: '結尾段應濃縮重點或提出意義,讓讀者有完整感'
   },
   {
     type: 'options',
-    question: '寫完初稿後，修改時最優先應該檢查什麼？',
+    question: '寫完初稿後,修改時最優先應該檢查什麼？',
     options: [
-      '有沒有錯字',
       '內容是否清楚、每段主題是否明確、順序是否合理',
+      '有沒有錯字',
       '有沒有夠多的形容詞',
       '文章夠不夠長'
     ],
-    answer: 1,
-    displayAnswer: '修改先看「大結構」（內容清楚嗎？順序對嗎？），再看細節（錯字）'
+    answer: 0,
+    displayAnswer: '修改先看「大結構」(內容清楚嗎？順序對嗎？),再看細節(錯字)'
   }
 ]
 
-const generateWritingQuestion = () => {
-  return writingQuestions[Math.floor(Math.random() * writingQuestions.length)]
-}
+const generateWritingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(writingQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion, generateScienceQuestion, generateWritingQuestion }
 
 // ==========================================
 // Day 4 資料

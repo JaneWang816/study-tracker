@@ -2,213 +2,267 @@
 // 第12週 - 第四天：動筆日 / 科技與傳統的對話
 
 // ==========================================
-// 練習題生成器
+// Week 14 Day 2 練習題庫
+// 主題：綜合應用、物質變化延伸
 // ==========================================
 
-// 【數學】W12 綜合練習題庫
-const mathQuestions = [
+// 使用 Fisher-Yates 洗牌算法
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// ==========================================
+// 【數學】W14 綜合練習題庫
+// ==========================================
+
+const mathQuestionsPool = [
   // 情境題：產業經濟
   {
     type: 'options',
-    question: '一位漁民出海成本 1200 元，希望賺 800 元利潤。總收入應該是多少元？',
+    question: '一位漁民出海成本 1200 元,希望賺 800 元利潤。總收入應該是多少元?',
     options: ['400元', '2000元', '2400元', '1600元'],
-    answer: 1,
-    displayAnswer: '2000元',
-    explanation: '設總收入 x 元：x - 1200 = 800，x = 2000'
+    correctAnswer: '2000元',
+    explanation: '設總收入 x 元:x - 1200 = 800,x = 2000'
   },
   {
     type: 'options',
-    question: '承上題，如果捕到 50 公斤飛魚，每公斤要賣多少錢？',
+    question: '承上題,如果捕到 50 公斤飛魚,每公斤要賣多少錢?',
     options: ['24元', '40元', '50元', '100元'],
-    answer: 1,
-    displayAnswer: '40元',
-    explanation: '設每公斤 y 元：50y = 2000，y = 40'
-  },
-  {
-    type: 'fill',
-    question: '一條魚乾原價 x 元，打 8 折後是 120 元。原價是多少元？',
-    answer: '150',
-    displayAnswer: '150',
-    explanation: '0.8x = 120，x = 150'
+    correctAnswer: '40元',
+    explanation: '設每公斤 y 元:50y = 2000,y = 40'
   },
   {
     type: 'options',
-    question: '科學園區面積是傳統工業區的 3 倍，科學園區 180 公頃。工業區多少公頃？',
+    question: '一條魚乾原價 x 元,打 8 折後是 120 元。原價是多少元?',
+    options: ['96元', '128元', '150元', '160元'],
+    correctAnswer: '150元',
+    explanation: '0.8x = 120,x = 150'
+  },
+  {
+    type: 'options',
+    question: '科學園區面積是傳統工業區的 3 倍,科學園區 180 公頃。工業區多少公頃?',
     options: ['60公頃', '90公頃', '540公頃', '183公頃'],
-    answer: 0,
-    displayAnswer: '60公頃',
-    explanation: '設工業區 x 公頃：3x = 180，x = 60'
+    correctAnswer: '60公頃',
+    explanation: '設工業區 x 公頃:3x = 180,x = 60'
   },
   // 情境題：環保永續
   {
     type: 'options',
-    question: '一個工廠每天產生 x 公斤廢棄物，回收再利用 40%，還剩 90 公斤。原本產生多少廢棄物？',
+    question: '一個工廠每天產生 x 公斤廢棄物,回收再利用 40%,還剩 90 公斤。原本產生多少廢棄物?',
     options: ['130公斤', '150公斤', '225公斤', '50公斤'],
-    answer: 1,
-    displayAnswer: '150公斤',
-    explanation: '設原本 x 公斤：x - 0.4x = 90 → 0.6x = 90 → x = 150'
+    correctAnswer: '150公斤',
+    explanation: '設原本 x 公斤:x - 0.4x = 90 → 0.6x = 90 → x = 150'
   },
   {
-    type: 'fill',
-    question: '太陽能板發電量是風力發電的 2 倍，兩者相加共 600 度電。風力發電多少度？',
-    answer: '200',
-    displayAnswer: '200',
-    explanation: '設風力 x 度：x + 2x = 600 → 3x = 600 → x = 200'
+    type: 'options',
+    question: '太陽能板發電量是風力發電的 2 倍,兩者相加共 600 度電。風力發電多少度?',
+    options: ['150度', '200度', '300度', '400度'],
+    correctAnswer: '200度',
+    explanation: '設風力 x 度:x + 2x = 600 → 3x = 600 → x = 200'
   },
   // 情境題：科技製造
   {
     type: 'options',
-    question: '一片晶圓可以切出 x 個晶片，5 片晶圓共切出 300 個晶片。一片切幾個？',
+    question: '一片晶圓可以切出 x 個晶片,5 片晶圓共切出 300 個晶片。一片切幾個?',
     options: ['50個', '60個', '70個', '80個'],
-    answer: 1,
-    displayAnswer: '60個',
-    explanation: '5x = 300，x = 60'
+    correctAnswer: '60個',
+    explanation: '5x = 300,x = 60'
   },
   {
     type: 'options',
-    question: '一台機器每小時加工 x 個零件，工作 8 小時後加工了 400 個。每小時加工幾個？',
+    question: '一台機器每小時加工 x 個零件,工作 8 小時後加工了 400 個。每小時加工幾個?',
     options: ['40個', '50個', '60個', '80個'],
-    answer: 1,
-    displayAnswer: '50個',
-    explanation: '8x = 400，x = 50'
+    correctAnswer: '50個',
+    explanation: '8x = 400,x = 50'
   },
   // 綜合應用
   {
     type: 'options',
-    question: '一批魚乾分裝，每盒裝 x 克，裝了 12 盒後還剩 50 克，總共有 650 克。每盒裝幾克？',
+    question: '一批魚乾分裝,每盒裝 x 克,裝了 12 盒後還剩 50 克,總共有 650 克。每盒裝幾克?',
     options: ['50克', '60克', '70克', '100克'],
-    answer: 0,
-    displayAnswer: '50克',
+    correctAnswer: '50克',
     explanation: '12x + 50 = 650 → 12x = 600 → x = 50'
   },
   {
-    type: 'fill',
-    question: '一個產品成本是售價的 60%，售價 250 元。成本是多少元？',
-    answer: '150',
-    displayAnswer: '150',
-    explanation: '設成本 x 元：x = 250 × 0.6 = 150'
+    type: 'options',
+    question: '一個產品成本是售價的 60%,售價 250 元。成本是多少元?',
+    options: ['100元', '150元', '180元', '200元'],
+    correctAnswer: '150元',
+    explanation: '設成本 x 元:x = 250 × 0.6 = 150'
   },
   // 比例應用
   {
     type: 'options',
-    question: '傳統產業產值與高科技產業產值比是 2:5，高科技產值 1500 億。傳統產業產值多少億？',
+    question: '傳統產業產值與高科技產業產值比是 2:5,高科技產值 1500 億。傳統產業產值多少億?',
     options: ['300億', '600億', '750億', '3750億'],
-    answer: 1,
-    displayAnswer: '600億',
+    correctAnswer: '600億',
     explanation: '2:5 = x:1500 → 5x = 3000 → x = 600'
   },
   {
     type: 'options',
-    question: '循環經濟回收率從 40% 提升到 60%，提升了幾個百分點？',
+    question: '循環經濟回收率從 40% 提升到 60%,提升了幾個百分點?',
     options: ['20個百分點', '50個百分點', '1.5倍', '60%'],
-    answer: 0,
-    displayAnswer: '20個百分點',
+    correctAnswer: '20個百分點',
     explanation: '60% - 40% = 20個百分點'
   }
-]
+];
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
-
+// ==========================================
 // 【科學】物質變化延伸練習題庫
-const scienceQuestions = [
+// ==========================================
+
+const scienceQuestionsPool = [
   {
     type: 'options',
-    question: '下列哪個變化是「可逆」的物理變化？',
+    question: '下列哪個變化是「可逆」的物理變化?',
     options: ['木材燃燒', '冰融化成水', '食物腐敗', '鐵生鏽'],
-    answer: 1,
-    displayAnswer: '冰融化成水'
+    correctAnswer: '冰融化成水',
+    explanation: '冰融化成水只是狀態改變,可以再冷凍成冰'
   },
   {
     type: 'options',
-    question: '下列哪個變化是「不可逆」的化學變化？',
+    question: '下列哪個變化是「不可逆」的化學變化?',
     options: ['糖溶解在水中', '紙張燃燒成灰', '水蒸發', '鹽融化'],
-    answer: 1,
-    displayAnswer: '紙張燃燒成灰'
+    correctAnswer: '紙張燃燒成灰',
+    explanation: '燃燒產生新物質,無法變回原來的紙'
   },
   {
     type: 'options',
-    question: '「可逆變化」是指？',
+    question: '「可逆變化」是指?',
     options: [
       '可以輕易恢復原狀的變化',
       '不能恢復原狀的變化',
       '需要很長時間的變化',
       '需要加熱的變化'
     ],
-    answer: 0,
-    displayAnswer: '可以輕易恢復原狀的變化'
+    correctAnswer: '可以輕易恢復原狀的變化',
+    explanation: '可逆變化可以透過簡單方法恢復原狀'
   },
   {
     type: 'options',
-    question: '化學變化常伴隨的現象，下列何者「不一定」發生？',
+    question: '化學變化常伴隨的現象,下列何者「不一定」發生?',
     options: ['產生新物質', '產生氣體', '溫度改變', '顏色改變'],
-    answer: 1,
-    displayAnswer: '產生氣體',
-    explanation: '化學變化一定產生新物質，但不一定有氣體、溫度或顏色變化'
+    correctAnswer: '產生氣體',
+    explanation: '化學變化一定產生新物質,但不一定有氣體、溫度或顏色變化'
   },
   {
     type: 'options',
-    question: '為什麼化學變化通常不可逆？',
+    question: '為什麼化學變化通常不可逆?',
     options: [
       '因為化學變化需要很長時間',
-      '因為產生了新物質，原物質已經改變',
+      '因為產生了新物質,原物質已經改變',
       '因為化學變化太複雜',
       '因為化學變化需要特殊設備'
     ],
-    answer: 1,
-    displayAnswer: '因為產生了新物質，原物質已經改變'
+    correctAnswer: '因為產生了新物質,原物質已經改變',
+    explanation: '新物質的化學成分與原物質不同,難以還原'
   },
   {
     type: 'options',
-    question: '「飛魚曬成魚乾」為什麼不可逆？',
+    question: '「飛魚曬成魚乾」為什麼不可逆?',
     options: [
       '因為魚乾太硬了',
-      '因為蛋白質已經變性，是化學變化',
+      '因為蛋白質已經變性,是化學變化',
       '因為水分蒸發了',
       '因為魚乾比較貴'
     ],
-    answer: 1,
-    displayAnswer: '因為蛋白質已經變性，是化學變化'
+    correctAnswer: '因為蛋白質已經變性,是化學變化',
+    explanation: '蛋白質變性後結構改變,無法恢復原狀'
   },
   {
     type: 'options',
-    question: '下列哪組變化的「可逆性」相同？',
+    question: '下列哪組變化的「可逆性」相同?',
     options: [
-      '水結冰、糖溶解（都可逆）',
-      '煮蛋、燒紙（都不可逆）',
-      '切菜、生鏽（一可逆一不可逆）',
-      '蒸發、腐敗（都可逆）'
+      '水結冰、糖溶解(都可逆)',
+      '煮蛋、燒紙(都不可逆)',
+      '切菜、生鏽(一可逆一不可逆)',
+      '蒸發、腐敗(都可逆)'
     ],
-    answer: 1,
-    displayAnswer: '煮蛋、燒紙（都不可逆）'
+    correctAnswer: '煮蛋、燒紙(都不可逆)',
+    explanation: '煮蛋和燒紙都是化學變化,都不可逆'
   },
   {
     type: 'options',
-    question: '能源轉換是什麼類型的變化？',
+    question: '能源轉換是什麼類型的變化?',
     options: [
       '都是物理變化',
       '都是化學變化',
       '有些是物理有些是化學',
       '不是物質變化'
     ],
-    answer: 2,
-    displayAnswer: '有些是物理有些是化學',
-    explanation: '例：水力發電是物理變化，燃煤發電是化學變化'
+    correctAnswer: '有些是物理有些是化學',
+    explanation: '例:水力發電是物理變化,燃煤發電是化學變化'
   },
   {
     type: 'options',
-    question: '回收塑膠瓶重新製成新瓶子，主要是什麼變化？',
+    question: '回收塑膠瓶重新製成新瓶子,主要是什麼變化?',
     options: ['物理變化', '化學變化', '兩者都有', '沒有變化'],
-    answer: 0,
-    displayAnswer: '物理變化',
-    explanation: '塑膠融化重塑是物理變化，成分沒改變'
+    correctAnswer: '物理變化',
+    explanation: '塑膠融化重塑是物理變化,成分沒改變'
+  },
+  {
+    type: 'options',
+    question: '下列哪個例子說明「可逆的物理變化」?',
+    options: [
+      '巧克力融化後可以再凝固',
+      '木頭燒成炭',
+      '牛奶變成優格',
+      '麵包發霉'
+    ],
+    correctAnswer: '巧克力融化後可以再凝固',
+    explanation: '巧克力融化只是狀態改變,可以重新凝固'
   }
-]
+];
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+// ==========================================
+// 題目生成器(使用閉包實現不重複)
+// ==========================================
+
+const createQuestionGenerator = (questionsPool) => {
+  let shuffledQuestions = [];
+  let currentIndex = 0;
+
+  const regenerate = () => {
+    shuffledQuestions = shuffleArray(questionsPool);
+    currentIndex = 0;
+  };
+
+  // 初始化
+  regenerate();
+
+  return () => {
+    if (currentIndex >= shuffledQuestions.length) {
+      regenerate();
+    }
+
+    const question = shuffledQuestions[currentIndex];
+    currentIndex++;
+
+    // 洗牌選項並記錄正確答案的新位置
+    const shuffledOptions = shuffleArray(question.options);
+    const answerIndex = shuffledOptions.indexOf(question.correctAnswer);
+
+    return {
+      type: question.type,
+      question: question.question,
+      options: shuffledOptions,
+      answer: answerIndex,
+      explanation: question.explanation
+    };
+  };
+};
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export const generateMathQuestion = createQuestionGenerator(mathQuestionsPool);
+export const generateScienceQuestion = createQuestionGenerator(scienceQuestionsPool);
 
 // ==========================================
 // Day 4 資料

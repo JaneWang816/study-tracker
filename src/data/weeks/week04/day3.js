@@ -1,197 +1,269 @@
 // src/data/weeks/week04/day3.js
 // W4 Day3：太陽的熱怎麼來？
 
-// ===== 社會：比例尺在生活中的應用 =====
-const generateScaleLifeQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '以下哪種地圖的比例尺最大（最詳細）？',
-      options: ['1：5000000（全台地圖）', '1：500000（縣市地圖）', '1：50000（鄉鎮地圖）', '1：5000（社區詳細地圖）'],
-      answer: 3,
-      explanation: '比例尺越大（分母越小），表示縮小倍數越少，地圖越詳細。1：5000的地圖上1公分=50公尺，細節最多；1：5000000上1公分=50公里，細節最少。'
-    },
-    {
-      type: 'choice',
-      question: '台灣的五萬分之一地圖（比例尺1：50000），圖上1公分代表實際多少公里？',
-      options: ['0.05公里', '0.5公里', '5公里', '50公里'],
-      answer: 1,
-      explanation: '50000公分 = 500公尺 = 0.5公里。圖上1公分代表實際0.5公里。'
-    },
-    {
-      type: 'choice',
-      question: '建築師設計一棟樓，把10公尺的牆畫成圖紙上5公分，這張圖的比例尺是多少？',
-      options: ['1：20', '1：200', '1：2000', '1：50'],
-      answer: 1,
-      explanation: '10公尺 = 1000公分，5公分對應1000公分，比例尺 = 5/1000 = 1/200，即 1：200。'
-    },
-    {
-      type: 'choice',
-      question: '一張台北市地圖，比例尺為1：25000。量到台北101到總統府的圖上距離是6公分，實際距離是多少公尺？',
-      options: ['150公尺', '1500公尺', '15000公尺', '150000公尺'],
-      answer: 1,
-      explanation: '6公分 × 25000 = 150000公分 = 1500公尺（約1.5公里）。'
-    },
-    {
-      question: '清朝丈量台灣土地，把1甲地（邊長約100公尺的正方形）畫進地籍圖，若比例尺為1：2000，圖上這塊地的邊長約幾公分？',
-      options: ['約5公分', '約50公分', '約500公分', '約0.5公分'],
-      answer: 0,
-      explanation: '100公尺=10000公分，10000÷2000=5公分。比例尺1：2000，每2000公分（20公尺）畫1公分。'
-    },
-    {
-      type: 'choice',
-      question: '一個人設計玩具模型，想把真實的火車（長20公尺）做成1：100的模型，模型應做多長？',
-      options: ['0.2公尺（20公分）', '2公尺', '20公分', '0.02公尺（2公分）'],
-      answer: 0,
-      explanation: '20公尺 ÷ 100 = 0.2公尺 = 20公分。'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 社會:比例尺在生活中的應用
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '以下哪種地圖的比例尺最大(最詳細)?',
+    options: ['1:5000(社區詳細地圖)', '1:5000000(全台地圖)', '1:500000(縣市地圖)', '1:50000(鄉鎮地圖)'],
+    answer: 0,
+    displayAnswer: '比例尺越大(分母越小),表示縮小倍數越少,地圖越詳細。1:5000的地圖上1公分=50公尺,細節最多;1:5000000上1公分=50公里,細節最少。'
+  },
+  {
+    type: 'options',
+    question: '台灣的五萬分之一地圖(比例尺1:50000),圖上1公分代表實際多少公里?',
+    options: ['0.5公里', '0.05公里', '5公里', '50公里'],
+    answer: 0,
+    displayAnswer: '50000公分 = 500公尺 = 0.5公里。圖上1公分代表實際0.5公里。'
+  },
+  {
+    type: 'options',
+    question: '建築師設計一棟樓,把10公尺的牆畫成圖紙上5公分,這張圖的比例尺是多少?',
+    options: ['1:200', '1:20', '1:2000', '1:50'],
+    answer: 0,
+    displayAnswer: '10公尺 = 1000公分,5公分對應1000公分,比例尺 = 5/1000 = 1/200,即 1:200。'
+  },
+  {
+    type: 'options',
+    question: '一張台北市地圖,比例尺為1:25000。量到台北101到總統府的圖上距離是6公分,實際距離是多少公尺?',
+    options: ['1500公尺', '150公尺', '15000公尺', '150000公尺'],
+    answer: 0,
+    displayAnswer: '6公分 × 25000 = 150000公分 = 1500公尺(約1.5公里)。'
+  },
+  {
+    type: 'options',
+    question: '清朝丈量台灣土地,把1甲地(邊長約100公尺的正方形)畫進地籍圖,若比例尺為1:2000,圖上這塊地的邊長約幾公分?',
+    options: ['約5公分', '約50公分', '約500公分', '約0.5公分'],
+    answer: 0,
+    displayAnswer: '100公尺=10000公分,10000÷2000=5公分。比例尺1:2000,每2000公分(20公尺)畫1公分。'
+  },
+  {
+    type: 'options',
+    question: '一個人設計玩具模型,想把真實的火車(長20公尺)做成1:100的模型,模型應做多長?',
+    options: ['0.2公尺(20公分)', '2公尺', '0.02公尺(2公分)', '200公分'],
+    answer: 0,
+    displayAnswer: '20公尺 ÷ 100 = 0.2公尺 = 20公分。'
+  }
+]
+
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
-
-const checkScaleLifeAnswer = (q, a) => parseInt(a) === q.answer
-
-// ===== 數學：比例尺綜合計算 =====
-const generateScaleCalculationQuestion = () => {
-  const types = ['two_step', 'area', 'compare']
-  const t = types[Math.floor(Math.random() * types.length)]
-
-  if (t === 'two_step') {
-    const problems = [
-      {
-        q: '比例尺 1：50000，圖上測得A、B兩點距離4公分，B、C兩點距離6公分，A到C（經過B）的實際距離是多少公里？',
-        mapDist: 10, scale: 50000, realCm: 500000, realKm: 5,
-        opts: ['5公里', '10公里', '500公尺', '50公里'],
-        ans: 0, exp: '（4+6）×50000=500000公分=5000公尺=5公里'
-      },
-      {
-        q: '比例尺 1：100000，圖上兩條路線分別長3公分和5公分，哪條路線的實際距離較長，長多少公里？',
-        opts: ['5公分那條，實際5公里', '3公分那條，實際3公里', '兩條一樣長', '5公分那條，實際50公里'],
-        ans: 0, exp: '5×100000=500000公分=5公里；3×100000=300000公分=3公里。5公里較長。'
-      }
-    ]
-    const p = problems[Math.floor(Math.random() * problems.length)]
-    const shuffled = [...p.opts].sort(() => Math.random() - 0.5)
-    const ans = shuffled.indexOf(p.opts[p.ans])
-    return { type: 'choice', question: p.q, options: shuffled, answer: ans, explanation: p.exp }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  if (t === 'area') {
-    const problems = [
-      {
-        q: '比例尺 1：1000，圖上一塊正方形農田邊長3公分，實際面積是多少平方公尺？',
-        opts: ['90000平方公尺', '900平方公尺', '9平方公尺', '9000平方公尺'],
-        ans: 1, exp: '實際邊長=3×1000=3000公分=30公尺，面積=30×30=900平方公尺。'
-      },
-      {
-        q: '比例尺 1：500，圖上一塊長方形土地長4公分、寬2公分，實際面積是多少平方公尺？',
-        opts: ['8平方公尺', '800平方公尺', '20000平方公尺', '200平方公尺'],
-        ans: 3, exp: '實際長=4×500=2000公分=20公尺，實際寬=2×500=1000公分=10公尺，面積=20×10=200平方公尺。'
-      }
-    ]
-    const p = problems[Math.floor(Math.random() * problems.length)]
-    const shuffled = [...p.opts].sort(() => Math.random() - 0.5)
-    const correctOpt = p.opts[p.ans]
-    const ans = shuffled.indexOf(correctOpt)
-    return { type: 'choice', question: p.q, options: shuffled, answer: ans, explanation: p.exp }
-  }
-
-  // compare
-  const q = {
-    question: '有兩張地圖，A圖比例尺 1：25000，B圖比例尺 1：100000，若同一條路在A圖量到8公分，在B圖上量到多少公分？',
+// ==========================================
+// 數學:比例尺綜合計算
+// ==========================================
+const mathQuestions = [
+  // 兩步驟計算
+  {
+    type: 'options',
+    question: '比例尺 1:50000,圖上測得A、B兩點距離4公分,B、C兩點距離6公分,A到C(經過B)的實際距離是多少公里?',
+    options: ['5公里', '10公里', '500公尺', '50公里'],
+    answer: 0,
+    displayAnswer: '(4+6)×50000=500000公分=5000公尺=5公里'
+  },
+  {
+    type: 'options',
+    question: '比例尺 1:100000,圖上兩條路線分別長3公分和5公分,5公分那條的實際距離是多少公里?',
+    options: ['5公里', '3公里', '8公里', '50公里'],
+    answer: 0,
+    displayAnswer: '5×100000=500000公分=5公里'
+  },
+  // 面積計算
+  {
+    type: 'options',
+    question: '比例尺 1:1000,圖上一塊正方形農田邊長3公分,實際面積是多少平方公尺?',
+    options: ['900平方公尺', '90000平方公尺', '9平方公尺', '9000平方公尺'],
+    answer: 0,
+    displayAnswer: '實際邊長=3×1000=3000公分=30公尺,面積=30×30=900平方公尺。'
+  },
+  {
+    type: 'options',
+    question: '比例尺 1:500,圖上一塊長方形土地長4公分、寬2公分,實際面積是多少平方公尺?',
+    options: ['200平方公尺', '8平方公尺', '800平方公尺', '20000平方公尺'],
+    answer: 0,
+    displayAnswer: '實際長=4×500=2000公分=20公尺,實際寬=2×500=1000公分=10公尺,面積=20×10=200平方公尺。'
+  },
+  // 比較不同比例尺
+  {
+    type: 'options',
+    question: '有兩張地圖,A圖比例尺 1:25000,B圖比例尺 1:100000,若同一條路在A圖量到8公分,在B圖上量到多少公分?',
     options: ['2公分', '32公分', '4公分', '16公分'],
     answer: 0,
-    explanation: 'A圖8公分×25000=200000公分=2000公尺。B圖：2000公尺=200000公分÷100000=2公分。'
+    displayAnswer: 'A圖8公分×25000=200000公分=2000公尺。B圖:2000公尺=200000公分÷100000=2公分。'
+  },
+  // 台灣地圖應用
+  {
+    type: 'options',
+    question: '台灣地圖比例尺 1:500000。台北到花蓮圖上距離約3公分,台北到高雄圖上約8公分。花蓮到高雄繞過台北的距離是多少公里?',
+    options: ['55公里', '5500公里', '550公尺', '55000公尺'],
+    answer: 0,
+    displayAnswer: '(3+8)×500000=5500000公分=55000公尺=55公里。'
+  },
+  {
+    type: 'options',
+    question: '一張嘉南平原地圖,比例尺 1:100000,圖上嘉南大圳的主幹線長約16公分,實際長度約多少公里?',
+    options: ['16公里', '160公里', '1.6公里', '1600公里'],
+    answer: 0,
+    displayAnswer: '16×100000=1600000公分=16000公尺=16公里。'
+  },
+  // 縮圖面積
+  {
+    type: 'options',
+    question: '一塊長方形農田長120公尺、寬80公尺,按照1:400縮圖。縮圖後長是多少公分?',
+    options: ['30公分', '60公分', '15公分', '20公分'],
+    answer: 0,
+    displayAnswer: '長:120公尺=12000公分÷400=30公分。'
+  },
+  {
+    type: 'options',
+    question: '一張藍圖比例尺 1:200,圖上房間長5公分、寬3公分,實際房間面積是多少平方公尺?',
+    options: ['60平方公尺', '6平方公尺', '600平方公尺', '30平方公尺'],
+    answer: 0,
+    displayAnswer: '實際長=5×200=1000公分=10公尺,寬=3×200=600公分=6公尺,面積=10×6=60平方公尺。'
+  },
+  // 轉換比例尺
+  {
+    type: 'options',
+    question: '比例尺1:50000的地圖上,兩村莊相距6公分。若要縮小成比例尺1:200000的地圖,兩村莊應相距多少公分?',
+    options: ['1.5公分', '24公分', '6公分', '3公分'],
+    answer: 0,
+    displayAnswer: '實際距離:6×50000=300000公分=3公里。新地圖:300000÷200000=1.5公分。'
+  },
+  {
+    type: 'options',
+    question: '台灣氣象局的雨量分布圖,比例尺為1:300000。圖上台北到台中的降雨帶寬度量到4公分,實際降雨帶約多寬(公里)?',
+    options: ['12公里', '120公里', '1.2公里', '1200公里'],
+    answer: 0,
+    displayAnswer: '4×300000=1200000公分=12000公尺=12公里。'
   }
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  const ans = shuffled.indexOf(q.options[q.answer])
-  return { type: 'choice', question: q.question, options: shuffled, answer: ans, explanation: q.explanation }
-}
+]
 
-const checkScaleCalculationAnswer = (q, a) => parseInt(a) === q.answer
-
-// ===== 科學：熱的輻射 =====
-const generateHeatRadiationQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '熱的「輻射」是指什麼？',
-      options: [
-        '熱透過固體直接接觸傳遞',
-        '熱隨著流體流動傳遞',
-        '熱以電磁波（紅外線等）形式向四面八方傳播，不需要介質',
-        '熱只能在有空氣的地方傳遞'
-      ],
-      answer: 2,
-      explanation: '輻射是熱以電磁波（主要是紅外線）形式傳播，不需要任何介質（甚至可以在真空中傳遞）。太陽的熱就是透過輻射穿越真空宇宙到達地球。'
-    },
-    {
-      type: 'choice',
-      question: '太陽的熱能如何傳遞到地球？',
-      options: [
-        '透過空氣傳導',
-        '透過太陽風對流',
-        '透過電磁輻射（主要是可見光和紅外線）穿越真空宇宙',
-        '透過地球磁場引導'
-      ],
-      answer: 2,
-      explanation: '地球和太陽之間是真空，傳導和對流都無法在真空中傳遞熱量。太陽輻射以電磁波形式穿越宇宙，到達地球後被大氣和地面吸收轉化為熱能。'
-    },
-    {
-      type: 'choice',
-      question: '深色物體和淺色物體，哪個在太陽下吸熱更快？',
-      options: [
-        '淺色物體吸熱更快',
-        '深色物體吸熱更快',
-        '兩者吸熱速度相同',
-        '這和顏色無關，只和材質有關'
-      ],
-      answer: 1,
-      explanation: '深色（黑色）物體吸收輻射的能力強，反射少，因此吸熱快；淺色（白色）物體反射輻射多，吸熱慢。這就是為什麼夏天穿白衣比較涼。'
-    },
-    {
-      type: 'choice',
-      question: '台灣夏天的柏油路面溫度可達60°C以上，這主要是什麼熱傳遞方式？',
-      options: [
-        '對流：熱空氣加熱柏油路',
-        '傳導：地底的熱傳上來',
-        '輻射：太陽輻射被深色柏油大量吸收',
-        '蒸發：水分蒸發加熱柏油路'
-      ],
-      answer: 2,
-      explanation: '黑色柏油是輻射吸收的良好材料，在強烈太陽輻射下大量吸熱，路面溫度遠高於氣溫。這也是城市「熱島效應」的原因之一。'
-    },
-    {
-      type: 'choice',
-      question: '太空衣為什麼要做成金屬銀色或白色？',
-      options: [
-        '只是為了美觀',
-        '金屬色能反射太陽輻射，防止太空人過熱；也能減少熱輻射散失，防止過冷',
-        '為了讓太空人在真空中更容易被看見',
-        '白色能吸收更多太陽能'
-      ],
-      answer: 1,
-      explanation: '太空中沒有大氣保護，在陽光照射側會極熱，在陰影側會極冷。太空衣的金屬反射塗層，能反射太陽輻射（防熱）、減少熱輻射散失（防冷），達到溫度調節效果。'
-    },
-    {
-      type: 'choice',
-      question: '台灣的「溫室種植」是利用什麼原理？',
-      options: [
-        '傳導：玻璃把太陽的熱傳導進溫室',
-        '對流：阻止溫室內的熱空氣對流散失',
-        '輻射：太陽短波輻射可穿透玻璃進入，但地面發出的長波輻射被玻璃阻擋，熱量留在溫室內',
-        '反射：玻璃把太陽光反射到植物上'
-      ],
-      answer: 2,
-      explanation: '溫室效應：太陽發出短波輻射可穿透玻璃，被地面和植物吸收後，以長波紅外線再輻射，但長波輻射無法穿透玻璃，熱量留在溫室內。大氣層對地球的保暖原理相同。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkHeatRadiationAnswer = (q, a) => parseInt(a) === q.answer
+// ==========================================
+// 科學:熱的輻射
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '熱的「輻射」是指什麼?',
+    options: [
+      '熱以電磁波(紅外線等)形式向四面八方傳播,不需要介質',
+      '熱透過固體直接接觸傳遞',
+      '熱隨著流體流動傳遞',
+      '熱只能在有空氣的地方傳遞'
+    ],
+    answer: 0,
+    displayAnswer: '輻射是熱以電磁波(主要是紅外線)形式傳播,不需要任何介質(甚至可以在真空中傳遞)。太陽的熱就是透過輻射穿越真空宇宙到達地球。'
+  },
+  {
+    type: 'options',
+    question: '太陽的熱能如何傳遞到地球?',
+    options: [
+      '透過電磁輻射(主要是可見光和紅外線)穿越真空宇宙',
+      '透過空氣傳導',
+      '透過太陽風對流',
+      '透過地球磁場引導'
+    ],
+    answer: 0,
+    displayAnswer: '地球和太陽之間是真空,傳導和對流都無法在真空中傳遞熱量。太陽輻射以電磁波形式穿越宇宙,到達地球後被大氣和地面吸收轉化為熱能。'
+  },
+  {
+    type: 'options',
+    question: '深色物體和淺色物體,哪個在太陽下吸熱更快?',
+    options: [
+      '深色物體吸熱更快',
+      '淺色物體吸熱更快',
+      '兩者吸熱速度相同',
+      '這和顏色無關,只和材質有關'
+    ],
+    answer: 0,
+    displayAnswer: '深色(黑色)物體吸收輻射的能力強,反射少,因此吸熱快;淺色(白色)物體反射輻射多,吸熱慢。這就是為什麼夏天穿白衣比較涼。'
+  },
+  {
+    type: 'options',
+    question: '台灣夏天的柏油路面溫度可達60°C以上,這主要是什麼熱傳遞方式?',
+    options: [
+      '輻射:太陽輻射被深色柏油大量吸收',
+      '對流:熱空氣加熱柏油路',
+      '傳導:地底的熱傳上來',
+      '蒸發:水分蒸發加熱柏油路'
+    ],
+    answer: 0,
+    displayAnswer: '黑色柏油是輻射吸收的良好材料,在強烈太陽輻射下大量吸熱,路面溫度遠高於氣溫。這也是城市「熱島效應」的原因之一。'
+  },
+  {
+    type: 'options',
+    question: '太空衣為什麼要做成金屬銀色或白色?',
+    options: [
+      '金屬色能反射太陽輻射,防止太空人過熱;也能減少熱輻射散失,防止過冷',
+      '只是為了美觀',
+      '為了讓太空人在真空中更容易被看見',
+      '白色能吸收更多太陽能'
+    ],
+    answer: 0,
+    displayAnswer: '太空中沒有大氣保護,在陽光照射側會極熱,在陰影側會極冷。太空衣的金屬反射塗層,能反射太陽輻射(防熱)、減少熱輻射散失(防冷),達到溫度調節效果。'
+  },
+  {
+    type: 'options',
+    question: '台灣的「溫室種植」是利用什麼原理?',
+    options: [
+      '輻射:太陽短波輻射可穿透玻璃進入,但地面發出的長波輻射被玻璃阻擋,熱量留在溫室內',
+      '傳導:玻璃把太陽的熱傳導進溫室',
+      '對流:阻止溫室內的熱空氣對流散失',
+      '反射:玻璃把太陽光反射到植物上'
+    ],
+    answer: 0,
+    displayAnswer: '溫室效應:太陽發出短波輻射可穿透玻璃,被地面和植物吸收後,以長波紅外線再輻射,但長波輻射無法穿透玻璃,熱量留在溫室內。大氣層對地球的保暖原理相同。'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion }
 
 // ===== 組合成 Day 3 =====
 const day3 = {
@@ -269,8 +341,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateScaleLifeQuestion,
-        checkAnswer: checkScaleLifeAnswer
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -307,8 +381,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateScaleCalculationQuestion,
-        checkAnswer: checkScaleCalculationAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -354,8 +430,10 @@ const day3 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateHeatRadiationQuestion,
-        checkAnswer: checkHeatRadiationAnswer
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

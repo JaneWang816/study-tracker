@@ -2423,3 +2423,24 @@ input.answer-input {
   margin: 24px 0 16px;
   line-height: 1.5;
 }
+
+.block-svg {
+  margin: 24px 0;
+  text-align: center;
+  padding: 20px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.block-svg svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.svg-caption {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-light);
+  font-style: italic;
+}

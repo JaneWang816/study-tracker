@@ -2,262 +2,301 @@
 // W5 Day1：日治時代蓋了什麼？
 // 貫穿文本：吳念真〈琵琶鼠〉第一段
 
-// ===== 社會：日治基礎建設 =====
-const generateSocialQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '日本統治台灣的時期大約是哪段時間？',
-      options: ['1895年～1945年', '1644年～1895年', '1945年～1987年', '1624年～1662年'],
-      answer: 0,
-      explanation: '日本在1895年甲午戰爭後依《馬關條約》取得台灣，統治至1945年二戰結束，共約50年。'
-    },
-    {
-      type: 'choice',
-      question: '日治時期完成的「縱貫鐵路」連接台灣哪兩個城市？',
-      options: ['基隆到高雄', '台北到台中', '台南到花蓮', '基隆到台東'],
-      answer: 0,
-      explanation: '縱貫鐵路在1908年全線通車，從基隆一路連接到高雄（打狗），貫穿台灣西部平原，是當時最重要的交通建設。'
-    },
-    {
-      type: 'choice',
-      question: '日治時期為台灣人設立的學校叫做什麼？',
-      options: ['書院', '公學校', '國民學校', '義塾'],
-      answer: 1,
-      explanation: '公學校是日治時期專為台灣本島人設立的初等學校，日本人的學校則稱為「小學校」，兩者分開。'
-    },
-    {
-      type: 'choice',
-      question: '日治時期台灣建設自來水系統，主要是為了解決什麼問題？',
-      options: ['讓工廠有水用', '防止傳染病蔓延，改善公共衛生', '提供灌溉農田的用水', '讓日本軍隊有飲用水'],
-      answer: 1,
-      explanation: '日治初期台灣霍亂等傳染病嚴重，總督府積極建設自來水系統（如台北水道），大幅改善了公共衛生環境。'
-    },
-    {
-      type: 'choice',
-      question: '下列哪一項不是日治時期在台灣建設的重要設施？',
-      options: ['縱貫鐵路', '自來水道', '嘉南大圳', '101大樓'],
-      answer: 3,
-      explanation: '101大樓建於2004年，是戰後台灣自行建設的現代建築。縱貫鐵路、自來水道、嘉南大圳都是日治時期的重要建設。'
-    },
-    {
-      type: 'choice',
-      question: '日治時期修築的道路和鐵路，主要目的是什麼？',
-      options: [
-        '只是為了讓台灣人出行方便',
-        '便於資源運輸與軍事控制，同時帶動地方發展',
-        '純粹是日本人送給台灣的禮物',
-        '只是為了觀光用途'
-      ],
-      answer: 1,
-      explanation: '日治時期的基礎建設有複雜的動機：一方面便於將台灣的農產品和資源運往日本，另一方面也有軍事管控的目的，但客觀上也帶動了台灣各地的發展。'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 社會:日治基礎建設
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '日本統治台灣的時期大約是哪段時間?',
+    options: ['1895年～1945年', '1644年～1895年', '1945年～1987年', '1624年～1662年'],
+    answer: 0,
+    displayAnswer: '日本在1895年甲午戰爭後依《馬關條約》取得台灣,統治至1945年二戰結束,共約50年。'
+  },
+  {
+    type: 'options',
+    question: '日治時期完成的「縱貫鐵路」連接台灣哪兩個城市?',
+    options: ['基隆到高雄', '台北到台中', '台南到花蓮', '基隆到台東'],
+    answer: 0,
+    displayAnswer: '縱貫鐵路在1908年全線通車,從基隆一路連接到高雄(打狗),貫穿台灣西部平原,是當時最重要的交通建設。'
+  },
+  {
+    type: 'options',
+    question: '日治時期為台灣人設立的學校叫做什麼?',
+    options: ['公學校', '書院', '國民學校', '義塾'],
+    answer: 0,
+    displayAnswer: '公學校是日治時期專為台灣本島人設立的初等學校,日本人的學校則稱為「小學校」,兩者分開。'
+  },
+  {
+    type: 'options',
+    question: '日治時期台灣建設自來水系統,主要是為了解決什麼問題?',
+    options: ['防止傳染病蔓延,改善公共衛生', '讓工廠有水用', '提供灌溉農田的用水', '讓日本軍隊有飲用水'],
+    answer: 0,
+    displayAnswer: '日治初期台灣霍亂等傳染病嚴重,總督府積極建設自來水系統(如台北水道),大幅改善了公共衛生環境。'
+  },
+  {
+    type: 'options',
+    question: '下列哪一項不是日治時期在台灣建設的重要設施?',
+    options: ['101大樓', '縱貫鐵路', '自來水道', '嘉南大圳'],
+    answer: 0,
+    displayAnswer: '101大樓建於2004年,是戰後台灣自行建設的現代建築。縱貫鐵路、自來水道、嘉南大圳都是日治時期的重要建設。'
+  },
+  {
+    type: 'options',
+    question: '日治時期修築的道路和鐵路,主要目的是什麼?',
+    options: [
+      '便於資源運輸與軍事控制,同時帶動地方發展',
+      '只是為了讓台灣人出行方便',
+      '純粹是日本人送給台灣的禮物',
+      '只是為了觀光用途'
+    ],
+    answer: 0,
+    displayAnswer: '日治時期的基礎建設有複雜的動機:一方面便於將台灣的農產品和資源運往日本,另一方面也有軍事管控的目的,但客觀上也帶動了台灣各地的發展。'
+  }
+]
+
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return {
-    ...q,
-    options: shuffled,
-    answer: shuffled.indexOf(q.options[q.answer])
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-}
+})()
 
-// ===== 數學：圓周長 C = 2πr =====
-const generateMathQuestion = () => {
-  const type = Math.floor(Math.random() * 4)
-
-  if (type === 0) {
-    // 基本公式理解
-    const questions = [
-      {
-        question: '圓周長的公式是？',
-        options: ['C = πr²', 'C = 2πr', 'C = 2r', 'C = πr'],
-        answer: 1,
-        explanation: '圓周長公式是 C = 2πr，其中 r 是半徑，π ≈ 3.14。也可以寫成 C = πd，d 是直徑（d = 2r）。'
-      },
-      {
-        question: 'π（圓周率）的近似值是多少？',
-        options: ['2.14', '3.14', '4.14', '1.14'],
-        answer: 1,
-        explanation: 'π（圓周率）是圓周長除以直徑的比值，是一個無限不循環小數，通常取近似值 3.14 來計算。'
-      },
-      {
-        question: '如果一個圓的直徑是 d，那圓周長是多少？',
-        options: ['πd', '2πd', 'πd²', '2d'],
-        answer: 0,
-        explanation: '直徑 d = 2r，所以圓周長 C = 2πr = πd。用直徑計算比較簡便。'
-      }
-    ]
-    const q = questions[Math.floor(Math.random() * questions.length)]
-    const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-    return { type: 'choice', ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
+// ==========================================
+// 數學:圓周長 C=2πr
+// ==========================================
+const mathQuestions = [
+  // 基本公式
+  {
+    type: 'options',
+    question: '圓周長的公式是?',
+    options: ['C = 2πr', 'C = πr²', 'C = 2r', 'C = πr'],
+    answer: 0,
+    displayAnswer: '圓周長公式是 C = 2πr,其中 r 是半徑,π ≈ 3.14。也可以寫成 C = πd,d 是直徑(d = 2r)。'
+  },
+  {
+    type: 'options',
+    question: 'π(圓周率)的近似值是多少?',
+    options: ['3.14', '2.14', '4.14', '1.14'],
+    answer: 0,
+    displayAnswer: 'π(圓周率)是圓周長除以直徑的比值,是一個無限不循環小數,通常取近似值 3.14 來計算。'
+  },
+  {
+    type: 'options',
+    question: '如果一個圓的直徑是 d,那圓周長是多少?',
+    options: ['πd', '2πd', 'πd²', '2d'],
+    answer: 0,
+    displayAnswer: '直徑 d = 2r,所以圓周長 C = 2πr = πd。用直徑計算比較簡便。'
+  },
+  // 已知半徑求周長
+  {
+    type: 'options',
+    question: '一個圓形的半徑是 3 公分,它的圓周長是多少公分?(π ≈ 3.14)',
+    options: ['18.84', '9.42', '21.84', '28.26'],
+    answer: 0,
+    displayAnswer: '圓周長 C = 2πr = 2 × 3.14 × 3 = 18.84 公分'
+  },
+  {
+    type: 'options',
+    question: '一個圓形的半徑是 5 公分,它的圓周長是多少公分?(π ≈ 3.14)',
+    options: ['31.4', '15.7', '36.4', '78.5'],
+    answer: 0,
+    displayAnswer: '圓周長 C = 2πr = 2 × 3.14 × 5 = 31.4 公分'
+  },
+  {
+    type: 'options',
+    question: '一個圓形的半徑是 7 公分,它的圓周長是多少公分?(π ≈ 3.14)',
+    options: ['43.96', '21.98', '51.96', '153.86'],
+    answer: 0,
+    displayAnswer: '圓周長 C = 2πr = 2 × 3.14 × 7 = 43.96 公分'
+  },
+  {
+    type: 'options',
+    question: '一個圓形的半徑是 10 公分,它的圓周長是多少公分?(π ≈ 3.14)',
+    options: ['62.8', '31.4', '72.8', '314'],
+    answer: 0,
+    displayAnswer: '圓周長 C = 2πr = 2 × 3.14 × 10 = 62.8 公分'
+  },
+  // 已知直徑求周長
+  {
+    type: 'options',
+    question: '一個圓形的直徑是 6 公分,它的圓周長是多少公分?(π ≈ 3.14)',
+    options: ['18.84', '37.68', '9.42', '24.84'],
+    answer: 0,
+    displayAnswer: '圓周長 C = πd = 3.14 × 6 = 18.84 公分'
+  },
+  {
+    type: 'options',
+    question: '一個圓形的直徑是 10 公分,它的圓周長是多少公分?(π ≈ 3.14)',
+    options: ['31.4', '62.8', '15.7', '41.4'],
+    answer: 0,
+    displayAnswer: '圓周長 C = πd = 3.14 × 10 = 31.4 公分'
+  },
+  {
+    type: 'options',
+    question: '一個圓形的直徑是 14 公分,它的圓周長是多少公分?(π ≈ 3.14)',
+    options: ['43.96', '87.92', '21.98', '57.96'],
+    answer: 0,
+    displayAnswer: '圓周長 C = πd = 3.14 × 14 = 43.96 公分'
+  },
+  // 生活情境
+  {
+    type: 'options',
+    question: '一個圓形水池的半徑是 50 公分。如果要在水池邊緣圍一圈欄杆,需要多長的欄杆?(π ≈ 3.14)',
+    options: ['314 公分', '157 公分', '414 公分', '7850 公分'],
+    answer: 0,
+    displayAnswer: '圓周長 C = 2πr = 2 × 3.14 × 50 = 314 公分'
+  },
+  {
+    type: 'options',
+    question: '一個圓形時鐘的半徑是 21 公分。這個時鐘外框的一圈長度是多少公分?(π ≈ 3.14)',
+    options: ['131.88 公分', '65.94 公分', '152.88 公分', '1384.74 公分'],
+    answer: 0,
+    displayAnswer: '圓周長 C = 2πr = 2 × 3.14 × 21 = 131.88 公分'
   }
+]
 
-  if (type === 1) {
-    // 已知半徑求周長
-    const r = [3, 5, 7, 10, 14][Math.floor(Math.random() * 5)]
-    const c = (2 * 3.14 * r).toFixed(2)
-    const wrong1 = (3.14 * r).toFixed(2)
-    const wrong2 = (2 * 3.14 * r + r).toFixed(2)
-    const wrong3 = (3.14 * r * r).toFixed(2)
-    const options = [c, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `一個圓形的半徑是 ${r} 公分，它的圓周長是多少公分？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(c),
-      explanation: `圓周長 C = 2πr = 2 × 3.14 × ${r} = ${c} 公分`
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  if (type === 2) {
-    // 已知直徑求周長
-    const d = [6, 10, 14, 20, 8][Math.floor(Math.random() * 5)]
-    const c = (3.14 * d).toFixed(2)
-    const wrong1 = (2 * 3.14 * d).toFixed(2)
-    const wrong2 = (3.14 * d / 2).toFixed(2)
-    const wrong3 = (3.14 * d + d).toFixed(2)
-    const options = [c, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `一個圓形的直徑是 ${d} 公分，它的圓周長是多少公分？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(c),
-      explanation: `圓周長 C = πd = 3.14 × ${d} = ${c} 公分`
-    }
+// ==========================================
+// 科學:槓桿原理
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '槓桿的三個重要部分是什麼?',
+    options: [
+      '支點、施力點、抗力點',
+      '起點、終點、中間點',
+      '重心、浮心、壓心',
+      '頭、身體、尾巴'
+    ],
+    answer: 0,
+    displayAnswer: '槓桿由三個部分組成:支點(pivot,槓桿的支撐點)、施力點(effort,施加力量的地方)、抗力點(load,承受重量的地方)。'
+  },
+  {
+    type: 'options',
+    question: '蹺蹺板是哪一種槓桿的好例子?',
+    options: ['支點在中間的槓桿', '支點在一端的槓桿', '沒有支點的槓桿', '有兩個支點的槓桿'],
+    answer: 0,
+    displayAnswer: '蹺蹺板的支點在正中間,兩側的人分別是施力點和抗力點,是「支點在中間」的等臂或不等臂槓桿。'
+  },
+  {
+    type: 'options',
+    question: '用一根長棍子撬起一塊大石頭時,支點要靠近石頭,這樣做的目的是?',
+    options: ['為了省力(用較小的力搬動較重的物體)', '為了省距離', '為了好看', '支點位置不影響施力大小'],
+    answer: 0,
+    displayAnswer: '槓桿原理:支點越靠近抗力點(石頭),施力臂越長,就越省力。這也是阿基米德說「給我一個支點,我可以舉起地球」的原理。'
+  },
+  {
+    type: 'options',
+    question: '下列哪個工具不是利用槓桿原理?',
+    options: ['水杯', '釣魚竿', '剪刀', '老虎鉗'],
+    answer: 0,
+    displayAnswer: '釣魚竿、剪刀、老虎鉗都是槓桿的應用。水杯只是容器,不涉及槓桿原理。'
+  },
+  {
+    type: 'options',
+    question: '鑷子夾東西時,手指施力的地方在哪裡?',
+    options: ['鑷子尾端(施力點)', '鑷子中間(支點)', '鑷子前端(抗力點)', '鑷子三個地方同時'],
+    answer: 0,
+    displayAnswer: '鑷子是施力點在支點和抗力點之間的槓桿:支點在尾端(彈簧處),施力點是手指捏的地方,抗力點是前端夾東西的地方。這種槓桿費力但精確。'
+  },
+  {
+    type: 'options',
+    question: '兩個小朋友坐蹺蹺板,體重較重的小朋友應該坐哪裡才能平衡?',
+    options: ['靠近支點的一側', '遠離支點的一側', '不管坐哪都一樣', '站在蹺蹺板上'],
+    answer: 0,
+    displayAnswer: '較重的小朋友靠近支點,較輕的小朋友遠離支點,讓兩側的「力 × 距離」相等,就能平衡。這是槓桿平衡的基本概念。'
   }
+]
 
-  // type === 3：生活情境
-  const situations = [
-    {
-      r: 50,
-      unit: '公分',
-      context: '一個圓形水池的半徑是 50 公分',
-      question: '如果要在水池邊緣圍一圈欄杆，需要多長的欄杆？（π ≈ 3.14）'
-    },
-    {
-      r: 21,
-      unit: '公分',
-      context: '一個圓形時鐘的半徑是 21 公分',
-      question: '這個時鐘外框的一圈長度是多少公分？（π ≈ 3.14）'
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
     }
-  ]
-  const s = situations[Math.floor(Math.random() * situations.length)]
-  const c2 = (2 * 3.14 * s.r).toFixed(2)
-  const wrong1 = (3.14 * s.r).toFixed(2)
-  const wrong2 = (2 * 3.14 * s.r + s.r * 2).toFixed(2)
-  const wrong3 = (3.14 * s.r * s.r).toFixed(2)
-  const options = [c2, wrong1, wrong2, wrong3]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  return {
-    type: 'choice',
-    question: `${s.context}。${s.question}`,
-    options: shuffled,
-    answer: shuffled.indexOf(c2),
-    explanation: `圓周長 C = 2πr = 2 × 3.14 × ${s.r} = ${c2} ${s.unit}`
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-}
+})()
 
-// ===== 科學：槓桿原理 =====
-const generateScienceQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '槓桿的三個重要部分是什麼？',
-      options: [
-        '支點、施力點、抗力點',
-        '起點、終點、中間點',
-        '重心、浮心、壓心',
-        '頭、身體、尾巴'
-      ],
-      answer: 0,
-      explanation: '槓桿由三個部分組成：支點（pivot，槓桿的支撐點）、施力點（effort，施加力量的地方）、抗力點（load，承受重量的地方）。'
-    },
-    {
-      type: 'choice',
-      question: '蹺蹺板是哪一種槓桿的好例子？',
-      options: ['支點在中間的槓桿', '支點在一端的槓桿', '沒有支點的槓桿', '有兩個支點的槓桿'],
-      answer: 0,
-      explanation: '蹺蹺板的支點在正中間，兩側的人分別是施力點和抗力點，是「支點在中間」的等臂或不等臂槓桿。'
-    },
-    {
-      type: 'choice',
-      question: '用一根長棍子撬起一塊大石頭時，支點要靠近石頭，這樣做的目的是？',
-      options: ['為了省力（用較小的力搬動較重的物體）', '為了省距離', '為了好看', '支點位置不影響施力大小'],
-      answer: 0,
-      explanation: '槓桿原理：支點越靠近抗力點（石頭），施力臂越長，就越省力。這也是阿基米德說「給我一個支點，我可以舉起地球」的原理。'
-    },
-    {
-      type: 'choice',
-      question: '下列哪個工具不是利用槓桿原理？',
-      options: ['釣魚竿', '剪刀', '水杯', '老虎鉗'],
-      answer: 2,
-      explanation: '釣魚竿、剪刀、老虎鉗都是槓桿的應用。水杯只是容器，不涉及槓桿原理。'
-    },
-    {
-      type: 'choice',
-      question: '鑷子夾東西時，手指施力的地方在哪裡？',
-      options: ['鑷子中間（支點）', '鑷子尾端（施力點）', '鑷子前端（抗力點）', '鑷子三個地方同時'],
-      answer: 1,
-      explanation: '鑷子是施力點在支點和抗力點之間的槓桿：支點在尾端（彈簧處），施力點是手指捏的地方，抗力點是前端夾東西的地方。這種槓桿費力但精確。'
-    },
-    {
-      type: 'choice',
-      question: '兩個小朋友坐蹺蹺板，體重較重的小朋友應該坐哪裡才能平衡？',
-      options: ['靠近支點的一側', '遠離支點的一側', '不管坐哪都一樣', '站在蹺蹺板上'],
-      answer: 0,
-      explanation: '較重的小朋友靠近支點，較輕的小朋友遠離支點，讓兩側的「力 × 距離」相等，就能平衡。這是槓桿平衡的基本概念。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return {
-    ...q,
-    options: shuffled,
-    answer: shuffled.indexOf(q.options[q.answer])
+// ==========================================
+// 語文詞彙:建設與機械用語
+// ==========================================
+const vocabQuestions = [
+  {
+    type: 'options',
+    question: '「縱貫」鐵路的「縱」字,表示方向是?',
+    options: ['南北向(直的)', '東西向(橫的)', '斜向', '環形'],
+    answer: 0,
+    displayAnswer: '「縱」表示南北方向(直的),「橫」表示東西方向。縱貫鐵路從北到南貫穿台灣西部,所以叫「縱貫」。'
+  },
+  {
+    type: 'options',
+    question: '「基礎建設」的「基礎」是什麼意思?',
+    options: ['最基本的、打底的建設(如道路、水電、通訊)', '很基礎簡單的建設', '只有地基的建設', '廉價的建設'],
+    answer: 0,
+    displayAnswer: '基礎建設(infrastructure)是指一個社會最基本的、支撐其他活動的建設,如道路、鐵路、水道、電力等,就像房子的地基一樣重要。'
+  },
+  {
+    type: 'options',
+    question: '「槓桿」這個詞在日常生活中除了物理意義,還常被用來比喻什麼?',
+    options: [
+      '用小小的力量或資源撬動更大的效果',
+      '一種很重的東西',
+      '一種食物',
+      '沒有其他意思,只用在物理'
+    ],
+    answer: 0,
+    displayAnswer: '「槓桿效應」在日常語言中常用來比喻:用少量資源撬動大效果。例如「利用人際關係作為槓桿,打開商業機會」。'
   }
-}
+]
 
-// ===== 語文詞彙：建設與機械用語 =====
-const generateVocabQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「縱貫」鐵路的「縱」字，表示方向是？',
-      options: ['東西向（橫的）', '南北向（直的）', '斜向', '環形'],
-      answer: 1,
-      explanation: '「縱」表示南北方向（直的），「橫」表示東西方向。縱貫鐵路從北到南貫穿台灣西部，所以叫「縱貫」。'
-    },
-    {
-      type: 'choice',
-      question: '「基礎建設」的「基礎」是什麼意思？',
-      options: ['最基本的、打底的建設（如道路、水電、通訊）', '很基礎簡單的建設', '只有地基的建設', '廉價的建設'],
-      answer: 0,
-      explanation: '基礎建設（infrastructure）是指一個社會最基本的、支撐其他活動的建設，如道路、鐵路、水道、電力等，就像房子的地基一樣重要。'
-    },
-    {
-      type: 'choice',
-      question: '「槓桿」這個詞在日常生活中除了物理意義，還常被用來比喻什麼？',
-      options: [
-        '一種很重的東西',
-        '用小小的力量或資源撬動更大的效果',
-        '一種食物',
-        '沒有其他意思，只用在物理'
-      ],
-      answer: 1,
-      explanation: '「槓桿效應」在日常語言中常用來比喻：用少量資源撬動大效果。例如「利用人際關係作為槓桿，打開商業機會」。'
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return {
-    ...q,
-    options: shuffled,
-    answer: shuffled.indexOf(q.options[q.answer])
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-}
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion, generateVocabQuestion }
 
 // ===== Day 1 主體 =====
 const day1 = {
@@ -347,7 +386,9 @@ const day1 = {
       practice: {
         questionCount: 5,
         generator: generateSocialQuestion,
-        checkAnswer: (q, a) => parseInt(a) === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -399,7 +440,9 @@ const day1 = {
       practice: {
         questionCount: 5,
         generator: generateMathQuestion,
-        checkAnswer: (q, a) => parseInt(a) === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -447,7 +490,9 @@ const day1 = {
       practice: {
         questionCount: 5,
         generator: generateScienceQuestion,
-        checkAnswer: (q, a) => parseInt(a) === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -481,7 +526,9 @@ const day1 = {
       practice: {
         questionCount: 3,
         generator: generateVocabQuestion,
-        checkAnswer: (q, a) => parseInt(a) === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

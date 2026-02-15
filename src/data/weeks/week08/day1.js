@@ -1,129 +1,220 @@
 // src/data/weeks/week08/day1.js
 // W8 Day1：台灣經濟奇蹟是什麼？
 
-// ── 社會科題庫（戰後台灣經濟發展）────────────────
-const socialPool = [
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 社會:戰後台灣經濟發展
+// ==========================================
+const socialQuestions = [
   {
-    question: '台灣光復後最早的經濟型態是什麼？',
+    type: 'options',
+    question: '台灣光復後最早的經濟型態是什麼?',
     options: ['農業為主', '輕工業為主', '重工業為主', '科技業為主'],
-    answer: 0
+    answer: 0,
+    displayAnswer: '台灣光復後(1945年)最早是以農業為主的經濟型態,主要生產稻米、蔗糖等農產品,是台灣經濟發展的起點。'
   },
   {
-    question: '1950–60年代，台灣主要出口什麼產品？',
-    options: ['電腦晶片', '汽車', '米、糖、香蕉', '手機'],
-    answer: 2
+    type: 'options',
+    question: '1950–60年代,台灣主要出口什麼產品?',
+    options: ['米、糖、香蕉', '電腦晶片', '汽車', '手機'],
+    answer: 0,
+    displayAnswer: '1950-60年代,台灣主要出口農產品,包括稻米、蔗糖、香蕉等,被稱為「香蕉王國」,農產品出口是當時重要的外匯來源。'
   },
   {
-    question: '「客廳即工廠」描述的是台灣哪個時代的現象？',
-    options: ['日治時期', '1970–80年代輕工業時期', '2000年代科技業', '現在的電商時代'],
-    answer: 1
+    type: 'options',
+    question: '「客廳即工廠」描述的是台灣哪個時代的現象?',
+    options: ['1970–80年代輕工業時期', '日治時期', '2000年代科技業', '現在的電商時代'],
+    answer: 0,
+    displayAnswer: '「客廳即工廠」描述1970-80年代台灣家庭代工的景象,許多家庭在客廳進行雨傘、玩具、成衣等輕工業加工,是台灣經濟起飛的重要特色。'
   },
   {
-    question: '台灣在1970–80年代最著名的外銷產品是什麼？',
-    options: ['茶葉和蔗糖', '雨傘、玩具、成衣', '半導體晶片', '電動車'],
-    answer: 1
+    type: 'options',
+    question: '台灣在1970–80年代最著名的外銷產品是什麼?',
+    options: ['雨傘、玩具、成衣', '茶葉和蔗糖', '半導體晶片', '電動車'],
+    answer: 0,
+    displayAnswer: '1970-80年代,台灣以勞力密集的輕工業為主,雨傘、玩具、成衣是最著名的外銷產品,為台灣賺取大量外匯,奠定經濟起飛的基礎。'
   },
   {
-    question: '「台灣錢淹腳目」這句話形容的是哪個時代？',
-    options: ['清朝時期', '日治時期', '1980–90年代經濟起飛', '2020年代'],
-    answer: 2
+    type: 'options',
+    question: '「台灣錢淹腳目」這句話形容的是哪個時代?',
+    options: ['1980–90年代經濟起飛', '清朝時期', '日治時期', '2020年代'],
+    answer: 0,
+    displayAnswer: '「台灣錢淹腳目」(錢多到淹過腳踝)形容1980-90年代台灣經濟起飛、全民富裕的景象,當時台灣外匯存底大增,被稱為「亞洲四小龍」之一。'
   },
   {
-    question: '台灣從「農業」轉向「科技業」，大約經歷了多少年？',
-    options: ['10年', '30年', '50年', '100年'],
-    answer: 2
+    type: 'options',
+    question: '台灣從「農業」轉向「科技業」,大約經歷了多少年?',
+    options: ['50年', '10年', '30年', '100年'],
+    answer: 0,
+    displayAnswer: '台灣從1950年代的農業經濟,經過1960-80年代的輕工業,到1990年代轉向高科技產業,大約經歷了50年的產業轉型歷程。'
   },
   {
-    question: '1990年代以後，台灣經濟重心轉向什麼產業？',
-    options: ['稻米種植', '紡織業', '半導體和高科技產業', '觀光業'],
-    answer: 2
+    type: 'options',
+    question: '1990年代以後,台灣經濟重心轉向什麼產業?',
+    options: ['半導體和高科技產業', '稻米種植', '紡織業', '觀光業'],
+    answer: 0,
+    displayAnswer: '1990年代以後,台灣經濟重心轉向半導體、電子、資訊等高科技產業,台積電等公司成為全球重要的科技供應商。'
   },
   {
-    question: '為什麼台灣1960–80年代能快速工業化？',
+    type: 'options',
+    question: '為什麼台灣1960–80年代能快速工業化?',
     options: [
-      '發現石油',
       '加工出口、勞力密集的輕工業',
+      '發現石油',
       '大量進口外國商品',
       '只發展農業'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '台灣1960-80年代快速工業化的關鍵是發展勞力密集的加工出口業,利用當時充沛且便宜的勞動力,為國際市場代工生產,賺取外匯。'
   }
 ]
 
-function generateSocialQuestion() {
-  const q = socialPool[Math.floor(Math.random() * socialPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
-// ── 數學題庫（百分比概念、基準量）─────────────────
-function generateMathQuestion() {
-  const type = Math.floor(Math.random() * 3)
-
-  if (type === 0) {
-    // 小數轉百分比
-    const decimals = [0.25, 0.5, 0.75, 0.2, 0.4, 0.6, 0.8, 0.1, 0.3, 0.7]
-    const d = decimals[Math.floor(Math.random() * decimals.length)]
-    const pct = d * 100
-    const wrong1 = pct + 10
-    const wrong2 = pct - 10 > 0 ? pct - 10 : pct + 20
-    const wrong3 = d * 10
-    const options = [String(pct), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(pct)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `小數 ${d} 換算成百分比是多少？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 1) {
-    // 百分比轉小數
-    const pcts = [10, 20, 25, 30, 40, 50, 60, 75, 80]
-    const p = pcts[Math.floor(Math.random() * pcts.length)]
-    const dec = p / 100
-    const wrong1 = p / 10
-    const wrong2 = p
-    const wrong3 = p / 1000
-    const options = [String(dec), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(dec)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `${p}% 換算成小數是多少？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else {
-    // 求某數的百分之幾
-    const base = (Math.floor(Math.random() * 4) + 2) * 50  // 100, 150, 200, 250
-    const pct = [20, 25, 40, 50, 75][Math.floor(Math.random() * 5)]
-    const result = base * (pct / 100)
-    const wrong1 = base + pct
-    const wrong2 = base - pct
-    const wrong3 = base * pct
-    const options = [String(result), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(result)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `${base} 的 ${pct}% 是多少？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
+// ==========================================
+// 數學:百分比概念、基準量
+// ==========================================
+const mathQuestions = [
+  // 小數轉百分比
+  {
+    type: 'options',
+    question: '小數 0.25 換算成百分比是多少?',
+    options: ['25%', '35%', '15%', '2.5%'],
+    answer: 0,
+    displayAnswer: '0.25 × 100 = 25%\n小數轉百分比:乘以100,加上%符號'
+  },
+  {
+    type: 'options',
+    question: '小數 0.5 換算成百分比是多少?',
+    options: ['50%', '60%', '40%', '5%'],
+    answer: 0,
+    displayAnswer: '0.5 × 100 = 50%'
+  },
+  {
+    type: 'options',
+    question: '小數 0.75 換算成百分比是多少?',
+    options: ['75%', '85%', '65%', '7.5%'],
+    answer: 0,
+    displayAnswer: '0.75 × 100 = 75%'
+  },
+  {
+    type: 'options',
+    question: '小數 0.2 換算成百分比是多少?',
+    options: ['20%', '30%', '10%', '2%'],
+    answer: 0,
+    displayAnswer: '0.2 × 100 = 20%'
+  },
+  {
+    type: 'options',
+    question: '小數 0.4 換算成百分比是多少?',
+    options: ['40%', '50%', '30%', '4%'],
+    answer: 0,
+    displayAnswer: '0.4 × 100 = 40%'
+  },
+  {
+    type: 'options',
+    question: '小數 0.8 換算成百分比是多少?',
+    options: ['80%', '90%', '70%', '8%'],
+    answer: 0,
+    displayAnswer: '0.8 × 100 = 80%'
+  },
+  // 百分比轉小數
+  {
+    type: 'options',
+    question: '10% 換算成小數是多少?',
+    options: ['0.1', '1', '10', '0.01'],
+    answer: 0,
+    displayAnswer: '10% ÷ 100 = 0.1\n百分比轉小數:除以100'
+  },
+  {
+    type: 'options',
+    question: '25% 換算成小數是多少?',
+    options: ['0.25', '2.5', '25', '0.025'],
+    answer: 0,
+    displayAnswer: '25% ÷ 100 = 0.25'
+  },
+  {
+    type: 'options',
+    question: '50% 換算成小數是多少?',
+    options: ['0.5', '5', '50', '0.05'],
+    answer: 0,
+    displayAnswer: '50% ÷ 100 = 0.5'
+  },
+  {
+    type: 'options',
+    question: '75% 換算成小數是多少?',
+    options: ['0.75', '7.5', '75', '0.075'],
+    answer: 0,
+    displayAnswer: '75% ÷ 100 = 0.75'
+  },
+  // 求某數的百分之幾
+  {
+    type: 'options',
+    question: '100 的 20% 是多少?',
+    options: ['20', '120', '80', '2000'],
+    answer: 0,
+    displayAnswer: '100 × 20% = 100 × 0.2 = 20'
+  },
+  {
+    type: 'options',
+    question: '150 的 40% 是多少?',
+    options: ['60', '190', '110', '6000'],
+    answer: 0,
+    displayAnswer: '150 × 40% = 150 × 0.4 = 60'
+  },
+  {
+    type: 'options',
+    question: '200 的 25% 是多少?',
+    options: ['50', '225', '175', '5000'],
+    answer: 0,
+    displayAnswer: '200 × 25% = 200 × 0.25 = 50'
+  },
+  {
+    type: 'options',
+    question: '200 的 50% 是多少?',
+    options: ['100', '250', '150', '10000'],
+    answer: 0,
+    displayAnswer: '200 × 50% = 200 × 0.5 = 100'
+  },
+  {
+    type: 'options',
+    question: '100 的 75% 是多少?',
+    options: ['75', '175', '25', '7500'],
+    answer: 0,
+    displayAnswer: '100 × 75% = 100 × 0.75 = 75'
   }
-}
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day1 = {

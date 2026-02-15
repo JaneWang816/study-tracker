@@ -1,39 +1,39 @@
 // src/data/weeks/week15/day5.js
 // 第15週 - 第五天：我的學習宣言
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W15D5 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【綜合複習】W15總複習練習題庫
 const comprehensiveReviewQuestions = [
   {
     type: 'options',
-    question: 'AI時代，學習變得更重要還是更不重要？',
+    question: 'AI時代,學習變得更重要還是更不重要?',
     options: [
-      '更不重要，因為AI都知道',
-      '更重要，因為需要判斷AI對錯、提出好問題、建立連結',
+      '更不重要,因為AI都知道',
+      '更重要,因為需要判斷AI對錯、提出好問題、建立連結',
       '不重要了',
       '沒有差別'
     ],
     answer: 1,
-    displayAnswer: '更重要，因為需要判斷AI對錯、提出好問題、建立連結'
+    displayAnswer: '更重要,因為需要判斷AI對錯、提出好問題、建立連結'
   },
   {
     type: 'options',
-    question: 'W15這五天的核心訊息是什麼？',
+    question: 'W15這五天的核心訊息是什麼?',
     options: [
       '要多背書',
-      '記憶是思考的燃料，知識是提問的基礎，從錯誤中學習，建立連結產生理解',
+      '記憶是思考的燃料,知識是提問的基礎,從錯誤中學習,建立連結產生理解',
       'AI很厲害',
       '不用學習了'
     ],
     answer: 1,
-    displayAnswer: '記憶是思考的燃料，知識是提問的基礎，從錯誤中學習，建立連結產生理解'
+    displayAnswer: '記憶是思考的燃料,知識是提問的基礎,從錯誤中學習,建立連結產生理解'
   },
   {
     type: 'options',
-    question: '記憶的作用不包括下列哪一項？',
+    question: '記憶的作用不包括下列哪一項?',
     options: [
       '即時判斷',
       '有效提問',
@@ -41,35 +41,35 @@ const comprehensiveReviewQuestions = [
       '建立連結'
     ],
     answer: 2,
-    displayAnswer: '炫耀知識（記憶的真正作用是：判斷、提問、連結、思考、創造）'
+    displayAnswer: '炫耀知識(記憶的真正作用是:判斷、提問、連結、思考、創造)'
   },
   {
     type: 'options',
-    question: '「善用AI」和「依賴AI」的差別是什麼？',
+    question: '「善用AI」和「依賴AI」的差別是什麼?',
     options: [
       '沒有差別',
-      '善用=有知識基礎、先思考再問；依賴=沒知識基礎、直接問答案',
+      '善用=有知識基礎、先思考再問;依賴=沒知識基礎、直接問答案',
       '善用比較累',
       '依賴比較好'
     ],
     answer: 1,
-    displayAnswer: '善用=有知識基礎、先思考再問；依賴=沒知識基礎、直接問答案'
+    displayAnswer: '善用=有知識基礎、先思考再問;依賴=沒知識基礎、直接問答案'
   },
   {
     type: 'options',
-    question: '為什麼說「記憶是網絡，不是倉庫」？',
+    question: '為什麼說「記憶是網絡,不是倉庫」?',
     options: [
       '因為大腦像網路',
-      '因為知識之間有連結，思考需要同時調用多個知識點',
+      '因為知識之間有連結,思考需要同時調用多個知識點',
       '因為要上網',
       '因為記憶會壞掉'
     ],
     answer: 1,
-    displayAnswer: '因為知識之間有連結，思考需要同時調用多個知識點'
+    displayAnswer: '因為知識之間有連結,思考需要同時調用多個知識點'
   },
   {
     type: 'options',
-    question: 'AI做不到、人類可以做到的是？',
+    question: 'AI做不到、人類可以做到的是?',
     options: [
       '快速計算',
       '大量記憶',
@@ -81,7 +81,7 @@ const comprehensiveReviewQuestions = [
   },
   {
     type: 'options',
-    question: '成長心態的核心信念是？',
+    question: '成長心態的核心信念是?',
     options: [
       '能力是天生的',
       '能力可以透過努力和學習培養',
@@ -93,7 +93,7 @@ const comprehensiveReviewQuestions = [
   },
   {
     type: 'options',
-    question: '15週學習證明了什麼？',
+    question: '15週學習證明了什麼?',
     options: [
       '你很聰明',
       '你有能力獨立學習、從錯誤中成長、建立知識連結',
@@ -105,7 +105,7 @@ const comprehensiveReviewQuestions = [
   },
   {
     type: 'options',
-    question: '終身學習者的特質不包括？',
+    question: '終身學習者的特質不包括?',
     options: [
       '保持好奇心',
       '從錯誤中學習',
@@ -113,11 +113,11 @@ const comprehensiveReviewQuestions = [
       '建立知識連結'
     ],
     answer: 2,
-    displayAnswer: '害怕挑戰（終身學習者擁抱挑戰）'
+    displayAnswer: '害怕挑戰(終身學習者擁抱挑戰)'
   },
   {
     type: 'options',
-    question: 'AI時代最重要的能力是？',
+    question: 'AI時代最重要的能力是?',
     options: [
       '寫程式',
       '批判思考、提問能力、從錯誤學習、建立連結',
@@ -129,8 +129,25 @@ const comprehensiveReviewQuestions = [
   }
 ]
 
-const generateComprehensiveReviewQuestion = () => {
-  return comprehensiveReviewQuestions[Math.floor(Math.random() * comprehensiveReviewQuestions.length)]
+const generateComprehensiveReviewQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(comprehensiveReviewQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateComprehensiveReviewQuestion
 }
 
 // ==========================================

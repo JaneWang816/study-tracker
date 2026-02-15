@@ -1,6 +1,8 @@
 // src/data/weeks/week01/day2.js
 // 第1週 - 第二天：台灣在哪裡？
 
+import { shuffleArray, shuffleOptions } from '../../utils'
+
 // ==========================================
 // 練習題生成器
 // ==========================================
@@ -11,275 +13,312 @@ const mathQuestions = [
   {
     type: 'options',
     question: '一個完整的圓是幾度？',
-    options: ['90°', '180°', '270°', '360°'],
-    answer: 3,
+    options: ['360°', '90°', '180°', '270°'],
+    answer: 0,
     displayAnswer: '360°'
   },
   {
     type: 'options',
-    question: '圓的 360° 平均分成 4 等份，每份是幾度？',
-    options: ['60°', '90°', '120°', '180°'],
-    answer: 1,
-    displayAnswer: '90°（360 ÷ 4 = 90）'
+    question: '圓的 360° 平均分成 4 等份,每份是幾度？',
+    options: ['90°', '60°', '120°', '180°'],
+    answer: 0,
+    displayAnswer: '90°(360 ÷ 4 = 90)'
   },
   {
     type: 'options',
-    question: '地球是一個球，360° 平均分成 24 小時（一天），每小時對應幾度的經度？',
-    options: ['10°', '15°', '20°', '24°'],
-    answer: 1,
-    displayAnswer: '15°（360 ÷ 24 = 15）'
+    question: '地球是一個球,360° 平均分成 24 小時(一天),每小時對應幾度的經度？',
+    options: ['15°', '10°', '20°', '24°'],
+    answer: 0,
+    displayAnswer: '15°(360 ÷ 24 = 15)'
   },
   {
-    type: 'fill',
-    question: '圓的 360° 分成 24 等份，每份幾度？',
-    answer: '15',
+    type: 'options',
+    question: '圓的 360° 分成 24 等份,每份幾度？',
+    options: ['15°', '12°', '18°', '20°'],
+    answer: 0,
     displayAnswer: '15°'
   },
   // ── 時差計算 ──
   {
     type: 'options',
-    question: '地球自轉一圈 360°，需要 24 小時。台灣（東經 120°）和本初子午線（0°）相差 120°，時差是幾小時？',
-    options: ['6 小時', '8 小時', '10 小時', '12 小時'],
-    answer: 1,
-    displayAnswer: '8 小時（120 ÷ 15 = 8）'
+    question: '地球自轉一圈 360°,需要 24 小時。台灣(東經 120°)和本初子午線(0°)相差 120°,時差是幾小時？',
+    options: ['8 小時', '6 小時', '10 小時', '12 小時'],
+    answer: 0,
+    displayAnswer: '8 小時(120 ÷ 15 = 8)'
   },
   {
     type: 'options',
-    question: '台灣是東經 120°，日本東京是東經 135°，兩地相差幾度經度？',
-    options: ['10°', '15°', '20°', '25°'],
-    answer: 1,
-    displayAnswer: '15°（135 - 120 = 15）'
+    question: '台灣是東經 120°,日本東京是東經 135°,兩地相差幾度經度？',
+    options: ['15°', '10°', '20°', '25°'],
+    answer: 0,
+    displayAnswer: '15°(135 - 120 = 15)'
   },
   {
     type: 'options',
-    question: '台灣和東京相差 15° 經度，時差是幾小時？',
-    options: ['0.5 小時', '1 小時', '1.5 小時', '2 小時'],
-    answer: 1,
-    displayAnswer: '1 小時（15 ÷ 15 = 1）'
+    question: '台灣和東京相差 15° 經度,時差是幾小時？',
+    options: ['1 小時', '0.5 小時', '1.5 小時', '2 小時'],
+    answer: 0,
+    displayAnswer: '1 小時(15 ÷ 15 = 1)'
   },
   {
     type: 'options',
-    question: '台灣現在是中午 12:00，東京比台灣早 1 小時，東京現在是幾點？',
-    options: ['上午 11:00', '下午 1:00', '下午 2:00', '上午 10:00'],
-    answer: 1,
-    displayAnswer: '下午 1:00（12:00 + 1 小時）'
+    question: '台灣現在是中午 12:00,東京比台灣早 1 小時,東京現在是幾點？',
+    options: ['下午 1:00', '上午 11:00', '下午 2:00', '上午 10:00'],
+    answer: 0,
+    displayAnswer: '下午 1:00(12:00 + 1 小時)'
   },
   {
     type: 'options',
-    question: '台灣（東經 120°）和英國倫敦（東經 0°）相差幾度？',
-    options: ['60°', '90°', '120°', '180°'],
-    answer: 2,
-    displayAnswer: '120°（120 - 0 = 120）'
-  },
-  {
-    type: 'fill',
-    question: '台灣和倫敦相差 120° 經度，時差是幾小時？（每 15° = 1 小時）',
-    answer: '8',
-    displayAnswer: '8 小時（120 ÷ 15 = 8）'
+    question: '台灣(東經 120°)和英國倫敦(東經 0°)相差幾度？',
+    options: ['120°', '60°', '90°', '180°'],
+    answer: 0,
+    displayAnswer: '120°(120 - 0 = 120)'
   },
   {
     type: 'options',
-    question: '台灣現在是下午 3:00，倫敦比台灣慢 8 小時，倫敦現在是幾點？',
+    question: '台灣和倫敦相差 120° 經度,時差是幾小時？(每 15° = 1 小時)',
+    options: ['8 小時', '6 小時', '10 小時', '12 小時'],
+    answer: 0,
+    displayAnswer: '8 小時(120 ÷ 15 = 8)'
+  },
+  {
+    type: 'options',
+    question: '台灣現在是下午 3:00,倫敦比台灣慢 8 小時,倫敦現在是幾點？',
     options: ['上午 7:00', '下午 11:00', '上午 11:00', '凌晨 1:00'],
     answer: 0,
-    displayAnswer: '上午 7:00（15:00 - 8 = 7:00）'
+    displayAnswer: '上午 7:00(15:00 - 8 = 7:00)'
   },
   {
     type: 'options',
-    question: '每 15° 經度 = 1 小時時差。美國紐約大約在西經 75°，跟台灣（東經 120°）共相差幾度？',
-    options: ['45°', '120°', '195°', '75°'],
-    answer: 2,
-    displayAnswer: '195°（東西兩側要相加：120 + 75 = 195）'
+    question: '每 15° 經度 = 1 小時時差。美國紐約大約在西經 75°,跟台灣(東經 120°)共相差幾度？',
+    options: ['195°', '45°', '120°', '75°'],
+    answer: 0,
+    displayAnswer: '195°(東西兩側要相加:120 + 75 = 195)'
   },
   {
     type: 'options',
-    question: '台灣和紐約相差 195°，但地球只有 360°，實際時差取較短路徑：360 - 195 = 165°，時差是幾小時？',
-    options: ['9 小時', '11 小時', '13 小時', '15 小時'],
-    answer: 2,
-    displayAnswer: '13 小時（195 ÷ 15 = 13）'
+    question: '台灣和紐約相差 195°,時差是幾小時？',
+    options: ['13 小時', '9 小時', '11 小時', '15 小時'],
+    answer: 0,
+    displayAnswer: '13 小時(195 ÷ 15 = 13)'
   }
 ]
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // 【社會】台灣地理位置練習題庫
 const socialQuestions = [
   {
     type: 'options',
     question: '台灣本島大約呈什麼形狀？',
-    options: ['圓形', '正方形', '南北走向的橢圓形（番薯形）', '東西寬廣的長方形'],
-    answer: 2,
-    displayAnswer: '南北走向的橢圓形（番薯形）'
+    options: ['南北走向的橢圓形(番薯形)', '圓形', '正方形', '東西寬廣的長方形'],
+    answer: 0,
+    displayAnswer: '南北走向的橢圓形(番薯形)'
   },
   {
     type: 'options',
     question: '台灣海峽將台灣與哪個地區隔開？',
-    options: ['日本', '菲律賓', '中國大陸', '琉球群島'],
-    answer: 2,
+    options: ['中國大陸', '日本', '菲律賓', '琉球群島'],
+    answer: 0,
     displayAnswer: '中國大陸'
   },
   {
     type: 'options',
     question: '台灣東邊是哪個海洋？',
-    options: ['南海', '印度洋', '太平洋', '東海'],
-    answer: 2,
+    options: ['太平洋', '南海', '印度洋', '東海'],
+    answer: 0,
     displayAnswer: '太平洋'
   },
   {
     type: 'options',
-    question: '北回歸線（23.5°N）穿過台灣哪個地區？',
-    options: ['基隆附近', '台北附近', '嘉義附近', '屏東附近'],
-    answer: 2,
+    question: '北回歸線(23.5°N)穿過台灣哪個地區？',
+    options: ['嘉義附近', '基隆附近', '台北附近', '屏東附近'],
+    answer: 0,
     displayAnswer: '嘉義附近'
   },
   {
     type: 'options',
-    question: '台灣的鄰近離島中，哪個島嶼屬於達悟族的傳統領域？',
-    options: ['澎湖', '金門', '蘭嶼', '綠島'],
-    answer: 2,
+    question: '台灣的鄰近離島中,哪個島嶼屬於達悟族的傳統領域？',
+    options: ['蘭嶼', '澎湖', '金門', '綠島'],
+    answer: 0,
     displayAnswer: '蘭嶼'
   },
   {
     type: 'options',
     question: '台灣北邊最近的島鏈是？',
-    options: ['菲律賓群島', '琉球群島（沖繩）', '夏威夷群島', '馬里亞納群島'],
-    answer: 1,
-    displayAnswer: '琉球群島（沖繩）'
+    options: ['琉球群島(沖繩)', '菲律賓群島', '夏威夷群島', '馬里亞納群島'],
+    answer: 0,
+    displayAnswer: '琉球群島(沖繩)'
   },
   {
     type: 'options',
     question: '台灣南邊緊鄰的國家是？',
-    options: ['日本', '越南', '菲律賓', '印尼'],
-    answer: 2,
+    options: ['菲律賓', '日本', '越南', '印尼'],
+    answer: 0,
     displayAnswer: '菲律賓'
   },
   {
     type: 'options',
     question: '比例尺 1:100,000 代表地圖上 1 公分等於實際多遠？',
-    options: ['1 公尺', '100 公尺', '1 公里', '10 公里'],
-    answer: 2,
-    displayAnswer: '1 公里（100,000 公分 = 1,000 公尺 = 1 公里）'
+    options: ['1 公里', '1 公尺', '100 公尺', '10 公里'],
+    answer: 0,
+    displayAnswer: '1 公里(100,000 公分 = 1,000 公尺 = 1 公里)'
   },
   {
     type: 'options',
     question: '地圖上的「圖例」是用來說明什麼的？',
-    options: ['地圖的來源', '地圖符號與顏色的意義', '地圖的比例尺', '地圖的製作日期'],
-    answer: 1,
+    options: ['地圖符號與顏色的意義', '地圖的來源', '地圖的比例尺', '地圖的製作日期'],
+    answer: 0,
     displayAnswer: '地圖符號與顏色的意義'
   },
   {
     type: 'options',
     question: '台灣位在「亞熱帶」的依據是？',
     options: [
+      '北回歸線穿過台灣中南部,大部分土地在熱帶與溫帶之間',
       '台灣面積很小',
       '台灣四面環海',
-      '北回歸線穿過台灣中南部，大部分土地在熱帶與溫帶之間',
       '台灣海拔很高'
     ],
-    answer: 2,
-    displayAnswer: '北回歸線穿過台灣中南部，大部分土地在熱帶與溫帶之間'
+    answer: 0,
+    displayAnswer: '北回歸線穿過台灣中南部,大部分土地在熱帶與溫帶之間'
   }
 ]
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // 【科學】觀察工具與測量練習題庫
 const scienceQuestions = [
   {
     type: 'options',
-    question: '使用放大鏡觀察時，下列哪項操作正確？',
+    question: '使用放大鏡觀察時,下列哪項操作正確？',
     options: [
-      '把放大鏡貼在眼睛上',
       '移動放大鏡直到影像最清晰',
+      '把放大鏡貼在眼睛上',
       '把物體放到放大鏡後面',
       '在陽光直射下觀察'
     ],
-    answer: 1,
+    answer: 0,
     displayAnswer: '移動放大鏡直到影像最清晰'
   },
   {
     type: 'options',
-    question: '用尺測量長度時，讀數應該從哪裡開始？',
-    options: ['尺的物理末端', '0 刻度線的位置', '最近的整數刻度', '隨便哪裡都行'],
-    answer: 1,
+    question: '用尺測量長度時,讀數應該從哪裡開始？',
+    options: ['0 刻度線的位置', '尺的物理末端', '最近的整數刻度', '隨便哪裡都行'],
+    answer: 0,
     displayAnswer: '0 刻度線的位置'
   },
   {
     type: 'options',
     question: '「量角器」的主要用途是？',
-    options: ['測量長度', '測量角度', '測量重量', '測量溫度'],
-    answer: 1,
+    options: ['測量角度', '測量長度', '測量重量', '測量溫度'],
+    answer: 0,
     displayAnswer: '測量角度'
   },
   {
     type: 'options',
-    question: '記錄觀察數據時，為什麼要寫「單位」？',
+    question: '記錄觀察數據時,為什麼要寫「單位」？',
     options: [
-      '讓記錄看起來更完整',
       '沒有單位就不知道數值代表什麼',
+      '讓記錄看起來更完整',
       '老師要求的格式',
       '只有大數字才需要寫單位'
     ],
-    answer: 1,
+    answer: 0,
     displayAnswer: '沒有單位就不知道數值代表什麼'
   },
   {
     type: 'options',
-    question: '觀察樹葉時，下列哪個描述是「可量化」的觀察？',
+    question: '觀察樹葉時,下列哪個描述是「可量化」的觀察？',
     options: [
+      '葉子是綠色的,長約 8 公分,寬約 4 公分',
       '葉子很漂亮',
-      '葉子是綠色的，長約 8 公分，寬約 4 公分',
       '葉子看起來很健康',
       '葉子聞起來有味道'
     ],
-    answer: 1,
-    displayAnswer: '葉子是綠色的，長約 8 公分，寬約 4 公分'
+    answer: 0,
+    displayAnswer: '葉子是綠色的,長約 8 公分,寬約 4 公分'
   },
   {
     type: 'options',
     question: '「比較」在科學觀察中的意義是？',
     options: [
-      '告訴別人自己的想法',
       '找出兩個事物之間的相同和不同',
+      '告訴別人自己的想法',
       '判斷哪個比較好',
       '預測結果'
     ],
-    answer: 1,
+    answer: 0,
     displayAnswer: '找出兩個事物之間的相同和不同'
   },
   {
     type: 'options',
     question: '科學實驗中的「變因」是指什麼？',
     options: [
-      '實驗結果',
       '實驗過程中可能影響結果的條件',
+      '實驗結果',
       '實驗需要的材料',
       '實驗的時間'
     ],
-    answer: 1,
+    answer: 0,
     displayAnswer: '實驗過程中可能影響結果的條件'
   },
   {
     type: 'options',
-    question: '如果你要比較兩種肥料哪個讓植物長得更好，下列哪個設計最科學？',
+    question: '如果你要比較兩種肥料哪個讓植物長得更好,下列哪個設計最科學？',
     options: [
-      '兩棵植物放在不同地方，分別施不同肥料',
-      '相同條件的兩棵植物，只改變施的肥料種類',
-      '一棵植物先施A肥，一段時間後再施B肥',
+      '相同條件的兩棵植物,只改變施的肥料種類',
+      '兩棵植物放在不同地方,分別施不同肥料',
+      '一棵植物先施A肥,一段時間後再施B肥',
       '問農夫哪種比較好'
     ],
-    answer: 1,
-    displayAnswer: '相同條件的兩棵植物，只改變施的肥料種類'
+    answer: 0,
+    displayAnswer: '相同條件的兩棵植物,只改變施的肥料種類'
   }
 ]
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion, generateSocialQuestion, generateScienceQuestion }
 
 // ==========================================
 // Day 2 資料
@@ -312,7 +351,7 @@ const day2 = {
                 content: '昨天，我們讀到了小叔公和飛魚的故事。今天，我們繼續看夏曼・藍波安如何描述達悟族人認識海洋的方式。'
               },
               {
-                type: 'quote',
+                type: 'text',
                 content: '我的族人對海洋的認識，不是來自書本，不是來自學校。是來自腳踩在珊瑚礁上、眼睛看著海浪的顏色、鼻子聞著海風的味道，手指觸摸海水的溫度……\n\n他們知道哪個季節的魚最肥美，哪個方向的風預告著暴風雨，哪顆星星是回家的方向。這些知識，是好幾代人用身體換來的。',
                 author: '改寫自夏曼・藍波安《大海浮夢》精神'
               }

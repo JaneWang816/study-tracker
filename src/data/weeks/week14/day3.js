@@ -1,63 +1,63 @@
 // src/data/weeks/week14/day3.js
 // 第14週 - 第三天：AI不能做什麼？
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W14D3 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【社會】SDGs挑戰與科技落差練習題庫
 const socialQuestions = [
   {
     type: 'options',
-    question: '「數位落差」是指什麼？',
+    question: '「數位落差」是指什麼?',
     options: [
       '數位產品的價格差異',
-      '因經濟或地理因素，無法使用科技的不平等',
+      '因經濟或地理因素,無法使用科技的不平等',
       '不同世代對科技的理解差異',
       '城市和鄉村的距離'
     ],
     answer: 1,
-    displayAnswer: '因經濟或地理因素，無法使用科技的不平等'
+    displayAnswer: '因經濟或地理因素,無法使用科技的不平等'
   },
   {
     type: 'options',
-    question: 'Amazon招聘AI為什麼被停用？',
+    question: 'Amazon招聘AI為什麼被停用?',
     options: [
       '因為AI太慢',
-      '因為AI出現性別偏見，偏好男性應徵者',
+      '因為AI出現性別偏見,偏好男性應徵者',
       '因為AI太貴',
       '因為應徵者不喜歡AI面試'
     ],
     answer: 1,
-    displayAnswer: '因為AI出現性別偏見，偏好男性應徵者'
+    displayAnswer: '因為AI出現性別偏見,偏好男性應徵者'
   },
   {
     type: 'options',
-    question: 'AI招聘系統為什麼會產生性別偏見？',
+    question: 'AI招聘系統為什麼會產生性別偏見?',
     options: [
       '因為AI討厭女性',
-      '因為訓練資料中，過去被錄取的大多是男性',
+      '因為訓練資料中,過去被錄取的大多是男性',
       '因為程式設計師是男性',
       '因為女性不會寫履歷'
     ],
     answer: 1,
-    displayAnswer: '因為訓練資料中，過去被錄取的大多是男性'
+    displayAnswer: '因為訓練資料中,過去被錄取的大多是男性'
   },
   {
     type: 'options',
-    question: '人臉辨識AI對有色人種準確率較低，這說明了什麼？',
+    question: '人臉辨識AI對有色人種準確率較低,這說明了什麼?',
     options: [
       '有色人種的臉比較難辨識',
-      'AI的訓練資料主要是白人照片，缺乏多元性',
+      'AI的訓練資料主要是白人照片,缺乏多元性',
       'AI有種族歧視',
       '這是正常現象'
     ],
     answer: 1,
-    displayAnswer: 'AI的訓練資料主要是白人照片，缺乏多元性'
+    displayAnswer: 'AI的訓練資料主要是白人照片,缺乏多元性'
   },
   {
     type: 'options',
-    question: '下列哪個「不是」解決數位落差的方法？',
+    question: '下列哪個「不是」解決數位落差的方法?',
     options: [
       '提供偏鄉地區網路基礎建設',
       '降低科技產品價格',
@@ -65,23 +65,23 @@ const socialQuestions = [
       '提供免費的數位素養課程'
     ],
     answer: 2,
-    displayAnswer: '禁止使用AI（應該是讓更多人能使用，而不是禁止）'
+    displayAnswer: '禁止使用AI(應該是讓更多人能使用,而不是禁止)'
   },
   {
     type: 'options',
-    question: 'AI個人化學習可能如何加劇教育不平等？',
+    question: 'AI個人化學習可能如何加劇教育不平等?',
     options: [
       'AI會歧視學生',
-      '有錢家庭能負擔AI家教，窮人家負擔不起',
+      '有錢家庭能負擔AI家教,窮人家負擔不起',
       'AI會讓學生變笨',
       'AI取代老師'
     ],
     answer: 1,
-    displayAnswer: '有錢家庭能負擔AI家教，窮人家負擔不起'
+    displayAnswer: '有錢家庭能負擔AI家教,窮人家負擔不起'
   },
   {
     type: 'options',
-    question: 'SDG 10（減少不平等）在AI時代為什麼特別重要？',
+    question: 'SDG 10(減少不平等)在AI時代為什麼特別重要?',
     options: [
       '因為AI會自動解決不平等',
       '因為AI可能加劇貧富差距和數位落差',
@@ -93,7 +93,7 @@ const socialQuestions = [
   },
   {
     type: 'options',
-    question: '如何確保AI技術「公平」地被使用？',
+    question: '如何確保AI技術「公平」地被使用?',
     options: [
       '讓AI自己決定',
       '只有政府可以用AI',
@@ -105,63 +105,76 @@ const socialQuestions = [
   }
 ]
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【科學】AI的限制與倫理練習題庫
 const scienceQuestions = [
   {
     type: 'options',
-    question: 'AI為什麼無法真正「理解」意義？',
+    question: 'AI為什麼無法真正「理解」意義?',
     options: [
       '因為AI太笨',
-      '因為AI只能找統計規律，不知道文字背後的意義',
+      '因為AI只能找統計規律,不知道文字背後的意義',
       '因為AI沒有讀書',
       '因為AI不會說話'
     ],
     answer: 1,
-    displayAnswer: '因為AI只能找統計規律，不知道文字背後的意義'
+    displayAnswer: '因為AI只能找統計規律,不知道文字背後的意義'
   },
   {
     type: 'options',
-    question: 'ChatGPT能寫出「媽媽很辛苦，我要感謝她」，但它真的理解「辛苦」和「感謝」嗎？',
+    question: 'ChatGPT能寫出「媽媽很辛苦,我要感謝她」,但它真的理解「辛苦」和「感謝」嗎?',
     options: [
-      '理解，所以才能寫出來',
-      '不理解，它只是學到「這些詞常一起出現」',
+      '理解,所以才能寫出來',
+      '不理解,它只是學到「這些詞常一起出現」',
       '部分理解',
       'ChatGPT有自己的想法'
     ],
     answer: 1,
-    displayAnswer: '不理解，它只是學到「這些詞常一起出現」'
+    displayAnswer: '不理解,它只是學到「這些詞常一起出現」'
   },
   {
     type: 'options',
-    question: 'AI缺乏「常識」，下列哪個是例子？',
+    question: 'AI缺乏「常識」,下列哪個是例子?',
     options: [
       'AI知道1+1=2',
       'AI能翻譯語言',
-      'AI可能回答「可以用鐵鎚釘果凍」（不符合常識）',
+      'AI可能回答「可以用鐵鎚釘果凍」(不符合常識)',
       'AI能下棋'
     ],
     answer: 2,
-    displayAnswer: 'AI可能回答「可以用鐵鎚釘果凍」（不符合常識）'
+    displayAnswer: 'AI可能回答「可以用鐵鎚釘果凍」(不符合常識)'
   },
   {
     type: 'options',
-    question: 'AI無法做什麼？',
+    question: 'AI無法做什麼?',
     options: [
       '快速計算',
       '辨識圖片',
-      '感受他人的痛苦（同理心）',
+      '感受他人的痛苦(同理心)',
       '翻譯語言'
     ],
     answer: 2,
-    displayAnswer: '感受他人的痛苦（同理心）'
+    displayAnswer: '感受他人的痛苦(同理心)'
   },
   {
     type: 'options',
-    question: '為什麼AI無法進行「道德判斷」？',
+    question: '為什麼AI無法進行「道德判斷」?',
     options: [
       '因為AI沒有價值觀和同理心',
       '因為AI不會思考',
@@ -173,125 +186,156 @@ const scienceQuestions = [
   },
   {
     type: 'options',
-    question: '自動駕駛汽車遇到「電車難題」（煞車失靈，左邊是老人、右邊是小孩），AI應該怎麼選擇？',
+    question: '自動駕駛汽車遇到「電車難題」(煞車失靈,左邊是老人、右邊是小孩),AI應該怎麼選擇?',
     options: [
       'AI可以自己決定誰比較重要',
-      '這是倫理問題，AI無法判斷，需要人類事先決定',
+      '這是倫理問題,AI無法判斷,需要人類事先決定',
       'AI會選擇撞老人',
       'AI會選擇撞小孩'
     ],
     answer: 1,
-    displayAnswer: '這是倫理問題，AI無法判斷，需要人類事先決定'
+    displayAnswer: '這是倫理問題,AI無法判斷,需要人類事先決定'
   },
   {
     type: 'options',
-    question: '深偽技術（Deepfake）是什麼？',
+    question: '深偽技術(Deepfake)是什麼?',
     options: [
       'AI加密技術',
       'AI用來偵測假新聞',
-      'AI生成假的影像或聲音，看起來/聽起來像真的',
+      'AI生成假的影像或聲音,看起來/聽起來像真的',
       'AI翻譯技術'
     ],
     answer: 2,
-    displayAnswer: 'AI生成假的影像或聲音，看起來/聽起來像真的'
+    displayAnswer: 'AI生成假的影像或聲音,看起來/聽起來像真的'
   },
   {
     type: 'options',
-    question: 'AI出錯時，誰該負責？',
+    question: 'AI出錯時,誰該負責?',
     options: [
       'AI自己',
-      '設計AI的工程師、使用AI的人、制定政策的政府，都有責任',
+      '設計AI的工程師、使用AI的人、制定政策的政府,都有責任',
       '沒有人需要負責',
       '只有使用者負責'
     ],
     answer: 1,
-    displayAnswer: '設計AI的工程師、使用AI的人、制定政策的政府，都有責任'
+    displayAnswer: '設計AI的工程師、使用AI的人、制定政策的政府,都有責任'
   }
 ]
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【數學】W7-W10綜合複習練習題庫
 const mathQuestions = [
   {
     type: 'options',
-    question: '時速60公里的車，開2.5小時，走了多少公里？',
+    question: '時速60公里的車,開2.5小時,走了多少公里?',
     options: ['120公里', '150公里', '24公里', '62.5公里'],
     answer: 1,
-    displayAnswer: '150公里（距離 = 速率 × 時間 = 60 × 2.5）'
+    displayAnswer: '150公里(距離 = 速率 × 時間 = 60 × 2.5)'
   },
   {
-    type: 'fill',
-    question: '走了300公里，花了5小時，平均時速是多少公里？',
-    answer: '60',
+    type: 'options',
+    question: '走了300公里,花了5小時,平均時速是多少公里?',
+    options: ['50公里/小時', '60公里/小時', '70公里/小時', '80公里/小時'],
+    answer: 1,
     displayAnswer: '60公里/小時'
   },
   {
     type: 'options',
-    question: '原價800元，打8折後是多少元？',
+    question: '原價800元,打8折後是多少元?',
     options: ['640元', '720元', '160元', '880元'],
     answer: 0,
-    displayAnswer: '640元（800 × 0.8）'
+    displayAnswer: '640元(800 × 0.8)'
   },
   {
     type: 'options',
-    question: '去年營收100萬，今年營收120萬，成長率是多少？',
+    question: '去年營收100萬,今年營收120萬,成長率是多少?',
     options: ['20%', '120%', '1.2%', '220%'],
     answer: 0,
-    displayAnswer: '20%（成長率 = (120-100)÷100 = 20%）'
+    displayAnswer: '20%(成長率 = (120-100)÷100 = 20%)'
   },
   {
-    type: 'fill',
-    question: '一組數據：5, 8, 8, 10, 12，中位數是多少？',
-    answer: '8',
+    type: 'options',
+    question: '一組數據:5, 8, 8, 10, 12,中位數是多少?',
+    options: ['5', '8', '10', '12'],
+    answer: 1,
     displayAnswer: '8'
   },
   {
     type: 'options',
-    question: '一組數據：3, 7, 7, 7, 15，眾數是多少？',
+    question: '一組數據:3, 7, 7, 7, 15,眾數是多少?',
     options: ['3', '7', '15', '沒有眾數'],
     answer: 1,
-    displayAnswer: '7（出現最多次）'
+    displayAnswer: '7(出現最多次)'
   },
   {
     type: 'options',
-    question: '圓形圖中，某類別占25%，對應的圓心角是幾度？',
+    question: '圓形圖中,某類別占25%,對應的圓心角是幾度?',
     options: ['25度', '90度', '180度', '360度'],
     answer: 1,
-    displayAnswer: '90度（360 × 0.25）'
+    displayAnswer: '90度(360 × 0.25)'
   },
   {
     type: 'options',
-    question: '折線圖中，從2020年的50上升到2025年的80，這是什麼趨勢？',
+    question: '折線圖中,從2020年的50上升到2025年的80,這是什麼趨勢?',
     options: ['下降', '持平', '上升', '先升後降'],
     answer: 2,
     displayAnswer: '上升'
   }
 ]
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    if (question.type === 'options') {
+      return shuffleOptions(question)
+    }
+    return { ...question }
+  }
+})()
 
 // 【語文】哲學思辨練習題庫
 const thinkingQuestions = [
   {
     type: 'options',
-    question: '「如果AI比人類更聰明，人類還有價值嗎？」這個問題的核心是什麼？',
+    question: '「如果AI比人類更聰明,人類還有價值嗎?」這個問題的核心是什麼?',
     options: [
       '比較智商',
-      '思考「價值」的定義——人的價值在於智力，還是其他？',
+      '思考「價值」的定義——人的價值在於智力,還是其他?',
       '討論AI是否危險',
       '決定要不要發展AI'
     ],
     answer: 1,
-    displayAnswer: '思考「價值」的定義——人的價值在於智力，還是其他？'
+    displayAnswer: '思考「價值」的定義——人的價值在於智力,還是其他?'
   },
   {
     type: 'options',
-    question: '人類的價值「不只」在於智力，還在於什麼？',
+    question: '人類的價值「不只」在於智力,還在於什麼?',
     options: [
       '同理心、創造力、價值判斷、情感連結',
       '計算速度',
@@ -303,31 +347,31 @@ const thinkingQuestions = [
   },
   {
     type: 'options',
-    question: 'AI能「生成」藝術作品（如畫作、音樂），這算「創造」嗎？',
+    question: 'AI能「生成」藝術作品(如畫作、音樂),這算「創造」嗎?',
     options: [
-      '算，因為作品是新的',
-      '不完全算，因為AI是重組訓練資料，不是真正的原創',
+      '算,因為作品是新的',
+      '不完全算,因為AI是重組訓練資料,不是真正的原創',
       'AI的創造力比人類強',
       'AI不能生成藝術'
     ],
     answer: 1,
-    displayAnswer: '不完全算，因為AI是重組訓練資料，不是真正的原創'
+    displayAnswer: '不完全算,因為AI是重組訓練資料,不是真正的原創'
   },
   {
     type: 'options',
-    question: '如果AI能做所有工作，人類應該做什麼？',
+    question: '如果AI能做所有工作,人類應該做什麼?',
     options: [
-      '什麼都不做，躺平',
+      '什麼都不做,躺平',
       '和AI競爭',
-      '專注於AI做不到的事：創造、關懷、思考意義',
+      '專注於AI做不到的事:創造、關懷、思考意義',
       '學會寫程式控制AI'
     ],
     answer: 2,
-    displayAnswer: '專注於AI做不到的事：創造、關懷、思考意義'
+    displayAnswer: '專注於AI做不到的事:創造、關懷、思考意義'
   },
   {
     type: 'options',
-    question: '「AI該有權利嗎？」這個問題的前提是什麼？',
+    question: '「AI該有權利嗎?」這個問題的前提是什麼?',
     options: [
       'AI是否有「意識」和「感受」',
       'AI是否有用',
@@ -339,20 +383,40 @@ const thinkingQuestions = [
   },
   {
     type: 'options',
-    question: '目前的AI（如ChatGPT）有意識嗎？',
+    question: '目前的AI(如ChatGPT)有意識嗎?',
     options: [
-      '有，因為它會說話',
-      '沒有，它只是複雜的統計模型，沒有主觀感受',
+      '有,因為它會說話',
+      '沒有,它只是複雜的統計模型,沒有主觀感受',
       '不確定',
       '它假裝有意識'
     ],
     answer: 1,
-    displayAnswer: '沒有，它只是複雜的統計模型，沒有主觀感受'
+    displayAnswer: '沒有,它只是複雜的統計模型,沒有主觀感受'
   }
 ]
 
-const generateThinkingQuestion = () => {
-  return thinkingQuestions[Math.floor(Math.random() * thinkingQuestions.length)]
+const generateThinkingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(thinkingQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateSocialQuestion,
+  generateScienceQuestion,
+  generateMathQuestion,
+  generateThinkingQuestion
 }
 
 // ==========================================

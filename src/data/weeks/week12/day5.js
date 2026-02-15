@@ -2,156 +2,209 @@
 // 第12週 - 第五天：科技與人文的對話 / 為了什麼翱遊？
 
 // ==========================================
-// 練習題生成器
+// Week 14 Day 1 練習題庫
+// 主題：綜合複習
 // ==========================================
 
-// 【綜合複習】W12 總複習題庫
-const reviewQuestions = [
+// 使用 Fisher-Yates 洗牌算法
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// ==========================================
+// 【綜合複習】W14 總複習題庫
+// ==========================================
+
+const reviewQuestionsPool = [
   // 社會
   {
     type: 'options',
-    question: '台灣產業轉型的核心方向是？',
+    question: '台灣產業轉型的核心方向是?',
     options: [
       '從城市到鄉村',
       '從低附加價值到高附加價值',
       '從服務業到工業',
       '從出口到內銷'
     ],
-    answer: 1,
-    displayAnswer: '從低附加價值到高附加價值'
+    correctAnswer: '從低附加價值到高附加價值',
+    explanation: '台灣產業不斷升級,追求更高的附加價值'
   },
   {
     type: 'options',
-    question: '「永續發展」包含哪三個面向？',
+    question: '「永續發展」包含哪三個面向?',
     options: [
       '經濟、政治、軍事',
       '環境、經濟、社會',
       '科技、教育、文化',
       '農業、工業、服務業'
     ],
-    answer: 1,
-    displayAnswer: '環境、經濟、社會'
+    correctAnswer: '環境、經濟、社會',
+    explanation: '永續發展需要平衡環境保護、經濟成長和社會公平'
   },
   {
     type: 'options',
-    question: '循環經濟的核心概念是？',
+    question: '循環經濟的核心概念是?',
     options: [
       '經濟要不斷成長',
-      '讓資源循環使用，減少浪費',
+      '讓資源循環使用,減少浪費',
       '產品要不斷更新',
       '錢要快速流通'
     ],
-    answer: 1,
-    displayAnswer: '讓資源循環使用，減少浪費'
+    correctAnswer: '讓資源循環使用,減少浪費',
+    explanation: '循環經濟強調資源的重複利用和再生'
   },
   // 數學
   {
     type: 'options',
-    question: '解方程式 3x - 6 = 15，正確的步驟是？',
+    question: '解方程式 3x - 6 = 15,正確的步驟是?',
     options: [
-      '先除 3，再加 6',
-      '先加 6，再除 3',
-      '先減 15，再除 3',
-      '先乘 3，再加 6'
+      '先除 3,再加 6',
+      '先加 6,再除 3',
+      '先減 15,再除 3',
+      '先乘 3,再加 6'
     ],
-    answer: 1,
-    displayAnswer: '先加 6，再除 3',
+    correctAnswer: '先加 6,再除 3',
     explanation: '3x - 6 + 6 = 15 + 6 → 3x = 21 → x = 7'
   },
   {
-    type: 'fill',
-    question: '2x ÷ 5 = 8，x = ？',
-    answer: '20',
-    displayAnswer: '20',
-    explanation: '先乘 5：2x = 40；再除 2：x = 20'
+    type: 'options',
+    question: '2x ÷ 5 = 8,x 是多少?',
+    options: ['4', '10', '20', '40'],
+    correctAnswer: '20',
+    explanation: '先乘 5:2x = 40;再除 2:x = 20'
   },
   // 科學
   {
     type: 'options',
-    question: '下列哪個是化學變化？',
+    question: '下列哪個是化學變化?',
     options: ['冰融化', '鐵生鏽', '糖溶解', '水蒸發'],
-    answer: 1,
-    displayAnswer: '鐵生鏽'
+    correctAnswer: '鐵生鏽',
+    explanation: '鐵生鏽產生氧化鐵,是新物質,屬於化學變化'
   },
   {
     type: 'options',
-    question: '不鏽鋼為什麼不容易生鏽？',
+    question: '不鏽鋼為什麼不容易生鏽?',
     options: [
       '因為它不含鐵',
       '因為加入鉻形成保護層',
       '因為它是塑膠',
       '因為它很硬'
     ],
-    answer: 1,
-    displayAnswer: '因為加入鉻形成保護層'
+    correctAnswer: '因為加入鉻形成保護層',
+    explanation: '不鏽鋼含鉻,會在表面形成緻密的氧化層保護內部'
   },
   {
     type: 'options',
-    question: '「可逆變化」是指？',
+    question: '「可逆變化」是指?',
     options: [
       '可以輕易恢復原狀的變化',
       '不能恢復原狀的變化',
       '需要很長時間的變化',
       '化學變化'
     ],
-    answer: 0,
-    displayAnswer: '可以輕易恢復原狀的變化'
+    correctAnswer: '可以輕易恢復原狀的變化',
+    explanation: '可逆變化可以透過簡單方法恢復原狀,如冰融化成水'
   },
   // 語文
   {
     type: 'options',
-    question: '自然書寫的特色是？',
+    question: '自然書寫的特色是?',
     options: [
       '只描寫自然景色',
-      '結合科學觀察與文學感受，思考人與自然的關係',
+      '結合科學觀察與文學感受,思考人與自然的關係',
       '只寫動物',
       '只寫植物'
     ],
-    answer: 1,
-    displayAnswer: '結合科學觀察與文學感受，思考人與自然的關係'
+    correctAnswer: '結合科學觀察與文學感受,思考人與自然的關係',
+    explanation: '自然書寫融合科學知識、文學美感和哲學思考'
   },
   {
     type: 'options',
-    question: '廖鴻基在《飛魚》中用什麼手法描寫飛魚？',
+    question: '廖鴻基在《飛魚》中用什麼手法描寫飛魚?',
     options: [
       '只用科學術語',
       '只用比喻',
       '結合細膩觀察、詩意比喻、哲學提問',
       '只記錄數據'
     ],
-    answer: 2,
-    displayAnswer: '結合細膩觀察、詩意比喻、哲學提問'
+    correctAnswer: '結合細膩觀察、詩意比喻、哲學提問',
+    explanation: '作者運用多元手法,讓讀者深入理解飛魚之美'
   },
   // 跨學科
   {
     type: 'options',
-    question: '本週學習的核心概念是？',
+    question: '本週學習的核心概念是?',
     options: [
       '速度與時間',
       '變化與轉型',
       '面積與體積',
       '力與運動'
     ],
-    answer: 1,
-    displayAnswer: '變化與轉型'
+    correctAnswer: '變化與轉型',
+    explanation: '本週探討物質變化、產業轉型等「變化」主題'
   },
   {
     type: 'options',
-    question: '產業「式微」和鐵「生鏽」的相似之處是？',
+    question: '產業「式微」和鐵「生鏽」的相似之處是?',
     options: [
       '都無法預防',
       '都是因為環境條件改變而衰退',
       '都是好事',
       '都很快發生'
     ],
-    answer: 1,
-    displayAnswer: '都是因為環境條件改變而衰退'
+    correctAnswer: '都是因為環境條件改變而衰退',
+    explanation: '兩者都因外在條件變化導致衰退,需要主動保護或轉型'
   }
-]
+];
 
-const generateReviewQuestion = () => {
-  return reviewQuestions[Math.floor(Math.random() * reviewQuestions.length)]
-}
+// ==========================================
+// 題目生成器(使用閉包實現不重複)
+// ==========================================
+
+const createQuestionGenerator = (questionsPool) => {
+  let shuffledQuestions = [];
+  let currentIndex = 0;
+
+  const regenerate = () => {
+    shuffledQuestions = shuffleArray(questionsPool);
+    currentIndex = 0;
+  };
+
+  // 初始化
+  regenerate();
+
+  return () => {
+    if (currentIndex >= shuffledQuestions.length) {
+      regenerate();
+    }
+
+    const question = shuffledQuestions[currentIndex];
+    currentIndex++;
+
+    // 洗牌選項並記錄正確答案的新位置
+    const shuffledOptions = shuffleArray(question.options);
+    const answerIndex = shuffledOptions.indexOf(question.correctAnswer);
+
+    return {
+      type: question.type,
+      question: question.question,
+      options: shuffledOptions,
+      answer: answerIndex,
+      explanation: question.explanation
+    };
+  };
+};
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export const generateReviewQuestion = createQuestionGenerator(reviewQuestionsPool);
 
 // ==========================================
 // Day 5 資料

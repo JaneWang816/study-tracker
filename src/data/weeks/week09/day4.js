@@ -1,6 +1,207 @@
 // week09/day4.js - W9 Day 4: 動筆日
 
-import { generateW9ComprehensiveQuestion, checkW9ComprehensiveAnswer } from './generators.js'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 練習題庫
+// ==========================================
+
+// 【數學】W9 綜合應用題庫
+const mathQuestions = [
+  {
+    type: 'options',
+    question: '某班 40 人選班長,小明 15 票、小華 12 票、小美 8 票、小強 5 票。小明在圓形圖中應該占多少度?',
+    options: ['135°', '108°', '90°', '72°'],
+    answer: 0,
+    displayAnswer: '135°'
+  },
+  {
+    type: 'options',
+    question: '折線圖顯示投票率:1996年76%、2000年83%、2004年80%、2008年76%。哪個時期是下降趨勢?',
+    options: ['2000年→2008年', '1996年→2000年', '2004年→2008年保持不變', '全程上升'],
+    answer: 0,
+    displayAnswer: '2000年→2008年'
+  },
+  {
+    type: 'options',
+    question: '某圖表Y軸從95開始,顯示「銷量暴增」從96到99。這是什麼陷阱?',
+    options: ['Y軸不從0開始,誇大變化', '樣本太少', '選擇性呈現', '沒有問題'],
+    answer: 0,
+    displayAnswer: 'Y軸不從0開始,誇大變化'
+  },
+  {
+    type: 'options',
+    question: '串聯電路最大的缺點是什麼?',
+    options: ['一個地方斷開,全部停止', '太複雜', '太貴', '太亮'],
+    answer: 0,
+    displayAnswer: '一個地方斷開,全部停止'
+  },
+  {
+    type: 'options',
+    question: '並聯電路最大的優點是什麼?',
+    options: ['各支路獨立,有容錯機制', '最便宜', '最簡單', '最省電'],
+    answer: 0,
+    displayAnswer: '各支路獨立,有容錯機制'
+  },
+  {
+    type: 'options',
+    question: '老榕樹70%枯損,30%健康。在圓形圖中,枯損部分占幾度?',
+    options: ['252°', '108°', '180°', '216°'],
+    answer: 0,
+    displayAnswer: '252°'
+  },
+  {
+    type: 'options',
+    question: '某產品調查「95%滿意」但只問了20人。這是什麼問題?',
+    options: ['樣本數太少,不具代表性', 'Y軸問題', '標題誇大', '沒問題'],
+    answer: 0,
+    displayAnswer: '樣本數太少,不具代表性'
+  },
+  {
+    type: 'options',
+    question: '混合電路結合了串聯和並聯的什麼優點?',
+    options: ['統一控制和獨立運作', '最便宜和最簡單', '最亮和最暗', '最快和最慢'],
+    answer: 0,
+    displayAnswer: '統一控制和獨立運作'
+  },
+  {
+    type: 'options',
+    question: '某折線圖從2020年100→2021年120→2022年110→2023年130。整體趨勢是?',
+    options: ['波動上升', '持續下降', '完全持平', '先升後平'],
+    answer: 0,
+    displayAnswer: '波動上升'
+  },
+  {
+    type: 'options',
+    question: '台灣中央與地方的權力配置,最像哪種電路?',
+    options: ['混合電路', '只有串聯', '只有並聯', '沒有電路'],
+    answer: 0,
+    displayAnswer: '混合電路'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// 【科學】電路設計挑戰題庫
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '教室的黑板燈應該用什麼電路設計?',
+    options: ['並聯', '串聯', '不需要電路', '隨便都可以'],
+    answer: 0,
+    displayAnswer: '並聯'
+  },
+  {
+    type: 'options',
+    question: '為什麼走廊燈要獨立於教室電路?',
+    options: [
+      '因為走廊是公共空間,即使教室沒人,走廊燈也要亮',
+      '因為比較便宜',
+      '因為走廊燈比較亮',
+      '因為串聯比較好'
+    ],
+    answer: 0,
+    displayAnswer: '因為走廊是公共空間,即使教室沒人,走廊燈也要亮'
+  },
+  {
+    type: 'options',
+    question: '總開關在電路中扮演什麼角色?',
+    options: [
+      '串聯設計,可以一次控制所有教室燈',
+      '裝飾用',
+      '只控制黑板燈',
+      '沒有作用'
+    ],
+    answer: 0,
+    displayAnswer: '串聯設計,可以一次控制所有教室燈'
+  },
+  {
+    type: 'options',
+    question: '如果教室電路設計成全部串聯,會有什麼問題?',
+    options: [
+      '一盞燈壞掉,所有燈都不亮',
+      '更省電',
+      '更便宜',
+      '沒有問題'
+    ],
+    answer: 0,
+    displayAnswer: '一盞燈壞掉,所有燈都不亮'
+  },
+  {
+    type: 'options',
+    question: '這個混合電路設計可以比喻成民主制度的哪個特徵?',
+    options: [
+      '憲法約束下的權力分立',
+      '獨裁統治',
+      '無政府狀態',
+      '君主專制'
+    ],
+    answer: 0,
+    displayAnswer: '憲法約束下的權力分立'
+  },
+  {
+    type: 'options',
+    question: '為什麼黑板燈應該用並聯而不是串聯?',
+    options: [
+      '因為一盞壞掉,其他還能繼續亮',
+      '因為比較便宜',
+      '因為比較簡單',
+      '因為比較省電'
+    ],
+    answer: 0,
+    displayAnswer: '因為一盞壞掉,其他還能繼續亮'
+  },
+  {
+    type: 'options',
+    question: '教室照明系統中,「總開關」可以比喻成民主制度的什麼?',
+    options: ['憲法', '總統', '立法院', '地方政府'],
+    answer: 0,
+    displayAnswer: '憲法'
+  },
+  {
+    type: 'options',
+    question: '各組燈(黑板燈、天花板燈、公布欄燈)可以比喻成什麼?',
+    options: ['不同機關或部門(立法、行政、司法)', '同一個機關', '沒有關係', '總統'],
+    answer: 0,
+    displayAnswer: '不同機關或部門(立法、行政、司法)'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 課程內容
+// ==========================================
 
 const day4 = {
   id: 'day4',
@@ -128,8 +329,10 @@ const day4 = {
       },
       practice: {
         questionCount: 8,
-        generator: generateW9ComprehensiveQuestion,
-        checkAnswer: checkW9ComprehensiveAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -213,70 +416,27 @@ const day4 = {
       },
       practice: {
         questionCount: 5,
-        questions: [
-          {
-            question: '教室的黑板燈應該用什麼電路設計?',
-            options: ['串聯', '並聯', '不需要電路', '隨便都可以'],
-            answer: 1
-          },
-          {
-            question: '為什麼走廊燈要獨立於教室電路?',
-            options: [
-              '因為比較便宜',
-              '因為走廊是公共空間,即使教室沒人,走廊燈也要亮',
-              '因為走廊燈比較亮',
-              '因為串聯比較好'
-            ],
-            answer: 1
-          },
-          {
-            question: '總開關在電路中扮演什麼角色?',
-            options: [
-              '裝飾用',
-              '串聯設計,可以一次控制所有教室燈',
-              '只控制黑板燈',
-              '沒有作用'
-            ],
-            answer: 1
-          },
-          {
-            question: '如果教室電路設計成全部串聯,會有什麼問題?',
-            options: [
-              '更省電',
-              '更便宜',
-              '一盞燈壞掉,所有燈都不亮',
-              '沒有問題'
-            ],
-            answer: 2
-          },
-          {
-            question: '這個混合電路設計可以比喻成民主制度的哪個特徵?',
-            options: [
-              '獨裁統治',
-              '憲法約束下的權力分立',
-              '無政府狀態',
-              '君主專制'
-            ],
-            answer: 1
-          }
-        ]
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
-    // ========== 語文引導:論說文 ==========
+    // ========== 語文寫作 ==========
     {
       id: 'w9d4-writing',
       name: '語文:論說文寫作',
       icon: '✍️',
       lesson: {
-        title: '論說文:智慧型手機的利與弊',
+        title: '六段式論說文:智慧型手機的利弊',
         sections: [
           {
             title: '一、什麼是論說文?',
             blocks: [
               {
                 type: 'text',
-                content: '**論說文**是一種說服性文章,目的是透過理由和證據,說服讀者接受你的觀點。'
+                content: '**論說文**是一種說服性的文章,目的是透過理由和證據,讓讀者接受你的觀點。'
               },
               {
                 type: 'text',

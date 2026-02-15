@@ -2,59 +2,75 @@
 // W5 Day5：藝術收尾——《KANO》電影日
 // 貫穿文本：吳念真〈琵琶鼠〉結尾（四十年後重逢）
 
-// ===== 輕量複習題（觀影前暖身）=====
-const generateReviewQuestion = () => {
-  const questions = [
-    // 數學複習
-    {
-      type: 'choice',
-      question: '一個圓形的半徑是 7 公分，它的圓周長約是多少公分？（π ≈ 3.14）',
-      options: ['43.96', '21.98', '153.86', '14'],
-      answer: 0,
-      explanation: 'C = 2πr = 2 × 3.14 × 7 = 43.96 公分'
-    },
-    {
-      type: 'choice',
-      question: '半徑 10 公分、圓心角 90° 的扇形，弧長是多少公分？（π ≈ 3.14）',
-      options: ['15.7', '62.8', '31.4', '7.85'],
-      answer: 0,
-      explanation: '弧長 = 2 × 3.14 × 10 × (90÷360) = 62.8 × 0.25 = 15.7 公分'
-    },
-    // 社會複習
-    {
-      type: 'choice',
-      question: '縱貫鐵路完工的年份是？',
-      options: ['1908年', '1895年', '1934年', '1945年'],
-      answer: 0,
-      explanation: '縱貫鐵路在1908年全線通車，從基隆連接到高雄，貫穿台灣西部。'
-    },
-    {
-      type: 'choice',
-      question: '日月潭水力發電廠完工於哪一年？',
-      options: ['1934年', '1908年', '1895年', '1920年'],
-      answer: 0,
-      explanation: '日月潭水力發電廠（第一發電所）於1934年完工，是當時東亞最大的水力發電廠之一。'
-    },
-    // 科學複習
-    {
-      type: 'choice',
-      question: '定滑輪的主要功能是？',
-      options: ['改變施力方向', '省力一半', '讓重物自動上升', '增加速度'],
-      answer: 0,
-      explanation: '定滑輪固定不動，不省力，但可以改變施力方向。例如升旗桿讓你往下拉，旗子往上升。'
-    },
-    {
-      type: 'choice',
-      question: '用一根長棍撬起大石頭，支點應該靠近哪裡？',
-      options: ['靠近石頭（抗力點）', '靠近手（施力點）', '在中間', '支點位置沒有影響'],
-      answer: 0,
-      explanation: '支點靠近抗力點（石頭），施力臂（支點到施力點的距離）就越長，越省力。'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 輕量複習題(觀影前暖身)
+// ==========================================
+const reviewQuestions = [
+  // 數學複習
+  {
+    type: 'options',
+    question: '一個圓形的半徑是 7 公分,它的圓周長約是多少公分?(π ≈ 3.14)',
+    options: ['43.96', '21.98', '153.86', '14'],
+    answer: 0,
+    displayAnswer: 'C = 2πr = 2 × 3.14 × 7 = 43.96 公分'
+  },
+  {
+    type: 'options',
+    question: '半徑 10 公分、圓心角 90° 的扇形,弧長是多少公分?(π ≈ 3.14)',
+    options: ['15.7', '62.8', '31.4', '7.85'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 10 × (90÷360) = 62.8 × 0.25 = 15.7 公分'
+  },
+  // 社會複習
+  {
+    type: 'options',
+    question: '縱貫鐵路完工的年份是?',
+    options: ['1908年', '1895年', '1934年', '1945年'],
+    answer: 0,
+    displayAnswer: '縱貫鐵路在1908年全線通車,從基隆連接到高雄,貫穿台灣西部。'
+  },
+  {
+    type: 'options',
+    question: '日月潭水力發電廠完工於哪一年?',
+    options: ['1934年', '1908年', '1895年', '1920年'],
+    answer: 0,
+    displayAnswer: '日月潭水力發電廠(第一發電所)於1934年完工,是當時東亞最大的水力發電廠之一。'
+  },
+  // 科學複習
+  {
+    type: 'options',
+    question: '定滑輪的主要功能是?',
+    options: ['改變施力方向', '省力一半', '讓重物自動上升', '增加速度'],
+    answer: 0,
+    displayAnswer: '定滑輪固定不動,不省力,但可以改變施力方向。例如升旗桿讓你往下拉,旗子往上升。'
+  },
+  {
+    type: 'options',
+    question: '用一根長棍撬起大石頭,支點應該靠近哪裡?',
+    options: ['靠近石頭(抗力點)', '靠近手(施力點)', '在中間', '支點位置沒有影響'],
+    answer: 0,
+    displayAnswer: '支點靠近抗力點(石頭),施力臂(支點到施力點的距離)就越長,越省力。'
+  }
+]
+
+const generateReviewQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(reviewQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateReviewQuestion }
 
 // ===== Day 5 主體 =====
 const day5 = {

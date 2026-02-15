@@ -1,39 +1,39 @@
 // src/data/weeks/week15/day2.js
 // 第15週 - 第二天：學會問問題
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W15D2 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【提問能力】提問層次練習題庫
 const questionLevelQuestions = [
   {
     type: 'options',
-    question: '下列哪個是「好問題」？',
+    question: '下列哪個是「好問題」?',
     options: [
-      '什麼是AI？',
-      'AI怎麼運作？',
-      '為什麼AI會產生幻覺？訓練資料的品質如何影響結果？',
-      'AI很厲害嗎？'
+      '什麼是AI?',
+      'AI怎麼運作?',
+      '為什麼AI會產生幻覺?訓練資料的品質如何影響結果?',
+      'AI很厲害嗎?'
     ],
     answer: 2,
-    displayAnswer: '為什麼AI會產生幻覺？訓練資料的品質如何影響結果？（具體、有深度、引導思考）'
+    displayAnswer: '為什麼AI會產生幻覺?訓練資料的品質如何影響結果?(具體、有深度、引導思考)'
   },
   {
     type: 'options',
-    question: '看到新聞「台灣綠能突破20%」，哪個問題最有助於理解？',
+    question: '看到新聞「台灣綠能突破20%」,哪個問題最有助於理解?',
     options: [
-      '綠能是什麼？',
-      '20%多還是少？',
-      '相比2020年的5.4%，成長率多少？距離2025年目標還有多遠？',
-      '台灣有綠能嗎？'
+      '綠能是什麼?',
+      '20%多還是少?',
+      '相比2020年的5.4%,成長率多少?距離2025年目標還有多遠?',
+      '台灣有綠能嗎?'
     ],
     answer: 2,
-    displayAnswer: '相比2020年的5.4%，成長率多少？距離2025年目標還有多遠？（連結舊知識、具體數據）'
+    displayAnswer: '相比2020年的5.4%,成長率多少?距離2025年目標還有多遠?(連結舊知識、具體數據)'
   },
   {
     type: 'options',
-    question: '提問的五個層次，由低到高排列正確的是？',
+    question: '提問的五個層次,由低到高排列正確的是?',
     options: [
       '空泛→關鍵詞→結構→深度→批判',
       '批判→深度→結構→關鍵詞→空泛',
@@ -45,7 +45,7 @@ const questionLevelQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼「腦中有知識」才能問出好問題？',
+    question: '為什麼「腦中有知識」才能問出好問題?',
     options: [
       '因為知識多就厲害',
       '因為知識決定你知道該用什麼詞彙、該問什麼面向',
@@ -57,19 +57,19 @@ const questionLevelQuestions = [
   },
   {
     type: 'options',
-    question: '「層次1：記憶型問題」的例子是？',
+    question: '「層次1:記憶型問題」的例子是?',
     options: [
-      '為什麼要設立國家公園？',
-      '台灣有幾個國家公園？',
-      '如果再設一個國家公園，應該設在哪裡？',
-      '國家公園和永續發展有什麼關係？'
+      '為什麼要設立國家公園?',
+      '台灣有幾個國家公園?',
+      '如果再設一個國家公園,應該設在哪裡?',
+      '國家公園和永續發展有什麼關係?'
     ],
     answer: 1,
-    displayAnswer: '台灣有幾個國家公園？（只需記憶，不需理解）'
+    displayAnswer: '台灣有幾個國家公園?(只需記憶,不需理解)'
   },
   {
     type: 'options',
-    question: '「層次3：應用型問題」的特徵是？',
+    question: '「層次3:應用型問題」的特徵是?',
     options: [
       '只需記憶就能回答',
       '需要理解概念才能回答',
@@ -81,19 +81,19 @@ const questionLevelQuestions = [
   },
   {
     type: 'options',
-    question: '看到數學題目「解方程式 x + 5 = 12」卡住了，哪個問AI的方式最好？',
+    question: '看到數學題目「解方程式 x + 5 = 12」卡住了,哪個問AI的方式最好?',
     options: [
-      '答案是什麼？',
-      '怎麼解？',
-      '我知道要移項，但為什麼加5要變成減5？等量公理的原理是什麼？',
-      '這題對嗎？'
+      '答案是什麼?',
+      '怎麼解?',
+      '我知道要移項,但為什麼加5要變成減5?等量公理的原理是什麼?',
+      '這題對嗎?'
     ],
     answer: 2,
-    displayAnswer: '我知道要移項，但為什麼加5要變成減5？等量公理的原理是什麼？（具體指出卡在哪裡）'
+    displayAnswer: '我知道要移項,但為什麼加5要變成減5?等量公理的原理是什麼?(具體指出卡在哪裡)'
   },
   {
     type: 'options',
-    question: '好問題的三個特徵是？',
+    question: '好問題的三個特徵是?',
     options: [
       '長、複雜、難懂',
       '具體、有深度、開放',
@@ -105,164 +105,223 @@ const questionLevelQuestions = [
   }
 ]
 
-const generateQuestionLevelQuestion = () => {
-  return questionLevelQuestions[Math.floor(Math.random() * questionLevelQuestions.length)]
-}
+const generateQuestionLevelQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(questionLevelQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【對比實驗】學生A vs 學生B 案例題庫
 const comparisonQuestions = [
   {
     type: 'options',
-    question: '學生A問「數學好難」，學生B問「為什麼移項時加法要變減法？」哪個能得到有用的答案？',
+    question: '學生A問「數學好難」,學生B問「為什麼移項時加法要變減法?」哪個能得到有用的答案?',
     options: [
-      '學生A，因為表達了感受',
-      '學生B，因為問題具體',
+      '學生A,因為表達了感受',
+      '學生B,因為問題具體',
       '兩個都好',
       '兩個都不好'
     ],
     answer: 1,
-    displayAnswer: '學生B，因為問題具體，AI能給出針對性解釋'
+    displayAnswer: '學生B,因為問題具體,AI能給出針對性解釋'
   },
   {
     type: 'options',
-    question: '為什麼「學生A的空泛問題」得到的AI回答沒什麼用？',
+    question: '為什麼「學生A的空泛問題」得到的AI回答沒什麼用?',
     options: [
       '因為AI不喜歡他',
-      '因為問題太籠統，AI不知道你真正想問什麼',
+      '因為問題太籠統,AI不知道你真正想問什麼',
       '因為學生A比較笨',
       '因為AI壞掉了'
     ],
     answer: 1,
-    displayAnswer: '因為問題太籠統，AI不知道你真正想問什麼'
+    displayAnswer: '因為問題太籠統,AI不知道你真正想問什麼'
   },
   {
     type: 'options',
-    question: '學生B能問出好問題，是因為？',
+    question: '學生B能問出好問題,是因為?',
     options: [
       '他比較聰明',
-      '他腦中有知識基礎，知道該問什麼',
+      '他腦中有知識基礎,知道該問什麼',
       '他運氣好',
       'AI偏心'
     ],
     answer: 1,
-    displayAnswer: '他腦中有知識基礎，知道該問什麼'
+    displayAnswer: '他腦中有知識基礎,知道該問什麼'
   },
   {
     type: 'options',
-    question: '對比實驗告訴我們什麼？',
+    question: '對比實驗告訴我們什麼?',
     options: [
       'AI會歧視某些人',
-      '好問題來自知識基礎，不是天生的',
+      '好問題來自知識基礎,不是天生的',
       '有些人天生會問問題',
       '問題不重要'
     ],
     answer: 1,
-    displayAnswer: '好問題來自知識基礎，不是天生的'
+    displayAnswer: '好問題來自知識基礎,不是天生的'
   }
 ]
 
-const generateComparisonQuestion = () => {
-  return comparisonQuestions[Math.floor(Math.random() * comparisonQuestions.length)]
-}
+const generateComparisonQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(comparisonQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【實際應用】數學解題情境題庫
 const mathContextQuestions = [
   {
     type: 'options',
-    question: '【情境】你在解「2x + 5 = 17」，算出x = 6。接下來應該？',
+    question: '【情境】你在解「2x + 5 = 17」,算出x = 6。接下來應該?',
     options: [
-      '就這樣，完成了',
-      '驗算：把x = 6代回原式，看等式是否成立',
+      '就這樣,完成了',
+      '驗算:把x = 6代回原式,看等式是否成立',
       '問AI對不對',
       '猜測可能對'
     ],
     answer: 1,
-    displayAnswer: '驗算：把x = 6代回原式，看等式是否成立（自我檢核）'
+    displayAnswer: '驗算:把x = 6代回原式,看等式是否成立(自我檢核)'
   },
   {
     type: 'options',
-    question: '【情境】驗算發現答案錯了，應該？',
+    question: '【情境】驗算發現答案錯了,應該?',
     options: [
       '放棄',
       '直接問AI答案',
-      '回頭檢查每一步，找出錯在哪裡',
+      '回頭檢查每一步,找出錯在哪裡',
       '隨便改一個數字'
     ],
     answer: 2,
-    displayAnswer: '回頭檢查每一步，找出錯在哪裡（自我修正）'
+    displayAnswer: '回頭檢查每一步,找出錯在哪裡(自我修正)'
   },
   {
     type: 'options',
-    question: '【情境】某一步不懂，問AI時應該？',
+    question: '【情境】某一步不懂,問AI時應該?',
     options: [
       '問「這題答案是什麼」',
       '問「怎麼解」',
-      '問「我在這一步卡住了：為什麼要先減5再除以2？」',
+      '問「我在這一步卡住了:為什麼要先減5再除以2?」',
       '問「數學好難怎麼辦」'
     ],
     answer: 2,
-    displayAnswer: '問「我在這一步卡住了：為什麼要先減5再除以2？」（具體指出問題）'
+    displayAnswer: '問「我在這一步卡住了:為什麼要先減5再除以2?」(具體指出問題)'
   },
   {
     type: 'options',
-    question: '為什麼「先自己嘗試，卡住才問AI」比「直接問AI」好？',
+    question: '為什麼「先自己嘗試,卡住才問AI」比「直接問AI」好?',
     options: [
       '因為比較累',
-      '因為自己嘗試才會真正理解，直接問只是知道答案',
+      '因為自己嘗試才會真正理解,直接問只是知道答案',
       '因為AI會生氣',
       '因為老師規定'
     ],
     answer: 1,
-    displayAnswer: '因為自己嘗試才會真正理解，直接問只是知道答案'
+    displayAnswer: '因為自己嘗試才會真正理解,直接問只是知道答案'
   }
 ]
 
-const generateMathContextQuestion = () => {
-  return mathContextQuestions[Math.floor(Math.random() * mathContextQuestions.length)]
-}
+const generateMathContextQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathContextQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【綜合】提問策略練習題庫
 const questionStrategyQuestions = [
   {
     type: 'options',
-    question: '提問升級：從「民主是什麼」進化到更好的問題是？',
+    question: '提問升級:從「民主是什麼」進化到更好的問題是?',
     options: [
-      '民主好嗎？',
-      '台灣有民主嗎？',
-      '民主的核心概念是什麼？為什麼說「多數決」還需要「少數保障」？',
-      '什麼是投票？'
+      '民主好嗎?',
+      '台灣有民主嗎?',
+      '民主的核心概念是什麼?為什麼說「多數決」還需要「少數保障」?',
+      '什麼是投票?'
     ],
     answer: 2,
-    displayAnswer: '民主的核心概念是什麼？為什麼說「多數決」還需要「少數保障」？'
+    displayAnswer: '民主的核心概念是什麼?為什麼說「多數決」還需要「少數保障」?'
   },
   {
     type: 'options',
-    question: '看到「AI」這個詞，哪個問題能引導更深入的理解？',
+    question: '看到「AI」這個詞,哪個問題能引導更深入的理解?',
     options: [
-      'AI是什麼？',
-      'AI厲害嗎？',
-      'AI的學習方式和人類有什麼不同？為什麼AI無法真正理解意義？',
-      'AI會取代人類嗎？'
+      'AI是什麼?',
+      'AI厲害嗎?',
+      'AI的學習方式和人類有什麼不同?為什麼AI無法真正理解意義?',
+      'AI會取代人類嗎?'
     ],
     answer: 2,
-    displayAnswer: 'AI的學習方式和人類有什麼不同？為什麼AI無法真正理解意義？'
+    displayAnswer: 'AI的學習方式和人類有什麼不同?為什麼AI無法真正理解意義?'
   },
   {
     type: 'options',
-    question: '「後設認知」在提問中的作用是？',
+    question: '「後設認知」在提問中的作用是?',
     options: [
-      '知道自己不懂什麼，才知道該問什麼',
+      '知道自己不懂什麼,才知道該問什麼',
       '讓問題變難',
       '炫耀知識',
       '沒有作用'
     ],
     answer: 0,
-    displayAnswer: '知道自己不懂什麼，才知道該問什麼'
+    displayAnswer: '知道自己不懂什麼,才知道該問什麼'
   }
 ]
 
-const generateQuestionStrategyQuestion = () => {
-  return questionStrategyQuestions[Math.floor(Math.random() * questionStrategyQuestions.length)]
+const generateQuestionStrategyQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(questionStrategyQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateQuestionLevelQuestion,
+  generateComparisonQuestion,
+  generateMathContextQuestion,
+  generateQuestionStrategyQuestion
 }
 
 // ==========================================

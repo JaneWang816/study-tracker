@@ -2,243 +2,312 @@
 // W5 Day3：電從哪裡來？
 // 貫穿文本：吳念真〈琵琶鼠〉第三段（摘一葉草、九九乘法表對話）
 
-// ===== 社會：日月潭水力發電 =====
-const generateSocialQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '日月潭水力發電廠大約在哪一年完工？',
-      options: ['1934年', '1895年', '1908年', '1950年'],
-      answer: 0,
-      explanation: '日月潭水力發電廠（日月潭第一發電所）於1934年完工，是當時東亞最大的水力發電廠之一，大幅提升了台灣的電力供應。'
-    },
-    {
-      type: 'choice',
-      question: '水力發電是利用什麼來產生電能？',
-      options: [
-        '水從高處落下的動能帶動發電機',
-        '水的重量直接壓出電',
-        '把水加熱後產生的蒸汽',
-        '水中的礦物質'
-      ],
-      answer: 0,
-      explanation: '水力發電是把高處的水引流而下，水流的動能推動水輪機旋轉，水輪機再帶動發電機發電。能量轉換：位能 → 動能 → 電能。'
-    },
-    {
-      type: 'choice',
-      question: '日月潭水力發電廠的建設，對台灣最大的影響是什麼？',
-      options: [
-        '大幅提升電力供應，讓工廠、礦場、城市都能用電',
-        '讓台灣可以出口電力給日本',
-        '只為日月潭附近的居民供電',
-        '讓台灣不再需要進口煤炭'
-      ],
-      answer: 0,
-      explanation: '日月潭水電廠建成後，電力輸往台灣各地，支撐了製糖廠、礦場、紡織廠等工業用電，大幅推動了台灣工業化發展。'
-    },
-    {
-      type: 'choice',
-      question: '水力發電廠通常建在哪種地方？',
-      options: [
-        '有高低落差、水量充沛的山區河川或水庫旁',
-        '海邊平原',
-        '沙漠地區',
-        '任何地方都可以'
-      ],
-      answer: 0,
-      explanation: '水力發電需要「位能差」，也就是水從高處流下的落差。台灣中央山脈多溪谷，河流短促、落差大，非常適合建設水力發電廠。'
-    },
-    {
-      type: 'choice',
-      question: '日治時期台灣電力最初的主要用途是什麼？',
-      options: [
-        '工業（礦場、製糖廠等）和城市照明',
-        '只用於日本軍隊',
-        '全部用來出口',
-        '只用於農業灌溉'
-      ],
-      answer: 0,
-      explanation: '日治時期的電力最初主要供應工業用途（礦場抽水、製糖廠機械）以及城市公共照明，逐漸才普及到一般家庭。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-// ===== 數學：弧長與扇形周長 =====
-const generateMathQuestion = () => {
-  const type = Math.floor(Math.random() * 3)
-
-  if (type === 0) {
-    // 弧長公式理解
-    const questions = [
-      {
-        question: '扇形的弧長公式是？（C為圓周長，θ為圓心角）',
-        options: ['弧長 = C × θ ÷ 360', '弧長 = C × 360 ÷ θ', '弧長 = C + θ', '弧長 = C × θ'],
-        answer: 0,
-        explanation: '弧長 = 圓周長 × (圓心角 ÷ 360°)。扇形是圓的一部分，圓心角佔360°的幾分之幾，弧長就是圓周長的幾分之幾。'
-      },
-      {
-        question: '一個半圓的弧長是圓周長的幾分之幾？',
-        options: ['1/2（一半）', '1/4（四分之一）', '2/3（三分之二）', '等於圓周長'],
-        answer: 0,
-        explanation: '半圓的圓心角是180°，佔360°的一半，所以弧長 = 圓周長 × (180÷360) = 圓周長 × 1/2。'
-      }
-    ]
-    const q = questions[Math.floor(Math.random() * questions.length)]
-    const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-    return { type: 'choice', ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
+// ==========================================
+// 社會:日月潭水力發電
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '日月潭水力發電廠大約在哪一年完工?',
+    options: ['1934年', '1895年', '1908年', '1950年'],
+    answer: 0,
+    displayAnswer: '日月潭水力發電廠(日月潭第一發電所)於1934年完工,是當時東亞最大的水力發電廠之一,大幅提升了台灣的電力供應。'
+  },
+  {
+    type: 'options',
+    question: '水力發電是利用什麼來產生電能?',
+    options: [
+      '水從高處落下的動能帶動發電機',
+      '水的重量直接壓出電',
+      '把水加熱後產生的蒸汽',
+      '水中的礦物質'
+    ],
+    answer: 0,
+    displayAnswer: '水力發電是把高處的水引流而下,水流的動能推動水輪機旋轉,水輪機再帶動發電機發電。能量轉換:位能 → 動能 → 電能。'
+  },
+  {
+    type: 'options',
+    question: '日月潭水力發電廠的建設,對台灣最大的影響是什麼?',
+    options: [
+      '大幅提升電力供應,讓工廠、礦場、城市都能用電',
+      '讓台灣可以出口電力給日本',
+      '只為日月潭附近的居民供電',
+      '讓台灣不再需要進口煤炭'
+    ],
+    answer: 0,
+    displayAnswer: '日月潭水電廠建成後,電力輸往台灣各地,支撐了製糖廠、礦場、紡織廠等工業用電,大幅推動了台灣工業化發展。'
+  },
+  {
+    type: 'options',
+    question: '水力發電廠通常建在哪種地方?',
+    options: [
+      '有高低落差、水量充沛的山區河川或水庫旁',
+      '海邊平原',
+      '沙漠地區',
+      '任何地方都可以'
+    ],
+    answer: 0,
+    displayAnswer: '水力發電需要「位能差」,也就是水從高處流下的落差。台灣中央山脈多溪谷,河流短促、落差大,非常適合建設水力發電廠。'
+  },
+  {
+    type: 'options',
+    question: '日治時期台灣電力最初的主要用途是什麼?',
+    options: [
+      '工業(礦場、製糖廠等)和城市照明',
+      '只用於日本軍隊',
+      '全部用來出口',
+      '只用於農業灌溉'
+    ],
+    answer: 0,
+    displayAnswer: '日治時期的電力最初主要供應工業用途(礦場抽水、製糖廠機械)以及城市公共照明,逐漸才普及到一般家庭。'
   }
+]
 
-  if (type === 1) {
-    // 已知半徑和圓心角，求弧長
-    const r = [6, 10, 15][Math.floor(Math.random() * 3)]
-    const angles = [60, 90, 120, 180]
-    const angle = angles[Math.floor(Math.random() * angles.length)]
-    const arcLen = (2 * 3.14 * r * angle / 360).toFixed(2)
-    const wrong1 = (2 * 3.14 * r).toFixed(2)
-    const wrong2 = (3.14 * r * angle / 360).toFixed(2)
-    const wrong3 = (2 * 3.14 * r * angle / 180).toFixed(2)
-    const options = [arcLen, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `一個半徑為 ${r} 公分的圓，取圓心角 ${angle}° 的扇形，弧長是多少公分？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(arcLen),
-      explanation: `弧長 = 圓周長 × (圓心角 ÷ 360°)\n= 2 × 3.14 × ${r} × (${angle} ÷ 360)\n= ${(2 * 3.14 * r).toFixed(2)} × ${(angle / 360).toFixed(4).replace(/0+$/, '')}\n= ${arcLen} 公分`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  // type === 2：扇形周長（弧長 + 兩條半徑）
-  const r = [5, 8, 10][Math.floor(Math.random() * 3)]
-  const angles = [90, 120, 180]
-  const angle = angles[Math.floor(Math.random() * angles.length)]
-  const arcLen = 2 * 3.14 * r * angle / 360
-  const perimeter = (arcLen + 2 * r).toFixed(2)
-  const wrong1 = arcLen.toFixed(2)
-  const wrong2 = (arcLen + r).toFixed(2)
-  const wrong3 = (arcLen + 3 * r).toFixed(2)
-  const options = [perimeter, wrong1, wrong2, wrong3]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  return {
-    type: 'choice',
-    question: `一個半徑為 ${r} 公分、圓心角為 ${angle}° 的扇形，它的周長（弧長 + 兩條半徑）是多少公分？（π ≈ 3.14）`,
-    options: shuffled,
-    answer: shuffled.indexOf(perimeter),
-    explanation: `弧長 = 2 × 3.14 × ${r} × ${angle} ÷ 360 = ${arcLen.toFixed(2)} 公分\n扇形周長 = 弧長 + 半徑 × 2 = ${arcLen.toFixed(2)} + ${r} × 2 = ${arcLen.toFixed(2)} + ${r * 2} = ${perimeter} 公分`
+// ==========================================
+// 數學:弧長與扇形周長
+// ==========================================
+const mathQuestions = [
+  // 弧長公式理解
+  {
+    type: 'options',
+    question: '扇形的弧長公式是?(C為圓周長,θ為圓心角)',
+    options: ['弧長 = C × θ ÷ 360', '弧長 = C × 360 ÷ θ', '弧長 = C + θ', '弧長 = C × θ'],
+    answer: 0,
+    displayAnswer: '弧長 = 圓周長 × (圓心角 ÷ 360°)。扇形是圓的一部分,圓心角佔360°的幾分之幾,弧長就是圓周長的幾分之幾。'
+  },
+  {
+    type: 'options',
+    question: '一個半圓的弧長是圓周長的幾分之幾?',
+    options: ['1/2(一半)', '1/4(四分之一)', '2/3(三分之二)', '等於圓周長'],
+    answer: 0,
+    displayAnswer: '半圓的圓心角是180°,佔360°的一半,所以弧長 = 圓周長 × (180÷360) = 圓周長 × 1/2。'
+  },
+  // 已知半徑和圓心角,求弧長
+  {
+    type: 'options',
+    question: '一個半徑為 6 公分的圓,取圓心角 60° 的扇形,弧長是多少公分?(π ≈ 3.14)',
+    options: ['6.28', '37.68', '3.14', '12.56'],
+    answer: 0,
+    displayAnswer: '弧長 = 圓周長 × (圓心角 ÷ 360°)\n= 2 × 3.14 × 6 × (60 ÷ 360)\n= 37.68 × 0.1667\n= 6.28 公分'
+  },
+  {
+    type: 'options',
+    question: '一個半徑為 10 公分的圓,取圓心角 90° 的扇形,弧長是多少公分?(π ≈ 3.14)',
+    options: ['15.7', '62.8', '31.4', '7.85'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 10 × (90 ÷ 360)\n= 62.8 × 0.25\n= 15.7 公分'
+  },
+  {
+    type: 'options',
+    question: '一個半徑為 15 公分的圓,取圓心角 120° 的扇形,弧長是多少公分?(π ≈ 3.14)',
+    options: ['31.4', '94.2', '47.1', '15.7'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 15 × (120 ÷ 360)\n= 94.2 × 0.3333\n= 31.4 公分'
+  },
+  {
+    type: 'options',
+    question: '一個半徑為 6 公分的圓,取圓心角 180° 的扇形,弧長是多少公分?(π ≈ 3.14)',
+    options: ['18.84', '37.68', '9.42', '6.28'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 6 × (180 ÷ 360)\n= 37.68 × 0.5\n= 18.84 公分'
+  },
+  // 扇形周長(弧長 + 兩條半徑)
+  {
+    type: 'options',
+    question: '一個半徑為 5 公分、圓心角為 90° 的扇形,它的周長(弧長 + 兩條半徑)是多少公分?(π ≈ 3.14)',
+    options: ['17.85', '7.85', '12.85', '22.85'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 5 × 90 ÷ 360 = 7.85 公分\n扇形周長 = 弧長 + 半徑 × 2 = 7.85 + 5 × 2 = 7.85 + 10 = 17.85 公分'
+  },
+  {
+    type: 'options',
+    question: '一個半徑為 8 公分、圓心角為 90° 的扇形,它的周長(弧長 + 兩條半徑)是多少公分?(π ≈ 3.14)',
+    options: ['28.56', '12.56', '20.56', '36.56'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 8 × 90 ÷ 360 = 12.56 公分\n扇形周長 = 12.56 + 8 × 2 = 12.56 + 16 = 28.56 公分'
+  },
+  {
+    type: 'options',
+    question: '一個半徑為 10 公分、圓心角為 120° 的扇形,它的周長(弧長 + 兩條半徑)是多少公分?(π ≈ 3.14)',
+    options: ['40.93', '20.93', '30.93', '50.93'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 10 × 120 ÷ 360 = 20.93 公分\n扇形周長 = 20.93 + 10 × 2 = 20.93 + 20 = 40.93 公分'
+  },
+  {
+    type: 'options',
+    question: '一個半徑為 10 公分、圓心角為 180° 的扇形,它的周長(弧長 + 兩條半徑)是多少公分?(π ≈ 3.14)',
+    options: ['51.4', '31.4', '41.4', '61.4'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 10 × 180 ÷ 360 = 31.4 公分\n扇形周長 = 31.4 + 10 × 2 = 31.4 + 20 = 51.4 公分'
   }
-}
+]
 
-// ===== 科學：滑輪 =====
-const generateScienceQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '定滑輪（固定不動的滑輪）的主要作用是？',
-      options: [
-        '改變施力的方向（不省力，但讓施力方向更方便）',
-        '省力一半',
-        '省力四分之三',
-        '讓力量增加兩倍'
-      ],
-      answer: 0,
-      explanation: '定滑輪不省力，拉繩子的力和重物的重量一樣大，但可以改變施力方向。例如：升旗桿的滑輪讓你往下拉，旗子就往上升。'
-    },
-    {
-      type: 'choice',
-      question: '動滑輪（會移動的滑輪）的主要作用是？',
-      options: [
-        '省力一半（用一半的力拉起同樣重的重物）',
-        '讓力增加兩倍',
-        '改變施力方向',
-        '讓物體移動更快'
-      ],
-      answer: 0,
-      explanation: '動滑輪可以省力一半，因為重物由兩段繩子承受，每段繩子只需承受一半的重量。但代價是繩子要拉兩倍長的距離。'
-    },
-    {
-      type: 'choice',
-      question: '升旗桿上的滑輪是哪種滑輪？',
-      options: ['定滑輪', '動滑輪', '滑輪組', '不是滑輪'],
-      answer: 0,
-      explanation: '升旗桿頂端的滑輪是固定不動的定滑輪。它不省力，但讓你可以站在地面往下拉繩子，讓旗子往上升——改變了施力方向。'
-    },
-    {
-      type: 'choice',
-      question: '建築工地用吊車搬運重物，通常使用的是哪種裝置？',
-      options: [
-        '滑輪組（定滑輪和動滑輪的組合）',
-        '只用一個定滑輪',
-        '只用一個動滑輪',
-        '只用槓桿'
-      ],
-      answer: 0,
-      explanation: '滑輪組結合了定滑輪（改向）和動滑輪（省力），可以達到更大的省力效果。滑輪越多，省力越多，但繩子要拉越長的距離。'
-    },
-    {
-      type: 'choice',
-      question: '礦坑裡用來把礦石從坑底「提升」到地面的設備，主要利用什麼原理？',
-      options: [
-        '滑輪組——用較小的力把沉重的礦石籃提升到地面',
-        '槓桿——用長棍子把礦石撬起來',
-        '輪軸——用大輪轉動把礦石拉上來',
-        '以上三種都不對'
-      ],
-      answer: 0,
-      explanation: '礦坑提升系統通常使用大型捲揚機（滑輪組原理），用蒸汽機或電動機驅動，能把沉重的礦石籃從深達數百公尺的坑底提升到地面。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-// ===== 語文詞彙：能源 / 電力用語 =====
-const generateVocabQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「水力發電」的「水力」是指？',
-      options: [
-        '水流動的能量（動能），可以推動機械',
-        '水的重量',
-        '水裡面含有電',
-        '水蒸發產生的能量'
-      ],
-      answer: 0,
-      explanation: '水力是指水流動或從高處落下時所具有的能量。水力發電就是把這種能量轉換成電能。'
-    },
-    {
-      type: 'choice',
-      question: '文章中老鼠子說「九八七十二，九九八十一！」，為什麼在「九九八十一」的時候「刻意把聲音揚高」？',
-      options: [
-        '九九乘法表的最後一句，有一種「終於唸完了」的成就感，聲音自然揚高',
-        '因為81是很大的數字',
-        '因為他背錯了，所以緊張',
-        '這只是吳念真的寫作習慣，沒有特別意義'
-      ],
-      answer: 0,
-      explanation: '九九乘法表的最後一句「九九八十一」是終點，背完有完成的喜悅。老鼠子沒上過學卻把乘法表背得比誰都熟，用揚高的語氣表達那種自豪和頑皮。'
-    },
-    {
-      type: 'choice',
-      question: '「能源」和「能量」有什麼不同？',
-      options: [
-        '能源是可以提供能量的資源（如水、煤、石油），能量是做功的能力',
-        '兩個詞意思完全相同',
-        '能源比能量大',
-        '能量比能源重要'
-      ],
-      answer: 0,
-      explanation: '能源（energy source）是指能提供能量的物質或自然現象，如水力、煤炭、太陽能。能量（energy）是做功的能力本身。水是能源，水流的動能是能量。'
+// ==========================================
+// 科學:滑輪
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '定滑輪(固定不動的滑輪)的主要作用是?',
+    options: [
+      '改變施力的方向(不省力,但讓施力方向更方便)',
+      '省力一半',
+      '省力四分之三',
+      '讓力量增加兩倍'
+    ],
+    answer: 0,
+    displayAnswer: '定滑輪不省力,拉繩子的力和重物的重量一樣大,但可以改變施力方向。例如:升旗桿的滑輪讓你往下拉,旗子就往上升。'
+  },
+  {
+    type: 'options',
+    question: '動滑輪(會移動的滑輪)的主要作用是?',
+    options: [
+      '省力一半(用一半的力拉起同樣重的重物)',
+      '讓力增加兩倍',
+      '改變施力方向',
+      '讓物體移動更快'
+    ],
+    answer: 0,
+    displayAnswer: '動滑輪可以省力一半,因為重物由兩段繩子承受,每段繩子只需承受一半的重量。但代價是繩子要拉兩倍長的距離。'
+  },
+  {
+    type: 'options',
+    question: '升旗桿上的滑輪是哪種滑輪?',
+    options: ['定滑輪', '動滑輪', '滑輪組', '不是滑輪'],
+    answer: 0,
+    displayAnswer: '升旗桿頂端的滑輪是固定不動的定滑輪。它不省力,但讓你可以站在地面往下拉繩子,讓旗子往上升——改變了施力方向。'
+  },
+  {
+    type: 'options',
+    question: '建築工地用吊車搬運重物,通常使用的是哪種裝置?',
+    options: [
+      '滑輪組(定滑輪和動滑輪的組合)',
+      '只用一個定滑輪',
+      '只用一個動滑輪',
+      '只用槓桿'
+    ],
+    answer: 0,
+    displayAnswer: '滑輪組結合了定滑輪(改向)和動滑輪(省力),可以達到更大的省力效果。滑輪越多,省力越多,但繩子要拉越長的距離。'
+  },
+  {
+    type: 'options',
+    question: '礦坑裡用來把礦石從坑底「提升」到地面的設備,主要利用什麼原理?',
+    options: [
+      '滑輪組——用較小的力把沉重的礦石籃提升到地面',
+      '槓桿——用長棍子把礦石撬起來',
+      '輪軸——用大輪轉動把礦石拉上來',
+      '以上三種都不對'
+    ],
+    answer: 0,
+    displayAnswer: '礦坑提升系統通常使用大型捲揚機(滑輪組原理),用蒸汽機或電動機驅動,能把沉重的礦石籃從深達數百公尺的坑底提升到地面。'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 語文詞彙:能源/電力用語
+// ==========================================
+const vocabQuestions = [
+  {
+    type: 'options',
+    question: '「水力發電」的「水力」是指?',
+    options: [
+      '水流動的能量(動能),可以推動機械',
+      '水的重量',
+      '水裡面含有電',
+      '水蒸發產生的能量'
+    ],
+    answer: 0,
+    displayAnswer: '水力是指水流動或從高處落下時所具有的能量。水力發電就是把這種能量轉換成電能。'
+  },
+  {
+    type: 'options',
+    question: '文章中老鼠子說「九八七十二,九九八十一!」,為什麼在「九九八十一」的時候「刻意把聲音揚高」?',
+    options: [
+      '九九乘法表的最後一句,有一種「終於唸完了」的成就感,聲音自然揚高',
+      '因為81是很大的數字',
+      '因為他背錯了,所以緊張',
+      '這只是吳念真的寫作習慣,沒有特別意義'
+    ],
+    answer: 0,
+    displayAnswer: '九九乘法表的最後一句「九九八十一」是終點,背完有完成的喜悅。老鼠子沒上過學卻把乘法表背得比誰都熟,用揚高的語氣表達那種自豪和頑皮。'
+  },
+  {
+    type: 'options',
+    question: '「能源」和「能量」有什麼不同?',
+    options: [
+      '能源是可以提供能量的資源(如水、煤、石油),能量是做功的能力',
+      '兩個詞意思完全相同',
+      '能源比能量大',
+      '能量比能源重要'
+    ],
+    answer: 0,
+    displayAnswer: '能源(energy source)是指能提供能量的物質或自然現象,如水力、煤炭、太陽能。能量(energy)是做功的能力本身。水是能源,水流的動能是能量。'
+  }
+]
+
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion, generateVocabQuestion }
 
 // ===== Day 3 主體 =====
 const day3 = {

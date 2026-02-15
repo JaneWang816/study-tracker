@@ -1,211 +1,250 @@
 // src/data/weeks/week03/day1.js
 // W3 Day1：台灣的河流在哪裡？
 
-// ===== 社會：台灣水系分布 =====
-const generateRiverGeographyQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '台灣河流普遍具有哪些特性？',
-      options: ['長而緩慢，適合航行', '短而湍急，含沙量高', '長而湍急，水量穩定', '短而平緩，水量豐沛'],
-      answer: 1,
-      explanation: '台灣因地形陡峻，河流大多短促急湍，含沙量較高。'
-    },
-    {
-      type: 'choice',
-      question: '台灣哪一條河川的長度最長？',
-      options: ['淡水河', '高屏溪', '濁水溪', '大甲溪'],
-      answer: 2,
-      explanation: '濁水溪全長約186公里，是台灣最長的河流。'
-    },
-    {
-      type: 'choice',
-      question: '台灣哪一條河川的流量最大？',
-      options: ['濁水溪', '淡水河', '曾文溪', '高屏溪'],
-      answer: 3,
-      explanation: '高屏溪（又稱下淡水溪）是台灣流量最大的河流，流域面積廣大。'
-    },
-    {
-      type: 'choice',
-      question: '台灣的河流大多發源自哪裡，然後向哪個方向流？',
-      options: ['從西部平原發源，向東流入太平洋', '從中央山脈發源，分別向東西兩側流', '從北部山地發源，向南流', '從東部山脈發源，向西流入台灣海峽'],
-      answer: 1,
-      explanation: '中央山脈是台灣的分水嶺，河流從此向東西兩側流下。'
-    },
-    {
-      type: 'choice',
-      question: '淡水河流經哪一個城市？',
-      options: ['台中', '台南', '台北', '高雄'],
-      answer: 2,
-      explanation: '淡水河流貫台北盆地，是台北最重要的河流。'
-    },
-    {
-      type: 'choice',
-      question: '台灣西部河川和東部河川相比，通常哪邊較長？',
-      options: ['東部河川較長', '西部河川較長', '兩邊一樣長', '依季節不同'],
-      answer: 1,
-      explanation: '中央山脈偏東，使得西部坡面較緩、較長，因此西部河川通常比東部長。'
-    },
-    {
-      type: 'choice',
-      question: '濁水溪因水色混濁而得名，主要原因是什麼？',
-      options: ['河水受到污染', '含有大量泥沙', '河床岩石是黑色的', '水源來自火山'],
-      answer: 1,
-      explanation: '濁水溪流域土壤疏鬆，河水攜帶大量泥沙，使水色呈現濁黃色。'
-    },
-    {
-      type: 'choice',
-      question: '台灣的河流容易氾濫，主要是因為什麼？',
-      options: ['台灣的雨量太少', '河流太長，水流不及排出', '坡度陡、雨量集中，水流急速', '台灣地形平坦，排水不易'],
-      answer: 2,
-      explanation: '台灣山坡陡峭，加上雨量集中（颱風、梅雨），水流迅速匯集，容易造成洪患。'
-    }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-const checkRiverGeographyAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
-
-// ===== 數學：比與比值 =====
-const generateRatioQuestion = () => {
-  const types = ['basic_ratio', 'ratio_value', 'compare']
-  const t = types[Math.floor(Math.random() * types.length)]
-
-  if (t === 'basic_ratio') {
-    const pairs = [
-      { a: 186, b: 124, nameA: '濁水溪', nameB: '大肚溪', unit: '公里' },
-      { a: 3, b: 2, nameA: '蘋果', nameB: '橘子', unit: '個' },
-      { a: 4, b: 6, nameA: '男生', nameB: '女生', unit: '人' },
-      { a: 5, b: 3, nameA: '紅球', nameB: '藍球', unit: '顆' },
-      { a: 8, b: 12, nameA: 'A水桶', nameB: 'B水桶', unit: '公升' }
-    ]
-    const p = pairs[Math.floor(Math.random() * pairs.length)]
-    const options = [
-      `${p.a}：${p.b}`,
-      `${p.b}：${p.a}`,
-      `${p.a + p.b}：${p.a}`,
-      `${p.a}：${p.a + p.b}`
-    ]
-    return {
-      type: 'choice',
-      question: `${p.nameA}有 ${p.a} ${p.unit}，${p.nameB}有 ${p.b} ${p.unit}，${p.nameA} 對 ${p.nameB} 的比是？`,
-      options,
-      answer: 0,
-      explanation: `比的寫法：前項：後項 = ${p.a}：${p.b}，前項寫的是「${p.nameA}」的數量。`
-    }
+// ==========================================
+// 社會:台灣水系分布
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '台灣河流普遍具有哪些特性?',
+    options: ['短而湍急,含沙量高', '長而緩慢,適合航行', '長而湍急,水量穩定', '短而平緩,水量豐沛'],
+    answer: 0,
+    displayAnswer: '短而湍急,含沙量高。台灣因地形陡峻,河流大多短促急湍,含沙量較高。'
+  },
+  {
+    type: 'options',
+    question: '台灣哪一條河川的長度最長?',
+    options: ['濁水溪', '淡水河', '高屏溪', '大甲溪'],
+    answer: 0,
+    displayAnswer: '濁水溪全長約186公里,是台灣最長的河流。'
+  },
+  {
+    type: 'options',
+    question: '台灣哪一條河川的流量最大?',
+    options: ['高屏溪', '濁水溪', '淡水河', '曾文溪'],
+    answer: 0,
+    displayAnswer: '高屏溪(又稱下淡水溪)是台灣流量最大的河流,流域面積廣大。'
+  },
+  {
+    type: 'options',
+    question: '台灣的河流大多發源自哪裡,然後向哪個方向流?',
+    options: ['從中央山脈發源,分別向東西兩側流', '從西部平原發源,向東流入太平洋', '從北部山地發源,向南流', '從東部山脈發源,向西流入台灣海峽'],
+    answer: 0,
+    displayAnswer: '中央山脈是台灣的分水嶺,河流從此向東西兩側流下。'
+  },
+  {
+    type: 'options',
+    question: '淡水河流經哪一個城市?',
+    options: ['台北', '台中', '台南', '高雄'],
+    answer: 0,
+    displayAnswer: '淡水河流貫台北盆地,是台北最重要的河流。'
+  },
+  {
+    type: 'options',
+    question: '台灣西部河川和東部河川相比,通常哪邊較長?',
+    options: ['西部河川較長', '東部河川較長', '兩邊一樣長', '依季節不同'],
+    answer: 0,
+    displayAnswer: '中央山脈偏東,使得西部坡面較緩、較長,因此西部河川通常比東部長。'
+  },
+  {
+    type: 'options',
+    question: '濁水溪因水色混濁而得名,主要原因是什麼?',
+    options: ['含有大量泥沙', '河水受到污染', '河床岩石是黑色的', '水源來自火山'],
+    answer: 0,
+    displayAnswer: '濁水溪流域土壤疏鬆,河水攜帶大量泥沙,使水色呈現濁黃色。'
+  },
+  {
+    type: 'options',
+    question: '台灣的河流容易氾濫,主要是因為什麼?',
+    options: ['坡度陡、雨量集中,水流急速', '台灣的雨量太少', '河流太長,水流不及排出', '台灣地形平坦,排水不易'],
+    answer: 0,
+    displayAnswer: '台灣山坡陡峭,加上雨量集中(颱風、梅雨),水流迅速匯集,容易造成洪患。'
   }
+]
 
-  if (t === 'ratio_value') {
-    const data = [
-      { a: 3, b: 4 }, { a: 5, b: 2 }, { a: 6, b: 4 }, { a: 9, b: 3 }, { a: 8, b: 5 }
-    ]
-    const d = data[Math.floor(Math.random() * data.length)]
-    const val = d.a / d.b
-    const valStr = Number.isInteger(val) ? String(val) : val.toFixed(2)
-    const wrongs = [
-      (d.b / d.a).toFixed(2),
-      ((d.a + d.b) / d.b).toFixed(2),
-      (d.a * d.b).toFixed(2)
-    ]
-    const options = [valStr, wrongs[0], wrongs[1], wrongs[2]].sort(() => Math.random() - 0.5)
-    const correctIdx = options.indexOf(valStr)
-    return {
-      type: 'choice',
-      question: `比 ${d.a}：${d.b} 的比值是多少？`,
-      options,
-      answer: correctIdx,
-      explanation: `比值 = 前項 ÷ 後項 = ${d.a} ÷ ${d.b} = ${valStr}`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  // compare
-  const pairs = [
-    { r1: [3, 4], r2: [5, 4] },
-    { r1: [2, 5], r2: [4, 5] },
-    { r1: [6, 3], r2: [4, 2] }
-  ]
-  const p = pairs[Math.floor(Math.random() * pairs.length)]
-  const v1 = (p.r1[0] / p.r1[1]).toFixed(2)
-  const v2 = (p.r2[0] / p.r2[1]).toFixed(2)
-  const larger = parseFloat(v1) > parseFloat(v2)
-    ? `${p.r1[0]}：${p.r1[1]}`
-    : `${p.r2[0]}：${p.r2[1]}`
-  const options = [
-    `${p.r1[0]}：${p.r1[1]} 較大`,
-    `${p.r2[0]}：${p.r2[1]} 較大`,
-    '兩者相等',
-    '無法比較'
-  ]
-  const correctAnswer = larger === `${p.r1[0]}：${p.r1[1]}` ? 0 : 1
-  return {
-    type: 'choice',
-    question: `比 ${p.r1[0]}：${p.r1[1]} 和比 ${p.r2[0]}：${p.r2[1]}，哪個比值較大？`,
-    options,
-    answer: correctAnswer,
-    explanation: `比值分別為 ${v1} 和 ${v2}，${larger} 的比值較大。`
+// ==========================================
+// 數學:比與比值
+// ==========================================
+const mathQuestions = [
+  // 基本比的寫法
+  {
+    type: 'options',
+    question: '濁水溪有 186 公里,大肚溪有 124 公里,濁水溪對大肚溪的比是?',
+    options: ['186:124', '124:186', '310:186', '186:310'],
+    answer: 0,
+    displayAnswer: '186:124(比的寫法:前項:後項,前項寫的是「濁水溪」的數量)'
+  },
+  {
+    type: 'options',
+    question: '蘋果有 3 個,橘子有 2 個,蘋果對橘子的比是?',
+    options: ['3:2', '2:3', '5:3', '3:5'],
+    answer: 0,
+    displayAnswer: '3:2'
+  },
+  {
+    type: 'options',
+    question: '男生有 4 人,女生有 6 人,男生對女生的比是?',
+    options: ['4:6', '6:4', '10:4', '4:10'],
+    answer: 0,
+    displayAnswer: '4:6'
+  },
+  {
+    type: 'options',
+    question: '紅球有 5 顆,藍球有 3 顆,紅球對藍球的比是?',
+    options: ['5:3', '3:5', '8:5', '5:8'],
+    answer: 0,
+    displayAnswer: '5:3'
+  },
+  // 比值計算
+  {
+    type: 'options',
+    question: '比 3:4 的比值是多少?',
+    options: ['0.75', '1.33', '1.75', '4'],
+    answer: 0,
+    displayAnswer: '比值 = 前項 ÷ 後項 = 3 ÷ 4 = 0.75'
+  },
+  {
+    type: 'options',
+    question: '比 5:2 的比值是多少?',
+    options: ['2.5', '2', '0.4', '3.5'],
+    answer: 0,
+    displayAnswer: '比值 = 5 ÷ 2 = 2.5'
+  },
+  {
+    type: 'options',
+    question: '比 6:4 的比值是多少?',
+    options: ['1.5', '1.33', '0.67', '2.4'],
+    answer: 0,
+    displayAnswer: '比值 = 6 ÷ 4 = 1.5'
+  },
+  {
+    type: 'options',
+    question: '比 9:3 的比值是多少?',
+    options: ['3', '0.33', '6', '12'],
+    answer: 0,
+    displayAnswer: '比值 = 9 ÷ 3 = 3'
+  },
+  // 比值比較
+  {
+    type: 'options',
+    question: '比 3:4 和比 5:4,哪個比值較大?',
+    options: ['5:4 較大', '3:4 較大', '兩者相等', '無法比較'],
+    answer: 0,
+    displayAnswer: '比值分別為 0.75 和 1.25,5:4 的比值較大。'
+  },
+  {
+    type: 'options',
+    question: '比 2:5 和比 4:5,哪個比值較大?',
+    options: ['4:5 較大', '2:5 較大', '兩者相等', '無法比較'],
+    answer: 0,
+    displayAnswer: '比值分別為 0.4 和 0.8,4:5 的比值較大。'
+  },
+  {
+    type: 'options',
+    question: '比 6:3 和比 4:2,哪個比值較大?',
+    options: ['兩者相等', '6:3 較大', '4:2 較大', '無法比較'],
+    answer: 0,
+    displayAnswer: '比值分別為 2 和 2,兩者相等。'
   }
-}
+]
 
-const checkRatioAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
-
-// ===== 科學：月相觀測入門 =====
-const generateMoonPhaseQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '月亮本身會發光嗎？',
-      options: ['會，月亮自己發出銀白色的光', '不會，我們看到的是月亮反射太陽光', '會，但只在晚上才發光', '不會，月光是地球大氣層折射的光'],
-      answer: 1,
-      explanation: '月亮本身不會發光，我們看到的月光是月球表面反射太陽光的結果。'
-    },
-    {
-      type: 'choice',
-      question: '從新月到下一次新月，大約需要多少天？',
-      options: ['約15天', '約20天', '約29.5天', '約365天'],
-      answer: 2,
-      explanation: '月相的完整週期約為29.5天，這也是農曆一個月的由來。'
-    },
-    {
-      type: 'choice',
-      question: '月相按順序排列，「上弦月」出現在哪個階段？',
-      options: ['新月之前', '新月之後、滿月之前', '滿月之後、新月之前', '和滿月同時出現'],
-      answer: 1,
-      explanation: '月相順序：新月→眉月→上弦月→盈凸月→滿月→虧凸月→下弦月→殘月→新月。'
-    },
-    {
-      type: 'choice',
-      question: '滿月時，地球、月亮和太陽的位置關係是？',
-      options: ['月亮在地球和太陽之間', '地球在月亮和太陽之間', '太陽在地球和月亮之間', '三者排成直角'],
-      answer: 1,
-      explanation: '滿月時，地球在中間，月亮和太陽分別在地球的兩側，月亮被太陽完整照亮。'
-    },
-    {
-      type: 'choice',
-      question: '月相一個完整週期共有幾個主要相位？',
-      options: ['4個', '6個', '8個', '12個'],
-      answer: 2,
-      explanation: '月相有八個主要相位：新月、眉月、上弦月、盈凸月、滿月、虧凸月、下弦月、殘月。'
-    },
-    {
-      type: 'choice',
-      question: '農曆的「十五」通常是什麼月相？',
-      options: ['新月', '上弦月', '滿月', '下弦月'],
-      answer: 2,
-      explanation: '農曆每月初一是新月，十五前後是滿月，這是農曆曆法的基礎。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkMoonPhaseAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
+// ==========================================
+// 科學:月相觀測入門
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '月亮本身會發光嗎?',
+    options: ['不會,我們看到的是月亮反射太陽光', '會,月亮自己發出銀白色的光', '會,但只在晚上才發光', '不會,月光是地球大氣層折射的光'],
+    answer: 0,
+    displayAnswer: '月亮本身不會發光,我們看到的月光是月球表面反射太陽光的結果。'
+  },
+  {
+    type: 'options',
+    question: '從新月到下一次新月,大約需要多少天?',
+    options: ['約29.5天', '約15天', '約20天', '約365天'],
+    answer: 0,
+    displayAnswer: '月相的完整週期約為29.5天,這也是農曆一個月的由來。'
+  },
+  {
+    type: 'options',
+    question: '月相按順序排列,「上弦月」出現在哪個階段?',
+    options: ['新月之後、滿月之前', '新月之前', '滿月之後、新月之前', '和滿月同時出現'],
+    answer: 0,
+    displayAnswer: '月相順序:新月→眉月→上弦月→盈凸月→滿月→虧凸月→下弦月→殘月→新月。'
+  },
+  {
+    type: 'options',
+    question: '滿月時,地球、月亮和太陽的位置關係是?',
+    options: ['地球在月亮和太陽之間', '月亮在地球和太陽之間', '太陽在地球和月亮之間', '三者排成直角'],
+    answer: 0,
+    displayAnswer: '滿月時,地球在中間,月亮和太陽分別在地球的兩側,月亮被太陽完整照亮。'
+  },
+  {
+    type: 'options',
+    question: '月相一個完整週期共有幾個主要相位?',
+    options: ['8個', '4個', '6個', '12個'],
+    answer: 0,
+    displayAnswer: '月相有八個主要相位:新月、眉月、上弦月、盈凸月、滿月、虧凸月、下弦月、殘月。'
+  },
+  {
+    type: 'options',
+    question: '農曆的「十五」通常是什麼月相?',
+    options: ['滿月', '新月', '上弦月', '下弦月'],
+    answer: 0,
+    displayAnswer: '農曆每月初一是新月,十五前後是滿月,這是農曆曆法的基礎。'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion }
 
 // ===== 組合成 Day 1 =====
 const day1 = {
@@ -323,8 +362,10 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateRiverGeographyQuestion,
-        checkAnswer: checkRiverGeographyAnswer
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -383,8 +424,10 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateRatioQuestion,
-        checkAnswer: checkRatioAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -443,8 +486,10 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateMoonPhaseQuestion,
-        checkAnswer: checkMoonPhaseAnswer
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

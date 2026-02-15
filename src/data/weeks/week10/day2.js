@@ -1,329 +1,436 @@
 // src/data/weeks/week10/day2.js
 // W10 Day2：蒐集資料
 
+// 改寫後的題庫 - 使用標準洗牌機制
+
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 練習題庫
+// ==========================================
+
 // ── 社會科題庫（資料查證技巧）────────────────────
 const socialPool = [
   {
+    type: 'options',
     question: '下列哪個網址「最可信」？',
     options: [
-      'www.news-shock.com（震驚新聞網）',
       'www.moea.gov.tw（經濟部）',
+      'www.news-shock.com（震驚新聞網）',
       '匿名論壇的文章',
       '沒有來源的LINE訊息'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: 'www.moea.gov.tw（經濟部）'
   },
   {
+    type: 'options',
     question: '「三源交叉法」的意思是什麼？',
     options: [
+      '同一數據查三個不同來源',
       '看三遍同一篇文章',
       '問三個朋友',
-      '同一數據查三個不同來源',
       '等三天再查'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '同一數據查三個不同來源'
   },
   {
+    type: 'options',
     question: '下列哪個「不是」可信的資料來源？',
     options: [
+      '標題寫「震驚！不看後悔！」的文章',
       '中央研究院的研究報告',
       '台電公司的年報',
-      '標題寫「震驚！不看後悔！」的文章',
       '聯合國的報告'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '標題寫「震驚！不看後悔！」的文章'
   },
   {
+    type: 'options',
     question: '記錄資料來源時，「不需要」記錄什麼？',
     options: [
+      '你看到這篇文章的心情',
       '網站名稱',
       '發布日期',
-      '你看到這篇文章的心情',
       '網址'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '你看到這篇文章的心情'
   },
   {
+    type: 'options',
     question: '如果查到的三個來源說法不一致，應該怎麼辦？',
     options: [
+      '再多查幾個來源，或選擇最權威的',
       '選最簡單的那個',
       '選自己喜歡的那個',
-      '再多查幾個來源，或選擇最權威的',
       '放棄不查了'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '再多查幾個來源，或選擇最權威的'
   },
   {
+    type: 'options',
     question: '政府網站的網址結尾通常是什麼？',
-    options: ['.com', '.gov.tw', '.org', '.net'],
-    answer: 1
+    options: ['.gov.tw', '.com', '.org', '.net'],
+    answer: 0,
+    displayAnswer: '.gov.tw'
   },
   {
+    type: 'options',
     question: '學術機構網站的網址結尾通常是什麼？',
-    options: ['.com', '.gov.tw', '.edu.tw', '.net'],
-    answer: 2
+    options: ['.edu.tw', '.com', '.gov.tw', '.net'],
+    answer: 0,
+    displayAnswer: '.edu.tw'
   },
   {
+    type: 'options',
     question: '內容農場的特徵是什麼？',
     options: [
+      '標題很誇張、充滿廣告',
       '標題很客觀',
       '有明確作者和來源',
-      '標題很誇張、充滿廣告',
       '資料很完整'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '標題很誇張、充滿廣告'
   }
 ]
 
-function generateSocialQuestion() {
-  const q = socialPool[Math.floor(Math.random() * socialPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialPool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 數學科題庫（中位數與眾數）──────────────────────
 const mathPool = [
   {
+    type: 'options',
     question: '五個數字由小到大排列：10, 20, 30, 40, 50，中位數是多少？',
-    options: ['20', '25', '30', '35'],
-    answer: 2
+    options: ['30', '20', '25', '35'],
+    answer: 0,
+    displayAnswer: '30'
   },
   {
+    type: 'options',
     question: '數字：10, 15, 10, 20, 10, 25，眾數是多少？',
     options: ['10', '15', '20', '25'],
-    answer: 0
+    answer: 0,
+    displayAnswer: '10'
   },
   {
+    type: 'options',
     question: '什麼時候用中位數比平均數更適合？',
     options: [
-      '數字都差不多的時候',
       '有極端值的時候',
+      '數字都差不多的時候',
       '數字很少的時候',
       '隨時都可以'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '有極端值的時候'
   },
   {
+    type: 'options',
     question: '四個數字由小到大：10, 20, 30, 40，中位數是多少？',
-    options: ['20', '25', '30', '35'],
-    answer: 1
+    options: ['25', '20', '30', '35'],
+    answer: 0,
+    displayAnswer: '25'
   },
   {
+    type: 'options',
     question: '5個人的零用錢：100, 100, 150, 100, 1000元。哪個更能代表一般情況？',
     options: [
-      '平均數270元',
       '中位數100元',
+      '平均數270元',
       '都一樣',
       '都不對'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '中位數100元'
   },
   {
+    type: 'options',
     question: '「眾數」是什麼意思？',
     options: [
-      '最大的數',
       '出現次數最多的數',
+      '最大的數',
       '中間的數',
       '平均的數'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '出現次數最多的數'
   },
   {
+    type: 'options',
     question: '數字：5, 8, 5, 9, 5, 12，眾數是多少？',
     options: ['5', '8', '9', '12'],
-    answer: 0
+    answer: 0,
+    displayAnswer: '5'
   },
   {
+    type: 'options',
     question: '中位數的計算步驟第一步是什麼？',
     options: [
-      '加起來',
       '由小到大排列',
+      '加起來',
       '找出最大值',
       '除以個數'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '由小到大排列'
   }
 ]
 
-function generateMathQuestion() {
-  const q = mathPool[Math.floor(Math.random() * mathPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathPool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 科學題庫（電磁感應）────────────────────────────
 const sciencePool = [
   {
+    type: 'options',
     question: '法拉第發現了什麼？',
     options: [
-      '電流產生磁場',
       '磁場變化產生電流',
+      '電流產生磁場',
       '光產生電',
       '熱產生磁'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '磁場變化產生電流'
   },
   {
+    type: 'options',
     question: '發電機的原理是什麼？',
     options: [
-      '電流產生磁場',
       '磁場變化產生電流',
+      '電流產生磁場',
       '燃燒產生電',
       '光線產生電'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '磁場變化產生電流'
   },
   {
+    type: 'options',
     question: '把磁鐵快速移進線圈，會發生什麼？',
     options: [
-      '線圈發熱',
       '線圈產生電流',
+      '線圈發熱',
       '線圈變成磁鐵',
       '什麼都不會發生'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '線圈產生電流'
   },
   {
+    type: 'options',
     question: '電磁感應需要什麼條件？',
     options: [
-      '磁場不動',
       '磁場變化',
+      '磁場不動',
       '溫度很高',
       '很多電池'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '磁場變化'
   },
   {
+    type: 'options',
     question: '腳踏車的發電機利用什麼原理？',
     options: [
-      '太陽能',
       '電磁感應',
+      '太陽能',
       '化學反應',
       '核能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '電磁感應'
   },
   {
+    type: 'options',
     question: '發電廠的發電機是利用什麼來轉動？',
     options: [
-      '用手轉',
       '水流、蒸汽或風力',
+      '用手轉',
       '太陽光',
       '電池'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '水流、蒸汽或風力'
   },
   {
+    type: 'options',
     question: '磁鐵靜止不動放在線圈旁邊，會產生電流嗎？',
     options: [
-      '會',
       '不會',
+      '會',
       '有時會有時不會',
       '要看磁鐵大小'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '不會'
   },
   {
+    type: 'options',
     question: '奧斯特和法拉第的發現有什麼關係？',
     options: [
-      '完全無關',
       '互為相反的過程',
+      '完全無關',
       '完全一樣',
       '沒有關係'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '互為相反的過程'
   }
 ]
 
-function generateScienceQuestion() {
-  const q = sciencePool[Math.floor(Math.random() * sciencePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(sciencePool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 語文題庫（閱讀理解）──────────────────────────
 const chinesePool = [
   {
+    type: 'options',
     question: '台灣2020年的發電結構中，哪種占比最高？',
-    options: ['太陽能', '風力', '火力', '核能'],
-    answer: 2
+    options: ['火力', '太陽能', '風力', '核能'],
+    answer: 0,
+    displayAnswer: '火力'
   },
   {
+    type: 'options',
     question: '台灣2020年綠能占總發電量的多少？',
-    options: ['3.6%', '5.4%', '15%', '20%'],
-    answer: 1
+    options: ['5.4%', '3.6%', '15%', '20%'],
+    answer: 0,
+    displayAnswer: '5.4%'
   },
   {
+    type: 'options',
     question: '2011到2020年，哪種綠能成長最快？',
-    options: ['水力', '風力', '太陽能', '生質能'],
-    answer: 2
+    options: ['太陽能', '水力', '風力', '生質能'],
+    answer: 0,
+    displayAnswer: '太陽能'
   },
   {
+    type: 'options',
     question: '核能最大的爭議是什麼？',
     options: [
-      '太貴',
       '核廢料和安全問題',
+      '太貴',
       '發電量太小',
       '需要很多人'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '核廢料和安全問題'
   },
   {
+    type: 'options',
     question: '2011年哪個國家發生核災？',
-    options: ['台灣', '美國', '日本', '法國'],
-    answer: 2
+    options: ['日本', '台灣', '美國', '法國'],
+    answer: 0,
+    displayAnswer: '日本'
   },
   {
+    type: 'options',
     question: '再生能源的特點是什麼？',
     options: [
-      '會用完',
       '用了還會再長出來',
+      '會用完',
       '只有台灣有',
       '很貴'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '用了還會再長出來'
   },
   {
+    type: 'options',
     question: '化石燃料包括哪些？',
     options: [
-      '太陽能、風力',
       '煤炭、石油、天然氣',
+      '太陽能、風力',
       '水力、地熱',
       '核能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '煤炭、石油、天然氣'
   },
   {
+    type: 'options',
     question: '狹義的綠能定義「不包含」什麼？',
-    options: ['太陽能', '風力', '核能', '水力'],
-    answer: 2
+    options: ['核能', '太陽能', '風力', '水力'],
+    answer: 0,
+    displayAnswer: '核能'
   }
 ]
 
-function generateChineseQuestion() {
-  const q = chinesePool[Math.floor(Math.random() * chinesePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateChineseQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(chinesePool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
+})()
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export {
+  generateSocialQuestion,
+  generateMathQuestion,
+  generateScienceQuestion,
+  generateChineseQuestion
 }
 
 // ── Day 資料 ──────────────────────────────────────

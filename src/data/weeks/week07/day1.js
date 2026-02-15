@@ -1,154 +1,260 @@
 // src/data/weeks/week07/day1.js
 // W7 Day1：火車怎麼改變台灣？
 
-// ── 社會科題庫 ────────────────────────────────────
-const socialPool = [
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 社會:台灣鐵路歷史
+// ==========================================
+const socialQuestions = [
   {
-    question: '台灣第一條鐵路是哪一年通車的？',
-    options: ['1871年', '1891年', '1908年', '1945年'],
-    answer: 1
+    type: 'options',
+    question: '台灣第一條鐵路是哪一年通車的?',
+    options: ['1891年', '1871年', '1908年', '1945年'],
+    answer: 0,
+    displayAnswer: '台灣第一條鐵路在1891年通車,連接台北到基隆,是清朝劉銘傳推動建設的。'
   },
   {
-    question: '台灣第一條鐵路連接哪兩個城市？',
-    options: ['台北到高雄', '台北到基隆', '基隆到台南', '台北到台中'],
-    answer: 1
+    type: 'options',
+    question: '台灣第一條鐵路連接哪兩個城市?',
+    options: ['台北到基隆', '台北到高雄', '基隆到台南', '台北到台中'],
+    answer: 0,
+    displayAnswer: '台灣第一條鐵路連接台北到基隆,由清朝台灣巡撫劉銘傳主持建設,1891年通車。'
   },
   {
-    question: '縱貫鐵路全線通車是在哪一年？',
-    options: ['1895年', '1900年', '1908年', '1920年'],
-    answer: 2
+    type: 'options',
+    question: '縱貫鐵路全線通車是在哪一年?',
+    options: ['1908年', '1895年', '1900年', '1920年'],
+    answer: 0,
+    displayAnswer: '縱貫鐵路在日治時期建設,1908年全線通車,從基隆貫穿到高雄,是台灣交通史上的重要里程碑。'
   },
   {
-    question: '縱貫鐵路是在哪個時代完成建設？',
-    options: ['清朝時代', '日治時代', '荷蘭時代', '戰後時代'],
-    answer: 1
+    type: 'options',
+    question: '縱貫鐵路是在哪個時代完成建設?',
+    options: ['日治時代', '清朝時代', '荷蘭時代', '戰後時代'],
+    answer: 0,
+    displayAnswer: '縱貫鐵路是在日治時代完成建設,1908年全線通車,大幅縮短了南北交通時間。'
   },
   {
-    question: '縱貫鐵路通車後，台北到高雄的交通時間縮短到大約多久？',
-    options: ['三天', '一星期', '一天', '半天'],
-    answer: 2
+    type: 'options',
+    question: '縱貫鐵路通車後,台北到高雄的交通時間縮短到大約多久?',
+    options: ['一天', '三天', '一星期', '半天'],
+    answer: 0,
+    displayAnswer: '縱貫鐵路通車後,台北到高雄的交通時間從原本需要數天縮短到大約一天,大幅改善了南北交通。'
   },
   {
-    question: '中山高速公路是哪一年通車？',
-    options: ['1965年', '1972年', '1978年', '1985年'],
-    answer: 2
+    type: 'options',
+    question: '中山高速公路是哪一年通車?',
+    options: ['1978年', '1965年', '1972年', '1985年'],
+    answer: 0,
+    displayAnswer: '中山高速公路在1978年全線通車,是台灣第一條高速公路,連接基隆到高雄。'
   },
   {
-    question: '台灣高鐵是哪一年正式通車？',
-    options: ['1998年', '2002年', '2005年', '2007年'],
-    answer: 3
+    type: 'options',
+    question: '台灣高鐵是哪一年正式通車?',
+    options: ['2007年', '1998年', '2002年', '2005年'],
+    answer: 0,
+    displayAnswer: '台灣高鐵在2007年正式通車,將台北到高雄的交通時間縮短到約90分鐘,是台灣交通現代化的重要成就。'
   },
   {
-    question: '最早推動台灣建設鐵路的清朝官員是誰？',
-    options: ['鄭成功', '劉銘傳', '沈葆楨', '丁汝昌'],
-    answer: 1
+    type: 'options',
+    question: '最早推動台灣建設鐵路的清朝官員是誰?',
+    options: ['劉銘傳', '鄭成功', '沈葆楨', '丁汝昌'],
+    answer: 0,
+    displayAnswer: '劉銘傳是清朝台灣巡撫,在1885-1891年間推動台灣現代化建設,包括修建台灣第一條鐵路(台北-基隆),奠定了台灣鐵路的基礎。'
   }
 ]
 
-function generateSocialQuestion() {
-  const q = socialPool[Math.floor(Math.random() * socialPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
-// ── 數學科題庫（速率概念 v = d ÷ t）──────────────
-function generateMathQuestion() {
-  const type = Math.floor(Math.random() * 3)
-  let question, correctVal, wrong1, wrong2, wrong3
-
-  if (type === 0) {
-    // 求速率
-    const d = (Math.floor(Math.random() * 8) + 2) * 50   // 100–450
-    const t = Math.floor(Math.random() * 4) + 1           // 1–4
-    correctVal = d / t
-    wrong1 = correctVal + 20
-    wrong2 = correctVal - 20 > 0 ? correctVal - 20 : correctVal + 40
-    wrong3 = d * t
-    question = `一列火車行駛了 ${d} 公里，花了 ${t} 小時，平均速率是多少公里/小時？`
-  } else if (type === 1) {
-    // 求距離
-    const v = (Math.floor(Math.random() * 6) + 4) * 20   // 80–180
-    const t = Math.floor(Math.random() * 4) + 1           // 1–4
-    correctVal = v * t
-    wrong1 = v + t
-    wrong2 = correctVal + 50
-    wrong3 = correctVal - 50 > 0 ? correctVal - 50 : correctVal + 100
-    question = `一列火車時速 ${v} 公里，行駛了 ${t} 小時，共走了幾公里？`
-  } else {
-    // 求時間
-    const v = (Math.floor(Math.random() * 4) + 2) * 50   // 100–300
-    const t = Math.floor(Math.random() * 4) + 1           // 1–4
-    const d = v * t
-    correctVal = t
-    wrong1 = t + 1
-    wrong2 = t > 1 ? t - 1 : t + 2
-    wrong3 = t + 3
-    question = `台北到某站距離 ${d} 公里，火車時速 ${v} 公里，需要幾小時到達？`
-  }
-
-  const options = [String(correctVal), String(wrong1), String(wrong2), String(wrong3)]
-  const correctText = String(correctVal)
-  for (let i = options.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[options[i], options[j]] = [options[j], options[i]]
-  }
-  return { question, options, answer: options.indexOf(correctText) }
-}
-
-// ── 語文題庫（文本理解）──────────────────────────
-const literaturePool = [
+// ==========================================
+// 數學:速率概念 v=d÷t
+// ==========================================
+const mathQuestions = [
+  // 求速率
   {
-    question: '劉克襄說「11元」的火車旅行象徵什麼？',
-    options: ['最快速的旅行方式', '緩慢的節奏與淳樸的生活', '最便宜的交通工具', '只在台北地區行駛的火車'],
-    answer: 1
+    type: 'options',
+    question: '一列火車行駛了 100 公里,花了 1 小時,平均速率是多少公里/小時?',
+    options: ['100', '120', '80', '100 (d×t)'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 100 ÷ 1 = 100 公里/小時'
   },
   {
-    question: '劉克襄對鐵路的熱情，最早從哪裡開始？',
-    options: ['大學時代讀鐵路書籍', '五歲在烏日水田旁看火車', '第一次坐高鐵', '祖父送他玩具火車'],
-    answer: 1
+    type: 'options',
+    question: '一列火車行駛了 150 公里,花了 2 小時,平均速率是多少公里/小時?',
+    options: ['75', '95', '55', '300'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 150 ÷ 2 = 75 公里/小時'
   },
   {
-    question: '「鐵道不是一把尺，而是圓規」這句話的意思是？',
+    type: 'options',
+    question: '一列火車行駛了 200 公里,花了 2 小時,平均速率是多少公里/小時?',
+    options: ['100', '120', '80', '400'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 200 ÷ 2 = 100 公里/小時'
+  },
+  {
+    type: 'options',
+    question: '一列火車行駛了 250 公里,花了 3 小時,平均速率是多少公里/小時?',
+    options: ['83.33', '103.33', '63.33', '750'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 250 ÷ 3 ≈ 83.33 公里/小時'
+  },
+  // 求距離
+  {
+    type: 'options',
+    question: '一列火車時速 80 公里,行駛了 2 小時,共走了幾公里?',
+    options: ['160', '82', '210', '110'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 80 × 2 = 160 公里'
+  },
+  {
+    type: 'options',
+    question: '一列火車時速 100 公里,行駛了 3 小時,共走了幾公里?',
+    options: ['300', '103', '350', '250'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 100 × 3 = 300 公里'
+  },
+  {
+    type: 'options',
+    question: '一列火車時速 120 公里,行駛了 2 小時,共走了幾公里?',
+    options: ['240', '122', '290', '190'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 120 × 2 = 240 公里'
+  },
+  {
+    type: 'options',
+    question: '一列火車時速 140 公里,行駛了 3 小時,共走了幾公里?',
+    options: ['420', '143', '470', '370'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 140 × 3 = 420 公里'
+  },
+  // 求時間
+  {
+    type: 'options',
+    question: '台北到某站距離 100 公里,火車時速 100 公里,需要幾小時到達?',
+    options: ['1', '2', '0', '4'],
+    answer: 0,
+    displayAnswer: '時間 = 距離 ÷ 速率 = 100 ÷ 100 = 1 小時'
+  },
+  {
+    type: 'options',
+    question: '台北到某站距離 200 公里,火車時速 100 公里,需要幾小時到達?',
+    options: ['2', '3', '1', '5'],
+    answer: 0,
+    displayAnswer: '時間 = 距離 ÷ 速率 = 200 ÷ 100 = 2 小時'
+  },
+  {
+    type: 'options',
+    question: '台北到某站距離 300 公里,火車時速 150 公里,需要幾小時到達?',
+    options: ['2', '3', '1', '5'],
+    answer: 0,
+    displayAnswer: '時間 = 距離 ÷ 速率 = 300 ÷ 150 = 2 小時'
+  },
+  {
+    type: 'options',
+    question: '台北到某站距離 400 公里,火車時速 200 公里,需要幾小時到達?',
+    options: ['2', '3', '1', '5'],
+    answer: 0,
+    displayAnswer: '時間 = 距離 ÷ 速率 = 400 ÷ 200 = 2 小時'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 語文:文本理解
+// ==========================================
+const literatureQuestions = [
+  {
+    type: 'options',
+    question: '劉克襄說「11元」的火車旅行象徵什麼?',
+    options: ['緩慢的節奏與淳樸的生活', '最快速的旅行方式', '最便宜的交通工具', '只在台北地區行駛的火車'],
+    answer: 0,
+    displayAnswer: '劉克襄用「11元的鐵道旅行」來象徵一種緩慢的、親近土地的生活方式,強調的是旅行的心境與過程,而非速度與價格。'
+  },
+  {
+    type: 'options',
+    question: '劉克襄對鐵路的熱情,最早從哪裡開始?',
+    options: ['五歲在烏日水田旁看火車', '大學時代讀鐵路書籍', '第一次坐高鐵', '祖父送他玩具火車'],
+    answer: 0,
+    displayAnswer: '劉克襄在五歲時,在烏日水田旁看著火車經過,從那時開始就對鐵路充滿熱情和想像。'
+  },
+  {
+    type: 'options',
+    question: '「鐵道不是一把尺,而是圓規」這句話的意思是?',
     options: [
+      '以車站為中心向四周探索,畫出生活的圓',
       '火車速度可以量測距離',
-      '以車站為中心向四周探索，畫出生活的圓',
       '鐵道像圓規一樣彎曲',
       '搭火車需要帶量尺'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '這句話的意思是:不要把鐵道只當作從A點到B點的直線工具,而應該以每個車站為中心,向周圍延伸探索,畫出屬於自己的生活圓圈。'
   },
   {
-    question: '劉克襄認為搭火車比開車更環保的原因是什麼？',
+    type: 'options',
+    question: '劉克襄認為搭火車比開車更環保的原因是什麼?',
     options: [
+      '火車一次載很多人,石油消耗相對少',
       '火車速度比較慢',
       '火車票比較便宜',
-      '火車一次載很多人，石油消耗相對少',
       '火車不需要燃料'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '火車一次可以載很多人,平均每個人的能源消耗比開車少很多,因此更環保。這是大眾運輸相對於私人交通工具的優勢。'
   },
   {
-    question: '文章裡的「11路車」是什麼意思？',
-    options: ['11號公車', '11元的火車', '用兩條腿走路', '11節車廂的列車'],
-    answer: 2
+    type: 'options',
+    question: '文章裡的「11路車」是什麼意思?',
+    options: ['用兩條腿走路', '11號公車', '11元的火車', '11節車廂的列車'],
+    answer: 0,
+    displayAnswer: '「11路車」是幽默的說法,指的是用兩條腿走路(兩條腿看起來像數字11)。表示下了火車後,要靠自己的雙腳去探索周圍。'
   }
 ]
 
-function generateLiteratureQuestion() {
-  const q = literaturePool[Math.floor(Math.random() * literaturePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateLiteratureQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(literatureQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateLiteratureQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day1 = {

@@ -1,27 +1,27 @@
 // src/data/weeks/week15/day3.js
 // 第15週 - 第三天：從錯誤中學習
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W15D3 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【錯誤的價值】錯誤類型與學習練習題庫
 const errorLearningQuestions = [
   {
     type: 'options',
-    question: 'AI犯錯和人類犯錯最大的差別是什麼？',
+    question: 'AI犯錯和人類犯錯最大的差別是什麼?',
     options: [
       'AI犯錯比較少',
-      'AI不會反思為什麼錯，人類可以',
+      'AI不會反思為什麼錯,人類可以',
       'AI犯錯會道歉',
       'AI犯錯會自己改正'
     ],
     answer: 1,
-    displayAnswer: 'AI不會反思為什麼錯，人類可以'
+    displayAnswer: 'AI不會反思為什麼錯,人類可以'
   },
   {
     type: 'options',
-    question: '「知識性錯誤」是指？',
+    question: '「知識性錯誤」是指?',
     options: [
       '不知道知識',
       '記錯了事實或公式',
@@ -29,11 +29,11 @@ const errorLearningQuestions = [
       '粗心大意'
     ],
     answer: 1,
-    displayAnswer: '記錯了事實或公式（例：記錯圓面積公式）'
+    displayAnswer: '記錯了事實或公式(例:記錯圓面積公式)'
   },
   {
     type: 'options',
-    question: '「概念性錯誤」是指？',
+    question: '「概念性錯誤」是指?',
     options: [
       '記錯事實',
       '算錯答案',
@@ -41,11 +41,11 @@ const errorLearningQuestions = [
       '寫錯字'
     ],
     answer: 2,
-    displayAnswer: '對概念的理解有誤（例：以為民主就是投票）'
+    displayAnswer: '對概念的理解有誤(例:以為民主就是投票)'
   },
   {
     type: 'options',
-    question: '「程序性錯誤」是指？',
+    question: '「程序性錯誤」是指?',
     options: [
       '不知道知識',
       '理解錯誤',
@@ -53,11 +53,11 @@ const errorLearningQuestions = [
       '態度不對'
     ],
     answer: 2,
-    displayAnswer: '步驟順序錯了或遺漏（例：解方程式先乘除後加減）'
+    displayAnswer: '步驟順序錯了或遺漏(例:解方程式先乘除後加減)'
   },
   {
     type: 'options',
-    question: '「思維性錯誤」是指？',
+    question: '「思維性錯誤」是指?',
     options: [
       '記錯事實',
       '算錯答案',
@@ -69,87 +69,100 @@ const errorLearningQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼要建立「錯誤學習日誌」？',
+    question: '為什麼要建立「錯誤學習日誌」?',
     options: [
       '為了懲罰自己',
-      '為了記住錯誤，避免重複犯錯，並理解錯誤背後的原因',
+      '為了記住錯誤,避免重複犯錯,並理解錯誤背後的原因',
       '為了給老師看',
       '因為規定要寫'
     ],
     answer: 1,
-    displayAnswer: '為了記住錯誤，避免重複犯錯，並理解錯誤背後的原因'
+    displayAnswer: '為了記住錯誤,避免重複犯錯,並理解錯誤背後的原因'
   },
   {
     type: 'options',
-    question: '「成長心態」和「固定心態」的差別是？',
+    question: '「成長心態」和「固定心態」的差別是?',
     options: [
-      '成長心態相信能力可以培養，固定心態認為能力是天生的',
+      '成長心態相信能力可以培養,固定心態認為能力是天生的',
       '成長心態比較聰明',
       '固定心態比較穩定',
       '沒有差別'
     ],
     answer: 0,
-    displayAnswer: '成長心態相信能力可以培養，固定心態認為能力是天生的'
+    displayAnswer: '成長心態相信能力可以培養,固定心態認為能力是天生的'
   },
   {
     type: 'options',
-    question: '面對錯誤，哪種反應是「成長心態」？',
+    question: '面對錯誤,哪種反應是「成長心態」?',
     options: [
-      '「我太笨了，我不會」',
-      '「我現在還不會，但我可以學」',
+      '「我太笨了,我不會」',
+      '「我現在還不會,但我可以學」',
       '「我天生就不是讀書的料」',
-      '「算了，放棄」'
+      '「算了,放棄」'
     ],
     answer: 1,
-    displayAnswer: '「我現在還不會，但我可以學」'
+    displayAnswer: '「我現在還不會,但我可以學」'
   }
 ]
 
-const generateErrorLearningQuestion = () => {
-  return errorLearningQuestions[Math.floor(Math.random() * errorLearningQuestions.length)]
-}
+const generateErrorLearningQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(errorLearningQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【成長心態】固定心態vs成長心態練習題庫
 const mindsetQuestions = [
   {
     type: 'options',
-    question: '固定心態的人遇到困難時會想？',
+    question: '固定心態的人遇到困難時會想?',
     options: [
-      '「這太難了，我不會」',
-      '「這是挑戰，我要試試看」',
+      '「這太難了,我不會」',
+      '「這是挑戰,我要試試看」',
       '「我可以學習」',
       '「失敗是成長的機會」'
     ],
     answer: 0,
-    displayAnswer: '「這太難了，我不會」（消極、放棄）'
+    displayAnswer: '「這太難了,我不會」(消極、放棄)'
   },
   {
     type: 'options',
-    question: '成長心態的人看到別人成功時會想？',
+    question: '成長心態的人看到別人成功時會想?',
     options: [
-      '「他天生聰明，我不行」',
+      '「他天生聰明,我不行」',
       '「他一定作弊」',
       '「我可以向他學習」',
       '「反正我再怎麼努力也沒用」'
     ],
     answer: 2,
-    displayAnswer: '「我可以向他學習」（積極、開放）'
+    displayAnswer: '「我可以向他學習」(積極、開放)'
   },
   {
     type: 'options',
-    question: '下列哪句話展現「成長心態」？',
+    question: '下列哪句話展現「成長心態」?',
     options: [
       '「我數學不好」',
-      '「我數學還不夠好，但我在進步」',
+      '「我數學還不夠好,但我在進步」',
       '「我天生不是讀書的料」',
       '「反正我再怎麼努力也學不會」'
     ],
     answer: 1,
-    displayAnswer: '「我數學還不夠好，但我在進步」'
+    displayAnswer: '「我數學還不夠好,但我在進步」'
   },
   {
     type: 'options',
-    question: '成長心態的核心信念是？',
+    question: '成長心態的核心信念是?',
     options: [
       '能力是天生的',
       '能力是固定的',
@@ -161,76 +174,108 @@ const mindsetQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼成長心態在AI時代特別重要？',
+    question: '為什麼成長心態在AI時代特別重要?',
     options: [
       '因為AI會批評人',
-      '因為世界變化快，需要不斷學習新事物',
+      '因為世界變化快,需要不斷學習新事物',
       '因為AI有成長心態',
       '因為考試會考'
     ],
     answer: 1,
-    displayAnswer: '因為世界變化快，需要不斷學習新事物'
+    displayAnswer: '因為世界變化快,需要不斷學習新事物'
   }
 ]
 
-const generateMindsetQuestion = () => {
-  return mindsetQuestions[Math.floor(Math.random() * mindsetQuestions.length)]
-}
+const generateMindsetQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mindsetQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【實作】錯誤分析練習題庫
 const errorAnalysisQuestions = [
   {
     type: 'options',
-    question: '【情境】小明算 2x + 5 = 17，得出 x = 11。這是哪種錯誤？',
+    question: '【情境】小明算 2x + 5 = 17,得出 x = 11。這是哪種錯誤?',
     options: [
-      '知識性錯誤（記錯公式）',
-      '概念性錯誤（不理解等量公理）',
-      '程序性錯誤（步驟錯誤）',
-      '粗心（算錯）'
+      '知識性錯誤(記錯公式)',
+      '概念性錯誤(不理解等量公理)',
+      '程序性錯誤(步驟錯誤)',
+      '粗心(算錯)'
     ],
     answer: 2,
-    displayAnswer: '程序性錯誤（可能先除以2再減5，順序錯了）'
+    displayAnswer: '程序性錯誤(可能先除以2再減5,順序錯了)'
   },
   {
     type: 'options',
-    question: '【情境】小華說「民主就是投票」。這是哪種錯誤？',
+    question: '【情境】小華說「民主就是投票」。這是哪種錯誤?',
     options: [
       '知識性錯誤',
-      '概念性錯誤（理解不完整）',
+      '概念性錯誤(理解不完整)',
       '程序性錯誤',
       '思維性錯誤'
     ],
     answer: 1,
-    displayAnswer: '概念性錯誤（理解不完整，民主還包括少數保障等）'
+    displayAnswer: '概念性錯誤(理解不完整,民主還包括少數保障等)'
   },
   {
     type: 'options',
-    question: '【情境】小美說「圓面積是2πr」。這是哪種錯誤？',
+    question: '【情境】小美說「圓面積是2πr」。這是哪種錯誤?',
     options: [
-      '知識性錯誤（記錯公式）',
+      '知識性錯誤(記錯公式)',
       '概念性錯誤',
       '程序性錯誤',
       '思維性錯誤'
     ],
     answer: 0,
-    displayAnswer: '知識性錯誤（記錯公式，應該是πr²）'
+    displayAnswer: '知識性錯誤(記錯公式,應該是πr²)'
   },
   {
     type: 'options',
-    question: '發現自己犯了「概念性錯誤」，應該？',
+    question: '發現自己犯了「概念性錯誤」,應該?',
     options: [
       '記住正確答案就好',
-      '重新理解概念，問「為什麼」',
+      '重新理解概念,問「為什麼」',
       '多做題目',
       '請AI幫忙'
     ],
     answer: 1,
-    displayAnswer: '重新理解概念，問「為什麼」（治本，不只是治標）'
+    displayAnswer: '重新理解概念,問「為什麼」(治本,不只是治標)'
   }
 ]
 
-const generateErrorAnalysisQuestion = () => {
-  return errorAnalysisQuestions[Math.floor(Math.random() * errorAnalysisQuestions.length)]
+const generateErrorAnalysisQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(errorAnalysisQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateErrorLearningQuestion,
+  generateMindsetQuestion,
+  generateErrorAnalysisQuestion
 }
 
 // ==========================================

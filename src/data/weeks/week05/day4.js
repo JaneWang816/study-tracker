@@ -2,136 +2,189 @@
 // W5 Day4：動筆日
 // 貫穿文本：吳念真〈琵琶鼠〉第四段（父親去世、老鼠子離開）
 
-// ===== 數學綜合：圓周長 + 弧長 + 機械情境 =====
-const generateMathQuestion = () => {
-  const type = Math.floor(Math.random() * 4)
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-  if (type === 0) {
-    // 圓周長情境
-    const r = [8, 12, 15, 25][Math.floor(Math.random() * 4)]
-    const c = (2 * 3.14 * r).toFixed(2)
-    const wrong1 = (3.14 * r).toFixed(2)
-    const wrong2 = (2 * 3.14 * r + 2 * r).toFixed(2)
-    const wrong3 = (3.14 * r * r).toFixed(2)
-    const options = [c, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `礦坑裡的水輪半徑是 ${r} 公分，轉一圈能帶動多長的鏈條？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(c),
-      explanation: `水輪的周長 = 2 × 3.14 × ${r} = ${c} 公分，轉一圈就帶動 ${c} 公分長的鏈條。`
-    }
+// ==========================================
+// 數學綜合:圓周長+弧長+機械情境
+// ==========================================
+const mathQuestions = [
+  // 圓周長情境
+  {
+    type: 'options',
+    question: '礦坑裡的水輪半徑是 8 公分,轉一圈能帶動多長的鏈條?(π ≈ 3.14)',
+    options: ['50.24', '25.12', '60.24', '200.96'],
+    answer: 0,
+    displayAnswer: '水輪的周長 = 2 × 3.14 × 8 = 50.24 公分,轉一圈就帶動 50.24 公分長的鏈條。'
+  },
+  {
+    type: 'options',
+    question: '礦坑裡的水輪半徑是 12 公分,轉一圈能帶動多長的鏈條?(π ≈ 3.14)',
+    options: ['75.36', '37.68', '85.36', '452.16'],
+    answer: 0,
+    displayAnswer: '水輪的周長 = 2 × 3.14 × 12 = 75.36 公分,轉一圈就帶動 75.36 公分長的鏈條。'
+  },
+  {
+    type: 'options',
+    question: '礦坑裡的水輪半徑是 15 公分,轉一圈能帶動多長的鏈條?(π ≈ 3.14)',
+    options: ['94.2', '47.1', '104.2', '706.5'],
+    answer: 0,
+    displayAnswer: '水輪的周長 = 2 × 3.14 × 15 = 94.2 公分,轉一圈就帶動 94.2 公分長的鏈條。'
+  },
+  {
+    type: 'options',
+    question: '礦坑裡的水輪半徑是 25 公分,轉一圈能帶動多長的鏈條?(π ≈ 3.14)',
+    options: ['157', '78.5', '167', '1962.5'],
+    answer: 0,
+    displayAnswer: '水輪的周長 = 2 × 3.14 × 25 = 157 公分,轉一圈就帶動 157 公分長的鏈條。'
+  },
+  // 弧長情境
+  {
+    type: 'options',
+    question: '五分仔車的圓形路線,整圈半徑 10 公尺。若只走 60° 的弧形段,走了多少公尺?(π ≈ 3.14)',
+    options: ['10.47', '62.8', '5.23', '20.94'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 10 × (60 ÷ 360) = 10.47 公尺'
+  },
+  {
+    type: 'options',
+    question: '五分仔車的圓形路線,整圈半徑 14 公尺。若只走 90° 的弧形段,走了多少公尺?(π ≈ 3.14)',
+    options: ['21.98', '87.92', '10.99', '43.96'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 14 × (90 ÷ 360) = 21.98 公尺'
+  },
+  {
+    type: 'options',
+    question: '五分仔車的圓形路線,整圈半徑 20 公尺。若只走 120° 的弧形段,走了多少公尺?(π ≈ 3.14)',
+    options: ['41.87', '125.6', '20.93', '83.73'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 20 × (120 ÷ 360) = 41.87 公尺'
+  },
+  // 扇形周長情境
+  {
+    type: 'options',
+    question: '製糖廠的圓形冷卻池被分成四等份,每份是圓心角 90° 的扇形,半徑 6 公尺。圍住其中一份扇形的柵欄總長是多少公尺?(π ≈ 3.14)',
+    options: ['21.42', '9.42', '15.42', '31.42'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 6 × (90÷360) = 9.42 公尺\n柵欄總長 = 弧長 + 兩條半徑 = 9.42 + 6 + 6 = 21.42 公尺'
+  },
+  {
+    type: 'options',
+    question: '製糖廠的圓形冷卻池被分成四等份,每份是圓心角 90° 的扇形,半徑 8 公尺。圍住其中一份扇形的柵欄總長是多少公尺?(π ≈ 3.14)',
+    options: ['28.56', '12.56', '20.56', '40.56'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 8 × (90÷360) = 12.56 公尺\n柵欄總長 = 弧長 + 兩條半徑 = 12.56 + 8 + 8 = 28.56 公尺'
+  },
+  {
+    type: 'options',
+    question: '製糖廠的圓形冷卻池被分成四等份,每份是圓心角 90° 的扇形,半徑 10 公尺。圍住其中一份扇形的柵欄總長是多少公尺?(π ≈ 3.14)',
+    options: ['35.7', '15.7', '25.7', '51.4'],
+    answer: 0,
+    displayAnswer: '弧長 = 2 × 3.14 × 10 × (90÷360) = 15.7 公尺\n柵欄總長 = 弧長 + 兩條半徑 = 15.7 + 10 + 10 = 35.7 公尺'
+  },
+  // 多步驟綜合
+  {
+    type: 'options',
+    question: '礦場的提升機用直徑 10 公分的鼓輪捲起鋼絲繩,鼓輪轉了 3 圈,鋼絲繩被拉了多少公分?(π ≈ 3.14)',
+    options: ['94.2', '47.1', '104.2', '31.4'],
+    answer: 0,
+    displayAnswer: '鼓輪半徑 = 5 公分,每轉一圈拉 = 2 × 3.14 × 5 = 31.4 公分\n轉 3 圈共拉 = 31.4 × 3 = 94.2 公分'
+  },
+  {
+    type: 'options',
+    question: '礦場的提升機用直徑 14 公分的鼓輪捲起鋼絲繩,鼓輪轉了 5 圈,鋼絲繩被拉了多少公分?(π ≈ 3.14)',
+    options: ['219.8', '109.9', '239.8', '43.96'],
+    answer: 0,
+    displayAnswer: '鼓輪半徑 = 7 公分,每轉一圈拉 = 2 × 3.14 × 7 = 43.96 公分\n轉 5 圈共拉 = 43.96 × 5 = 219.8 公分'
+  },
+  {
+    type: 'options',
+    question: '礦場的提升機用直徑 20 公分的鼓輪捲起鋼絲繩,鼓輪轉了 8 圈,鋼絲繩被拉了多少公分?(π ≈ 3.14)',
+    options: ['502.4', '251.2', '522.4', '62.8'],
+    answer: 0,
+    displayAnswer: '鼓輪半徑 = 10 公分,每轉一圈拉 = 2 × 3.14 × 10 = 62.8 公分\n轉 8 圈共拉 = 62.8 × 8 = 502.4 公分'
   }
+]
 
-  if (type === 1) {
-    // 弧長情境
-    const r = [10, 14, 20][Math.floor(Math.random() * 3)]
-    const angle = [60, 90, 120][Math.floor(Math.random() * 3)]
-    const arcLen = (2 * 3.14 * r * angle / 360).toFixed(2)
-    const wrong1 = (2 * 3.14 * r).toFixed(2)
-    const wrong2 = (2 * 3.14 * r * angle / 180).toFixed(2)
-    const wrong3 = (3.14 * r * angle / 360).toFixed(2)
-    const options = [arcLen, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `五分仔車的圓形路線，整圈半徑 ${r} 公尺。若只走 ${angle}° 的弧形段，走了多少公尺？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(arcLen),
-      explanation: `弧長 = 2 × 3.14 × ${r} × (${angle} ÷ 360) = ${arcLen} 公尺`
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  if (type === 2) {
-    // 扇形周長情境
-    const r = [6, 8, 10][Math.floor(Math.random() * 3)]
-    const angle = 90
-    const arcLen = 2 * 3.14 * r * angle / 360
-    const perimeter = (arcLen + 2 * r).toFixed(2)
-    const wrong1 = arcLen.toFixed(2)
-    const wrong2 = (arcLen + r).toFixed(2)
-    const wrong3 = (2 * 3.14 * r + 2 * r).toFixed(2)
-    const options = [perimeter, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `製糖廠的圓形冷卻池被分成四等份，每份是圓心角 90° 的扇形，半徑 ${r} 公尺。圍住其中一份扇形的柵欄總長是多少公尺？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(perimeter),
-      explanation: `弧長 = 2 × 3.14 × ${r} × (90÷360) = ${arcLen.toFixed(2)} 公尺\n柵欄總長 = 弧長 + 兩條半徑 = ${arcLen.toFixed(2)} + ${r} + ${r} = ${perimeter} 公尺`
+// ==========================================
+// 科學綜合:三種簡單機械
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '下列哪一個是「省力槓桿」的例子?',
+    options: [
+      '開罐器(支點在前端,施力點在後端)',
+      '鑷子(施力點在中間)',
+      '蹺蹺板(支點在中間,兩端等距)',
+      '釣魚竿(施力點靠近支點)'
+    ],
+    answer: 0,
+    displayAnswer: '開罐器支點在瓶蓋邊緣,抗力點也在瓶蓋邊緣(靠支點),施力點在長端——施力臂長,省力。鑷子是費力槓桿;蹺蹺板是等力槓桿;釣魚竿也是費力槓桿。'
+  },
+  {
+    type: 'options',
+    question: '下列哪個情境用到了「輪軸」原理?',
+    options: [
+      '用大把手的螺絲起子旋緊螺絲',
+      '用繩子拉起重物',
+      '用撬棒撬起大石頭',
+      '用梯子爬到高處'
+    ],
+    answer: 0,
+    displayAnswer: '螺絲起子的粗把手是「輪」,細螺絲桿是「軸」,用粗把手旋轉可以在細桿上產生更大的扭力——這正是輪軸省力的原理。'
+  },
+  {
+    type: 'options',
+    question: '礦坑挖掘時,工人用繩子和滑輪把礦石籃從坑底拉到地面,為了讓工人施力更省力,應該加裝哪種滑輪?',
+    options: ['動滑輪(省力一半)', '定滑輪(只改向,不省力)', '不需要滑輪', '加更多定滑輪'],
+    answer: 0,
+    displayAnswer: '動滑輪可以省力一半,讓工人用較少的力拉起沉重的礦石。雖然需要拉兩倍長的繩子,但在礦坑這種環境,省力比省距離更重要。'
+  },
+  {
+    type: 'options',
+    question: '「能量守恆」在簡單機械中的意思是?',
+    options: [
+      '省力必然費距離——用較少的力,需要移動較長的距離',
+      '機械可以無中生有,創造出更多能量',
+      '使用機械可以讓工作完全不需要力',
+      '省力的同時也可以省距離'
+    ],
+    answer: 0,
+    displayAnswer: '能量守恆:槓桿省力則費距離,動滑輪省力一半則繩子要拉兩倍長。機械不創造能量,只是讓我們以更方便的方式使用能量。'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  // type === 3：多步驟綜合
-  const r = [5, 7, 10][Math.floor(Math.random() * 3)]
-  const turns = [3, 5, 8][Math.floor(Math.random() * 3)]
-  const dist = (2 * 3.14 * r * turns).toFixed(2)
-  const wrong1 = (3.14 * r * turns).toFixed(2)
-  const wrong2 = (2 * 3.14 * r * turns + r).toFixed(2)
-  const wrong3 = (2 * r * turns).toFixed(2)
-  const options = [dist, wrong1, wrong2, wrong3]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  return {
-    type: 'choice',
-    question: `礦場的提升機用直徑 ${r * 2} 公分的鼓輪捲起鋼絲繩，鼓輪轉了 ${turns} 圈，鋼絲繩被拉了多少公分？（π ≈ 3.14）`,
-    options: shuffled,
-    answer: shuffled.indexOf(dist),
-    explanation: `鼓輪半徑 = ${r} 公分，每轉一圈拉 = 2 × 3.14 × ${r} = ${(2 * 3.14 * r).toFixed(2)} 公分\n轉 ${turns} 圈共拉 = ${(2 * 3.14 * r).toFixed(2)} × ${turns} = ${dist} 公分`
-  }
-}
-
-// ===== 科學綜合：三種簡單機械 =====
-const generateScienceQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '下列哪一個是「省力槓桿」的例子？',
-      options: [
-        '開罐器（支點在前端，施力點在後端）',
-        '鑷子（施力點在中間）',
-        '蹺蹺板（支點在中間，兩端等距）',
-        '釣魚竿（施力點靠近支點）'
-      ],
-      answer: 0,
-      explanation: '開罐器支點在瓶蓋邊緣，抗力點也在瓶蓋邊緣（靠支點），施力點在長端——施力臂長，省力。鑷子是費力槓桿；蹺蹺板是等力槓桿；釣魚竿也是費力槓桿。'
-    },
-    {
-      type: 'choice',
-      question: '下列哪個情境用到了「輪軸」原理？',
-      options: [
-        '用大把手的螺絲起子旋緊螺絲',
-        '用繩子拉起重物',
-        '用撬棒撬起大石頭',
-        '用梯子爬到高處'
-      ],
-      answer: 0,
-      explanation: '螺絲起子的粗把手是「輪」，細螺絲桿是「軸」，用粗把手旋轉可以在細桿上產生更大的扭力——這正是輪軸省力的原理。'
-    },
-    {
-      type: 'choice',
-      question: '礦坑挖掘時，工人用繩子和滑輪把礦石籃從坑底拉到地面，為了讓工人施力更省力，應該加裝哪種滑輪？',
-      options: ['動滑輪（省力一半）', '定滑輪（只改向，不省力）', '不需要滑輪', '加更多定滑輪'],
-      answer: 0,
-      explanation: '動滑輪可以省力一半，讓工人用較少的力拉起沉重的礦石。雖然需要拉兩倍長的繩子，但在礦坑這種環境，省力比省距離更重要。'
-    },
-    {
-      type: 'choice',
-      question: '「能量守恆」在簡單機械中的意思是？',
-      options: [
-        '省力必然費距離——用較少的力，需要移動較長的距離',
-        '機械可以無中生有，創造出更多能量',
-        '使用機械可以讓工作完全不需要力',
-        '省力的同時也可以省距離'
-      ],
-      answer: 0,
-      explanation: '能量守恆：槓桿省力則費距離，動滑輪省力一半則繩子要拉兩倍長。機械不創造能量，只是讓我們以更方便的方式使用能量。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+export { generateMathQuestion, generateScienceQuestion }
 
 // ===== Day 4 主體 =====
 const day4 = {

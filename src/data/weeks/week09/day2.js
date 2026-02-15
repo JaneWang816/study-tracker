@@ -1,6 +1,298 @@
 // week09/day2.js - W9 Day 2: 台灣怎麼走向民主?
 
-import { generateLineChartQuestion, checkLineChartAnswer } from './generators.js'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 練習題庫
+// ==========================================
+
+// 【數學】折線圖練習題庫
+const mathQuestions = [
+  {
+    type: 'options',
+    question: '折線圖最適合用來表示什麼?',
+    options: ['數值隨時間的變化趨勢', '各部分占整體的比例', '兩個數量的比較', '地點分布'],
+    answer: 0,
+    displayAnswer: '數值隨時間的變化趨勢'
+  },
+  {
+    type: 'options',
+    question: '某城市氣溫折線圖顯示從 1 月到 7 月持續上升。這個趨勢是?',
+    options: ['上升趨勢', '下降趨勢', '持平趨勢', '波動趨勢'],
+    answer: 0,
+    displayAnswer: '上升趨勢'
+  },
+  {
+    type: 'options',
+    question: '折線圖中,如果線條突然急劇上升,這代表什麼?',
+    options: ['數值快速增加', '數值快速減少', '數值不變', '沒有意義'],
+    answer: 0,
+    displayAnswer: '數值快速增加'
+  },
+  {
+    type: 'options',
+    question: '某商店銷售額折線圖:1月100萬、2月120萬、3月140萬。這是什麼趨勢?',
+    options: ['穩定上升', '急劇下降', '沒有變化', '先升後降'],
+    answer: 0,
+    displayAnswer: '穩定上升'
+  },
+  {
+    type: 'options',
+    question: '老榕樹健康度從2020年90%降到2024年30%。這個折線會呈現什麼趨勢?',
+    options: ['急劇下降', '緩慢上升', '持平不變', '先降後升'],
+    answer: 0,
+    displayAnswer: '急劇下降'
+  },
+  {
+    type: 'options',
+    question: '台灣投票率折線圖:1996年76%、2000年83%、2004年80%、2008年76%。哪一年最高?',
+    options: ['2000年', '1996年', '2004年', '2008年'],
+    answer: 0,
+    displayAnswer: '2000年'
+  },
+  {
+    type: 'options',
+    question: '折線圖中,兩點之間的斜率越陡峭,代表什麼?',
+    options: ['變化幅度越大', '變化幅度越小', '數值越高', '數值越低'],
+    answer: 0,
+    displayAnswer: '變化幅度越大'
+  },
+  {
+    type: 'options',
+    question: '某公司員工數折線圖:2020年100人、2021年100人、2022年100人。這是什麼趨勢?',
+    options: ['持平趨勢', '上升趨勢', '下降趨勢', '波動趨勢'],
+    answer: 0,
+    displayAnswer: '持平趨勢'
+  },
+  {
+    type: 'options',
+    question: '折線圖的「轉折點」是指什麼?',
+    options: ['趨勢改變的地方', '數值最高的地方', '數值最低的地方', '開始的地方'],
+    answer: 0,
+    displayAnswer: '趨勢改變的地方'
+  },
+  {
+    type: 'options',
+    question: '某地降雨量折線圖:1月50mm、2月30mm、3月20mm、4月10mm。這個趨勢顯示什麼?',
+    options: ['降雨量持續減少', '降雨量持續增加', '降雨量沒有變化', '降雨量先增後減'],
+    answer: 0,
+    displayAnswer: '降雨量持續減少'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// 【社會】台灣民主化歷程練習題庫
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '日治時期,台灣總督府的政治體制是?',
+    options: ['總督專制', '民主選舉', '議會制', '聯邦制'],
+    answer: 0,
+    displayAnswer: '總督專制'
+  },
+  {
+    type: 'options',
+    question: '二二八事件發生在哪一年?',
+    options: ['1947年', '1945年', '1949年', '1987年'],
+    answer: 0,
+    displayAnswer: '1947年'
+  },
+  {
+    type: 'options',
+    question: '台灣的戒嚴時期持續了多少年?',
+    options: ['38年', '20年', '30年', '50年'],
+    answer: 0,
+    displayAnswer: '38年'
+  },
+  {
+    type: 'options',
+    question: '台灣在哪一年解除戒嚴?',
+    options: ['1987年', '1979年', '1996年', '2000年'],
+    answer: 0,
+    displayAnswer: '1987年'
+  },
+  {
+    type: 'options',
+    question: '台灣首次總統直選是在哪一年?',
+    options: ['1996年', '1987年', '1991年', '2000年'],
+    answer: 0,
+    displayAnswer: '1996年'
+  },
+  {
+    type: 'options',
+    question: '為什麼說威權統治像「串聯電路」?',
+    options: [
+      '因為權力集中,一旦出錯影響全局,缺乏制衡機制',
+      '因為很有效率',
+      '因為很穩定',
+      '因為很便宜'
+    ],
+    answer: 0,
+    displayAnswer: '因為權力集中,一旦出錯影響全局,缺乏制衡機制'
+  },
+  {
+    type: 'options',
+    question: '美麗島事件發生在哪一年?',
+    options: ['1979年', '1987年', '1996年', '2000年'],
+    answer: 0,
+    displayAnswer: '1979年'
+  },
+  {
+    type: 'options',
+    question: '台灣第一次政黨輪替是在哪一年?',
+    options: ['2000年', '1996年', '1987年', '2004年'],
+    answer: 0,
+    displayAnswer: '2000年'
+  },
+  {
+    type: 'options',
+    question: '1986年成立的第一個反對黨是?',
+    options: ['民主進步黨', '台灣團結聯盟', '親民黨', '時代力量'],
+    answer: 0,
+    displayAnswer: '民主進步黨'
+  },
+  {
+    type: 'options',
+    question: '為什麼極權統治最終會走向民主?',
+    options: [
+      '因為經濟發展帶來教育普及,人民開始追求自由',
+      '因為政府主動放棄權力',
+      '因為外國壓力',
+      '因為自然演化'
+    ],
+    answer: 0,
+    displayAnswer: '因為經濟發展帶來教育普及,人民開始追求自由'
+  }
+]
+
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// 【科學】並聯電路練習題庫
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '在並聯電路中,如果拔掉其中一個燈泡,會發生什麼事?',
+    options: ['其他燈泡繼續亮著,亮度不變', '所有燈泡都熄滅', '其他燈泡變暗', '其他燈泡更亮'],
+    answer: 0,
+    displayAnswer: '其他燈泡繼續亮著,亮度不變'
+  },
+  {
+    type: 'options',
+    question: '為什麼家裡的插座要用並聯電路?',
+    options: [
+      '因為可以讓每個電器獨立運作,一個壞掉不影響其他',
+      '因為比較便宜',
+      '因為比較省電',
+      '因為串聯會爆炸'
+    ],
+    answer: 0,
+    displayAnswer: '因為可以讓每個電器獨立運作,一個壞掉不影響其他'
+  },
+  {
+    type: 'options',
+    question: '並聯電路可以比喻成民主制度的哪個特徵?',
+    options: ['權力分立', '多數決', '選舉制度', '言論自由'],
+    answer: 0,
+    displayAnswer: '權力分立'
+  },
+  {
+    type: 'options',
+    question: '民主國家的三權分立是指哪三個權力?',
+    options: [
+      '立法權、行政權、司法權',
+      '總統、國會、法院',
+      '中央、地方、民間',
+      '經濟、政治、文化'
+    ],
+    answer: 0,
+    displayAnswer: '立法權、行政權、司法權'
+  },
+  {
+    type: 'options',
+    question: '為什麼說並聯電路有「容錯機制」?',
+    options: [
+      '因為一個支路出問題,其他支路不受影響,系統仍能運作',
+      '因為比較貴',
+      '因為可以連接很多燈泡',
+      '因為電壓比較高'
+    ],
+    answer: 0,
+    displayAnswer: '因為一個支路出問題,其他支路不受影響,系統仍能運作'
+  },
+  {
+    type: 'options',
+    question: '並聯電路中,每個燈泡兩端的電壓有什麼特性?',
+    options: ['都等於電池電壓', '越後面越小', '越前面越大', '不一定'],
+    answer: 0,
+    displayAnswer: '都等於電池電壓'
+  },
+  {
+    type: 'options',
+    question: '並聯電路和串聯電路最大的差別是什麼?',
+    options: ['並聯有多條路徑,串聯只有一條', '並聯比較亮', '串聯比較省電', '並聯比較貴'],
+    answer: 0,
+    displayAnswer: '並聯有多條路徑,串聯只有一條'
+  },
+  {
+    type: 'options',
+    question: '在並聯電路中,如果加入更多燈泡,原本的燈泡亮度會如何?',
+    options: ['亮度不變', '變暗', '變亮', '閃爍'],
+    answer: 0,
+    displayAnswer: '亮度不變'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 課程內容
+// ==========================================
 
 const day2 = {
   id: 'day2',
@@ -210,43 +502,10 @@ const day2 = {
       },
       practice: {
         questionCount: 6,
-        questions: [
-          {
-            question: '日治時期,台灣總督府的政治體制是?',
-            options: ['民主選舉', '總督專制', '議會制', '聯邦制'],
-            answer: 1
-          },
-          {
-            question: '二二八事件發生在哪一年?',
-            options: ['1945 年', '1947 年', '1949 年', '1987 年'],
-            answer: 1
-          },
-          {
-            question: '台灣的戒嚴時期持續了多少年?',
-            options: ['20 年', '30 年', '38 年', '50 年'],
-            answer: 2
-          },
-          {
-            question: '台灣在哪一年解除戒嚴?',
-            options: ['1979 年', '1987 年', '1996 年', '2000 年'],
-            answer: 1
-          },
-          {
-            question: '台灣首次總統直選是在哪一年?',
-            options: ['1987 年', '1991 年', '1996 年', '2000 年'],
-            answer: 2
-          },
-          {
-            question: '為什麼說威權統治像「串聯電路」?',
-            options: [
-              '因為很有效率',
-              '因為權力集中,一旦出錯影響全局,缺乏制衡機制',
-              '因為很穩定',
-              '因為很便宜'
-            ],
-            answer: 1
-          }
-        ]
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -263,16 +522,16 @@ const day2 = {
             blocks: [
               {
                 type: 'text',
-                content: '**折線圖**是用來表示數據隨時間變化的統計圖表。透過連接各時間點的數值,我們可以看出趨勢:上升、下降、持平、或波動。'
+                content: '**折線圖**是用來表示數值隨時間或其他連續變數變化的統計圖表。它用點標示各時間點的數值,再用線段連接起來,讓我們能清楚看到數值的**變化趨勢**。'
               },
               {
                 type: 'text',
-                content: '折線圖最常用在:\n• 氣溫變化(一天/一年的溫度變化)\n• 投票率變化(歷屆選舉的投票率)\n• 成績變化(段考成績的進步或退步)\n• 經濟指標(股價、GDP、失業率)'
+                content: '折線圖最常用在:\n• 氣溫變化(一天中每小時的氣溫)\n• 人口變化(每年的人口數)\n• 經濟指標(每月銷售額、股票價格)\n• 選舉投票率(歷年投票率變化)'
               }
             ]
           },
           {
-            title: '二、折線圖的構成要素',
+            title: '二、折線圖的組成要素',
             blocks: [
               {
                 type: 'text',
@@ -280,7 +539,7 @@ const day2 = {
               },
               {
                 type: 'text',
-                content: '**橫軸(X 軸)**:通常表示時間(年份、月份、日期)\n**縱軸(Y 軸)**:表示數值(溫度、百分比、分數)\n**數據點**:每個時間點對應的數值\n**連線**:將數據點依序連接,形成折線\n**標題**:說明這張圖表的主題\n**單位**:標示 Y 軸的單位(°C、%、分)'
+                content: '• **橫軸(X 軸)**:通常表示時間(如年份、月份、日期)\n• **縱軸(Y 軸)**:表示數值(如溫度、人數、百分比)\n• **標題**:說明這張圖表的內容\n• **數據點**:用點標示各時間點的數值\n• **折線**:連接各數據點,顯示變化趨勢'
               }
             ]
           },
@@ -289,15 +548,19 @@ const day2 = {
             blocks: [
               {
                 type: 'text',
-                content: '**1. 整體趨勢**:\n• **上升趨勢**:折線整體向上,表示數值增加(如投票率提高)\n• **下降趨勢**:折線整體向下,表示數值減少(如失業率下降)\n• **持平**:折線接近水平,表示數值穩定(如物價穩定)\n• **波動**:折線上下起伏,表示數值不穩定(如股價波動)'
+                content: '**1. 看趨勢**\n折線往上 → **上升趨勢**(數值增加)\n折線往下 → **下降趨勢**(數值減少)\n折線平坦 → **持平趨勢**(數值穩定)'
               },
               {
                 type: 'text',
-                content: '**2. 轉折點**:\n折線改變方向的地方,通常代表某個重大事件。例如:\n• 1987 年台灣解嚴 → 投票率可能上升\n• 1996 年首次總統直選 → 投票率大幅提高\n• 2000 年首次政黨輪替 → 投票率達到高峰'
+                content: '**2. 看變化幅度**\n折線斜率陡峭 → 變化**快速、劇烈**\n折線斜率平緩 → 變化**緩慢、穩定**'
               },
               {
                 type: 'text',
-                content: '**3. 比較差異**:\n比較不同時間點的數值差異,了解變化幅度。例如:\n• 從 1992 年到 1996 年,投票率從 75% 升到 76%,增加了 1 個百分點'
+                content: '**3. 找轉折點**\n從上升轉為下降,或從下降轉為上升的地方,就是**轉折點**。轉折點往往代表重要的變化。'
+              },
+              {
+                type: 'text',
+                content: '**4. 比較數值**\n找出最高點、最低點,或比較不同時間點的數值差異。'
               }
             ]
           },
@@ -306,41 +569,24 @@ const day2 = {
             blocks: [
               {
                 type: 'text',
-                content: '讓我們看一個真實的例子(數據經過簡化):'
+                content: '讓我們用折線圖來看台灣歷年總統大選投票率:'
               },
               {
                 type: 'text',
-                content: '**台灣歷屆總統大選投票率**:\n• 1996 年(首次直選):76%\n• 2000 年(首次政黨輪替):83%\n• 2004 年:80%\n• 2008 年:76%\n• 2012 年:74%\n• 2016 年:66%\n• 2020 年:75%'
+                content: '• 1996 年(首次直選):76%\n• 2000 年(首次政黨輪替):83%\n• 2004 年:80%\n• 2008 年:76%\n• 2012 年:74%\n• 2016 年:66%\n• 2020 年:75%'
               },
               {
                 type: 'text',
-                content: '**判讀**:\n• 1996-2000:投票率**上升**,因為首次政黨輪替,人民熱情高\n• 2000-2016:投票率**整體下降**,可能因為對政治失望\n• 2016-2020:投票率**回升**,可能因為重大議題引發關注'
-              },
-              {
-                type: 'text',
-                content: '這張折線圖告訴我們:台灣民主雖然已經建立,但人民的參與熱情會隨著時間和事件而變化。'
+                content: '**判讀**:\n• **最高點**:2000 年(83%)——可能因為首次政黨輪替,人民特別踴躍投票\n• **最低點**:2016 年(66%)——投票率明顯下降\n• **轉折**:2016 年後又回升到 75%\n• **整體趨勢**:2000 年之後大致呈現緩慢下降,但仍維持在六成以上'
               }
             ]
           },
           {
-            title: '五、繪製折線圖的步驟',
+            title: '五、回到老榕樹的故事',
             blocks: [
               {
                 type: 'text',
-                content: '**步驟 1**:收集數據,整理成表格\n**步驟 2**:畫出 X 軸(時間)和 Y 軸(數值)\n**步驟 3**:標示刻度,確保間距均勻\n**步驟 4**:標出各時間點的數據點\n**步驟 5**:用直線依序連接各點\n**步驟 6**:加上標題和單位'
-              },
-              {
-                type: 'text',
-                content: '**注意事項**:\n• Y 軸通常從 0 開始(否則可能誇大變化)\n• 刻度要均勻(每格代表相同數值)\n• 連線要準確(不能歪斜)'
-              }
-            ]
-          },
-          {
-            title: '六、連結:老榕樹的健康趨勢',
-            blocks: [
-              {
-                type: 'text',
-                content: '如果我們用折線圖記錄老榕樹的健康狀況(假設數據):'
+                content: '還記得文章中提到:「如今只剩三分之一的樹冠還存綠意」,也就是「七成樹冠枯損」。我們可以用圓形圖來視覺化:'
               },
               {
                 type: 'text',
@@ -360,8 +606,10 @@ const day2 = {
       },
       practice: {
         questionCount: 6,
-        generator: generateLineChartQuestion,
-        checkAnswer: checkLineChartAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -488,48 +736,10 @@ const day2 = {
       },
       practice: {
         questionCount: 5,
-        questions: [
-          {
-            question: '在並聯電路中,如果拔掉其中一個燈泡,會發生什麼事?',
-            options: ['所有燈泡都熄滅', '其他燈泡繼續亮著,亮度不變', '其他燈泡變暗', '其他燈泡更亮'],
-            answer: 1
-          },
-          {
-            question: '為什麼家裡的插座要用並聯電路?',
-            options: [
-              '因為比較便宜',
-              '因為可以讓每個電器獨立運作,一個壞掉不影響其他',
-              '因為比較省電',
-              '因為串聯會爆炸'
-            ],
-            answer: 1
-          },
-          {
-            question: '並聯電路可以比喻成民主制度的哪個特徵?',
-            options: ['多數決', '權力分立', '選舉制度', '言論自由'],
-            answer: 1
-          },
-          {
-            question: '民主國家的三權分立是指哪三個權力?',
-            options: [
-              '總統、國會、法院',
-              '立法權、行政權、司法權',
-              '中央、地方、民間',
-              '經濟、政治、文化'
-            ],
-            answer: 1
-          },
-          {
-            question: '為什麼說並聯電路有「容錯機制」?',
-            options: [
-              '因為比較貴',
-              '因為一個支路出問題,其他支路不受影響,系統仍能運作',
-              '因為可以連接很多燈泡',
-              '因為電壓比較高'
-            ],
-            answer: 1
-          }
-        ]
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

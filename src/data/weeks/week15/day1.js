@@ -1,52 +1,52 @@
 // src/data/weeks/week15/day1.js
 // 第15週 - 第一天：我以為我不用記
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W15D1 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【體驗式實驗】任務A：簡單問題（模擬可以用AI）
 const taskAQuestions = [
   {
     type: 'options',
-    question: '【任務A-1】台灣最長的河流是？',
+    question: '【任務A-1】台灣最長的河流是?',
     options: ['濁水溪', '高屏溪', '淡水河', '大甲溪'],
     answer: 0,
     displayAnswer: '濁水溪',
-    note: '(如果可以用AI，這題很簡單)'
+    note: '(如果可以用AI,這題很簡單)'
   },
   {
     type: 'options',
-    question: '【任務A-2】圓面積公式是？',
+    question: '【任務A-2】圓面積公式是?',
     options: ['πr', 'πr²', '2πr', 'πd'],
     answer: 1,
     displayAnswer: 'πr²',
-    note: '(如果可以用AI，這題很簡單)'
+    note: '(如果可以用AI,這題很簡單)'
   },
   {
     type: 'options',
-    question: '【任務A-3】溫室效應是什麼？',
+    question: '【任務A-3】溫室效應是什麼?',
     options: [
       '溫室裡很熱',
-      '大氣層中的氣體吸收地表輻射，使地表溫度上升',
+      '大氣層中的氣體吸收地表輻射,使地表溫度上升',
       '地球離太陽越來越近',
       '工廠排放廢氣'
     ],
     answer: 1,
-    displayAnswer: '大氣層中的氣體吸收地表輻射，使地表溫度上升',
-    note: '(如果可以用AI，這題很簡單)'
+    displayAnswer: '大氣層中的氣體吸收地表輻射,使地表溫度上升',
+    note: '(如果可以用AI,這題很簡單)'
   },
   {
     type: 'options',
-    question: '【任務A-4】台灣有幾個國家公園？',
+    question: '【任務A-4】台灣有幾個國家公園?',
     options: ['3個', '5個', '9個', '10個'],
-    answer: 1,
+    answer: 2,
     displayAnswer: '9個',
-    note: '(如果可以用AI，這題很簡單)'
+    note: '(如果可以用AI,這題很簡單)'
   },
   {
     type: 'options',
-    question: '【任務A-5】民主的核心概念是什麼？',
+    question: '【任務A-5】民主的核心概念是什麼?',
     options: [
       '投票',
       '多數決＋少數保障＋人民主權',
@@ -55,171 +55,197 @@ const taskAQuestions = [
     ],
     answer: 1,
     displayAnswer: '多數決＋少數保障＋人民主權',
-    note: '(如果可以用AI，這題很簡單)'
+    note: '(如果可以用AI,這題很簡單)'
   }
 ]
 
-const generateTaskAQuestion = () => {
-  return taskAQuestions[Math.floor(Math.random() * taskAQuestions.length)]
-}
+const generateTaskAQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(taskAQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【體驗式實驗】任務B：進階挑戰（需要知識基礎）
 const taskBQuestions = [
   {
     type: 'options',
-    question: '【任務B-1】AI告訴你「台灣最熱的地方是台北」，這合理嗎？',
+    question: '【任務B-1】AI告訴你「台灣最熱的地方是台北」,這合理嗎?',
     options: [
-      '合理，台北是首都所以最熱',
-      '需要更多資訊才能判斷：台北有熱島效應，但「最熱」要看測量標準',
-      '不合理，台北在北部應該比較冷',
+      '合理,台北是首都所以最熱',
+      '需要更多資訊才能判斷:台北有熱島效應,但「最熱」要看測量標準',
+      '不合理,台北在北部應該比較冷',
       'AI說的一定對'
     ],
     answer: 1,
-    displayAnswer: '需要更多資訊才能判斷：台北有熱島效應，但「最熱」要看測量標準',
-    explanation: '如果你記得W4的氣候、W13的都市議題，你會知道要質疑「最熱」的定義'
+    displayAnswer: '需要更多資訊才能判斷:台北有熱島效應,但「最熱」要看測量標準',
+    explanation: '如果你記得W4的氣候、W13的都市議題,你會知道要質疑「最熱」的定義'
   },
   {
     type: 'options',
-    question: '【任務B-2】AI算出「你家到學校最短路線3.2公里」，地圖比例尺1:50000，圖上應該是幾公分？',
+    question: '【任務B-2】AI算出「你家到學校最短路線3.2公里」,地圖比例尺1:50000,圖上應該是幾公分?',
     options: ['3.2公分', '6.4公分', '16公分', '無法計算'],
     answer: 1,
     displayAnswer: '6.4公分',
-    explanation: '如果你記得W4的比例尺：3200m ÷ 50000 = 0.064m = 6.4cm'
+    explanation: '如果你記得W4的比例尺:3200m ÷ 50000 = 0.064m = 6.4cm'
   },
   {
     type: 'options',
-    question: '【任務B-3】新聞說「今年CO₂濃度創新高！」但沒給數據。你要問AI什麼，才能判斷是否危言聳聽？',
+    question: '【任務B-3】新聞說「今年CO₂濃度創新高!」但沒給數據。你要問AI什麼,才能判斷是否危言聳聽?',
     options: [
-      '「CO₂是什麼？」',
-      '「現在濃度多少ppm？歷史平均值？增加速度？」',
-      '「這新聞是真的嗎？」',
-      '「CO₂有害嗎？」'
+      '「CO₂是什麼?」',
+      '「現在濃度多少ppm?歷史平均值?增加速度?」',
+      '「這新聞是真的嗎?」',
+      '「CO₂有害嗎?」'
     ],
     answer: 1,
-    displayAnswer: '「現在濃度多少ppm？歷史平均值？增加速度？」',
-    explanation: '如果你記得W13的氣候變遷知識，你知道該問具體數據'
+    displayAnswer: '「現在濃度多少ppm?歷史平均值?增加速度?」',
+    explanation: '如果你記得W13的氣候變遷知識,你知道該問具體數據'
   },
   {
     type: 'options',
-    question: '【任務B-4】AI建議你的作文寫「民主就是投票」，這說法完整嗎？',
+    question: '【任務B-4】AI建議你的作文寫「民主就是投票」,這說法完整嗎?',
     options: [
-      '完整，民主就是投票',
+      '完整,民主就是投票',
       'AI說的都對',
-      '不完整，民主還包括：多數決+少數保障、代表與參與、公共利益與個人權利',
+      '不完整,民主還包括:多數決+少數保障、代表與參與、公共利益與個人權利',
       '不知道'
     ],
     answer: 2,
-    displayAnswer: '不完整，民主還包括：多數決+少數保障、代表與參與、公共利益與個人權利',
-    explanation: '如果你記得W9的民主概念，你會知道這說法太簡化'
+    displayAnswer: '不完整,民主還包括:多數決+少數保障、代表與參與、公共利益與個人權利',
+    explanation: '如果你記得W9的民主概念,你會知道這說法太簡化'
   },
   {
     type: 'options',
-    question: '【任務B-5】有人說「AI告訴我玉山國家公園有北極熊」，你如何判斷這是AI幻覺？',
+    question: '【任務B-5】有人說「AI告訴我玉山國家公園有北極熊」,你如何判斷這是AI幻覺?',
     options: [
       'AI不會錯',
-      '根據W11學的知識：玉山國家公園在台灣，保育對象是高山生態和台灣黑熊，不可能有北極熊',
+      '根據W11學的知識:玉山國家公園在台灣,保育對象是高山生態和台灣黑熊,不可能有北極熊',
       '不知道',
       '可能真的有'
     ],
     answer: 1,
-    displayAnswer: '根據W11學的知識：玉山國家公園在台灣，保育對象是高山生態和台灣黑熊，不可能有北極熊',
-    explanation: '如果你記得W11的內容，馬上知道這是錯的'
+    displayAnswer: '根據W11學的知識:玉山國家公園在台灣,保育對象是高山生態和台灣黑熊,不可能有北極熊',
+    explanation: '如果你記得W11的內容,馬上知道這是錯的'
   }
 ]
 
-const generateTaskBQuestion = () => {
-  return taskBQuestions[Math.floor(Math.random() * taskBQuestions.length)]
-}
+const generateTaskBQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(taskBQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【核心概念】記憶的作用練習題庫
 const memoryQuestions = [
   {
     type: 'options',
-    question: '為什麼「腦中有知識」很重要？',
+    question: '為什麼「腦中有知識」很重要?',
     options: [
       '為了考試',
-      '因為沒有知識基礎，連AI給的答案對不對都不知道',
+      '因為沒有知識基礎,連AI給的答案對不對都不知道',
       '為了炫耀',
       '因為老師說的'
     ],
     answer: 1,
-    displayAnswer: '因為沒有知識基礎，連AI給的答案對不對都不知道'
+    displayAnswer: '因為沒有知識基礎,連AI給的答案對不對都不知道'
   },
   {
     type: 'options',
-    question: '記憶的第一個作用是？',
+    question: '記憶的第一個作用是?',
     options: [
       '背很多東西',
-      '即時判斷（不用每次都查）',
+      '即時判斷(不用每次都查)',
       '考試考高分',
       '讓別人佩服'
     ],
     answer: 1,
-    displayAnswer: '即時判斷（不用每次都查）'
+    displayAnswer: '即時判斷(不用每次都查)'
   },
   {
     type: 'options',
-    question: '記憶的第二個作用：「有效提問」是指？',
+    question: '記憶的第二個作用:「有效提問」是指?',
     options: [
       '問很多問題',
-      '知道該用什麼詞彙、該問什麼，才能得到有用的答案',
+      '知道該用什麼詞彙、該問什麼,才能得到有用的答案',
       '問老師問題',
       '不懂就問'
     ],
     answer: 1,
-    displayAnswer: '知道該用什麼詞彙、該問什麼，才能得到有用的答案'
+    displayAnswer: '知道該用什麼詞彙、該問什麼,才能得到有用的答案'
   },
   {
     type: 'options',
-    question: '為什麼「腦中同時有A和B的知識」，才能看出兩者的關係？',
+    question: '為什麼「腦中同時有A和B的知識」,才能看出兩者的關係?',
     options: [
       '因為要考試',
-      '因為思考需要即時調用知識，如果要查詢會中斷思路',
+      '因為思考需要即時調用知識,如果要查詢會中斷思路',
       '因為記憶力好',
       '因為比較聰明'
     ],
     answer: 1,
-    displayAnswer: '因為思考需要即時調用知識，如果要查詢會中斷思路'
+    displayAnswer: '因為思考需要即時調用知識,如果要查詢會中斷思路'
   },
   {
     type: 'options',
-    question: '「大腦像廚房，知識像食材」這個比喻，「空廚房」代表什麼？',
+    question: '「大腦像廚房,知識像食材」這個比喻,「空廚房」代表什麼?',
     options: [
       '很乾淨',
-      '腦中沒有知識，每次都要出門買菜（查資料），很慢且不知道該買什麼',
+      '腦中沒有知識,每次都要出門買菜(查資料),很慢且不知道該買什麼',
       '很整齊',
       '準備做菜'
     ],
     answer: 1,
-    displayAnswer: '腦中沒有知識，每次都要出門買菜（查資料），很慢且不知道該買什麼'
+    displayAnswer: '腦中沒有知識,每次都要出門買菜(查資料),很慢且不知道該買什麼'
   },
   {
     type: 'options',
-    question: '記憶的第五個作用是「創意創造」，為什麼？',
+    question: '記憶的第五個作用是「創意創造」,為什麼?',
     options: [
       '因為記得多就有創意',
-      '因為創造需要重組素材，腦中沒有素材就無法創造',
+      '因為創造需要重組素材,腦中沒有素材就無法創造',
       '因為藝術家記憶力好',
       '因為考試要考'
     ],
     answer: 1,
-    displayAnswer: '因為創造需要重組素材，腦中沒有素材就無法創造'
+    displayAnswer: '因為創造需要重組素材,腦中沒有素材就無法創造'
   },
   {
     type: 'options',
-    question: 'AI像外送，優點是方便，缺點是？',
+    question: 'AI像外送,優點是方便,缺點是?',
     options: [
       '太貴',
-      '會斷線（沒網路）、送錯（幻覺）、太慢（中斷思考流程）',
+      '會斷線(沒網路)、送錯(幻覺)、太慢(中斷思考流程)',
       '不好吃',
       '沒有缺點'
     ],
     answer: 1,
-    displayAnswer: '會斷線（沒網路）、送錯（幻覺）、太慢（中斷思考流程）'
+    displayAnswer: '會斷線(沒網路)、送錯(幻覺)、太慢(中斷思考流程)'
   },
   {
     type: 'options',
-    question: '什麼樣的知識應該「記在腦中」？',
+    question: '什麼樣的知識應該「記在腦中」?',
     options: [
       '所有知識都要背',
       '考試會考的',
@@ -231,30 +257,45 @@ const memoryQuestions = [
   }
 ]
 
-const generateMemoryQuestion = () => {
-  return memoryQuestions[Math.floor(Math.random() * memoryQuestions.length)]
-}
+const generateMemoryQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(memoryQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【自我檢測】14週核心知識練習題庫
 const coreKnowledgeQuestions = [
   // 地理類
   {
-    type: 'fill',
-    question: '【地理】台灣最長的河流是？',
-    answer: '濁水溪',
+    type: 'options',
+    question: '【地理】台灣最長的河流是?',
+    options: ['濁水溪', '高屏溪', '淡水河', '大甲溪'],
+    answer: 0,
     displayAnswer: '濁水溪',
     category: '地理'
   },
   {
-    type: 'fill',
-    question: '【地理】台灣最高的山是？',
-    answer: '玉山',
+    type: 'options',
+    question: '【地理】台灣最高的山是?',
+    options: ['玉山', '雪山', '合歡山', '阿里山'],
+    answer: 0,
     displayAnswer: '玉山',
     category: '地理'
   },
   {
     type: 'options',
-    question: '【地理】台灣有幾個國家公園？',
+    question: '【地理】台灣有幾個國家公園?',
     options: ['5個', '7個', '9個', '11個'],
     answer: 2,
     displayAnswer: '9個',
@@ -263,22 +304,24 @@ const coreKnowledgeQuestions = [
   
   // 數學類
   {
-    type: 'fill',
-    question: '【數學】圓面積公式是？（用符號表示）',
-    answer: 'πr²',
-    displayAnswer: 'πr² 或 πr2 或 3.14r²',
+    type: 'options',
+    question: '【數學】圓面積公式是?',
+    options: ['πr', 'πr²', '2πr', 'πd'],
+    answer: 1,
+    displayAnswer: 'πr²',
     category: '數學'
   },
   {
-    type: 'fill',
-    question: '【數學】圓周長公式是？（用符號表示）',
-    answer: '2πr',
+    type: 'options',
+    question: '【數學】圓周長公式是?',
+    options: ['πr', 'πr²', '2πr', 'πd²'],
+    answer: 2,
     displayAnswer: '2πr 或 πd',
     category: '數學'
   },
   {
     type: 'options',
-    question: '【數學】速率公式是？',
+    question: '【數學】速率公式是?',
     options: ['距離÷時間', '時間÷距離', '距離×時間', '距離+時間'],
     answer: 0,
     displayAnswer: '速率 = 距離 ÷ 時間',
@@ -286,7 +329,7 @@ const coreKnowledgeQuestions = [
   },
   {
     type: 'options',
-    question: '【數學】解方程式 x + 8 = 15，x = ?',
+    question: '【數學】解方程式 x + 8 = 15,x = ?',
     options: ['7', '23', '8', '15'],
     answer: 0,
     displayAnswer: '7',
@@ -296,15 +339,15 @@ const coreKnowledgeQuestions = [
   // 科學類
   {
     type: 'options',
-    question: '【科學】溫室效應的主要溫室氣體是？',
+    question: '【科學】溫室效應的主要溫室氣體是?',
     options: ['氧氣', '氮氣', '二氧化碳', '氫氣'],
     answer: 2,
-    displayAnswer: '二氧化碳（CO₂）',
+    displayAnswer: '二氧化碳(CO₂)',
     category: '科學'
   },
   {
     type: 'options',
-    question: '【科學】酸性物質的pH值範圍是？',
+    question: '【科學】酸性物質的pH值範圍是?',
     options: ['pH < 7', 'pH = 7', 'pH > 7', 'pH = 0'],
     answer: 0,
     displayAnswer: 'pH < 7',
@@ -312,22 +355,22 @@ const coreKnowledgeQuestions = [
   },
   {
     type: 'options',
-    question: '【科學】台灣的地震主要原因是？',
+    question: '【科學】台灣的地震主要原因是?',
     options: [
       '火山爆發',
-      '板塊碰撞（菲律賓海板塊與歐亞板塊）',
+      '板塊碰撞(菲律賓海板塊與歐亞板塊)',
       '地底空洞',
       '地球自轉'
     ],
     answer: 1,
-    displayAnswer: '板塊碰撞（菲律賓海板塊與歐亞板塊）',
+    displayAnswer: '板塊碰撞(菲律賓海板塊與歐亞板塊)',
     category: '科學'
   },
   
   // 公民類
   {
     type: 'options',
-    question: '【公民】民主的三大核心概念是？',
+    question: '【公民】民主的三大核心概念是?',
     options: [
       '投票、選舉、開會',
       '多數決+少數保障、代表與參與、公共利益與個人權利',
@@ -340,7 +383,7 @@ const coreKnowledgeQuestions = [
   },
   {
     type: 'options',
-    question: '【公民】SDGs有幾個目標？',
+    question: '【公民】SDGs有幾個目標?',
     options: ['10個', '15個', '17個', '20個'],
     answer: 2,
     displayAnswer: '17個',
@@ -348,7 +391,7 @@ const coreKnowledgeQuestions = [
   },
   {
     type: 'options',
-    question: '【公民】SDGs的目標年是？',
+    question: '【公民】SDGs的目標年是?',
     options: ['2025年', '2030年', '2040年', '2050年'],
     answer: 1,
     displayAnswer: '2030年',
@@ -356,8 +399,28 @@ const coreKnowledgeQuestions = [
   }
 ]
 
-const generateCoreKnowledgeQuestion = () => {
-  return coreKnowledgeQuestions[Math.floor(Math.random() * coreKnowledgeQuestions.length)]
+const generateCoreKnowledgeQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(coreKnowledgeQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateTaskAQuestion,
+  generateTaskBQuestion,
+  generateMemoryQuestion,
+  generateCoreKnowledgeQuestion
 }
 
 // ==========================================

@@ -2,256 +2,327 @@
 // W6 Day3：地圖怎麼說故事？
 // 貫穿文本：〈米的臺灣史〉第三段（稻種多樣性→蓬萊米）
 
-// ===== 社會：分布圖與等值線圖 =====
-const generateSocialQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「分布圖」最主要的用途是？',
-      options: [
-        '顯示某種事物在地理空間上的分佈情形（哪裡多、哪裡少）',
-        '顯示時間的變化',
-        '顯示兩個數字的大小關係',
-        '只用來顯示人口'
-      ],
-      answer: 0,
-      explanation: '分布圖（distribution map）用不同顏色、深淺或符號，顯示某種事物在地理空間的分布。例如：台灣農業分布圖可以顯示哪裡種稻、哪裡種茶、哪裡種甘蔗。'
-    },
-    {
-      type: 'choice',
-      question: '「等值線圖」（如等雨量線、等高線）中，線上的每個點代表什麼？',
-      options: [
-        '數值相同的點（同一條線上的數值完全相等）',
-        '距離相等的點',
-        '時間相同的點',
-        '溫度最高的點'
-      ],
-      answer: 0,
-      explanation: '等值線連接數值相同的點。等高線上每個點的海拔高度相同；等雨量線上每個點的年雨量相同；等溫線上每個點的溫度相同。等值線密集表示變化快，稀疏表示變化緩。'
-    },
-    {
-      type: 'choice',
-      question: '看台灣「等雨量線圖」，等雨量線在台灣哪個方向比較密集？',
-      options: [
-        '東西方向（西部平原和中央山脈之間，雨量差距大，線條密集）',
-        '南北方向',
-        '全台灣等雨量線都一樣稀疏',
-        '台灣太小，不需要等雨量線'
-      ],
-      answer: 0,
-      explanation: '台灣地形從西部平原急遽上升到中央山脈，雨量也急劇增加（山區多雨），因此東西方向的等雨量線比南北方向密集得多，反映了台灣西部和山區的雨量差異。'
-    },
-    {
-      type: 'choice',
-      question: '1926年日本總督府為台灣新品種粳米命名為「蓬萊米」，「蓬萊」的意思是？',
-      options: [
-        '日本人舊稱台灣為「蓬萊仙島」，意指美好的仙境之島',
-        '一種稻米的顏色',
-        '農業試驗所所長的名字',
-        '日語中稻米的意思'
-      ],
-      answer: 0,
-      explanation: '日本人古時把台灣稱為「蓬萊仙島」（仙境之意）。1926年，日本總督府在台灣育種成功的新品種粳米，就以此命名為「蓬萊米」，意指「從蓬萊仙島來的米」，然後從台灣回銷日本。'
-    },
-    {
-      type: 'choice',
-      question: '台灣目前有哪三種主要稻米類型？',
-      options: [
-        '秈稻（在來米）、粳稻（蓬萊米）、糯稻（糯米）',
-        '白米、糙米、黑米',
-        '長米、短米、圓米',
-        '台灣只有一種米'
-      ],
-      answer: 0,
-      explanation: '台灣擁有世界三大類稻種：秈稻（黏性低，台語叫在來米，適合做米粉、粄條）、粳稻（黏性中等，就是蓬萊米，日治時期引進）、糯稻（黏性最高，做麻糬、粽子用）。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-// ===== 數學：扇形面積 =====
-const generateMathQuestion = () => {
-  const type = Math.floor(Math.random() * 3)
-
-  if (type === 0) {
-    // 扇形面積公式應用
-    const r = [6, 8, 10, 12][Math.floor(Math.random() * 4)]
-    const angles = [60, 90, 120, 180]
-    const angle = angles[Math.floor(Math.random() * angles.length)]
-    const area = (3.14 * r * r * angle / 360).toFixed(2)
-    const wrong1 = (3.14 * r * r).toFixed(2)
-    const wrong2 = (2 * 3.14 * r * angle / 360).toFixed(2)
-    const wrong3 = (3.14 * r * r * angle / 180).toFixed(2)
-    const options = [area, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `一塊扇形農田的半徑是 ${r} 公尺，圓心角是 ${angle}°，這塊農田的面積是多少平方公尺？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(area),
-      explanation: `扇形面積 = πr² × (圓心角 ÷ 360°)\n= 3.14 × ${r}² × (${angle} ÷ 360)\n= 3.14 × ${r * r} × ${(angle / 360).toFixed(4).replace(/0+$/, '')}\n= ${area} 平方公尺`
-    }
+// ==========================================
+// 社會:分布圖與等值線圖
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '「分布圖」最主要的用途是?',
+    options: [
+      '顯示某種事物在地理空間上的分佈情形(哪裡多、哪裡少)',
+      '顯示時間的變化',
+      '顯示兩個數字的大小關係',
+      '只用來顯示人口'
+    ],
+    answer: 0,
+    displayAnswer: '分布圖(distribution map)用不同顏色、深淺或符號,顯示某種事物在地理空間的分布。例如:台灣農業分布圖可以顯示哪裡種稻、哪裡種茶、哪裡種甘蔗。'
+  },
+  {
+    type: 'options',
+    question: '「等值線圖」(如等雨量線、等高線)中,線上的每個點代表什麼?',
+    options: [
+      '數值相同的點(同一條線上的數值完全相等)',
+      '距離相等的點',
+      '時間相同的點',
+      '溫度最高的點'
+    ],
+    answer: 0,
+    displayAnswer: '等值線連接數值相同的點。等高線上每個點的海拔高度相同;等雨量線上每個點的年雨量相同;等溫線上每個點的溫度相同。等值線密集表示變化快,稀疏表示變化緩。'
+  },
+  {
+    type: 'options',
+    question: '看台灣「等雨量線圖」,等雨量線在台灣哪個方向比較密集?',
+    options: [
+      '東西方向(西部平原和中央山脈之間,雨量差距大,線條密集)',
+      '南北方向',
+      '全台灣等雨量線都一樣稀疏',
+      '台灣太小,不需要等雨量線'
+    ],
+    answer: 0,
+    displayAnswer: '台灣地形從西部平原急遽上升到中央山脈,雨量也急劇增加(山區多雨),因此東西方向的等雨量線比南北方向密集得多,反映了台灣西部和山區的雨量差異。'
+  },
+  {
+    type: 'options',
+    question: '1926年日本總督府為台灣新品種粳米命名為「蓬萊米」,「蓬萊」的意思是?',
+    options: [
+      '日本人舊稱台灣為「蓬萊仙島」,意指美好的仙境之島',
+      '一種稻米的顏色',
+      '農業試驗所所長的名字',
+      '日語中稻米的意思'
+    ],
+    answer: 0,
+    displayAnswer: '日本人古時把台灣稱為「蓬萊仙島」(仙境之意)。1926年,日本總督府在台灣育種成功的新品種粳米,就以此命名為「蓬萊米」,意指「從蓬萊仙島來的米」,然後從台灣回銷日本。'
+  },
+  {
+    type: 'options',
+    question: '台灣目前有哪三種主要稻米類型?',
+    options: [
+      '秈稻(在來米)、粳稻(蓬萊米)、糯稻(糯米)',
+      '白米、糙米、黑米',
+      '長米、短米、圓米',
+      '台灣只有一種米'
+    ],
+    answer: 0,
+    displayAnswer: '台灣擁有世界三大類稻種:秈稻(黏性低,台語叫在來米,適合做米粉、粄條)、粳稻(黏性中等,就是蓬萊米,日治時期引進)、糯稻(黏性最高,做麻糬、粽子用)。'
   }
+]
 
-  if (type === 1) {
-    // 扇形面積 vs 整圓面積
-    const r = [10, 14, 20][Math.floor(Math.random() * 3)]
-    const angle = 90
-    const sectorArea = (3.14 * r * r * angle / 360).toFixed(2)
-    const circleArea = (3.14 * r * r).toFixed(2)
-    const options = [
-      `扇形面積 = ${sectorArea} 平方公尺（整圓的四分之一）`,
-      `扇形面積 = ${circleArea} 平方公尺（等於整圓）`,
-      `扇形面積 = ${(3.14 * r * r / 2).toFixed(2)} 平方公尺（整圓的一半）`,
-      `扇形面積 = ${(2 * 3.14 * r).toFixed(2)} 平方公尺`
-    ]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `一個半徑 ${r} 公尺的圓形農場被分成4等份，其中一份（圓心角90°）的面積是多少？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(`扇形面積 = ${sectorArea} 平方公尺（整圓的四分之一）`),
-      explanation: `扇形面積 = 3.14 × ${r}² × (90 ÷ 360) = ${circleArea} × 0.25 = ${sectorArea} 平方公尺\n確認：${sectorArea} × 4 = ${(parseFloat(sectorArea) * 4).toFixed(2)} ≈ ${circleArea} ✓`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  // type === 2：扇形面積情境（灌溉扇形範圍）
-  const r = [50, 80, 100][Math.floor(Math.random() * 3)]
-  const angle = [60, 90, 120][Math.floor(Math.random() * 3)]
-  const area = (3.14 * r * r * angle / 360).toFixed(0)
-  const wrong1 = (3.14 * r * r).toFixed(0)
-  const wrong2 = (3.14 * r * r * angle / 180).toFixed(0)
-  const wrong3 = (2 * 3.14 * r * angle / 360).toFixed(0)
-  const options = [area, wrong1, wrong2, wrong3]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  return {
-    type: 'choice',
-    question: `噴水灌溉設備能噴到半徑 ${r} 公尺的範圍，但受地形限制，只能向 ${angle}° 的扇形方向噴水。這台設備能灌溉的面積是多少平方公尺？（π ≈ 3.14）`,
-    options: shuffled,
-    answer: shuffled.indexOf(area),
-    explanation: `扇形灌溉面積 = 3.14 × ${r}² × (${angle} ÷ 360)\n= 3.14 × ${r * r} × ${(angle / 360).toFixed(4).replace(/0+$/, '')}\n= ${area} 平方公尺`
+// ==========================================
+// 數學:扇形面積
+// ==========================================
+const mathQuestions = [
+  // 扇形面積公式應用
+  {
+    type: 'options',
+    question: '一塊扇形農田的半徑是 6 公尺,圓心角是 60°,這塊農田的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['18.84', '113.04', '6.28', '37.68'],
+    answer: 0,
+    displayAnswer: '扇形面積 = πr² × (圓心角 ÷ 360°)\n= 3.14 × 6² × (60 ÷ 360)\n= 3.14 × 36 × 0.1667\n= 18.84 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊扇形農田的半徑是 8 公尺,圓心角是 90°,這塊農田的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['50.24', '200.96', '12.56', '100.48'],
+    answer: 0,
+    displayAnswer: '扇形面積 = πr² × (圓心角 ÷ 360°)\n= 3.14 × 8² × (90 ÷ 360)\n= 3.14 × 64 × 0.25\n= 50.24 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊扇形農田的半徑是 10 公尺,圓心角是 120°,這塊農田的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['104.67', '314', '20.93', '209.33'],
+    answer: 0,
+    displayAnswer: '扇形面積 = πr² × (圓心角 ÷ 360°)\n= 3.14 × 10² × (120 ÷ 360)\n= 3.14 × 100 × 0.3333\n= 104.67 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊扇形農田的半徑是 12 公尺,圓心角是 180°,這塊農田的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['226.08', '452.16', '37.68', '904.32'],
+    answer: 0,
+    displayAnswer: '扇形面積 = πr² × (圓心角 ÷ 360°)\n= 3.14 × 12² × (180 ÷ 360)\n= 3.14 × 144 × 0.5\n= 226.08 平方公尺'
+  },
+  // 扇形面積 vs 整圓面積
+  {
+    type: 'options',
+    question: '一個半徑 10 公尺的圓形農場被分成4等份,其中一份(圓心角90°)的面積是多少?(π ≈ 3.14)',
+    options: ['扇形面積 = 78.5 平方公尺(整圓的四分之一)', '扇形面積 = 314 平方公尺(等於整圓)', '扇形面積 = 157 平方公尺(整圓的一半)', '扇形面積 = 62.8 平方公尺'],
+    answer: 0,
+    displayAnswer: '扇形面積 = 3.14 × 10² × (90 ÷ 360) = 314 × 0.25 = 78.5 平方公尺\n確認:78.5 × 4 = 314 ≈ 314 ✓'
+  },
+  {
+    type: 'options',
+    question: '一個半徑 14 公尺的圓形農場被分成4等份,其中一份(圓心角90°)的面積是多少?(π ≈ 3.14)',
+    options: ['扇形面積 = 153.86 平方公尺(整圓的四分之一)', '扇形面積 = 615.44 平方公尺(等於整圓)', '扇形面積 = 307.72 平方公尺(整圓的一半)', '扇形面積 = 87.92 平方公尺'],
+    answer: 0,
+    displayAnswer: '扇形面積 = 3.14 × 14² × (90 ÷ 360) = 615.44 × 0.25 = 153.86 平方公尺\n確認:153.86 × 4 = 615.44 ✓'
+  },
+  {
+    type: 'options',
+    question: '一個半徑 20 公尺的圓形農場被分成4等份,其中一份(圓心角90°)的面積是多少?(π ≈ 3.14)',
+    options: ['扇形面積 = 314 平方公尺(整圓的四分之一)', '扇形面積 = 1256 平方公尺(等於整圓)', '扇形面積 = 628 平方公尺(整圓的一半)', '扇形面積 = 125.6 平方公尺'],
+    answer: 0,
+    displayAnswer: '扇形面積 = 3.14 × 20² × (90 ÷ 360) = 1256 × 0.25 = 314 平方公尺\n確認:314 × 4 = 1256 ✓'
+  },
+  // 扇形面積情境(灌溉扇形範圍)
+  {
+    type: 'options',
+    question: '噴水灌溉設備能噴到半徑 50 公尺的範圍,但受地形限制,只能向 60° 的扇形方向噴水。這台設備能灌溉的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['1308', '7850', '2617', '157'],
+    answer: 0,
+    displayAnswer: '扇形灌溉面積 = 3.14 × 50² × (60 ÷ 360)\n= 3.14 × 2500 × 0.1667\n= 1308 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '噴水灌溉設備能噴到半徑 80 公尺的範圍,但受地形限制,只能向 90° 的扇形方向噴水。這台設備能灌溉的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['5024', '20096', '10048', '502'],
+    answer: 0,
+    displayAnswer: '扇形灌溉面積 = 3.14 × 80² × (90 ÷ 360)\n= 3.14 × 6400 × 0.25\n= 5024 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '噴水灌溉設備能噴到半徑 100 公尺的範圍,但受地形限制,只能向 120° 的扇形方向噴水。這台設備能灌溉的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['10467', '31400', '20933', '628'],
+    answer: 0,
+    displayAnswer: '扇形灌溉面積 = 3.14 × 100² × (120 ÷ 360)\n= 3.14 × 10000 × 0.3333\n= 10467 平方公尺'
   }
-}
+]
 
-// ===== 科學：相似形深入——影子測高法 =====
-const generateScienceQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「相似形」的定義是？',
-      options: [
-        '形狀相同、大小不同的兩個圖形（對應角相等，對應邊成比例）',
-        '大小和形狀都完全相同的兩個圖形',
-        '只是顏色不同的兩個圖形',
-        '有一個角相同的兩個三角形'
-      ],
-      answer: 0,
-      explanation: '相似形是形狀相同但大小可以不同的圖形。兩個相似三角形的對應角相等，對應邊的比值相同（成比例）。這是 W4 預覽過的概念，今天深入應用。'
-    },
-    {
-      type: 'choice',
-      question: '「影子測高法」的原理是？',
-      options: [
-        '在同一時刻，物體的高度和影子長度成正比（利用相似三角形）',
-        '影子越長，物體越矮',
-        '影子的長度等於物體的高度',
-        '需要用量角器量太陽的角度才能計算'
-      ],
-      answer: 0,
-      explanation: '同一時刻，陽光角度相同，所有物體的「高度：影長」比值都相同。你的高度÷你的影長 = 大樹的高度÷大樹的影長，這就是相似三角形的比例關係。'
-    },
-    {
-      type: 'choice',
-      question: '小明身高150公分，影子長100公分。同時測量一棵大樹的影子長400公分，這棵樹有多高？',
-      options: ['600公分', '400公分', '300公分', '500公分'],
-      answer: 0,
-      explanation: `用相似比：\n小明身高 / 小明影長 = 樹高 / 樹影長\n150 / 100 = 樹高 / 400\n樹高 = 150 × 400 ÷ 100 = 600 公分`
-    },
-    {
-      type: 'choice',
-      question: '用影子測高法，為什麼要「同時」測量自己的影子和大樹的影子？',
-      options: [
-        '因為太陽位置隨時間改變，影子的長度也會改變，必須同時測才能確保陽光角度相同',
-        '因為影子會移動，等一下就找不到了',
-        '因為規定必須同時測',
-        '時間不重要，早上測晚上用也可以'
-      ],
-      answer: 0,
-      explanation: '太陽從早到晚位置不斷改變，影子的方向和長度也跟著改變。「高度：影長」的比值只在相同時刻、相同陽光角度下才相等。所以必須同時測量，才能使用相似比。'
-    },
-    {
-      type: 'choice',
-      question: '台灣古代農民怎麼估算一塊不規則形農田的面積？',
-      options: [
-        '把不規則形田地分割成幾個長方形和三角形，分別計算再相加',
-        '直接用腳步量周長，然後乘以一個固定數字',
-        '只有現代才能計算不規則形面積',
-        '估算不規則形面積是不可能的'
-      ],
-      answer: 0,
-      explanation: '把複雜的不規則形分解成簡單圖形（長方形、三角形、扇形）再相加，是幾何的基本方法。台灣古代地方官員在丈量土地時，就使用這種「分割法」來估算不規則形田地的面積。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
+// ==========================================
+// 科學:相似形深入——影子測高法
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '「相似形」的定義是?',
+    options: [
+      '形狀相同、大小不同的兩個圖形(對應角相等,對應邊成比例)',
+      '大小和形狀都完全相同的兩個圖形',
+      '只是顏色不同的兩個圖形',
+      '有一個角相同的兩個三角形'
+    ],
+    answer: 0,
+    displayAnswer: '相似形是形狀相同但大小可以不同的圖形。兩個相似三角形的對應角相等,對應邊的比值相同(成比例)。這是 W4 預覽過的概念,今天深入應用。'
+  },
+  {
+    type: 'options',
+    question: '「影子測高法」的原理是?',
+    options: [
+      '在同一時刻,物體的高度和影子長度成正比(利用相似三角形)',
+      '影子越長,物體越矮',
+      '影子的長度等於物體的高度',
+      '需要用量角器量太陽的角度才能計算'
+    ],
+    answer: 0,
+    displayAnswer: '同一時刻,陽光角度相同,所有物體的「高度:影長」比值都相同。你的高度÷你的影長 = 大樹的高度÷大樹的影長,這就是相似三角形的比例關係。'
+  },
+  {
+    type: 'options',
+    question: '小明身高150公分,影子長100公分。同時測量一棵大樹的影子長400公分,這棵樹有多高?',
+    options: ['600公分', '400公分', '300公分', '500公分'],
+    answer: 0,
+    displayAnswer: '用相似比:\n小明身高 / 小明影長 = 樹高 / 樹影長\n150 / 100 = 樹高 / 400\n樹高 = 150 × 400 ÷ 100 = 600 公分'
+  },
+  {
+    type: 'options',
+    question: '用影子測高法,為什麼要「同時」測量自己的影子和大樹的影子?',
+    options: [
+      '因為太陽位置隨時間改變,影子的長度也會改變,必須同時測才能確保陽光角度相同',
+      '因為影子會移動,等一下就找不到了',
+      '因為規定必須同時測',
+      '時間不重要,早上測晚上用也可以'
+    ],
+    answer: 0,
+    displayAnswer: '太陽從早到晚位置不斷改變,影子的方向和長度也跟著改變。「高度:影長」的比值只在相同時刻、相同陽光角度下才相等。所以必須同時測量,才能使用相似比。'
+  },
+  {
+    type: 'options',
+    question: '台灣古代農民怎麼估算一塊不規則形農田的面積?',
+    options: [
+      '把不規則形田地分割成幾個長方形和三角形,分別計算再相加',
+      '直接用腳步量周長,然後乘以一個固定數字',
+      '只有現代才能計算不規則形面積',
+      '估算不規則形面積是不可能的'
+    ],
+    answer: 0,
+    displayAnswer: '把複雜的不規則形分解成簡單圖形(長方形、三角形、扇形)再相加,是幾何的基本方法。台灣古代地方官員在丈量土地時,就使用這種「分割法」來估算不規則形田地的面積。'
+  },
   // 動態計算題
-  if (Math.random() < 0.4) {
-    const myHeight = [140, 150, 160][Math.floor(Math.random() * 3)]
-    const myShadow = [100, 120, 80][Math.floor(Math.random() * 3)]
-    const treeShadow = [300, 400, 480, 600][Math.floor(Math.random() * 4)]
-    const treeHeight = Math.round(myHeight * treeShadow / myShadow)
-    const wrong1 = Math.round(myHeight * treeShadow / myShadow) + 50
-    const wrong2 = Math.round(myShadow * treeShadow / myHeight)
-    const wrong3 = treeShadow
-    const options = [String(treeHeight), String(wrong1), String(wrong2), String(wrong3)]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `小華身高 ${myHeight} 公分，影子長 ${myShadow} 公分。同時測量農場旁一棵大樹的影子長 ${treeShadow} 公分，這棵樹大約多高（公分）？`,
-      options: shuffled,
-      answer: shuffled.indexOf(String(treeHeight)),
-      explanation: `利用相似比：\n身高 / 影長 = 樹高 / 樹影長\n${myHeight} / ${myShadow} = 樹高 / ${treeShadow}\n樹高 = ${myHeight} × ${treeShadow} ÷ ${myShadow} = ${treeHeight} 公分`
-    }
+  {
+    type: 'options',
+    question: '小華身高 140 公分,影子長 100 公分。同時測量農場旁一棵大樹的影子長 300 公分,這棵樹大約多高(公分)?',
+    options: ['420', '470', '214', '300'],
+    answer: 0,
+    displayAnswer: '利用相似比:\n身高 / 影長 = 樹高 / 樹影長\n140 / 100 = 樹高 / 300\n樹高 = 140 × 300 ÷ 100 = 420 公分'
+  },
+  {
+    type: 'options',
+    question: '小華身高 150 公分,影子長 120 公分。同時測量農場旁一棵大樹的影子長 480 公分,這棵樹大約多高(公分)?',
+    options: ['600', '650', '360', '480'],
+    answer: 0,
+    displayAnswer: '利用相似比:\n身高 / 影長 = 樹高 / 樹影長\n150 / 120 = 樹高 / 480\n樹高 = 150 × 480 ÷ 120 = 600 公分'
+  },
+  {
+    type: 'options',
+    question: '小華身高 160 公分,影子長 80 公分。同時測量農場旁一棵大樹的影子長 400 公分,這棵樹大約多高(公分)?',
+    options: ['800', '850', '320', '400'],
+    answer: 0,
+    displayAnswer: '利用相似比:\n身高 / 影長 = 樹高 / 樹影長\n160 / 80 = 樹高 / 400\n樹高 = 160 × 400 ÷ 80 = 800 公分'
   }
+]
 
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
-
-// ===== 語文詞彙：地圖閱讀用語 =====
-const generateVocabQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「圖例」在地圖上的功能是？',
-      options: [
-        '說明地圖上各種符號、顏色、線條代表什麼意思',
-        '地圖的故事',
-        '地圖的標題',
-        '地圖的製作日期'
-      ],
-      answer: 0,
-      explanation: '圖例（legend）是地圖的「說明書」，告訴讀者地圖上各種符號和顏色的含義。沒有圖例，地圖就像一本沒有目錄的書，難以閱讀。'
-    },
-    {
-      type: 'choice',
-      question: '「在來米」這個名字是怎麼來的？',
-      options: [
-        '蓬萊米引進後，為了區分，原本就有的秈米被稱為「在來」（本來就有的）',
-        '因為這種米「在」台灣「來」的',
-        '這是一個人名',
-        '因為這種米的顏色'
-      ],
-      answer: 0,
-      explanation: '日文「在來」（zairai）有「向來、一直以來就有的」意思。蓬萊米（日本引進的粳稻）出現後，原本台灣就有的秈米被稱為「在來米」——意思是「本來就在這裡的米」，以示區別。'
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 語文詞彙:地圖閱讀用語
+// ==========================================
+const vocabQuestions = [
+  {
+    type: 'options',
+    question: '「圖例」在地圖上的功能是?',
+    options: [
+      '說明地圖上各種符號、顏色、線條代表什麼意思',
+      '地圖的故事',
+      '地圖的標題',
+      '地圖的製作日期'
+    ],
+    answer: 0,
+    displayAnswer: '圖例(legend)是地圖的「說明書」,告訴讀者地圖上各種符號和顏色的含義。沒有圖例,地圖就像一本沒有目錄的書,難以閱讀。'
+  },
+  {
+    type: 'options',
+    question: '「在來米」這個名字是怎麼來的?',
+    options: [
+      '蓬萊米引進後,為了區分,原本就有的秈米被稱為「在來」(本來就有的)',
+      '因為這種米「在」台灣「來」的',
+      '這是一個人名',
+      '因為這種米的顏色'
+    ],
+    answer: 0,
+    displayAnswer: '日文「在來」(zairai)有「向來、一直以來就有的」意思。蓬萊米(日本引進的粳稻)出現後,原本台灣就有的秈米被稱為「在來米」——意思是「本來就在這裡的米」,以示區別。'
+  }
+]
+
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion, generateVocabQuestion }
 
 // ===== Day 3 主體 =====
 const day3 = {

@@ -1,6 +1,274 @@
 // week09/day1.js - W9 Day 1: 什麼是民主?
 
-import { generatePieChartQuestion, checkPieChartAnswer } from './generators.js'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 練習題庫
+// ==========================================
+
+// 【數學】圓形圖練習題庫
+const mathQuestions = [
+  {
+    type: 'options',
+    question: '一個完整的圓形圖是 360°。如果某個項目占 50%,它的扇形角度是多少?',
+    options: ['180°', '90°', '120°', '150°'],
+    answer: 0,
+    displayAnswer: '180°'
+  },
+  {
+    type: 'options',
+    question: '某班 40 位學生,其中 10 位喜歡籃球。籃球在圓形圖中應該占多少度?',
+    options: ['90°', '45°', '60°', '120°'],
+    answer: 0,
+    displayAnswer: '90°'
+  },
+  {
+    type: 'options',
+    question: '圓形圖中,如果某項目的百分比是 25%,它的角度應該是?',
+    options: ['90°', '45°', '60°', '120°'],
+    answer: 0,
+    displayAnswer: '90°'
+  },
+  {
+    type: 'options',
+    question: '某次選舉,候選人 A 得 150 票,總共 300 票。A 在圓形圖中應該占多少度?',
+    options: ['180°', '90°', '120°', '150°'],
+    answer: 0,
+    displayAnswer: '180°'
+  },
+  {
+    type: 'options',
+    question: '如果一個扇形角度是 72°,它占圓形圖的百分比是多少?',
+    options: ['20%', '10%', '25%', '30%'],
+    answer: 0,
+    displayAnswer: '20%'
+  },
+  {
+    type: 'options',
+    question: '某班 30 人,9 人喜歡足球,12 人喜歡籃球,9 人喜歡游泳。足球的扇形角度是?',
+    options: ['108°', '90°', '120°', '144°'],
+    answer: 0,
+    displayAnswer: '108°'
+  },
+  {
+    type: 'options',
+    question: '老榕樹 70% 枯損,30% 健康。枯損部分在圓形圖中應該占多少度?',
+    options: ['252°', '180°', '216°', '270°'],
+    answer: 0,
+    displayAnswer: '252°'
+  },
+  {
+    type: 'options',
+    question: '某圓形圖中有四個項目,角度分別是 90°、120°、60° 和 X°。X 應該是多少?',
+    options: ['90°', '80°', '100°', '110°'],
+    answer: 0,
+    displayAnswer: '90°'
+  },
+  {
+    type: 'options',
+    question: '百分比 37.5% 轉換成角度是多少?(提示:37.5 × 3.6)',
+    options: ['135°', '120°', '150°', '140°'],
+    answer: 0,
+    displayAnswer: '135°'
+  },
+  {
+    type: 'options',
+    question: '某班幹部選舉,小明得 12 票,小華得 8 票,總共 40 票。小明的扇形角度是?',
+    options: ['108°', '90°', '120°', '72°'],
+    answer: 0,
+    displayAnswer: '108°'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// 【社會】民主的核心概念練習題庫
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '「民主」這個詞的原意是什麼?',
+    options: ['人民統治', '國王統治', '專家統治', '軍隊統治'],
+    answer: 0,
+    displayAnswer: '人民統治'
+  },
+  {
+    type: 'options',
+    question: '民主制度中的「多數決」原則,同時也強調什麼?',
+    options: ['少數保障', '效率優先', '快速決策', '服從命令'],
+    answer: 0,
+    displayAnswer: '少數保障'
+  },
+  {
+    type: 'options',
+    question: '柳營村民委託樹醫師救樹,但全程參與陪伴。這展現了民主的哪個特徵?',
+    options: ['代表制與公民參與結合', '完全依賴專家', '盲目服從多數', '放棄個人權利'],
+    answer: 0,
+    displayAnswer: '代表制與公民參與結合'
+  },
+  {
+    type: 'options',
+    question: '為什麼民主制度要在「公共利益」和「個人權利」之間找平衡?',
+    options: [
+      '因為需要尊重彼此,透過協商找到雙方都能接受的方案',
+      '因為公共利益永遠比個人權利重要',
+      '因為個人自由不能完全不受限制',
+      '因為政府說了算'
+    ],
+    answer: 0,
+    displayAnswer: '因為需要尊重彼此,透過協商找到雙方都能接受的方案'
+  },
+  {
+    type: 'options',
+    question: '柳營老榕樹的故事中,哪一點最能展現「世代正義」的概念?',
+    options: [
+      '阿嬤說「我的阿嬤、媽媽、我自己……三代都在這棵樹下長大」',
+      '樹醫師來自外地',
+      '村民準備茶點',
+      '老樹高達十五公尺'
+    ],
+    answer: 0,
+    displayAnswer: '阿嬤說「我的阿嬤、媽媽、我自己……三代都在這棵樹下長大」'
+  },
+  {
+    type: 'options',
+    question: '民主社會通常採用什麼方式來做決定?',
+    options: ['多數決', '少數決', '抽籤', '長者決定'],
+    answer: 0,
+    displayAnswer: '多數決'
+  },
+  {
+    type: 'options',
+    question: '現代社會採用的「代議民主」是什麼意思?',
+    options: ['人民選出代表來制定政策', '人民自己制定所有政策', '專家決定一切', '國王指派代表'],
+    answer: 0,
+    displayAnswer: '人民選出代表來制定政策'
+  },
+  {
+    type: 'options',
+    question: '下列哪個不是極權專制常見的問題?',
+    options: ['決策太慢', '權力腐化', '壓制言論', '侵害人權'],
+    answer: 0,
+    displayAnswer: '決策太慢'
+  }
+]
+
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// 【科學】串聯電路練習題庫
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '串聯電路中,電流的路徑有幾條?',
+    options: ['一條', '兩條', '三條', '很多條'],
+    answer: 0,
+    displayAnswer: '一條'
+  },
+  {
+    type: 'options',
+    question: '在串聯電路中,如果其中一個燈泡燒壞,會發生什麼事?',
+    options: ['所有燈泡都熄滅', '其他燈泡更亮', '其他燈泡變暗', '只有壞掉的燈泡熄滅'],
+    answer: 0,
+    displayAnswer: '所有燈泡都熄滅'
+  },
+  {
+    type: 'options',
+    question: '串聯電路中,如果連接的燈泡越多,每個燈泡會變得如何?',
+    options: ['更暗', '更亮', '亮度不變', '閃爍不定'],
+    answer: 0,
+    displayAnswer: '更暗'
+  },
+  {
+    type: 'options',
+    question: '串聯電路的特性可以比喻成哪種政治制度?',
+    options: ['極權統治', '民主制度', '聯邦制', '議會制'],
+    answer: 0,
+    displayAnswer: '極權統治'
+  },
+  {
+    type: 'options',
+    question: '為什麼說串聯電路「缺乏容錯機制」?',
+    options: [
+      '因為一個地方出錯,整個系統就停擺',
+      '因為電池會耗盡',
+      '因為燈泡會燒壞',
+      '因為導線會生鏽'
+    ],
+    answer: 0,
+    displayAnswer: '因為一個地方出錯,整個系統就停擺'
+  },
+  {
+    type: 'options',
+    question: '串聯電路中,流過每個燈泡的電流有什麼特性?',
+    options: ['電流處處相等', '越後面越小', '越前面越大', '不一定'],
+    answer: 0,
+    displayAnswer: '電流處處相等'
+  },
+  {
+    type: 'options',
+    question: '串聯電路就像哪種道路?',
+    options: ['單行道', '雙向道', '環狀道', '高速公路'],
+    answer: 0,
+    displayAnswer: '單行道'
+  },
+  {
+    type: 'options',
+    question: '串聯電路的優點是什麼?',
+    options: ['結構簡單,決策快速', '容錯性高', '可以分別控制', '省電'],
+    answer: 0,
+    displayAnswer: '結構簡單,決策快速'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 課程內容
+// ==========================================
 
 const day1 = {
   id: 'day1',
@@ -165,43 +433,10 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        questions: [
-          {
-            question: '「民主」這個詞的原意是什麼?',
-            options: ['人民統治', '國王統治', '專家統治', '軍隊統治'],
-            answer: 0
-          },
-          {
-            question: '民主制度中的「多數決」原則,同時也強調什麼?',
-            options: ['效率優先', '少數保障', '快速決策', '服從命令'],
-            answer: 1
-          },
-          {
-            question: '柳營村民委託樹醫師救樹,但全程參與陪伴。這展現了民主的哪個特徵?',
-            options: ['完全依賴專家', '代表制與公民參與結合', '盲目服從多數', '放棄個人權利'],
-            answer: 1
-          },
-          {
-            question: '為什麼民主制度要在「公共利益」和「個人權利」之間找平衡?',
-            options: [
-              '因為公共利益永遠比個人權利重要',
-              '因為個人自由不能完全不受限制',
-              '因為需要尊重彼此,透過協商找到雙方都能接受的方案',
-              '因為政府說了算'
-            ],
-            answer: 2
-          },
-          {
-            question: '柳營老榕樹的故事中,哪一點最能展現「世代正義」的概念?',
-            options: [
-              '樹醫師來自外地',
-              '阿嬤說「我的阿嬤、媽媽、我自己……三代都在這棵樹下長大」',
-              '村民準備茶點',
-              '老樹高達十五公尺'
-            ],
-            answer: 1
-          }
-        ]
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -298,8 +533,10 @@ const day1 = {
       },
       practice: {
         questionCount: 6,
-        generator: generatePieChartQuestion,
-        checkAnswer: checkPieChartAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -404,38 +641,10 @@ const day1 = {
       },
       practice: {
         questionCount: 5,
-        questions: [
-          {
-            question: '串聯電路中,電流的路徑有幾條?',
-            options: ['一條', '兩條', '三條', '很多條'],
-            answer: 0
-          },
-          {
-            question: '在串聯電路中,如果其中一個燈泡燒壞,會發生什麼事?',
-            options: ['其他燈泡更亮', '其他燈泡變暗', '所有燈泡都熄滅', '只有壞掉的燈泡熄滅'],
-            answer: 2
-          },
-          {
-            question: '串聯電路中,如果連接的燈泡越多,每個燈泡會變得如何?',
-            options: ['更亮', '更暗', '亮度不變', '閃爍不定'],
-            answer: 1
-          },
-          {
-            question: '串聯電路的特性可以比喻成哪種政治制度?',
-            options: ['民主制度', '極權統治', '聯邦制', '議會制'],
-            answer: 1
-          },
-          {
-            question: '為什麼說串聯電路「缺乏容錯機制」?',
-            options: [
-              '因為電池會耗盡',
-              '因為一個地方出錯,整個系統就停擺',
-              '因為燈泡會燒壞',
-              '因為導線會生鏽'
-            ],
-            answer: 1
-          }
-        ]
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

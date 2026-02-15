@@ -1,95 +1,125 @@
 // src/data/weeks/week08/day5.js
 // W8 Day5：去看一場電影
 
-// ── 輕量複習題（W8 綜合）──────────────────────
-const reviewPool = [
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 輕量複習題(W8綜合)
+// ==========================================
+const reviewQuestions = [
   {
-    question: '台灣經濟轉型的順序是？',
+    type: 'options',
+    question: '台灣經濟轉型的順序是?',
     options: [
-      '農業 → 科技業 → 輕工業',
       '農業 → 輕工業 → 重工業 → 科技業',
+      '農業 → 科技業 → 輕工業',
       '科技業 → 農業 → 工業',
       '工業 → 農業 → 服務業'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '台灣經濟轉型歷程:1950年代農業 → 1960-70年代輕工業(雨傘、玩具、成衣) → 1970-80年代重工業(十大建設) → 1990年代後科技業(半導體)。'
   },
   {
-    question: '小數 0.3 換算成百分比是多少？',
-    options: ['3%', '30%', '0.3%', '300%'],
-    answer: 1
+    type: 'options',
+    question: '小數 0.3 換算成百分比是多少?',
+    options: ['30%', '3%', '0.3%', '300%'],
+    answer: 0,
+    displayAnswer: '0.3 × 100 = 30%\n小數轉百分比:乘以100,加上%符號。'
   },
   {
-    question: '成長率的公式是？',
+    type: 'options',
+    question: '成長率的公式是?',
     options: [
-      '新值 ÷ 舊值',
       '增加量 ÷ 原本量 × 100%',
+      '新值 ÷ 舊值',
       '舊值 - 新值',
       '新值 - 舊值'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '成長率 = (增加量 ÷ 原本量) × 100%\n例如:原本100元,增加20元,成長率 = (20 ÷ 100) × 100% = 20%'
   },
   {
-    question: '市占率是什麼意思？',
+    type: 'options',
+    question: '市占率是什麼意思?',
     options: [
-      '公司賺了多少錢',
       '公司在整個市場中佔的份額',
+      '公司賺了多少錢',
       '公司的成長速度',
       '公司的員工人數'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '市占率 = (該公司營收 ÷ 整個市場總營收) × 100%\n表示公司在市場中所佔的比例。'
   },
   {
-    question: '電動車的能源轉換過程是？',
-    options: ['化學能 → 動能', '電能 → 動能', '熱能 → 動能', '動能 → 電能'],
-    answer: 1
+    type: 'options',
+    question: '電動車的能源轉換過程是?',
+    options: ['電能 → 動能', '化學能 → 動能', '熱能 → 動能', '動能 → 電能'],
+    answer: 0,
+    displayAnswer: '電動車使用電池的電能直接驅動馬達產生動能,比汽油車的能源轉換(化學能→熱能→動能)更簡單、效率更高。'
   },
   {
-    question: '火力發電產生的主要問題是？',
+    type: 'options',
+    question: '火力發電產生的主要問題是?',
     options: [
+      '會產生二氧化碳和空氣污染',
       '太貴',
       '太慢',
-      '會產生二氧化碳和空氣污染',
       '需要很多水'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '火力發電燃燒煤炭或天然氣,會產生二氧化碳(溫室氣體)和其他空氣污染物,是造成氣候變遷和空氣污染的主要原因之一。'
   },
   {
-    question: '「十大建設」是在哪個年代完成的？',
-    options: ['1950年代', '1970年代', '1990年代', '2010年代'],
-    answer: 1
+    type: 'options',
+    question: '「十大建設」是在哪個年代完成的?',
+    options: ['1970年代', '1950年代', '1990年代', '2010年代'],
+    answer: 0,
+    displayAnswer: '十大建設主要在1970年代完成,包括中山高速公路、桃園國際機場、台中港等,是台灣經濟起飛的重要基礎建設。'
   },
   {
-    question: '新民生戲院2012年重開時，首映的電影是？',
-    options: ['鐵達尼號', '復仇者聯盟1', '侏羅紀公園', '唐伯虎點秋香'],
-    answer: 1
+    type: 'options',
+    question: '新民生戲院2012年重開時,首映的電影是?',
+    options: ['復仇者聯盟1', '鐵達尼號', '侏羅紀公園', '唐伯虎點秋香'],
+    answer: 0,
+    displayAnswer: '新民生戲院2012年重新開幕時,首映電影是《復仇者聯盟1》,吸引許多民生社區居民回來觀影。'
   },
   {
-    question: '為什麼大眾運輸比私人汽車節能？',
+    type: 'options',
+    question: '為什麼大眾運輸比私人汽車節能?',
     options: [
+      '一次載很多人,平均每人能耗較低',
       '速度比較快',
-      '一次載很多人，平均每人能耗較低',
       '不需要能源',
       '政府補助'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '大眾運輸一次可載數十到數百人,平均每人消耗的能源遠低於私人汽車,是更節能環保的交通方式。'
   },
   {
-    question: '台灣的中小企業占企業總數的比例大約是？',
-    options: ['50%', '70%', '85%', '98%以上'],
-    answer: 3
+    type: 'options',
+    question: '台灣的中小企業占企業總數的比例大約是?',
+    options: ['98%以上', '50%', '70%', '85%'],
+    answer: 0,
+    displayAnswer: '台灣的中小企業占企業總數的98%以上,是台灣經濟的重要支柱,提供大量就業機會和多元化的商品服務。'
   }
 ]
 
-function generateReviewQuestion() {
-  const q = reviewPool[Math.floor(Math.random() * reviewPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateReviewQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(reviewQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
+
+export { generateReviewQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day5 = {

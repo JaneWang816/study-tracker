@@ -2,259 +2,336 @@
 // W6 Day1：台灣哪裡種什麼？
 // 貫穿文本：〈一樣米飼百代人——米的臺灣史〉第一段
 
-// ===== 社會：台灣區域農業分布 =====
-const generateSocialQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '台灣的稻米主要種植在哪個地區？',
-      options: ['西部平原（嘉南、濁水溪沖積平原）', '台灣東部山區', '台北盆地', '澎湖群島'],
-      answer: 0,
-      explanation: '台灣西部平原土地平坦、灌溉便利，尤其是嘉南平原和濁水溪沖積平原，自古就是台灣最重要的稻米產地。'
-    },
-    {
-      type: 'choice',
-      question: '台灣的茶葉主要產於哪個區域？',
-      options: ['北部與中部山區（台北、桃園、新竹、南投）', '南部平原', '東部海岸', '離島地區'],
-      answer: 0,
-      explanation: '台灣茶葉主要集中在北部和中部丘陵山區，包括文山包種茶（台北）、東方美人茶（新竹、苗栗）、阿里山高山茶（嘉義）、日月潭紅茶（南投）等。'
-    },
-    {
-      type: 'choice',
-      question: '台灣甘蔗種植最多的地區是？',
-      options: ['台灣南部（台南、高雄、屏東）', '台灣北部', '台灣東部', '中部山區'],
-      answer: 0,
-      explanation: '台灣南部氣候炎熱、日照充足，非常適合甘蔗生長。日治時期台南、高雄、屏東一帶建立了大量製糖廠，是台灣糖業的核心地帶。'
-    },
-    {
-      type: 'choice',
-      question: '「一樣米飼百樣人」這句台灣俚諺，原本是用來表達什麼意思？',
-      options: [
-        '同樣吃米長大，每個人的性格和行為卻大不相同',
-        '台灣有很多種類的米',
-        '米可以養活很多人',
-        '每個人吃米的方式都不一樣'
-      ],
-      answer: 0,
-      explanation: '「一樣米飼百樣人」是台灣常見的俚諺，意思是：同樣吃米長大的人，卻有各種不同的性格與行為，常用來感嘆人心複雜多變。'
-    },
-    {
-      type: 'choice',
-      question: '台灣的農業分布和地形有密切關係。下列哪個說法最正確？',
-      options: [
-        '平原地區適合稻米、甘蔗等需要大面積的作物；山坡地則適合茶葉、水果等',
-        '台灣各地的農業作物都一樣，沒有地區差異',
-        '只有南部才能種農作物，北部太冷',
-        '台灣的農業完全由政府決定種什麼，和地形無關'
-      ],
-      answer: 0,
-      explanation: '台灣農業和地形高度相關：西部廣大平原適合需要大面積平地的稻米和甘蔗；山坡丘陵地則適合需要排水良好的茶葉和各種水果。這正是「靠山吃山，靠海吃海」的台灣版本。'
-    },
-    {
-      type: 'choice',
-      question: '台灣的「旱稻」和「水稻」最大的不同是？',
-      options: [
-        '旱稻種在不需要大量水灌溉的陸地，水稻種在水田需要大量水',
-        '旱稻是甜的，水稻是鹹的',
-        '旱稻是白色的，水稻是紅色的',
-        '兩者完全相同，只是名稱不同'
-      ],
-      answer: 0,
-      explanation: '旱稻（陸稻）抗旱性強，可種在缺水灌溉的山地，台灣原住民早年就種旱稻；水稻需要大量水灌溉，種在水田，是後來引進的主要稻種。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-// ===== 數學：圓面積複習與鞏固 =====
-const generateMathQuestion = () => {
-  const type = Math.floor(Math.random() * 4)
-
-  if (type === 0) {
-    // 公式確認
-    const questions = [
-      {
-        question: '圓面積的公式是？',
-        options: ['S = πr²', 'S = 2πr', 'S = πr', 'S = r²'],
-        answer: 0,
-        explanation: '圓面積公式是 S = πr²，其中 r 是半徑，π ≈ 3.14。注意：這和圓周長 C = 2πr 不同，面積用的是半徑的平方。'
-      },
-      {
-        question: '半徑變成 2 倍，圓面積會變成幾倍？',
-        options: ['4 倍', '2 倍', '8 倍', '3.14 倍'],
-        answer: 0,
-        explanation: '原面積 = πr²；新面積 = π(2r)² = 4πr²。面積變成 4 倍。這就是「面積縮放 = 長度縮放的平方」——W4 比例尺學過的概念！'
-      }
-    ]
-    const q = questions[Math.floor(Math.random() * questions.length)]
-    const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-    return { type: 'choice', ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
+// ==========================================
+// 社會:台灣區域農業分布
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '台灣的稻米主要種植在哪個地區?',
+    options: ['西部平原(嘉南、濁水溪沖積平原)', '台灣東部山區', '台北盆地', '澎湖群島'],
+    answer: 0,
+    displayAnswer: '台灣西部平原土地平坦、灌溉便利,尤其是嘉南平原和濁水溪沖積平原,自古就是台灣最重要的稻米產地。'
+  },
+  {
+    type: 'options',
+    question: '台灣的茶葉主要產於哪個區域?',
+    options: ['北部與中部山區(台北、桃園、新竹、南投)', '南部平原', '東部海岸', '離島地區'],
+    answer: 0,
+    displayAnswer: '台灣茶葉主要集中在北部和中部丘陵山區,包括文山包種茶(台北)、東方美人茶(新竹、苗栗)、阿里山高山茶(嘉義)、日月潭紅茶(南投)等。'
+  },
+  {
+    type: 'options',
+    question: '台灣甘蔗種植最多的地區是?',
+    options: ['台灣南部(台南、高雄、屏東)', '台灣北部', '台灣東部', '中部山區'],
+    answer: 0,
+    displayAnswer: '台灣南部氣候炎熱、日照充足,非常適合甘蔗生長。日治時期台南、高雄、屏東一帶建立了大量製糖廠,是台灣糖業的核心地帶。'
+  },
+  {
+    type: 'options',
+    question: '「一樣米飼百樣人」這句台灣俚諺,原本是用來表達什麼意思?',
+    options: [
+      '同樣吃米長大,每個人的性格和行為卻大不相同',
+      '台灣有很多種類的米',
+      '米可以養活很多人',
+      '每個人吃米的方式都不一樣'
+    ],
+    answer: 0,
+    displayAnswer: '「一樣米飼百樣人」是台灣常見的俚諺,意思是:同樣吃米長大的人,卻有各種不同的性格與行為,常用來感嘆人心複雜多變。'
+  },
+  {
+    type: 'options',
+    question: '台灣的農業分布和地形有密切關係。下列哪個說法最正確?',
+    options: [
+      '平原地區適合稻米、甘蔗等需要大面積的作物;山坡地則適合茶葉、水果等',
+      '台灣各地的農業作物都一樣,沒有地區差異',
+      '只有南部才能種農作物,北部太冷',
+      '台灣的農業完全由政府決定種什麼,和地形無關'
+    ],
+    answer: 0,
+    displayAnswer: '台灣農業和地形高度相關:西部廣大平原適合需要大面積平地的稻米和甘蔗;山坡丘陵地則適合需要排水良好的茶葉和各種水果。這正是「靠山吃山,靠海吃海」的台灣版本。'
+  },
+  {
+    type: 'options',
+    question: '台灣的「旱稻」和「水稻」最大的不同是?',
+    options: [
+      '旱稻種在不需要大量水灌溉的陸地,水稻種在水田需要大量水',
+      '旱稻是甜的,水稻是鹹的',
+      '旱稻是白色的,水稻是紅色的',
+      '兩者完全相同,只是名稱不同'
+    ],
+    answer: 0,
+    displayAnswer: '旱稻(陸稻)抗旱性強,可種在缺水灌溉的山地,台灣原住民早年就種旱稻;水稻需要大量水灌溉,種在水田,是後來引進的主要稻種。'
   }
+]
 
-  if (type === 1) {
-    // 已知半徑求面積
-    const r = [5, 7, 10, 14][Math.floor(Math.random() * 4)]
-    const area = (3.14 * r * r).toFixed(2)
-    const wrong1 = (2 * 3.14 * r).toFixed(2)
-    const wrong2 = (3.14 * r).toFixed(2)
-    const wrong3 = (3.14 * r * r * 2).toFixed(2)
-    const options = [area, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `一塊圓形農田的半徑是 ${r} 公尺，面積是多少平方公尺？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(area),
-      explanation: `圓面積 S = πr² = 3.14 × ${r}² = 3.14 × ${r * r} = ${area} 平方公尺`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  if (type === 2) {
-    // 已知直徑求面積
-    const d = [10, 14, 20, 8][Math.floor(Math.random() * 4)]
-    const r = d / 2
-    const area = (3.14 * r * r).toFixed(2)
-    const wrong1 = (3.14 * d * d).toFixed(2)
-    const wrong2 = (2 * 3.14 * r).toFixed(2)
-    const wrong3 = (3.14 * r * r + r).toFixed(2)
-    const options = [area, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `一個圓形水池的直徑是 ${d} 公尺，水池的面積是多少平方公尺？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(area),
-      explanation: `直徑 ${d} 公尺，半徑 = ${d} ÷ 2 = ${r} 公尺\n圓面積 S = πr² = 3.14 × ${r}² = 3.14 × ${r * r} = ${area} 平方公尺`
-    }
+// ==========================================
+// 數學:圓面積複習與鞏固
+// ==========================================
+const mathQuestions = [
+  // 公式確認
+  {
+    type: 'options',
+    question: '圓面積的公式是?',
+    options: ['S = πr²', 'S = 2πr', 'S = πr', 'S = r²'],
+    answer: 0,
+    displayAnswer: '圓面積公式是 S = πr²,其中 r 是半徑,π ≈ 3.14。注意:這和圓周長 C = 2πr 不同,面積用的是半徑的平方。'
+  },
+  {
+    type: 'options',
+    question: '半徑變成 2 倍,圓面積會變成幾倍?',
+    options: ['4 倍', '2 倍', '8 倍', '3.14 倍'],
+    answer: 0,
+    displayAnswer: '原面積 = πr²;新面積 = π(2r)² = 4πr²。面積變成 4 倍。這就是「面積縮放 = 長度縮放的平方」——W4 比例尺學過的概念!'
+  },
+  // 已知半徑求面積
+  {
+    type: 'options',
+    question: '一塊圓形農田的半徑是 5 公尺,面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['78.5', '31.4', '15.7', '157'],
+    answer: 0,
+    displayAnswer: '圓面積 S = πr² = 3.14 × 5² = 3.14 × 25 = 78.5 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊圓形農田的半徑是 7 公尺,面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['153.86', '43.96', '21.98', '307.72'],
+    answer: 0,
+    displayAnswer: '圓面積 S = πr² = 3.14 × 7² = 3.14 × 49 = 153.86 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊圓形農田的半徑是 10 公尺,面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['314', '62.8', '31.4', '628'],
+    answer: 0,
+    displayAnswer: '圓面積 S = πr² = 3.14 × 10² = 3.14 × 100 = 314 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一塊圓形農田的半徑是 14 公尺,面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['615.44', '87.92', '43.96', '1230.88'],
+    answer: 0,
+    displayAnswer: '圓面積 S = πr² = 3.14 × 14² = 3.14 × 196 = 615.44 平方公尺'
+  },
+  // 已知直徑求面積
+  {
+    type: 'options',
+    question: '一個圓形水池的直徑是 10 公尺,水池的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['78.5', '314', '31.4', '83.5'],
+    answer: 0,
+    displayAnswer: '直徑 10 公尺,半徑 = 10 ÷ 2 = 5 公尺\n圓面積 S = πr² = 3.14 × 5² = 3.14 × 25 = 78.5 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一個圓形水池的直徑是 14 公尺,水池的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['153.86', '615.44', '43.96', '160.86'],
+    answer: 0,
+    displayAnswer: '直徑 14 公尺,半徑 = 14 ÷ 2 = 7 公尺\n圓面積 S = πr² = 3.14 × 7² = 3.14 × 49 = 153.86 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一個圓形水池的直徑是 20 公尺,水池的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['314', '1256', '62.8', '324'],
+    answer: 0,
+    displayAnswer: '直徑 20 公尺,半徑 = 20 ÷ 2 = 10 公尺\n圓面積 S = πr² = 3.14 × 10² = 3.14 × 100 = 314 平方公尺'
+  },
+  {
+    type: 'options',
+    question: '一個圓形水池的直徑是 8 公尺,水池的面積是多少平方公尺?(π ≈ 3.14)',
+    options: ['50.24', '200.96', '25.12', '54.24'],
+    answer: 0,
+    displayAnswer: '直徑 8 公尺,半徑 = 8 ÷ 2 = 4 公尺\n圓面積 S = πr² = 3.14 × 4² = 3.14 × 16 = 50.24 平方公尺'
+  },
+  // 比較兩個圓的面積
+  {
+    type: 'options',
+    question: '農場有兩塊圓形菜園,小菜園半徑 3 公尺,大菜園半徑 6 公尺(是小菜園的 2 倍)。大菜園面積是小菜園的幾倍?',
+    options: ['大圓面積是小圓的 4 倍', '大圓面積是小圓的 2 倍', '大圓面積是小圓的 8 倍', '兩圓面積相同'],
+    answer: 0,
+    displayAnswer: '小菜園面積 = 3.14 × 3² = 28.26 平方公尺\n大菜園面積 = 3.14 × 6² = 113.04 平方公尺\n113.04 ÷ 28.26 = 4 倍\n💡 半徑變 2 倍,面積變 4 倍(2² = 4)'
+  },
+  {
+    type: 'options',
+    question: '農場有兩塊圓形菜園,小菜園半徑 4 公尺,大菜園半徑 8 公尺(是小菜園的 2 倍)。大菜園面積是小菜園的幾倍?',
+    options: ['大圓面積是小圓的 4 倍', '大圓面積是小圓的 2 倍', '大圓面積是小圓的 8 倍', '兩圓面積相同'],
+    answer: 0,
+    displayAnswer: '小菜園面積 = 3.14 × 4² = 50.24 平方公尺\n大菜園面積 = 3.14 × 8² = 200.96 平方公尺\n200.96 ÷ 50.24 = 4 倍\n💡 半徑變 2 倍,面積變 4 倍(2² = 4)'
+  },
+  {
+    type: 'options',
+    question: '農場有兩塊圓形菜園,小菜園半徑 5 公尺,大菜園半徑 10 公尺(是小菜園的 2 倍)。大菜園面積是小菜園的幾倍?',
+    options: ['大圓面積是小圓的 4 倍', '大圓面積是小圓的 2 倍', '大圓面積是小圓的 8 倍', '兩圓面積相同'],
+    answer: 0,
+    displayAnswer: '小菜園面積 = 3.14 × 5² = 78.5 平方公尺\n大菜園面積 = 3.14 × 10² = 314 平方公尺\n314 ÷ 78.5 = 4 倍\n💡 半徑變 2 倍,面積變 4 倍(2² = 4)'
   }
+]
 
-  // type === 3：比較兩個圓的面積
-  const r1 = [3, 4, 5][Math.floor(Math.random() * 3)]
-  const r2 = r1 * 2
-  const a1 = (3.14 * r1 * r1).toFixed(2)
-  const a2 = (3.14 * r2 * r2).toFixed(2)
-  const ratio = 4
-  const options = [`大圓面積是小圓的 ${ratio} 倍`, `大圓面積是小圓的 2 倍`, `大圓面積是小圓的 8 倍`, `兩圓面積相同`]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  return {
-    type: 'choice',
-    question: `農場有兩塊圓形菜園，小菜園半徑 ${r1} 公尺，大菜園半徑 ${r2} 公尺（是小菜園的 2 倍）。大菜園面積是小菜園的幾倍？`,
-    options: shuffled,
-    answer: shuffled.indexOf(`大圓面積是小圓的 ${ratio} 倍`),
-    explanation: `小菜園面積 = 3.14 × ${r1}² = ${a1} 平方公尺\n大菜園面積 = 3.14 × ${r2}² = ${a2} 平方公尺\n${a2} ÷ ${a1} = 4 倍\n💡 半徑變 2 倍，面積變 4 倍（2² = 4）`
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-}
+})()
 
-// ===== 科學：摩擦力 =====
-const generateScienceQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '摩擦力是什麼？',
-      options: [
-        '兩個物體接觸面之間阻礙相對運動的力',
-        '讓物體往上飛的力',
-        '讓物體加速的力',
-        '只有在水中才有的力'
-      ],
-      answer: 0,
-      explanation: '摩擦力是兩個物體接觸面之間產生的，方向和運動方向相反，會阻礙物體的運動。它是日常生活中無所不在的力。'
-    },
-    {
-      type: 'choice',
-      question: '傳統水車運轉時，轉軸和軸承之間會產生什麼，消耗一部分能量？',
-      options: ['摩擦力（使軸承發熱，損耗能量）', '浮力', '磁力', '重力'],
-      answer: 0,
-      explanation: '水車轉軸和軸承之間有摩擦力，會讓一部分水流的能量轉成熱能散失，而不是完全用來汲水。這就是「機械效率」不能達到100%的主要原因之一。'
-    },
-    {
-      type: 'choice',
-      question: '下列哪種情況摩擦力比較大？',
-      options: [
-        '粗糙的木板上推木箱（摩擦力大）',
-        '光滑的冰面上推木箱（摩擦力小）',
-        '兩者摩擦力一樣大',
-        '光滑面的摩擦力反而更大'
-      ],
-      answer: 0,
-      explanation: '接觸面越粗糙，摩擦力越大；接觸面越光滑，摩擦力越小。這就是為什麼機器的轉軸要加潤滑油——減少摩擦，提高效率。'
-    },
-    {
-      type: 'choice',
-      question: '摩擦力在生活中有時候是好的，有時候是不好的。下列哪個例子中，摩擦力是「好的、我們需要的」？',
-      options: [
-        '鞋底和地面的摩擦力（讓我們不會滑倒）',
-        '機器齒輪之間的摩擦力（讓機器磨損）',
-        '水車轉軸的摩擦力（消耗能量）',
-        '車輪滾動時地面的阻力（讓車減速）'
-      ],
-      answer: 0,
-      explanation: '鞋底和地面之間的摩擦力讓我們能站穩、走路、跑步，是我們需要的「有益摩擦力」。沒有摩擦力，我們就像踩在冰上一樣無法行走。'
-    },
-    {
-      type: 'choice',
-      question: '古代農民在水車轉軸上塗豬油或動物油脂，這樣做的目的是？',
-      options: [
-        '減少摩擦力，讓水車轉動更順暢，減少能量損耗',
-        '讓水車看起來更漂亮',
-        '防止木頭腐爛',
-        '增加摩擦力，讓水車轉得更慢、更穩'
-      ],
-      answer: 0,
-      explanation: '在轉軸上塗抹油脂是最古老的「潤滑」技術，目的是減少轉軸和軸承之間的摩擦力，讓水車運轉更順暢，減少能量損耗。現代機器用機油達到同樣效果。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+// ==========================================
+// 科學:摩擦力
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '摩擦力是什麼?',
+    options: [
+      '兩個物體接觸面之間阻礙相對運動的力',
+      '讓物體往上飛的力',
+      '讓物體加速的力',
+      '只有在水中才有的力'
+    ],
+    answer: 0,
+    displayAnswer: '摩擦力是兩個物體接觸面之間產生的,方向和運動方向相反,會阻礙物體的運動。它是日常生活中無所不在的力。'
+  },
+  {
+    type: 'options',
+    question: '傳統水車運轉時,轉軸和軸承之間會產生什麼,消耗一部分能量?',
+    options: ['摩擦力(使軸承發熱,損耗能量)', '浮力', '磁力', '重力'],
+    answer: 0,
+    displayAnswer: '水車轉軸和軸承之間有摩擦力,會讓一部分水流的能量轉成熱能散失,而不是完全用來汲水。這就是「機械效率」不能達到100%的主要原因之一。'
+  },
+  {
+    type: 'options',
+    question: '下列哪種情況摩擦力比較大?',
+    options: [
+      '粗糙的木板上推木箱(摩擦力大)',
+      '光滑的冰面上推木箱(摩擦力小)',
+      '兩者摩擦力一樣大',
+      '光滑面的摩擦力反而更大'
+    ],
+    answer: 0,
+    displayAnswer: '接觸面越粗糙,摩擦力越大;接觸面越光滑,摩擦力越小。這就是為什麼機器的轉軸要加潤滑油——減少摩擦,提高效率。'
+  },
+  {
+    type: 'options',
+    question: '摩擦力在生活中有時候是好的,有時候是不好的。下列哪個例子中,摩擦力是「好的、我們需要的」?',
+    options: [
+      '鞋底和地面的摩擦力(讓我們不會滑倒)',
+      '機器齒輪之間的摩擦力(讓機器磨損)',
+      '水車轉軸的摩擦力(消耗能量)',
+      '車輪滾動時地面的阻力(讓車減速)'
+    ],
+    answer: 0,
+    displayAnswer: '鞋底和地面之間的摩擦力讓我們能站穩、走路、跑步,是我們需要的「有益摩擦力」。沒有摩擦力,我們就像踩在冰上一樣無法行走。'
+  },
+  {
+    type: 'options',
+    question: '古代農民在水車轉軸上塗豬油或動物油脂,這樣做的目的是?',
+    options: [
+      '減少摩擦力,讓水車轉動更順暢,減少能量損耗',
+      '讓水車看起來更漂亮',
+      '防止木頭腐爛',
+      '增加摩擦力,讓水車轉得更慢、更穩'
+    ],
+    answer: 0,
+    displayAnswer: '在轉軸上塗抹油脂是最古老的「潤滑」技術,目的是減少轉軸和軸承之間的摩擦力,讓水車運轉更順暢,減少能量損耗。現代機器用機油達到同樣效果。'
+  }
+]
 
-// ===== 語文詞彙：農業地理用語 =====
-const generateVocabQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「沖積平原」是怎麼形成的？',
-      options: [
-        '河流帶來的泥沙長期堆積，形成肥沃的平坦土地',
-        '海水退潮後留下的沙地',
-        '火山爆發後形成的平地',
-        '人工填海造陸形成的土地'
-      ],
-      answer: 0,
-      explanation: '沖積平原是河流從上游帶來的泥沙，在河流下游或入海口附近堆積而成。台灣的嘉南平原、濁水溪沖積扇都是例子，土壤肥沃，非常適合農業。'
-    },
-    {
-      type: 'choice',
-      question: '「旱稻」的「旱」字，帶有什麼意思？',
-      options: [
-        '缺水、乾燥（旱災、乾旱）',
-        '很熱',
-        '早上',
-        '陸地上'
-      ],
-      answer: 0,
-      explanation: '「旱」字的本義是缺水、乾燥，如「旱災」、「乾旱」。旱稻能在缺水的旱地生長，所以叫「旱稻」。'
-    },
-    {
-      type: 'choice',
-      question: '「食飯皇帝大」這句台語俚語，用來形容什麼情況？',
-      options: [
-        '吃飯是最重要的事，不能被打擾或中斷',
-        '皇帝最喜歡吃飯',
-        '米飯比任何食物都貴',
-        '只有皇帝才能吃白米飯'
-      ],
-      answer: 0,
-      explanation: '「食飯皇帝大」意思是：吃飯這件事比什麼都重要，就像皇帝一樣不可侵犯、不能被打斷。反映了農業社會對糧食和吃飯的高度重視。'
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 語文詞彙:農業地理用語
+// ==========================================
+const vocabQuestions = [
+  {
+    type: 'options',
+    question: '「沖積平原」是怎麼形成的?',
+    options: [
+      '河流帶來的泥沙長期堆積,形成肥沃的平坦土地',
+      '海水退潮後留下的沙地',
+      '火山爆發後形成的平地',
+      '人工填海造陸形成的土地'
+    ],
+    answer: 0,
+    displayAnswer: '沖積平原是河流從上游帶來的泥沙,在河流下游或入海口附近堆積而成。台灣的嘉南平原、濁水溪沖積扇都是例子,土壤肥沃,非常適合農業。'
+  },
+  {
+    type: 'options',
+    question: '「旱稻」的「旱」字,帶有什麼意思?',
+    options: [
+      '缺水、乾燥(旱災、乾旱)',
+      '很熱',
+      '早上',
+      '陸地上'
+    ],
+    answer: 0,
+    displayAnswer: '「旱」字的本義是缺水、乾燥,如「旱災」、「乾旱」。旱稻能在缺水的旱地生長,所以叫「旱稻」。'
+  },
+  {
+    type: 'options',
+    question: '「食飯皇帝大」這句台語俚語,用來形容什麼情況?',
+    options: [
+      '吃飯是最重要的事,不能被打擾或中斷',
+      '皇帝最喜歡吃飯',
+      '米飯比任何食物都貴',
+      '只有皇帝才能吃白米飯'
+    ],
+    answer: 0,
+    displayAnswer: '「食飯皇帝大」意思是:吃飯這件事比什麼都重要,就像皇帝一樣不可侵犯、不能被打斷。反映了農業社會對糧食和吃飯的高度重視。'
+  }
+]
+
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion, generateVocabQuestion }
 
 // ===== Day 1 主體 =====
 const day1 = {

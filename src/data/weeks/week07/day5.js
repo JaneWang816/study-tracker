@@ -1,75 +1,101 @@
 // src/data/weeks/week07/day5.js
 // W7 Day5：鐵道的詩意
 
-// ── 輕量複習題（綜合，只出5題）────────────────
-const reviewPool = [
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 輕量複習題(綜合)
+// ==========================================
+const reviewQuestions = [
   {
-    question: '台灣第一條縱貫鐵路在哪個時代完成？',
-    options: ['清朝', '日治時代', '戰後', '荷蘭時代'],
-    answer: 1
+    type: 'options',
+    question: '台灣第一條縱貫鐵路在哪個時代完成?',
+    options: ['日治時代', '清朝', '戰後', '荷蘭時代'],
+    answer: 0,
+    displayAnswer: '台灣縱貫鐵路在日治時代完成,1908年全線通車,從基隆連接到高雄,是台灣交通史上的重要里程碑。'
   },
   {
-    question: '速率公式 v = d ÷ t，其中 d 代表什麼？',
-    options: ['速率', '時間', '距離', '方向'],
-    answer: 2
+    type: 'options',
+    question: '速率公式 v = d ÷ t,其中 d 代表什麼?',
+    options: ['距離', '速率', '時間', '方向'],
+    answer: 0,
+    displayAnswer: 'v = d ÷ t 中,v代表速率,d代表距離,t代表時間。速率 = 距離 ÷ 時間。'
   },
   {
-    question: '火車需要很長距離才能停下來，主要是因為？',
-    options: ['煞車系統太舊', '火車質量大，慣性大', '鐵軌太光滑', '司機反應慢'],
-    answer: 1
+    type: 'options',
+    question: '火車需要很長距離才能停下來,主要是因為?',
+    options: ['火車質量大,慣性大', '煞車系統太舊', '鐵軌太光滑', '司機反應慢'],
+    answer: 0,
+    displayAnswer: '火車質量非常大,根據牛頓第一定律,質量越大慣性越大,要改變運動狀態需要更長的時間和距離,所以煞車距離很長。'
   },
   {
-    question: '「作用力與反作用力」的特點是？',
+    type: 'options',
+    question: '「作用力與反作用力」的特點是?',
     options: [
-      '大小相等，方向相同',
-      '大小不同，方向相反',
-      '大小相等，方向相反',
+      '大小相等,方向相反',
+      '大小相等,方向相同',
+      '大小不同,方向相反',
       '只存在於靜止狀態'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '牛頓第三運動定律:作用力與反作用力大小相等、方向相反,且作用在不同物體上。這是自然界的基本規律。'
   },
   {
-    question: '72 km/h 換算成 m/s 是多少？',
-    options: ['10 m/s', '20 m/s', '30 m/s', '40 m/s'],
-    answer: 1
+    type: 'options',
+    question: '72 km/h 換算成 m/s 是多少?',
+    options: ['20 m/s', '10 m/s', '30 m/s', '40 m/s'],
+    answer: 0,
+    displayAnswer: '72 km/h ÷ 3.6 = 20 m/s\n提示:km/h ÷ 3.6 = m/s'
   },
   {
-    question: 'YouBike 在大眾運輸系統中的作用是？',
+    type: 'options',
+    question: 'YouBike 在大眾運輸系統中的作用是?',
     options: [
-      '取代高鐵做長途旅行',
       '補足捷運或公車到目的地的「最後一哩路」',
+      '取代高鐵做長途旅行',
       '只在觀光景點使用',
       '速度比捷運更快'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: 'YouBike是公共自行車共享系統,主要用於短程接駁,解決從捷運站或公車站到最終目的地的「最後一哩路」問題。'
   },
   {
-    question: '劉克襄說「鐵道不是一把尺，而是圓規」，圓規比喻的是？',
+    type: 'options',
+    question: '劉克襄說「鐵道不是一把尺,而是圓規」,圓規比喻的是?',
     options: [
+      '以車站為中心,向四周步行探索',
       '火車可以畫圓形路線',
-      '以車站為中心，向四周步行探索',
       '火車速度像圓周率一樣固定',
       '買一張環島火車票'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '劉克襄用圓規比喻:不要把鐵道只當作從A點到B點的直線工具,而應該以每個車站為中心,向周圍延伸探索,畫出屬於自己的生活圓圈。'
   },
   {
-    question: '台灣高鐵最高時速大約是多少？',
-    options: ['150 km/h', '200 km/h', '250 km/h', '300 km/h'],
-    answer: 3
+    type: 'options',
+    question: '台灣高鐵最高時速大約是多少?',
+    options: ['300 km/h', '150 km/h', '200 km/h', '250 km/h'],
+    answer: 0,
+    displayAnswer: '台灣高鐵最高營運時速約300公里,是台灣最快的陸上交通工具,將台北到高雄的交通時間縮短到約90分鐘。'
   }
 ]
 
-function generateReviewQuestion() {
-  const q = reviewPool[Math.floor(Math.random() * reviewPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateReviewQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(reviewQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
+
+export { generateReviewQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day5 = {

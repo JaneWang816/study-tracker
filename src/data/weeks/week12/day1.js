@@ -2,280 +2,334 @@
 // 第12週 - 第一天：飛魚的季節 / 台灣產業怎麼轉型？
 
 // ==========================================
-// 練習題生成器
+// Week 14 Day 5 練習題庫
+// 主題：等量公理二、台灣產業變遷、物理化學變化
 // ==========================================
 
-// 【數學】等量公理二基礎練習題庫（兩邊乘除同一數）
-const mathQuestions = [
-  // x÷2 = 6 型（一步驟除法）
+// 使用 Fisher-Yates 洗牌算法
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// ==========================================
+// 【數學】等量公理二基礎練習題庫
+// ==========================================
+
+const mathQuestionsPool = [
+  // x÷2 = 6 型(一步驟除法)
   {
     type: 'options',
-    question: 'x ÷ 3 = 5，x 是多少？',
+    question: 'x ÷ 3 = 5,x 是多少?',
     options: ['2', '8', '15', '18'],
-    answer: 2,
-    displayAnswer: '15',
-    explanation: '等號兩邊同乘 3：x ÷ 3 × 3 = 5 × 3，所以 x = 15'
+    correctAnswer: '15',
+    explanation: '等號兩邊同乘 3:x ÷ 3 × 3 = 5 × 3,所以 x = 15'
   },
   {
     type: 'options',
-    question: 'x ÷ 4 = 7，x 是多少？',
+    question: 'x ÷ 4 = 7,x 是多少?',
     options: ['3', '11', '28', '32'],
-    answer: 2,
-    displayAnswer: '28',
-    explanation: '等號兩邊同乘 4：x ÷ 4 × 4 = 7 × 4，所以 x = 28'
+    correctAnswer: '28',
+    explanation: '等號兩邊同乘 4:x ÷ 4 × 4 = 7 × 4,所以 x = 28'
   },
-  {
-    type: 'fill',
-    question: 'x ÷ 5 = 8，x = ？',
-    answer: '40',
-    displayAnswer: '40',
-    explanation: '等號兩邊同乘 5：x = 8 × 5 = 40'
-  },
-  // 3x = 15 型（一步驟乘法）
   {
     type: 'options',
-    question: '2x = 12，x 是多少？',
+    question: 'x ÷ 5 = 8,x 是多少?',
+    options: ['35', '40', '45', '50'],
+    correctAnswer: '40',
+    explanation: '等號兩邊同乘 5:x = 8 × 5 = 40'
+  },
+  // 3x = 15 型(一步驟乘法)
+  {
+    type: 'options',
+    question: '2x = 12,x 是多少?',
     options: ['4', '6', '10', '14'],
-    answer: 1,
-    displayAnswer: '6',
-    explanation: '等號兩邊同除 2：2x ÷ 2 = 12 ÷ 2，所以 x = 6'
+    correctAnswer: '6',
+    explanation: '等號兩邊同除 2:2x ÷ 2 = 12 ÷ 2,所以 x = 6'
   },
   {
     type: 'options',
-    question: '5x = 35，x 是多少？',
+    question: '5x = 35,x 是多少?',
     options: ['5', '7', '30', '40'],
-    answer: 1,
-    displayAnswer: '7',
-    explanation: '等號兩邊同除 5：5x ÷ 5 = 35 ÷ 5，所以 x = 7'
-  },
-  {
-    type: 'fill',
-    question: '4x = 20，x = ？',
-    answer: '5',
-    displayAnswer: '5',
-    explanation: '等號兩邊同除 4：x = 20 ÷ 4 = 5'
+    correctAnswer: '7',
+    explanation: '等號兩邊同除 5:5x ÷ 5 = 35 ÷ 5,所以 x = 7'
   },
   {
     type: 'options',
-    question: '6x = 48，x 是多少？',
+    question: '4x = 20,x 是多少?',
+    options: ['4', '5', '16', '24'],
+    correctAnswer: '5',
+    explanation: '等號兩邊同除 4:x = 20 ÷ 4 = 5'
+  },
+  {
+    type: 'options',
+    question: '6x = 48,x 是多少?',
     options: ['6', '8', '42', '54'],
-    answer: 1,
-    displayAnswer: '8',
-    explanation: '等號兩邊同除 6：x = 48 ÷ 6 = 8'
+    correctAnswer: '8',
+    explanation: '等號兩邊同除 6:x = 48 ÷ 6 = 8'
   },
   // 混合型
   {
     type: 'options',
-    question: 'x ÷ 6 = 4，x 是多少？',
+    question: 'x ÷ 6 = 4,x 是多少?',
     options: ['10', '18', '24', '30'],
-    answer: 2,
-    displayAnswer: '24',
-    explanation: '等號兩邊同乘 6：x = 4 × 6 = 24'
-  },
-  {
-    type: 'fill',
-    question: '8x = 56，x = ？',
-    answer: '7',
-    displayAnswer: '7',
-    explanation: '等號兩邊同除 8：x = 56 ÷ 8 = 7'
+    correctAnswer: '24',
+    explanation: '等號兩邊同乘 6:x = 4 × 6 = 24'
   },
   {
     type: 'options',
-    question: '下列哪個等式運算正確？',
+    question: '8x = 56,x 是多少?',
+    options: ['7', '8', '48', '64'],
+    correctAnswer: '7',
+    explanation: '等號兩邊同除 8:x = 56 ÷ 8 = 7'
+  },
+  {
+    type: 'options',
+    question: '下列哪個等式運算正確?',
     options: [
       'x ÷ 3 = 9 → x = 9 - 3 = 6',
       '4x = 16 → x = 16 + 4 = 20',
       'x ÷ 2 = 10 → x = 10 × 2 = 20',
       '5x = 25 → x = 25 - 5 = 20'
     ],
-    answer: 2,
-    displayAnswer: 'x ÷ 2 = 10 → x = 10 × 2 = 20',
-    explanation: '除法要用乘法還原，乘法要用除法還原'
+    correctAnswer: 'x ÷ 2 = 10 → x = 10 × 2 = 20',
+    explanation: '除法要用乘法還原,乘法要用除法還原'
   }
-]
+];
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
-
+// ==========================================
 // 【社會】台灣產業變遷練習題庫
-const socialQuestions = [
+// ==========================================
+
+const socialQuestionsPool = [
   {
     type: 'options',
-    question: '戰後台灣最早發展的產業是？',
+    question: '戰後台灣最早發展的產業是?',
     options: ['半導體產業', '農業與輕工業', '重工業', '電子代工'],
-    answer: 1,
-    displayAnswer: '農業與輕工業'
+    correctAnswer: '農業與輕工業',
+    explanation: '戰後初期台灣以農業為主,並發展紡織等輕工業'
   },
   {
     type: 'options',
-    question: '1950-1960年代，台灣主要出口什麼產品？',
+    question: '1950-1960年代,台灣主要出口什麼產品?',
     options: ['晶片', '糖、米、香蕉', '汽車', '電腦'],
-    answer: 1,
-    displayAnswer: '糖、米、香蕉'
+    correctAnswer: '糖、米、香蕉',
+    explanation: '當時台灣以農產品出口為主,糖、米、香蕉是三大出口品'
   },
   {
     type: 'options',
-    question: '1970-1980年代，台灣發展出什麼產業？',
+    question: '1970-1980年代,台灣發展出什麼產業?',
     options: ['傳統農業', '紡織、塑膠、電子組裝', '綠能產業', '觀光業'],
-    answer: 1,
-    displayAnswer: '紡織、塑膠、電子組裝'
+    correctAnswer: '紡織、塑膠、電子組裝',
+    explanation: '此時期台灣從農業轉型為輕工業和電子加工業'
   },
   {
     type: 'options',
-    question: '新竹科學園區成立於哪一年？',
+    question: '新竹科學園區成立於哪一年?',
     options: ['1970年', '1980年', '1990年', '2000年'],
-    answer: 1,
-    displayAnswer: '1980年'
+    correctAnswer: '1980年',
+    explanation: '新竹科學園區於1980年成立,是台灣高科技產業的重要里程碑'
   },
   {
     type: 'options',
-    question: '台積電（TSMC）成立於哪一年？',
+    question: '台積電(TSMC)成立於哪一年?',
     options: ['1977年', '1987年', '1997年', '2007年'],
-    answer: 1,
-    displayAnswer: '1987年'
+    correctAnswer: '1987年',
+    explanation: '台積電於1987年成立,開創晶圓代工模式'
   },
   {
     type: 'options',
-    question: '台灣被稱為「矽島」是因為什麼產業？',
+    question: '台灣被稱為「矽島」是因為什麼產業?',
     options: ['煤礦業', '農業', '半導體產業', '紡織業'],
-    answer: 2,
-    displayAnswer: '半導體產業'
+    correctAnswer: '半導體產業',
+    explanation: '因為半導體產業發達,台灣被稱為「矽島」'
   },
   {
     type: 'options',
-    question: '為什麼傳統漁業在台灣逐漸式微？',
+    question: '為什麼傳統漁業在台灣逐漸式微?',
     options: [
       '魚類絕種了',
       '漁獲價格下降、年輕人不願從事',
       '政府禁止捕魚',
       '海洋污染太嚴重'
     ],
-    answer: 1,
-    displayAnswer: '漁獲價格下降、年輕人不願從事'
+    correctAnswer: '漁獲價格下降、年輕人不願從事',
+    explanation: '經濟轉型後,傳統產業收入較低,年輕人多選擇其他行業'
   },
   {
     type: 'options',
-    question: '台灣產業轉型的主要方向是？',
+    question: '台灣產業轉型的主要方向是?',
     options: [
       '從科技回到農業',
       '從高科技轉向傳統工業',
       '從低附加價值轉向高附加價值',
       '從出口轉向內銷'
     ],
-    answer: 2,
-    displayAnswer: '從低附加價值轉向高附加價值'
+    correctAnswer: '從低附加價值轉向高附加價值',
+    explanation: '台灣產業不斷升級,從勞力密集轉向技術密集'
   },
   {
     type: 'options',
-    question: '「附加價值」是什麼意思？',
+    question: '「附加價值」是什麼意思?',
     options: [
       '產品的重量',
       '生產過程中增加的價值',
       '產品的數量',
       '產品的顏色'
     ],
-    answer: 1,
-    displayAnswer: '生產過程中增加的價值'
+    correctAnswer: '生產過程中增加的價值',
+    explanation: '附加價值指經過加工、設計等過程後增加的價值'
   },
   {
     type: 'options',
-    question: '下列哪個是高附加價值產品？',
+    question: '下列哪個是高附加價值產品?',
     options: ['生米', '晶片', '原木', '原油'],
-    answer: 1,
-    displayAnswer: '晶片'
+    correctAnswer: '晶片',
+    explanation: '晶片需要高度技術和設備,附加價值遠高於原料'
   }
-]
+];
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
-
+// ==========================================
 // 【科學】物理變化vs化學變化練習題庫
-const scienceQuestions = [
+// ==========================================
+
+const scienceQuestionsPool = [
   {
     type: 'options',
-    question: '下列哪個是「物理變化」？',
+    question: '下列哪個是「物理變化」?',
     options: ['木材燃燒', '冰塊融化', '鐵釘生鏽', '食物腐敗'],
-    answer: 1,
-    displayAnswer: '冰塊融化'
+    correctAnswer: '冰塊融化',
+    explanation: '冰塊融化只是狀態改變,沒有產生新物質'
   },
   {
     type: 'options',
-    question: '下列哪個是「化學變化」？',
+    question: '下列哪個是「化學變化」?',
     options: ['水蒸發', '糖溶解', '紙張燃燒', '玻璃破裂'],
-    answer: 2,
-    displayAnswer: '紙張燃燒'
+    correctAnswer: '紙張燃燒',
+    explanation: '燃燒產生新物質(灰燼、二氧化碳等),是化學變化'
   },
   {
     type: 'options',
-    question: '物理變化和化學變化最大的差別是？',
+    question: '物理變化和化學變化最大的差別是?',
     options: [
       '物理變化比較慢',
       '化學變化會產生新物質',
       '物理變化需要加熱',
       '化學變化一定有顏色變化'
     ],
-    answer: 1,
-    displayAnswer: '化學變化會產生新物質'
+    correctAnswer: '化學變化會產生新物質',
+    explanation: '化學變化的本質是產生新物質,物理變化則否'
   },
   {
     type: 'options',
-    question: '「飛魚曬成魚乾」是什麼變化？',
+    question: '「飛魚曬成魚乾」是什麼變化?',
     options: ['物理變化', '化學變化', '兩者都是', '兩者都不是'],
-    answer: 2,
-    displayAnswer: '化學變化',
-    explanation: '水分蒸發+蛋白質變性+微生物分解，產生新物質'
+    correctAnswer: '化學變化',
+    explanation: '水分蒸發+蛋白質變性+微生物分解,產生新物質'
   },
   {
     type: 'options',
-    question: '「飛魚剖開展平」是什麼變化？',
+    question: '「飛魚剖開展平」是什麼變化?',
     options: ['物理變化', '化學變化', '兩者都是', '兩者都不是'],
-    answer: 0,
-    displayAnswer: '物理變化',
-    explanation: '只改變形狀，沒有產生新物質'
+    correctAnswer: '物理變化',
+    explanation: '只改變形狀,沒有產生新物質'
   },
   {
     type: 'options',
-    question: '「飛魚腥鮮轉化為腐味」是什麼變化？',
+    question: '「飛魚腥鮮轉化為腐味」是什麼變化?',
     options: ['物理變化', '化學變化', '兩者都是', '兩者都不是'],
-    answer: 1,
-    displayAnswer: '化學變化',
-    explanation: '微生物分解蛋白質，產生新的氣味物質'
+    correctAnswer: '化學變化',
+    explanation: '微生物分解蛋白質,產生新的氣味物質'
   },
   {
     type: 'options',
-    question: '下列哪個變化「可以輕易復原」？',
+    question: '下列哪個變化「可以輕易復原」?',
     options: ['木材燃燒', '水結冰', '食物煮熟', '鐵生鏽'],
-    answer: 1,
-    displayAnswer: '水結冰',
-    explanation: '冰加熱就變回水，這是物理變化的特徵'
+    correctAnswer: '水結冰',
+    explanation: '冰加熱就變回水,這是物理變化的特徵'
   },
   {
     type: 'options',
-    question: '化學變化常伴隨的現象，下列何者「不一定」發生？',
+    question: '化學變化常伴隨的現象,下列何者「不一定」發生?',
     options: ['產生新物質', '顏色改變', '放熱或吸熱', '產生氣體'],
-    answer: 1,
-    displayAnswer: '顏色改變',
-    explanation: '化學變化一定產生新物質，但不一定有明顯的顏色、氣體或溫度變化'
+    correctAnswer: '顏色改變',
+    explanation: '化學變化一定產生新物質,但不一定有明顯的顏色、氣體或溫度變化'
   },
   {
     type: 'options',
-    question: '「飛魚用米酒洗去腐味」能復原嗎？',
+    question: '「飛魚用米酒洗去腐味」能復原嗎?',
     options: [
-      '能，因為只是物理變化',
-      '不能，因為蛋白質已經分解',
-      '能，只要用水沖洗',
+      '能,因為只是物理變化',
+      '不能,因為蛋白質已經分解',
+      '能,只要用水沖洗',
       '看情況而定'
     ],
-    answer: 1,
-    displayAnswer: '不能，因為蛋白質已經分解'
+    correctAnswer: '不能,因為蛋白質已經分解',
+    explanation: '蛋白質分解是化學變化,無法復原'
+  },
+  {
+    type: 'options',
+    question: '下列哪組都是物理變化?',
+    options: [
+      '水結冰、紙燃燒',
+      '冰融化、糖溶解',
+      '鐵生鏽、食物腐敗',
+      '木材燃燒、煮飯'
+    ],
+    correctAnswer: '冰融化、糖溶解',
+    explanation: '這兩個都只是狀態改變,沒有產生新物質'
   }
-]
+];
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+// ==========================================
+// 題目生成器(使用閉包實現不重複)
+// ==========================================
+
+const createQuestionGenerator = (questionsPool) => {
+  let shuffledQuestions = [];
+  let currentIndex = 0;
+
+  const regenerate = () => {
+    shuffledQuestions = shuffleArray(questionsPool);
+    currentIndex = 0;
+  };
+
+  // 初始化
+  regenerate();
+
+  return () => {
+    if (currentIndex >= shuffledQuestions.length) {
+      regenerate();
+    }
+
+    const question = shuffledQuestions[currentIndex];
+    currentIndex++;
+
+    // 洗牌選項並記錄正確答案的新位置
+    const shuffledOptions = shuffleArray(question.options);
+    const answerIndex = shuffledOptions.indexOf(question.correctAnswer);
+
+    return {
+      type: question.type,
+      question: question.question,
+      options: shuffledOptions,
+      answer: answerIndex,
+      explanation: question.explanation
+    };
+  };
+};
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export const generateMathQuestion = createQuestionGenerator(mathQuestionsPool);
+export const generateSocialQuestion = createQuestionGenerator(socialQuestionsPool);
+export const generateScienceQuestion = createQuestionGenerator(scienceQuestionsPool);
 
 // ==========================================
 // Day 1 資料

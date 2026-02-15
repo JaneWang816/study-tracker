@@ -2,368 +2,413 @@
 // 第12週 - 第三天：飛魚的變化 / 如何永續發展？
 
 // ==========================================
-// 練習題生成器
+// Week 14 Day 3 練習題庫
+// 主題：等量公理綜合應用、循環經濟與綠能、防鏽方法
 // ==========================================
 
+// 使用 Fisher-Yates 洗牌算法
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// ==========================================
 // 【數學】等量公理綜合應用練習題庫
-const mathQuestions = [
+// ==========================================
+
+const mathQuestionsPool = [
   // 綜合一：需要判斷用哪種方法
   {
     type: 'options',
-    question: 'x + 8 = 15，x 是多少？',
+    question: 'x + 8 = 15,x 是多少?',
     options: ['7', '23', '120', '1.875'],
-    answer: 0,
-    displayAnswer: '7',
-    explanation: '兩邊減 8：x = 15 - 8 = 7'
+    correctAnswer: '7',
+    explanation: '兩邊減 8:x = 15 - 8 = 7'
   },
   {
     type: 'options',
-    question: '3x = 27，x 是多少？',
+    question: '3x = 27,x 是多少?',
     options: ['9', '24', '30', '81'],
-    answer: 0,
-    displayAnswer: '9',
-    explanation: '兩邊除 3：x = 27 ÷ 3 = 9'
+    correctAnswer: '9',
+    explanation: '兩邊除 3:x = 27 ÷ 3 = 9'
   },
   {
     type: 'options',
-    question: 'x - 12 = 30，x 是多少？',
+    question: 'x - 12 = 30,x 是多少?',
     options: ['18', '42', '2.5', '360'],
-    answer: 1,
-    displayAnswer: '42',
-    explanation: '兩邊加 12：x = 30 + 12 = 42'
+    correctAnswer: '42',
+    explanation: '兩邊加 12:x = 30 + 12 = 42'
   },
   {
     type: 'options',
-    question: 'x ÷ 6 = 7，x 是多少？',
+    question: 'x ÷ 6 = 7,x 是多少?',
     options: ['1', '13', '42', '0.857'],
-    answer: 2,
-    displayAnswer: '42',
-    explanation: '兩邊乘 6：x = 7 × 6 = 42'
+    correctAnswer: '42',
+    explanation: '兩邊乘 6:x = 7 × 6 = 42'
   },
   // 綜合二：兩步驟綜合
   {
     type: 'options',
-    question: '2x + 5 = 17，x 是多少？',
+    question: '2x + 5 = 17,x 是多少?',
     options: ['6', '11', '22', '34'],
-    answer: 0,
-    displayAnswer: '6',
-    explanation: '兩邊減 5：2x = 12；兩邊除 2：x = 6'
-  },
-  {
-    type: 'fill',
-    question: '4x - 8 = 20，x = ？',
-    answer: '7',
-    displayAnswer: '7',
-    explanation: '兩邊加 8：4x = 28；兩邊除 4：x = 7'
+    correctAnswer: '6',
+    explanation: '兩邊減 5:2x = 12;兩邊除 2:x = 6'
   },
   {
     type: 'options',
-    question: 'x ÷ 3 - 2 = 6，x 是多少？',
-    options: ['12', '24', '8', '18'],
-    answer: 1,
-    displayAnswer: '24',
-    explanation: '兩邊加 2：x ÷ 3 = 8；兩邊乘 3：x = 24'
+    question: '4x - 8 = 20,x 是多少?',
+    options: ['3', '7', '12', '28'],
+    correctAnswer: '7',
+    explanation: '兩邊加 8:4x = 28;兩邊除 4:x = 7'
   },
   {
-    type: 'fill',
-    question: '5x ÷ 2 = 15，x = ？',
-    answer: '6',
-    displayAnswer: '6',
-    explanation: '兩邊乘 2：5x = 30；兩邊除 5：x = 6'
+    type: 'options',
+    question: 'x ÷ 3 - 2 = 6,x 是多少?',
+    options: ['12', '24', '8', '18'],
+    correctAnswer: '24',
+    explanation: '兩邊加 2:x ÷ 3 = 8;兩邊乘 3:x = 24'
+  },
+  {
+    type: 'options',
+    question: '5x ÷ 2 = 15,x 是多少?',
+    options: ['3', '6', '10', '30'],
+    correctAnswer: '6',
+    explanation: '兩邊乘 2:5x = 30;兩邊除 5:x = 6'
   },
   // 應用題型
   {
     type: 'options',
-    question: '小明的錢是小華的 3 倍，小明有 120 元。設小華有 x 元，列式為？',
+    question: '小明的錢是小華的 3 倍,小明有 120 元。設小華有 x 元,列式為?',
     options: ['x + 3 = 120', '3x = 120', 'x - 3 = 120', 'x ÷ 3 = 120'],
-    answer: 1,
-    displayAnswer: '3x = 120',
-    explanation: '小明（120元）= 小華（x元）× 3'
+    correctAnswer: '3x = 120',
+    explanation: '小明(120元) = 小華(x元) × 3'
   },
   {
     type: 'options',
-    question: '承上題，小華有多少元？',
+    question: '承上題,小華有多少元?',
     options: ['30元', '40元', '60元', '360元'],
-    answer: 1,
-    displayAnswer: '40元',
-    explanation: '3x = 120，x = 40'
+    correctAnswer: '40元',
+    explanation: '3x = 120,x = 40'
   },
   {
     type: 'options',
-    question: '一條魚乾重 x 克，5 條魚乾加上盒子（200克）總重 700 克。列式為？',
+    question: '一條魚乾重 x 克,5 條魚乾加上盒子(200克)總重 700 克。列式為?',
     options: ['5x + 200 = 700', 'x + 200 = 700', '5x = 700', 'x ÷ 5 = 700'],
-    answer: 0,
-    displayAnswer: '5x + 200 = 700',
-    explanation: '5條魚乾（5x）+ 盒子（200）= 總重（700）'
+    correctAnswer: '5x + 200 = 700',
+    explanation: '5條魚乾(5x) + 盒子(200) = 總重(700)'
   },
   {
-    type: 'fill',
-    question: '承上題，一條魚乾重多少克？',
-    answer: '100',
-    displayAnswer: '100',
+    type: 'options',
+    question: '承上題,一條魚乾重多少克?',
+    options: ['80克', '100克', '120克', '140克'],
+    correctAnswer: '100克',
     explanation: '5x + 200 = 700 → 5x = 500 → x = 100'
   }
-]
+];
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
-
+// ==========================================
 // 【社會】循環經濟與綠能轉型練習題庫
-const socialQuestions = [
+// ==========================================
+
+const socialQuestionsPool = [
   {
     type: 'options',
-    question: '「循環經濟」的核心概念是？',
+    question: '「循環經濟」的核心概念是?',
     options: [
       '不斷生產新產品',
-      '減少浪費，讓資源循環使用',
+      '減少浪費,讓資源循環使用',
       '增加工廠數量',
       '降低產品價格'
     ],
-    answer: 1,
-    displayAnswer: '減少浪費，讓資源循環使用'
+    correctAnswer: '減少浪費,讓資源循環使用',
+    explanation: '循環經濟強調資源的重複利用,減少廢棄物'
   },
   {
     type: 'options',
-    question: '傳統的「線性經濟」模式是？',
+    question: '傳統的「線性經濟」模式是?',
     options: [
       '開採 → 製造 → 使用 → 丟棄',
       '開採 → 製造 → 使用 → 回收 → 再製造',
       '開採 → 使用 → 丟棄',
       '製造 → 回收 → 使用'
     ],
-    answer: 0,
-    displayAnswer: '開採 → 製造 → 使用 → 丟棄'
+    correctAnswer: '開採 → 製造 → 使用 → 丟棄',
+    explanation: '線性經濟是一次性使用模式,用完即丟'
   },
   {
     type: 'options',
-    question: '下列哪個「不是」循環經濟的做法？',
+    question: '下列哪個「不是」循環經濟的做法?',
     options: [
       '回收寶特瓶做成衣服',
       '維修舊手機繼續使用',
-      '用完就丟，再買新的',
+      '用完就丟,再買新的',
       '食物廚餘做成堆肥'
     ],
-    answer: 2,
-    displayAnswer: '用完就丟，再買新的'
+    correctAnswer: '用完就丟,再買新的',
+    explanation: '用完就丟是線性經濟的做法,不符合循環經濟'
   },
   {
     type: 'options',
-    question: '台灣綠能產業包括哪些？',
+    question: '台灣綠能產業包括哪些?',
     options: [
       '只有太陽能',
       '太陽能、風力發電、地熱等',
       '只有風力發電',
       '煤炭和石油'
     ],
-    answer: 1,
-    displayAnswer: '太陽能、風力發電、地熱等'
+    correctAnswer: '太陽能、風力發電、地熱等',
+    explanation: '綠能包括多種再生能源,如太陽能、風力、地熱等'
   },
   {
     type: 'options',
-    question: '台灣發展離岸風電的主要原因是？',
+    question: '台灣發展離岸風電的主要原因是?',
     options: [
       '台灣煤礦很多',
       '台灣海峽風力資源豐富',
       '台灣陸地面積大',
       '台灣石油豐富'
     ],
-    answer: 1,
-    displayAnswer: '台灣海峽風力資源豐富'
+    correctAnswer: '台灣海峽風力資源豐富',
+    explanation: '台灣海峽具有優良的風力條件,適合發展離岸風電'
   },
   {
     type: 'options',
-    question: '「永續發展」是指？',
+    question: '「永續發展」是指?',
     options: [
       '無限制地發展經濟',
-      '滿足當代需求，同時不損害未來世代',
+      '滿足當代需求,同時不損害未來世代',
       '完全不發展',
       '只發展工業'
     ],
-    answer: 1,
-    displayAnswer: '滿足當代需求，同時不損害未來世代'
+    correctAnswer: '滿足當代需求,同時不損害未來世代',
+    explanation: '永續發展兼顧現在和未來,平衡發展與環境保護'
   },
   {
     type: 'options',
-    question: '傳統漁業如何轉型成「永續漁業」？',
+    question: '傳統漁業如何轉型成「永續漁業」?',
     options: [
       '捕更多魚賺更多錢',
       '限制捕撈量、保護魚類繁殖期',
       '用更大的網子',
       '全天候捕魚'
     ],
-    answer: 1,
-    displayAnswer: '限制捕撈量、保護魚類繁殖期'
+    correctAnswer: '限制捕撈量、保護魚類繁殖期',
+    explanation: '永續漁業重視資源保育,避免過度捕撈'
   },
   {
     type: 'options',
-    question: '「觀光漁業」是指？',
+    question: '「觀光漁業」是指?',
     options: [
       '讓遊客參觀捕魚、體驗海洋文化',
       '只給觀光客賣魚',
       '漁民去觀光',
       '建設魚類博物館'
     ],
-    answer: 0,
-    displayAnswer: '讓遊客參觀捕魚、體驗海洋文化'
+    correctAnswer: '讓遊客參觀捕魚、體驗海洋文化',
+    explanation: '觀光漁業結合漁業生產與觀光體驗'
   },
   {
     type: 'options',
-    question: '為什麼傳統產業需要「升級」而非「消失」？',
+    question: '為什麼傳統產業需要「升級」而非「消失」?',
     options: [
       '因為還有很多人在做',
-      '因為傳統產業承載文化與技術，有存在價值',
+      '因為傳統產業承載文化與技術,有存在價值',
       '因為政府規定',
       '因為比較便宜'
     ],
-    answer: 1,
-    displayAnswer: '因為傳統產業承載文化與技術，有存在價值'
+    correctAnswer: '因為傳統產業承載文化與技術,有存在價值',
+    explanation: '傳統產業不只是經濟活動,更承載文化記憶與技藝'
   },
   {
     type: 'options',
-    question: '飛魚漁業可以如何轉型？',
+    question: '飛魚漁業可以如何轉型?',
     options: [
       '完全放棄捕魚',
       '結合生態導覽、文化體驗、永續捕撈',
       '改捕其他魚類',
       '遷移到其他國家'
     ],
-    answer: 1,
-    displayAnswer: '結合生態導覽、文化體驗、永續捕撈'
+    correctAnswer: '結合生態導覽、文化體驗、永續捕撈',
+    explanation: '飛魚漁業可以多元發展,兼顧傳統與創新'
   }
-]
+];
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
-
+// ==========================================
 // 【科學】防鏽方法練習題庫
-const scienceQuestions = [
+// ==========================================
+
+const scienceQuestionsPool = [
   {
     type: 'options',
-    question: '防鏽的基本原理是？',
+    question: '防鏽的基本原理是?',
     options: [
       '讓鐵變得更硬',
       '隔絕空氣或水分',
       '降低溫度',
       '增加鐵的重量'
     ],
-    answer: 1,
-    displayAnswer: '隔絕空氣或水分'
+    correctAnswer: '隔絕空氣或水分',
+    explanation: '防鏽的關鍵是阻止鐵與氧氣和水分接觸'
   },
   {
     type: 'options',
-    question: '在鐵器表面塗油漆的目的是？',
+    question: '在鐵器表面塗油漆的目的是?',
     options: [
       '讓鐵看起來更漂亮',
-      '隔絕空氣和水分，防止生鏽',
+      '隔絕空氣和水分,防止生鏽',
       '讓鐵變硬',
       '讓鐵變輕'
     ],
-    answer: 1,
-    displayAnswer: '隔絕空氣和水分，防止生鏽'
+    correctAnswer: '隔絕空氣和水分,防止生鏽',
+    explanation: '油漆形成保護層,阻止鐵接觸空氣和水'
   },
   {
     type: 'options',
-    question: '「電鍍」是什麼防鏽方法？',
+    question: '「電鍍」是什麼防鏽方法?',
     options: [
       '在鐵表面鍍一層不易生鏽的金屬',
       '用電流把鐵鏽去除',
       '讓鐵通電就不會生鏽',
       '用電焊接鐵器'
     ],
-    answer: 0,
-    displayAnswer: '在鐵表面鍍一層不易生鏽的金屬'
+    correctAnswer: '在鐵表面鍍一層不易生鏽的金屬',
+    explanation: '電鍍是用電化學方法在金屬表面鍍上保護層'
   },
   {
     type: 'options',
-    question: '不鏽鋼為什麼不容易生鏽？',
+    question: '不鏽鋼為什麼不容易生鏽?',
     options: [
       '因為它不含鐵',
-      '因為它加入了鉻等金屬，表面形成保護層',
+      '因為它加入了鉻等金屬,表面形成保護層',
       '因為它表面塗了油漆',
       '因為它是塑膠做的'
     ],
-    answer: 1,
-    displayAnswer: '因為它加入了鉻等金屬，表面形成保護層'
+    correctAnswer: '因為它加入了鉻等金屬,表面形成保護層',
+    explanation: '不鏽鋼含鉻,會在表面形成緻密的氧化層保護內部'
   },
   {
     type: 'options',
-    question: '下列哪種方法「不能」防鏽？',
+    question: '下列哪種方法「不能」防鏽?',
     options: [
       '塗油漆',
       '電鍍',
       '保持乾燥',
       '放在潮濕環境'
     ],
-    answer: 3,
-    displayAnswer: '放在潮濕環境'
+    correctAnswer: '放在潮濕環境',
+    explanation: '潮濕環境會加速生鏽,不是防鏽方法'
   },
   {
     type: 'options',
-    question: '汽車底盤為什麼要做防鏽處理？',
+    question: '汽車底盤為什麼要做防鏽處理?',
     options: [
       '因為底盤容易接觸水和泥土',
       '因為底盤比較重要',
       '因為底盤看不見',
       '因為底盤比較便宜'
     ],
-    answer: 0,
-    displayAnswer: '因為底盤容易接觸水和泥土'
+    correctAnswer: '因為底盤容易接觸水和泥土',
+    explanation: '底盤長期接觸潮濕和泥土,容易生鏽'
   },
   {
     type: 'options',
-    question: '「犧牲陽極法」是什麼防鏽原理？',
+    question: '「犧牲陽極法」是什麼防鏽原理?',
     options: [
       '把鐵器扔掉',
-      '讓更活潑的金屬先氧化，保護鐵',
+      '讓更活潑的金屬先氧化,保護鐵',
       '用陽光照射鐵器',
       '把鐵器放在陰涼處'
     ],
-    answer: 1,
-    displayAnswer: '讓更活潑的金屬先氧化，保護鐵'
+    correctAnswer: '讓更活潑的金屬先氧化,保護鐵',
+    explanation: '利用活性較高的金屬優先氧化,保護鐵不被氧化'
   },
   {
     type: 'options',
-    question: '船體常用鋅塊防鏽，原理是？',
+    question: '船體常用鋅塊防鏽,原理是?',
     options: [
       '鋅比鐵便宜',
-      '鋅比鐵更活潑，會先氧化保護鐵',
+      '鋅比鐵更活潑,會先氧化保護鐵',
       '鋅可以吸收海水',
       '鋅可以驅趕魚類'
     ],
-    answer: 1,
-    displayAnswer: '鋅比鐵更活潑，會先氧化保護鐵'
+    correctAnswer: '鋅比鐵更活潑,會先氧化保護鐵',
+    explanation: '鋅的活性比鐵高,會優先與氧反應,保護鐵'
   },
   {
     type: 'options',
-    question: '保持鐵器乾燥可以防鏽，是因為？',
+    question: '保持鐵器乾燥可以防鏽,是因為?',
     options: [
       '乾燥的鐵比較硬',
-      '生鏽需要水分，乾燥就無法生鏽',
+      '生鏽需要水分,乾燥就無法生鏽',
       '乾燥可以讓鐵變重',
       '乾燥可以讓鐵變色'
     ],
-    answer: 1,
-    displayAnswer: '生鏽需要水分，乾燥就無法生鏽'
+    correctAnswer: '生鏽需要水分,乾燥就無法生鏽',
+    explanation: '鐵生鏽需要空氣和水分,保持乾燥可阻止反應'
   },
   {
     type: 'options',
-    question: '傳統漁業「式微」和鐵「生鏽」的相似之處是？',
+    question: '傳統漁業「式微」和鐵「生鏽」的相似之處是?',
     options: [
       '都無法預防',
       '都是因為環境條件改變而衰退',
       '都是好事',
       '都可以輕易復原'
     ],
-    answer: 1,
-    displayAnswer: '都是因為環境條件改變而衰退'
+    correctAnswer: '都是因為環境條件改變而衰退',
+    explanation: '兩者都因外在條件變化導致衰退,需要主動保護'
   }
-]
+];
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+// ==========================================
+// 題目生成器(使用閉包實現不重複)
+// ==========================================
+
+const createQuestionGenerator = (questionsPool) => {
+  let shuffledQuestions = [];
+  let currentIndex = 0;
+
+  const regenerate = () => {
+    shuffledQuestions = shuffleArray(questionsPool);
+    currentIndex = 0;
+  };
+
+  // 初始化
+  regenerate();
+
+  return () => {
+    if (currentIndex >= shuffledQuestions.length) {
+      regenerate();
+    }
+
+    const question = shuffledQuestions[currentIndex];
+    currentIndex++;
+
+    // 洗牌選項並記錄正確答案的新位置
+    const shuffledOptions = shuffleArray(question.options);
+    const answerIndex = shuffledOptions.indexOf(question.correctAnswer);
+
+    return {
+      type: question.type,
+      question: question.question,
+      options: shuffledOptions,
+      answer: answerIndex,
+      explanation: question.explanation
+    };
+  };
+};
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export const generateMathQuestion = createQuestionGenerator(mathQuestionsPool);
+export const generateSocialQuestion = createQuestionGenerator(socialQuestionsPool);
+export const generateScienceQuestion = createQuestionGenerator(scienceQuestionsPool);
 
 // ==========================================
 // Day 3 資料

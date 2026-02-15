@@ -2,223 +2,297 @@
 // W5 Day2：機械怎麼省力？
 // 貫穿文本：吳念真〈琵琶鼠〉第二段
 
-// ===== 社會：日治糖業 =====
-const generateSocialQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '日治時期台灣的糖業發展到什麼程度？',
-      options: [
-        '台灣成為全球重要的糖業生產地之一',
-        '台灣幾乎不生產糖',
-        '台灣的糖全部自己消費，不出口',
-        '只有少數家庭手工製糖'
-      ],
-      answer: 0,
-      explanation: '日治時期，台灣成為全球主要的糖業生產地。台灣糖業株式會社在各地建立現代化製糖廠，台灣砂糖大量出口，為日本帶來重要收益。'
-    },
-    {
-      type: 'choice',
-      question: '「五分仔車」是什麼？',
-      options: [
-        '運送甘蔗到製糖廠的小型鐵路車輛',
-        '一種運送五分錢物品的車',
-        '只能坐五個人的公車',
-        '日治時期的計程車'
-      ],
-      answer: 0,
-      explanation: '五分仔車是台灣糖業鐵路的小火車，因軌距只有一般鐵路的一半（762mm），所以叫「五分仔」。它把各農場的甘蔗運到製糖廠，是糖業運輸的命脈。'
-    },
-    {
-      type: 'choice',
-      question: '製糖過程中，為什麼需要大型機械？',
-      options: [
-        '因為甘蔗的莖很硬，需要機械壓榨才能取出汁液',
-        '因為機械比人工便宜',
-        '只是為了好看',
-        '其實可以用手工製糖，機械不是必要的'
-      ],
-      answer: 0,
-      explanation: '甘蔗含糖量高，但纖維強韌，需要大型滾輪機器才能有效壓榨出汁液。機械化生產的效率比傳統牛拉磨石高出數十倍。'
-    },
-    {
-      type: 'choice',
-      question: '日治時期台灣的糖業主要集中在哪個地區？',
-      options: ['台灣南部（台南、高雄、屏東）', '台灣北部（台北、基隆）', '台灣東部（花蓮、台東）', '台灣的高山地區'],
-      answer: 0,
-      explanation: '台灣南部氣候炎熱、平原廣大，適合大規模種植甘蔗。台南、高雄、屏東是主要的甘蔗產地，現在的台糖公司也是源自日治時代的糖業。'
-    },
-    {
-      type: 'choice',
-      question: '台灣砂糖在日治時期主要出口到哪裡？',
-      options: ['日本本土及海外各地', '只賣給中國', '只在台灣島內消費', '主要出口到美國'],
-      answer: 0,
-      explanation: '台灣砂糖主要輸往日本本土，也透過日本的貿易網路出口至其他地區，是台灣最重要的出口商品之一，替日本帶來巨大的經濟利益。'
-    }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-// ===== 數學：圓周長應用（齒輪、輪胎） =====
-const generateMathQuestion = () => {
-  const type = Math.floor(Math.random() * 3)
-
-  if (type === 0) {
-    // 輪胎滾動距離
-    const r = [30, 35, 40, 50][Math.floor(Math.random() * 4)]
-    const turns = [5, 8, 10, 20][Math.floor(Math.random() * 4)]
-    const perimeter = 2 * 3.14 * r
-    const totalDist = (perimeter * turns).toFixed(2)
-    const wrong1 = (perimeter * turns + r).toFixed(2)
-    const wrong2 = (3.14 * r * turns).toFixed(2)
-    const wrong3 = (2 * 3.14 * r * turns + r).toFixed(2)
-    const options = [totalDist, wrong1, wrong2, wrong3]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `五分仔車的車輪半徑是 ${r} 公分，滾動 ${turns} 圈後，前進了多少公分？（π ≈ 3.14）`,
-      options: shuffled,
-      answer: shuffled.indexOf(totalDist),
-      explanation: `每轉一圈前進的距離 = 圓周長 = 2 × 3.14 × ${r} = ${perimeter.toFixed(2)} 公分\n${turns} 圈共前進：${perimeter.toFixed(2)} × ${turns} = ${totalDist} 公分`
-    }
+// ==========================================
+// 社會:日治糖業
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '日治時期台灣的糖業發展到什麼程度?',
+    options: [
+      '台灣成為全球重要的糖業生產地之一',
+      '台灣幾乎不生產糖',
+      '台灣的糖全部自己消費,不出口',
+      '只有少數家庭手工製糖'
+    ],
+    answer: 0,
+    displayAnswer: '日治時期,台灣成為全球主要的糖業生產地。台灣糖業株式會社在各地建立現代化製糖廠,台灣砂糖大量出口,為日本帶來重要收益。'
+  },
+  {
+    type: 'options',
+    question: '「五分仔車」是什麼?',
+    options: [
+      '運送甘蔗到製糖廠的小型鐵路車輛',
+      '一種運送五分錢物品的車',
+      '只能坐五個人的公車',
+      '日治時期的計程車'
+    ],
+    answer: 0,
+    displayAnswer: '五分仔車是台灣糖業鐵路的小火車,因軌距只有一般鐵路的一半(762mm),所以叫「五分仔」。它把各農場的甘蔗運到製糖廠,是糖業運輸的命脈。'
+  },
+  {
+    type: 'options',
+    question: '製糖過程中,為什麼需要大型機械?',
+    options: [
+      '因為甘蔗的莖很硬,需要機械壓榨才能取出汁液',
+      '因為機械比人工便宜',
+      '只是為了好看',
+      '其實可以用手工製糖,機械不是必要的'
+    ],
+    answer: 0,
+    displayAnswer: '甘蔗含糖量高,但纖維強韌,需要大型滾輪機器才能有效壓榨出汁液。機械化生產的效率比傳統牛拉磨石高出數十倍。'
+  },
+  {
+    type: 'options',
+    question: '日治時期台灣的糖業主要集中在哪個地區?',
+    options: ['台灣南部(台南、高雄、屏東)', '台灣北部(台北、基隆)', '台灣東部(花蓮、台東)', '台灣的高山地區'],
+    answer: 0,
+    displayAnswer: '台灣南部氣候炎熱、平原廣大,適合大規模種植甘蔗。台南、高雄、屏東是主要的甘蔗產地,現在的台糖公司也是源自日治時代的糖業。'
+  },
+  {
+    type: 'options',
+    question: '台灣砂糖在日治時期主要出口到哪裡?',
+    options: ['日本本土及海外各地', '只賣給中國', '只在台灣島內消費', '主要出口到美國'],
+    answer: 0,
+    displayAnswer: '台灣砂糖主要輸往日本本土,也透過日本的貿易網路出口至其他地區,是台灣最重要的出口商品之一,替日本帶來巨大的經濟利益。'
   }
+]
 
-  if (type === 1) {
-    // 齒輪周長比較
-    const r1 = [5, 6, 8][Math.floor(Math.random() * 3)]
-    const r2 = r1 * 2
-    const c1 = (2 * 3.14 * r1).toFixed(2)
-    const c2 = (2 * 3.14 * r2).toFixed(2)
-    const ratio = 2
-    const options = [`大齒輪的周長是小齒輪的 ${ratio} 倍`, `大齒輪的周長是小齒輪的 4 倍`, `兩個齒輪的周長相同`, `大齒輪的周長是小齒輪的 3 倍`]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    return {
-      type: 'choice',
-      question: `製糖機械中有兩個齒輪：小齒輪半徑 ${r1} 公分，大齒輪半徑 ${r2} 公分。大齒輪的周長和小齒輪相比是？`,
-      options: shuffled,
-      answer: shuffled.indexOf(`大齒輪的周長是小齒輪的 ${ratio} 倍`),
-      explanation: `小齒輪周長 = 2 × 3.14 × ${r1} = ${c1} 公分\n大齒輪周長 = 2 × 3.14 × ${r2} = ${c2} 公分\n${c2} ÷ ${c1} = ${ratio}，所以大齒輪的周長是小齒輪的 ${ratio} 倍`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  // type === 2：反推半徑
-  const rChoices = [5, 10, 7]
-  const r = rChoices[Math.floor(Math.random() * rChoices.length)]
-  const c = (2 * 3.14 * r).toFixed(2)
-  const wrong1 = r + 2
-  const wrong2 = r - 1
-  const wrong3 = r * 2
-  const options = [String(r), String(wrong1), String(wrong2), String(wrong3)]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  return {
-    type: 'choice',
-    question: `一個圓形零件的周長是 ${c} 公分，它的半徑是多少公分？（π ≈ 3.14）`,
-    options: shuffled,
-    answer: shuffled.indexOf(String(r)),
-    explanation: `已知 C = ${c}，利用公式 C = 2πr\n${c} = 2 × 3.14 × r\n${c} = ${2 * 3.14} × r\nr = ${c} ÷ ${2 * 3.14} = ${r} 公分`
+// ==========================================
+// 數學:圓周長應用(齒輪、輪胎)
+// ==========================================
+const mathQuestions = [
+  // 輪胎滾動距離
+  {
+    type: 'options',
+    question: '五分仔車的車輪半徑是 30 公分,滾動 5 圈後,前進了多少公分?(π ≈ 3.14)',
+    options: ['942', '972', '471', '1002'],
+    answer: 0,
+    displayAnswer: '每轉一圈前進的距離 = 圓周長 = 2 × 3.14 × 30 = 188.4 公分\n5 圈共前進:188.4 × 5 = 942 公分'
+  },
+  {
+    type: 'options',
+    question: '五分仔車的車輪半徑是 35 公分,滾動 8 圈後,前進了多少公分?(π ≈ 3.14)',
+    options: ['1758.4', '879.2', '1793.4', '1723.4'],
+    answer: 0,
+    displayAnswer: '每轉一圈前進的距離 = 2 × 3.14 × 35 = 219.8 公分\n8 圈共前進:219.8 × 8 = 1758.4 公分'
+  },
+  {
+    type: 'options',
+    question: '五分仔車的車輪半徑是 40 公分,滾動 10 圈後,前進了多少公分?(π ≈ 3.14)',
+    options: ['2512', '1256', '2552', '2472'],
+    answer: 0,
+    displayAnswer: '每轉一圈前進的距離 = 2 × 3.14 × 40 = 251.2 公分\n10 圈共前進:251.2 × 10 = 2512 公分'
+  },
+  {
+    type: 'options',
+    question: '五分仔車的車輪半徑是 50 公分,滾動 20 圈後,前進了多少公分?(π ≈ 3.14)',
+    options: ['6280', '3140', '6380', '6180'],
+    answer: 0,
+    displayAnswer: '每轉一圈前進的距離 = 2 × 3.14 × 50 = 314 公分\n20 圈共前進:314 × 20 = 6280 公分'
+  },
+  // 齒輪周長比較
+  {
+    type: 'options',
+    question: '製糖機械中有兩個齒輪:小齒輪半徑 5 公分,大齒輪半徑 10 公分。大齒輪的周長和小齒輪相比是?',
+    options: ['大齒輪的周長是小齒輪的 2 倍', '大齒輪的周長是小齒輪的 4 倍', '兩個齒輪的周長相同', '大齒輪的周長是小齒輪的 3 倍'],
+    answer: 0,
+    displayAnswer: '小齒輪周長 = 2 × 3.14 × 5 = 31.4 公分\n大齒輪周長 = 2 × 3.14 × 10 = 62.8 公分\n62.8 ÷ 31.4 = 2,所以大齒輪的周長是小齒輪的 2 倍'
+  },
+  {
+    type: 'options',
+    question: '製糖機械中有兩個齒輪:小齒輪半徑 6 公分,大齒輪半徑 12 公分。大齒輪的周長和小齒輪相比是?',
+    options: ['大齒輪的周長是小齒輪的 2 倍', '大齒輪的周長是小齒輪的 4 倍', '兩個齒輪的周長相同', '大齒輪的周長是小齒輪的 3 倍'],
+    answer: 0,
+    displayAnswer: '小齒輪周長 = 2 × 3.14 × 6 = 37.68 公分\n大齒輪周長 = 2 × 3.14 × 12 = 75.36 公分\n75.36 ÷ 37.68 = 2,所以大齒輪的周長是小齒輪的 2 倍'
+  },
+  {
+    type: 'options',
+    question: '製糖機械中有兩個齒輪:小齒輪半徑 8 公分,大齒輪半徑 16 公分。大齒輪的周長和小齒輪相比是?',
+    options: ['大齒輪的周長是小齒輪的 2 倍', '大齒輪的周長是小齒輪的 4 倍', '兩個齒輪的周長相同', '大齒輪的周長是小齒輪的 3 倍'],
+    answer: 0,
+    displayAnswer: '小齒輪周長 = 2 × 3.14 × 8 = 50.24 公分\n大齒輪周長 = 2 × 3.14 × 16 = 100.48 公分\n100.48 ÷ 50.24 = 2,所以大齒輪的周長是小齒輪的 2 倍'
+  },
+  // 反推半徑
+  {
+    type: 'options',
+    question: '一個圓形零件的周長是 31.4 公分,它的半徑是多少公分?(π ≈ 3.14)',
+    options: ['5', '7', '4', '10'],
+    answer: 0,
+    displayAnswer: '已知 C = 31.4,利用公式 C = 2πr\n31.4 = 2 × 3.14 × r\n31.4 = 6.28 × r\nr = 31.4 ÷ 6.28 = 5 公分'
+  },
+  {
+    type: 'options',
+    question: '一個圓形零件的周長是 62.8 公分,它的半徑是多少公分?(π ≈ 3.14)',
+    options: ['10', '12', '9', '20'],
+    answer: 0,
+    displayAnswer: '已知 C = 62.8,利用公式 C = 2πr\n62.8 = 2 × 3.14 × r\nr = 62.8 ÷ 6.28 = 10 公分'
+  },
+  {
+    type: 'options',
+    question: '一個圓形零件的周長是 43.96 公分,它的半徑是多少公分?(π ≈ 3.14)',
+    options: ['7', '9', '6', '14'],
+    answer: 0,
+    displayAnswer: '已知 C = 43.96,利用公式 C = 2πr\n43.96 = 2 × 3.14 × r\nr = 43.96 ÷ 6.28 = 7 公分'
   }
-}
+]
 
-// ===== 科學：輪軸 =====
-const generateScienceQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「輪軸」這種簡單機械，「輪」和「軸」的關係是？',
-      options: [
-        '輪和軸連在一起，轉動時一起旋轉',
-        '輪和軸是分開的，互不影響',
-        '只有輪在轉，軸不動',
-        '只有軸在轉，輪不動'
-      ],
-      answer: 0,
-      explanation: '輪軸是輪和軸固定在一起的機械，轉動輪時，軸也跟著轉；反之亦然。因為輪的半徑比軸大，所以轉動輪比轉動軸省力。'
-    },
-    {
-      type: 'choice',
-      question: '用方向盤轉動汽車的轉向軸，利用的是什麼原理？',
-      options: ['輪軸原理——輪（方向盤）大，軸小，省力', '槓桿原理', '滑輪原理', '只是習慣，沒有特別原理'],
-      answer: 0,
-      explanation: '方向盤是輪軸的應用：方向盤是大輪，轉向軸是小軸。因為輪的半徑遠大於軸，所以用較小的力轉動方向盤，就能產生較大的扭力轉動車輪。'
-    },
-    {
-      type: 'choice',
-      question: '螺絲起子的把手和螺絲桿，利用的是什麼原理？',
-      options: ['輪軸原理——把手是輪，螺絲桿是軸', '槓桿原理', '只是設計好看', '彈力原理'],
-      answer: 0,
-      explanation: '螺絲起子的粗把手就是「輪」，細的螺絲桿就是「軸」。握住大把手轉動，可以在細桿上產生更大的扭力，讓螺絲更容易旋入。'
-    },
-    {
-      type: 'choice',
-      question: '輪軸和槓桿的共同特點是什麼？',
-      options: [
-        '都是「省力」的機械，讓人用較小的力做到較大的效果',
-        '都是圓形的',
-        '都需要電力才能運作',
-        '兩者完全不同，沒有共同點'
-      ],
-      answer: 0,
-      explanation: '槓桿和輪軸都是「省力」的簡單機械。槓桿利用「力臂長度差」省力，輪軸利用「輪軸半徑差」省力。它們的物理原理其實是相通的。'
-    },
-    {
-      type: 'choice',
-      question: '日治時期製糖廠用來壓榨甘蔗的「滾輪機」，主要利用什麼力學原理？',
-      options: [
-        '輪軸原理——大滾輪轉動時，中心軸產生強大的壓力',
-        '槓桿原理',
-        '浮力原理',
-        '磁力原理'
-      ],
-      answer: 0,
-      explanation: '製糖廠的大型滾輪是輪軸的應用。大滾輪轉動時，在中心軸產生強大的扭力和壓力，足以壓榨堅硬的甘蔗纖維，擠出甘蔗汁。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-// ===== 語文詞彙：力學用語 =====
-const generateVocabQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「省力」的意思是？',
-      options: [
-        '用較少的力達到相同的效果',
-        '完全不需要用力',
-        '把力氣省起來以後再用',
-        '省下力氣不做事'
-      ],
-      answer: 0,
-      explanation: '省力是指利用機械原理，讓同樣的任務只需較小的力就能完成。省力並不表示不用做功，而是把力量用在刀口上。'
-    },
-    {
-      type: 'choice',
-      question: '「扭力」的「扭」字，帶有什麼樣的動作概念？',
-      options: ['旋轉、擰動的力', '往上推的力', '往下壓的力', '往前推的力'],
-      answer: 0,
-      explanation: '「扭」就是旋轉、擰的動作，扭力是使物體旋轉的力。方向盤、螺絲起子、輪軸都與扭力有關。'
-    },
-    {
-      type: 'choice',
-      question: '〈琵琶鼠〉描述老鼠「扛礦坑裡要用的木頭或鐵軌」，「扛」字表示什麼動作？',
-      options: [
-        '用肩膀承受重量、搬運重物',
-        '用手拿著',
-        '用繩子綁著拖行',
-        '用車子運送'
-      ],
-      answer: 0,
-      explanation: '「扛」是用肩膀扛起重物的動作。這個字說明了老鼠從事的是非常粗重的勞動，需要很大的體力。'
+// ==========================================
+// 科學:輪軸
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '「輪軸」這種簡單機械,「輪」和「軸」的關係是?',
+    options: [
+      '輪和軸連在一起,轉動時一起旋轉',
+      '輪和軸是分開的,互不影響',
+      '只有輪在轉,軸不動',
+      '只有軸在轉,輪不動'
+    ],
+    answer: 0,
+    displayAnswer: '輪軸是輪和軸固定在一起的機械,轉動輪時,軸也跟著轉;反之亦然。因為輪的半徑比軸大,所以轉動輪比轉動軸省力。'
+  },
+  {
+    type: 'options',
+    question: '用方向盤轉動汽車的轉向軸,利用的是什麼原理?',
+    options: ['輪軸原理——輪(方向盤)大,軸小,省力', '槓桿原理', '滑輪原理', '只是習慣,沒有特別原理'],
+    answer: 0,
+    displayAnswer: '方向盤是輪軸的應用:方向盤是大輪,轉向軸是小軸。因為輪的半徑遠大於軸,所以用較小的力轉動方向盤,就能產生較大的扭力轉動車輪。'
+  },
+  {
+    type: 'options',
+    question: '螺絲起子的把手和螺絲桿,利用的是什麼原理?',
+    options: ['輪軸原理——把手是輪,螺絲桿是軸', '槓桿原理', '只是設計好看', '彈力原理'],
+    answer: 0,
+    displayAnswer: '螺絲起子的粗把手就是「輪」,細的螺絲桿就是「軸」。握住大把手轉動,可以在細桿上產生更大的扭力,讓螺絲更容易旋入。'
+  },
+  {
+    type: 'options',
+    question: '輪軸和槓桿的共同特點是什麼?',
+    options: [
+      '都是「省力」的機械,讓人用較小的力做到較大的效果',
+      '都是圓形的',
+      '都需要電力才能運作',
+      '兩者完全不同,沒有共同點'
+    ],
+    answer: 0,
+    displayAnswer: '槓桿和輪軸都是「省力」的簡單機械。槓桿利用「力臂長度差」省力,輪軸利用「輪軸半徑差」省力。它們的物理原理其實是相通的。'
+  },
+  {
+    type: 'options',
+    question: '日治時期製糖廠用來壓榨甘蔗的「滾輪機」,主要利用什麼力學原理?',
+    options: [
+      '輪軸原理——大滾輪轉動時,中心軸產生強大的壓力',
+      '槓桿原理',
+      '浮力原理',
+      '磁力原理'
+    ],
+    answer: 0,
+    displayAnswer: '製糖廠的大型滾輪是輪軸的應用。大滾輪轉動時,在中心軸產生強大的扭力和壓力,足以壓榨堅硬的甘蔗纖維,擠出甘蔗汁。'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
     }
-  ]
-  const q = questions[Math.floor(Math.random() * questions.length)]
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
-  return { ...q, options: shuffled, answer: shuffled.indexOf(q.options[q.answer]) }
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 語文詞彙:力學用語
+// ==========================================
+const vocabQuestions = [
+  {
+    type: 'options',
+    question: '「省力」的意思是?',
+    options: [
+      '用較少的力達到相同的效果',
+      '完全不需要用力',
+      '把力氣省起來以後再用',
+      '省下力氣不做事'
+    ],
+    answer: 0,
+    displayAnswer: '省力是指利用機械原理,讓同樣的任務只需較小的力就能完成。省力並不表示不用做功,而是把力量用在刀口上。'
+  },
+  {
+    type: 'options',
+    question: '「扭力」的「扭」字,帶有什麼樣的動作概念?',
+    options: ['旋轉、擰動的力', '往上推的力', '往下壓的力', '往前推的力'],
+    answer: 0,
+    displayAnswer: '「扭」就是旋轉、擰的動作,扭力是使物體旋轉的力。方向盤、螺絲起子、輪軸都與扭力有關。'
+  },
+  {
+    type: 'options',
+    question: '〈琵琶鼠〉描述老鼠「扛礦坑裡要用的木頭或鐵軌」,「扛」字表示什麼動作?',
+    options: [
+      '用肩膀承受重量、搬運重物',
+      '用手拿著',
+      '用繩子綁著拖行',
+      '用車子運送'
+    ],
+    answer: 0,
+    displayAnswer: '「扛」是用肩膀扛起重物的動作。這個字說明了老鼠從事的是非常粗重的勞動,需要很大的體力。'
+  }
+]
+
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion, generateVocabQuestion }
 
 // ===== Day 2 主體 =====
 const day2 = {

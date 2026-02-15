@@ -1,34 +1,34 @@
 // src/data/weeks/week14/day2.js
 // 第14週 - 第二天：AI能幫忙什麼？
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W14D2 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【社會】SDGs正面案例練習題庫
 const socialQuestions = [
   {
     type: 'options',
-    question: 'AI精準農業如何幫助實現SDG 2（消除飢餓）？',
+    question: 'AI精準農業如何幫助實現SDG 2(消除飢餓)?',
     options: [
       '讓農夫不用工作',
-      '透過感測器和AI分析，減少水肥浪費、提高產量',
+      '透過感測器和AI分析,減少水肥浪費、提高產量',
       '把所有農田變成工廠',
       '讓機器人種田'
     ],
     answer: 1,
-    displayAnswer: '透過感測器和AI分析，減少水肥浪費、提高產量'
+    displayAnswer: '透過感測器和AI分析,減少水肥浪費、提高產量'
   },
   {
     type: 'options',
-    question: '台大醫院使用AI判讀X光片，這對應哪個SDG？',
-    options: ['SDG 1（消除貧窮）', 'SDG 3（健康福祉）', 'SDG 4（優質教育）', 'SDG 7（清潔能源）'],
+    question: '台大醫院使用AI判讀X光片,這對應哪個SDG?',
+    options: ['SDG 1(消除貧窮)', 'SDG 3(健康福祉)', 'SDG 4(優質教育)', 'SDG 7(清潔能源)'],
     answer: 1,
-    displayAnswer: 'SDG 3（健康福祉）'
+    displayAnswer: 'SDG 3(健康福祉)'
   },
   {
     type: 'options',
-    question: 'AI遠距醫療診斷最大的好處是什麼？',
+    question: 'AI遠距醫療診斷最大的好處是什麼?',
     options: [
       '取代所有醫生',
       '讓偏鄉地區也能獲得專業診斷',
@@ -40,94 +40,107 @@ const socialQuestions = [
   },
   {
     type: 'options',
-    question: '下列哪個「不是」AI在醫療領域的實際應用？',
+    question: '下列哪個「不是」AI在醫療領域的實際應用?',
     options: [
-      'AI判讀醫療影像（X光、CT）',
+      'AI判讀醫療影像(X光、CT)',
       'AI預測疾病風險',
       'AI完全取代醫生看診',
       'AI協助藥物研發'
     ],
     answer: 2,
-    displayAnswer: 'AI完全取代醫生看診（AI只能輔助，無法完全取代）'
+    displayAnswer: 'AI完全取代醫生看診(AI只能輔助,無法完全取代)'
   },
   {
     type: 'options',
-    question: '台灣農業科技園區使用AI技術，主要目的是？',
+    question: '台灣農業科技園區使用AI技術,主要目的是?',
     options: [
       '讓農夫失業',
-      '提高農業效率和品質，實現永續農業',
+      '提高農業效率和品質,實現永續農業',
       '把農田變成科技公司',
       '只是做做樣子'
     ],
     answer: 1,
-    displayAnswer: '提高農業效率和品質，實現永續農業'
+    displayAnswer: '提高農業效率和品質,實現永續農業'
   },
   {
     type: 'options',
-    question: 'AI可以加速藥物研發，這對SDGs有什麼幫助？',
+    question: 'AI可以加速藥物研發,這對SDGs有什麼幫助?',
     options: [
       '沒有幫助',
       '只對藥廠有利',
-      '更快找到治療方法，拯救更多生命（SDG 3）',
+      '更快找到治療方法,拯救更多生命(SDG 3)',
       '讓藥變便宜'
     ],
     answer: 2,
-    displayAnswer: '更快找到治療方法，拯救更多生命（SDG 3）'
+    displayAnswer: '更快找到治療方法,拯救更多生命(SDG 3)'
   },
   {
     type: 'options',
-    question: 'AI精準農業的「精準」是指？',
+    question: 'AI精準農業的「精準」是指?',
     options: [
       '用機器人種田',
-      '根據每塊土地的狀況，給予剛好需要的水和肥料',
+      '根據每塊土地的狀況,給予剛好需要的水和肥料',
       '農作物長得一樣大',
       '用電腦控制天氣'
     ],
     answer: 1,
-    displayAnswer: '根據每塊土地的狀況，給予剛好需要的水和肥料'
+    displayAnswer: '根據每塊土地的狀況,給予剛好需要的水和肥料'
   },
   {
     type: 'options',
-    question: '使用AI幫助實現SDGs時，最重要的是什麼？',
+    question: '使用AI幫助實現SDGs時,最重要的是什麼?',
     options: [
       'AI技術越先進越好',
-      '確保技術能真正幫助需要的人，不加劇不平等',
+      '確保技術能真正幫助需要的人,不加劇不平等',
       '只要有AI就好',
       '讓所有人都學會寫程式'
     ],
     answer: 1,
-    displayAnswer: '確保技術能真正幫助需要的人，不加劇不平等'
+    displayAnswer: '確保技術能真正幫助需要的人,不加劇不平等'
   }
 ]
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【科學】AI的學習機制練習題庫
 const scienceQuestions = [
   {
     type: 'options',
-    question: '監督式學習（Supervised Learning）的特點是？',
+    question: '監督式學習(Supervised Learning)的特點是?',
     options: [
-      '機器自己學習，不需要人類給答案',
-      '人類給機器「問題+正確答案」，讓機器學習',
+      '機器自己學習,不需要人類給答案',
+      '人類給機器「問題+正確答案」,讓機器學習',
       '機器透過試錯學習',
       '機器會自己監督自己'
     ],
     answer: 1,
-    displayAnswer: '人類給機器「問題+正確答案」，讓機器學習'
+    displayAnswer: '人類給機器「問題+正確答案」,讓機器學習'
   },
   {
     type: 'options',
-    question: '訓練AI辨識貓和狗的照片，屬於哪種學習方式？',
+    question: '訓練AI辨識貓和狗的照片,屬於哪種學習方式?',
     options: ['監督式學習', '非監督式學習', '強化學習', '深度學習'],
     answer: 0,
-    displayAnswer: '監督式學習（因為人類標註了每張照片是貓還是狗）'
+    displayAnswer: '監督式學習(因為人類標註了每張照片是貓還是狗)'
   },
   {
     type: 'options',
-    question: '非監督式學習（Unsupervised Learning）是指？',
+    question: '非監督式學習(Unsupervised Learning)是指?',
     options: [
       '沒有老師教',
       '機器自己從資料中找出規律和分類',
@@ -139,38 +152,38 @@ const scienceQuestions = [
   },
   {
     type: 'options',
-    question: '強化學習（Reinforcement Learning）的核心概念是？',
+    question: '強化學習(Reinforcement Learning)的核心概念是?',
     options: [
       '強迫機器學習',
-      '透過「獎勵」和「懲罰」，讓機器在試錯中學習',
+      '透過「獎勵」和「懲罰」,讓機器在試錯中學習',
       '加強記憶力',
       '重複練習同一件事'
     ],
     answer: 1,
-    displayAnswer: '透過「獎勵」和「懲罰」，讓機器在試錯中學習'
+    displayAnswer: '透過「獎勵」和「懲罰」,讓機器在試錯中學習'
   },
   {
     type: 'options',
-    question: 'AlphaGo（打敗圍棋世界冠軍的AI）使用的是哪種學習方式？',
+    question: 'AlphaGo(打敗圍棋世界冠軍的AI)使用的是哪種學習方式?',
     options: ['監督式學習', '非監督式學習', '強化學習', '不需要學習'],
     answer: 2,
-    displayAnswer: '強化學習（透過自我對弈，在試錯中學習）'
+    displayAnswer: '強化學習(透過自我對弈,在試錯中學習)'
   },
   {
     type: 'options',
-    question: '人類學習和AI學習最大的差異是？',
+    question: '人類學習和AI學習最大的差異是?',
     options: [
       'AI學得比較快',
-      '人類能理解「為什麼」，AI只知道「什麼對應什麼」',
+      '人類能理解「為什麼」,AI只知道「什麼對應什麼」',
       'AI比較聰明',
-      '人類需要睡覺，AI不用'
+      '人類需要睡覺,AI不用'
     ],
     answer: 1,
-    displayAnswer: '人類能理解「為什麼」，AI只知道「什麼對應什麼」'
+    displayAnswer: '人類能理解「為什麼」,AI只知道「什麼對應什麼」'
   },
   {
     type: 'options',
-    question: 'AI需要多少資料才能學習？',
+    question: 'AI需要多少資料才能學習?',
     options: [
       '一個例子就夠',
       '通常需要成千上萬甚至百萬筆資料',
@@ -182,89 +195,120 @@ const scienceQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼人類可以「舉一反三」，AI很難？',
+    question: '為什麼人類可以「舉一反三」,AI很難?',
     options: [
       '因為AI比較笨',
-      '因為人類有常識和生活經驗，能理解事物的本質',
+      '因為人類有常識和生活經驗,能理解事物的本質',
       '因為AI沒有讀書',
       '因為人類記憶力好'
     ],
     answer: 1,
-    displayAnswer: '因為人類有常識和生活經驗，能理解事物的本質'
+    displayAnswer: '因為人類有常識和生活經驗,能理解事物的本質'
   }
 ]
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【數學】W4-W6綜合複習練習題庫
 const mathQuestions = [
   {
     type: 'options',
-    question: '地圖比例尺1:25000，圖上4公分代表實際多少公尺？',
+    question: '地圖比例尺1:25000,圖上4公分代表實際多少公尺?',
     options: ['100公尺', '1000公尺', '10000公尺', '100000公尺'],
     answer: 1,
-    displayAnswer: '1000公尺（4cm × 25000 = 100000cm = 1000m）'
+    displayAnswer: '1000公尺(4cm × 25000 = 100000cm = 1000m)'
   },
   {
-    type: 'fill',
-    question: '實際距離2公里，地圖比例尺1:40000，圖上距離是幾公分？',
-    answer: '5',
+    type: 'options',
+    question: '實際距離2公里,地圖比例尺1:40000,圖上距離是幾公分?',
+    options: ['2公分', '5公分', '8公分', '10公分'],
+    answer: 1,
     displayAnswer: '5公分'
   },
   {
     type: 'options',
-    question: '圓的半徑是7公分，周長是多少？（π≈3.14）',
+    question: '圓的半徑是7公分,周長是多少?(π≈3.14)',
     options: ['21.98公分', '43.96公分', '153.86公分', '14公分'],
     answer: 1,
-    displayAnswer: '43.96公分（C = 2πr = 2 × 3.14 × 7 = 43.96）'
+    displayAnswer: '43.96公分(C = 2πr = 2 × 3.14 × 7 = 43.96)'
   },
   {
     type: 'options',
-    question: '圓的直徑是10公分，面積是多少？（π≈3.14）',
+    question: '圓的直徑是10公分,面積是多少?(π≈3.14)',
     options: ['31.4平方公分', '78.5平方公分', '314平方公分', '100平方公分'],
     answer: 1,
-    displayAnswer: '78.5平方公分（S = πr² = 3.14 × 5² = 78.5）'
+    displayAnswer: '78.5平方公分(S = πr² = 3.14 × 5² = 78.5)'
   },
   {
-    type: 'fill',
-    question: '半徑是6公分的圓，面積是多少平方公分？（π≈3.14）',
-    answer: '113.04',
+    type: 'options',
+    question: '半徑是6公分的圓,面積是多少平方公分?(π≈3.14)',
+    options: ['37.68', '75.36', '113.04', '150.72'],
+    answer: 2,
     displayAnswer: '113.04平方公分'
   },
   {
     type: 'options',
-    question: '扇形的圓心角是90度，半徑是8公分，弧長是多少？（π≈3.14）',
+    question: '扇形的圓心角是90度,半徑是8公分,弧長是多少?(π≈3.14)',
     options: ['6.28公分', '12.56公分', '25.12公分', '50.24公分'],
     answer: 1,
-    displayAnswer: '12.56公分（弧長 = 2πr × 90/360 = 2 × 3.14 × 8 × 1/4）'
+    displayAnswer: '12.56公分(弧長 = 2πr × 90/360 = 2 × 3.14 × 8 × 1/4)'
   },
   {
     type: 'options',
-    question: '扇形的圓心角是120度，半徑是9公分，面積是多少？（π≈3.14）',
+    question: '扇形的圓心角是120度,半徑是9公分,面積是多少?(π≈3.14)',
     options: ['28.26平方公分', '56.52平方公分', '84.78平方公分', '254.34平方公分'],
     answer: 2,
-    displayAnswer: '84.78平方公分（S = πr² × 120/360 = 3.14 × 81 × 1/3）'
+    displayAnswer: '84.78平方公分(S = πr² × 120/360 = 3.14 × 81 × 1/3)'
   },
   {
     type: 'options',
-    question: '兩個相似圖形，邊長比是1:3，面積比是？',
+    question: '兩個相似圖形,邊長比是1:3,面積比是?',
     options: ['1:3', '1:6', '1:9', '1:27'],
     answer: 2,
-    displayAnswer: '1:9（面積比 = 邊長比的平方）'
+    displayAnswer: '1:9(面積比 = 邊長比的平方)'
   }
 ]
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    if (question.type === 'options') {
+      return shuffleOptions(question)
+    }
+    return { ...question }
+  }
+})()
 
 // 【語文】閱讀理解練習題庫
 const readingQuestions = [
   {
     type: 'options',
-    question: '根據文本，AI精準農業最主要解決什麼問題？',
+    question: '根據文本,AI精準農業最主要解決什麼問題?',
     options: [
       '農夫太辛苦',
       '資源浪費和效率低落',
@@ -276,7 +320,7 @@ const readingQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼AI遠距醫療對偏鄉特別重要？',
+    question: '為什麼AI遠距醫療對偏鄉特別重要?',
     options: [
       '因為偏鄉網路比較快',
       '因為偏鄉缺乏專業醫療資源',
@@ -288,7 +332,7 @@ const readingQuestions = [
   },
   {
     type: 'options',
-    question: '文本中提到「AI讓世界更好了嗎？還是讓某些人更好？」這句話想表達什麼？',
+    question: '文本中提到「AI讓世界更好了嗎?還是讓某些人更好?」這句話想表達什麼?',
     options: [
       'AI沒有用',
       '要注意AI可能加劇貧富差距和不平等',
@@ -300,7 +344,7 @@ const readingQuestions = [
   },
   {
     type: 'options',
-    question: '監督式學習需要什麼？',
+    question: '監督式學習需要什麼?',
     options: [
       '老師在旁邊監督',
       '人類標註好的「問題+答案」資料',
@@ -312,20 +356,40 @@ const readingQuestions = [
   },
   {
     type: 'options',
-    question: '為什麼人類可以用幾個例子就學會，AI需要上萬筆資料？',
+    question: '為什麼人類可以用幾個例子就學會,AI需要上萬筆資料?',
     options: [
       '因為AI比較笨',
-      '因為人類有常識、能理解意義，AI只能找統計規律',
+      '因為人類有常識、能理解意義,AI只能找統計規律',
       '因為AI記憶力不好',
       '因為人類比較聰明'
     ],
     answer: 1,
-    displayAnswer: '因為人類有常識、能理解意義，AI只能找統計規律'
+    displayAnswer: '因為人類有常識、能理解意義,AI只能找統計規律'
   }
 ]
 
-const generateReadingQuestion = () => {
-  return readingQuestions[Math.floor(Math.random() * readingQuestions.length)]
+const generateReadingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(readingQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+export {
+  generateSocialQuestion,
+  generateScienceQuestion,
+  generateMathQuestion,
+  generateReadingQuestion
 }
 
 // ==========================================

@@ -1,46 +1,46 @@
 // src/data/weeks/week14/day4.js
 // 第14週 - 第四天：動筆日——台灣與世界
 
-// ==========================================
-// 練習題生成器
-// ==========================================
+// W14D4 練習題生成器 - 改良版(使用洗牌機制)
+
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // 【社會】台灣與國際社會練習題庫
 const socialQuestions = [
   {
     type: 'options',
-    question: '台灣目前是聯合國會員國嗎？',
+    question: '台灣目前是聯合國會員國嗎?',
     options: ['是', '否', '觀察員身分', '候選國'],
     answer: 1,
     displayAnswer: '否'
   },
   {
     type: 'options',
-    question: '台灣雖然不是聯合國會員，但仍然推動SDGs。這說明了什麼？',
+    question: '台灣雖然不是聯合國會員,但仍然推動SDGs。這說明了什麼?',
     options: [
       '台灣只是做做樣子',
-      '永續發展是全球共同責任，不分國家身分',
+      '永續發展是全球共同責任,不分國家身分',
       '台灣被聯合國要求這樣做',
       '台灣想加入聯合國'
     ],
     answer: 1,
-    displayAnswer: '永續發展是全球共同責任，不分國家身分'
+    displayAnswer: '永續發展是全球共同責任,不分國家身分'
   },
   {
     type: 'options',
-    question: 'APEC的全名是什麼？',
+    question: 'APEC的全名是什麼?',
     options: [
-      'Asia-Pacific Economic Cooperation（亞太經濟合作）',
+      'Asia-Pacific Economic Cooperation(亞太經濟合作)',
       'Asian Political Economic Community',
       'Asia-Pacific Environment Council',
       'Asian Partnership for Economic Change'
     ],
     answer: 0,
-    displayAnswer: 'Asia-Pacific Economic Cooperation（亞太經濟合作）'
+    displayAnswer: 'Asia-Pacific Economic Cooperation(亞太經濟合作)'
   },
   {
     type: 'options',
-    question: '台灣參與國際事務的方式，下列何者正確？',
+    question: '台灣參與國際事務的方式,下列何者正確?',
     options: [
       '完全無法參與任何國際組織',
       '透過NGO、雙邊援助、APEC等方式參與',
@@ -52,19 +52,19 @@ const socialQuestions = [
   },
   {
     type: 'options',
-    question: '「世界公民」的意義是什麼？',
+    question: '「世界公民」的意義是什麼?',
     options: [
       '擁有很多國家的護照',
       '能說很多種語言',
-      '關心全球議題，願意為世界更好而努力，不只限於自己國家',
+      '關心全球議題,願意為世界更好而努力,不只限於自己國家',
       '經常出國旅行'
     ],
     answer: 2,
-    displayAnswer: '關心全球議題，願意為世界更好而努力，不只限於自己國家'
+    displayAnswer: '關心全球議題,願意為世界更好而努力,不只限於自己國家'
   },
   {
     type: 'options',
-    question: '台灣在國際上的醫療援助主要做什麼？',
+    question: '台灣在國際上的醫療援助主要做什麼?',
     options: [
       '只幫助邦交國',
       '派遣醫療團、捐贈物資、技術移轉給需要的國家',
@@ -76,19 +76,19 @@ const socialQuestions = [
   },
   {
     type: 'options',
-    question: '台灣的「國際參與」和「國家認同」有什麼關係？',
+    question: '台灣的「國際參與」和「國家認同」有什麼關係?',
     options: [
       '沒有關係',
       '只有被承認的國家才能參與國際',
-      '即使國際地位特殊，仍可透過實質貢獻參與世界',
+      '即使國際地位特殊,仍可透過實質貢獻參與世界',
       '台灣不需要參與國際'
     ],
     answer: 2,
-    displayAnswer: '即使國際地位特殊，仍可透過實質貢獻參與世界'
+    displayAnswer: '即使國際地位特殊,仍可透過實質貢獻參與世界'
   },
   {
     type: 'options',
-    question: '六年級學生可以如何成為「世界公民」？',
+    question: '六年級學生可以如何成為「世界公民」?',
     options: [
       '等長大後再說',
       '從關心全球議題、學習多元文化、實踐永續行動開始',
@@ -100,22 +100,35 @@ const socialQuestions = [
   }
 ]
 
-const generateSocialQuestion = () => {
-  return socialQuestions[Math.floor(Math.random() * socialQuestions.length)]
-}
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【科學】人類獨特價值練習題庫
 const scienceQuestions = [
   {
     type: 'options',
-    question: '下列哪個是人類獨有、AI無法做到的？',
-    options: ['快速計算', '大量記憶', '感受他人的痛苦（同理心）', '下棋'],
+    question: '下列哪個是人類獨有、AI無法做到的?',
+    options: ['快速計算', '大量記憶', '感受他人的痛苦(同理心)', '下棋'],
     answer: 2,
-    displayAnswer: '感受他人的痛苦（同理心）'
+    displayAnswer: '感受他人的痛苦(同理心)'
   },
   {
     type: 'options',
-    question: '為什麼「提問能力」很重要？',
+    question: '為什麼「提問能力」很重要?',
     options: [
       '因為考試會考',
       '因為好問題決定你能從AI得到什麼品質的答案',
@@ -127,55 +140,55 @@ const scienceQuestions = [
   },
   {
     type: 'options',
-    question: '人類的「創造力」和AI的「生成能力」有什麼不同？',
+    question: '人類的「創造力」和AI的「生成能力」有什麼不同?',
     options: [
       '沒有不同',
-      '人類能產生真正新的想法，AI只是重組訓練資料',
+      '人類能產生真正新的想法,AI只是重組訓練資料',
       'AI的創造力更強',
       '人類不會創造'
     ],
     answer: 1,
-    displayAnswer: '人類能產生真正新的想法，AI只是重組訓練資料'
+    displayAnswer: '人類能產生真正新的想法,AI只是重組訓練資料'
   },
   {
     type: 'options',
-    question: '為什麼「批判思考」在AI時代更重要？',
+    question: '為什麼「批判思考」在AI時代更重要?',
     options: [
       '因為AI會批判人類',
-      '因為AI給的答案不一定對，需要人類判斷',
+      '因為AI給的答案不一定對,需要人類判斷',
       '因為要跟AI辯論',
       '因為AI不喜歡被批評'
     ],
     answer: 1,
-    displayAnswer: '因為AI給的答案不一定對，需要人類判斷'
+    displayAnswer: '因為AI給的答案不一定對,需要人類判斷'
   },
   {
     type: 'options',
-    question: '「跨領域整合思考」是什麼意思？',
+    question: '「跨領域整合思考」是什麼意思?',
     options: [
       '同時學很多科目',
-      '能連結不同領域的知識，看出關係',
+      '能連結不同領域的知識,看出關係',
       '考試考很多科',
       '什麼都學一點'
     ],
     answer: 1,
-    displayAnswer: '能連結不同領域的知識，看出關係'
+    displayAnswer: '能連結不同領域的知識,看出關係'
   },
   {
     type: 'options',
-    question: '為什麼AI時代更需要「終身學習」？',
+    question: '為什麼AI時代更需要「終身學習」?',
     options: [
-      '因為AI會一直進步，人類要跟上',
-      '因為世界變化快，今天的知識明天可能過時',
+      '因為AI會一直進步,人類要跟上',
+      '因為世界變化快,今天的知識明天可能過時',
       '因為要跟AI競爭',
       '因為學校規定'
     ],
     answer: 1,
-    displayAnswer: '因為世界變化快，今天的知識明天可能過時'
+    displayAnswer: '因為世界變化快,今天的知識明天可能過時'
   },
   {
     type: 'options',
-    question: '人類的「後設認知」（知道自己知道什麼、不知道什麼）為什麼重要？',
+    question: '人類的「後設認知」(知道自己知道什麼、不知道什麼)為什麼重要?',
     options: [
       '因為考試會考',
       '因為能幫助你判斷該問什麼問題、該學什麼',
@@ -187,7 +200,7 @@ const scienceQuestions = [
   },
   {
     type: 'options',
-    question: 'AI時代，什麼樣的學習態度最重要？',
+    question: 'AI時代,什麼樣的學習態度最重要?',
     options: [
       '背很多知識就好',
       '只要會用AI就好',
@@ -199,69 +212,107 @@ const scienceQuestions = [
   }
 ]
 
-const generateScienceQuestion = () => {
-  return scienceQuestions[Math.floor(Math.random() * scienceQuestions.length)]
-}
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
 
 // 【數學】W11-W12代數綜合練習題庫
 const mathQuestions = [
   {
     type: 'options',
-    question: '解方程式：x + 15 = 23，x = ?',
+    question: '解方程式:x + 15 = 23,x = ?',
     options: ['8', '38', '7', '9'],
     answer: 0,
     displayAnswer: '8'
   },
   {
-    type: 'fill',
-    question: '解方程式：x - 12 = 7，x = ?',
-    answer: '19',
+    type: 'options',
+    question: '解方程式:x - 12 = 7,x = ?',
+    options: ['5', '19', '-5', '-19'],
+    answer: 1,
     displayAnswer: '19'
   },
   {
     type: 'options',
-    question: '解方程式：3x = 27，x = ?',
+    question: '解方程式:3x = 27,x = ?',
     options: ['9', '24', '30', '81'],
     answer: 0,
     displayAnswer: '9'
   },
   {
-    type: 'fill',
-    question: '解方程式：x ÷ 4 = 8，x = ?',
-    answer: '32',
+    type: 'options',
+    question: '解方程式:x ÷ 4 = 8,x = ?',
+    options: ['2', '4', '12', '32'],
+    answer: 3,
     displayAnswer: '32'
   },
   {
     type: 'options',
-    question: '解方程式：2x + 5 = 17，x = ?',
+    question: '解方程式:2x + 5 = 17,x = ?',
     options: ['6', '11', '12', '22'],
     answer: 0,
-    displayAnswer: '6（先減5得2x=12，再除以2）'
+    displayAnswer: '6(先減5得2x=12,再除以2)'
   },
   {
     type: 'options',
-    question: '解方程式：3x - 8 = 13，x = ?',
+    question: '解方程式:3x - 8 = 13,x = ?',
     options: ['5', '7', '15', '21'],
     answer: 1,
-    displayAnswer: '7（先加8得3x=21，再除以3）'
-  },
-  {
-    type: 'fill',
-    question: '解方程式：x ÷ 2 + 5 = 12，x = ?',
-    answer: '14',
-    displayAnswer: '14（先減5得x÷2=7，再乘以2）'
+    displayAnswer: '7(先加8得3x=21,再除以3)'
   },
   {
     type: 'options',
-    question: '小明有x元，買了一本80元的書後，還剩120元。x = ?',
+    question: '解方程式:x ÷ 2 + 5 = 12,x = ?',
+    options: ['7', '14', '24', '34'],
+    answer: 1,
+    displayAnswer: '14(先減5得x÷2=7,再乘以2)'
+  },
+  {
+    type: 'options',
+    question: '小明有x元,買了一本80元的書後,還剩120元。x = ?',
     options: ['40', '200', '160', '240'],
     answer: 1,
-    displayAnswer: '200（方程式：x - 80 = 120）'
+    displayAnswer: '200(方程式:x - 80 = 120)'
   }
 ]
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    if (question.type === 'options') {
+      return shuffleOptions(question)
+    }
+    return { ...question }
+  }
+})()
+
+export {
+  generateSocialQuestion,
+  generateScienceQuestion,
+  generateMathQuestion
 }
 
 // ==========================================

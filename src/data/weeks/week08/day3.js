@@ -1,235 +1,319 @@
 // src/data/weeks/week08/day3.js
 // W8 Day3：什麼是「堅持」？
 
-// ── 社會科題庫（中小企業、社區經濟）──────────────
-const socialPool = [
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 社會:中小企業、社區經濟
+// ==========================================
+const socialQuestions = [
   {
-    question: '2012年陳清松重開民生戲院，身邊的人大多是什麼態度？',
-    options: ['全力支持', '大多反對，認為不可能成功', '無所謂', '要求他開連鎖店'],
-    answer: 1
+    type: 'options',
+    question: '2012年陳清松重開民生戲院,身邊的人大多是什麼態度?',
+    options: ['大多反對,認為不可能成功', '全力支持', '無所謂', '要求他開連鎖店'],
+    answer: 0,
+    displayAnswer: '2012年陳清松想重開民生戲院時,身邊大多數人都反對,認為面對大型連鎖影城的競爭不可能成功,但他仍堅持對社區和電影的情感而重新開業。'
   },
   {
-    question: '新民生戲院2012年重開時，首映的電影是？',
-    options: ['鐵達尼號', '復仇者聯盟1', '侏羅紀公園', '唐伯虎點秋香'],
-    answer: 1
+    type: 'options',
+    question: '新民生戲院2012年重開時,首映的電影是?',
+    options: ['復仇者聯盟1', '鐵達尼號', '侏羅紀公園', '唐伯虎點秋香'],
+    answer: 0,
+    displayAnswer: '新民生戲院2012年重新開幕時,首映電影是《復仇者聯盟1》,吸引許多民生社區居民回來看電影,重現當年戲院的榮景。'
   },
   {
-    question: '「社區型戲院」和大型連鎖影城最大的差別是什麼？',
+    type: 'options',
+    question: '「社區型戲院」和大型連鎖影城最大的差別是什麼?',
     options: [
+      '緊密連結在地居民,有人情味和社區感',
       '票價比較便宜',
-      '緊密連結在地居民，有人情味和社區感',
       '設備比較好',
       '電影比較新'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '社區型戲院最大的特色是與在地居民的情感連結,提供鄰里聚會的場所和人情味,這是大型連鎖影城難以取代的社區功能。'
   },
   {
-    question: '文章中提到，民生社區居民去新民生戲院看電影時，很多人穿什麼？',
-    options: ['正式西裝', '夾腳拖', '高跟鞋', '運動鞋'],
-    answer: 1
+    type: 'options',
+    question: '文章中提到,民生社區居民去新民生戲院看電影時,很多人穿什麼?',
+    options: ['夾腳拖', '正式西裝', '高跟鞋', '運動鞋'],
+    answer: 0,
+    displayAnswer: '民生社區居民去新民生戲院看電影時,很多人穿夾腳拖就來了,就像去鄰居家串門子一樣輕鬆自在,展現了社區戲院的親切氛圍。'
   },
   {
-    question: '為什麼小企業雖然競爭力不如大企業，卻仍然有存在價值？',
+    type: 'options',
+    question: '為什麼小企業雖然競爭力不如大企業,卻仍然有存在價值?',
     options: [
-      '小企業比較便宜',
       '小企業提供特色商品、人情味、社區連結',
+      '小企業比較便宜',
       '政府規定要有小企業',
       '小企業速度比較快'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '小企業提供大企業無法提供的特色商品、個人化服務、人情味和社區連結,滿足消費者對多元性和在地文化的需求,這是小企業的獨特價值。'
   },
   {
-    question: '台灣的中小企業占企業總數的比例大約是多少？',
-    options: ['30%', '50%', '70%', '98%以上'],
-    answer: 3
+    type: 'options',
+    question: '台灣的中小企業占企業總數的比例大約是多少?',
+    options: ['98%以上', '30%', '50%', '70%'],
+    answer: 0,
+    displayAnswer: '台灣的中小企業占企業總數的98%以上,是台灣經濟的重要支柱,提供大量就業機會,展現台灣經濟的多元性和韌性。'
   },
   {
-    question: '陳清松說「不那麼賺錢也沒關係，我就只是想重新開起來」，這句話反映了什麼？',
+    type: 'options',
+    question: '陳清松說「不那麼賺錢也沒關係,我就只是想重新開起來」,這句話反映了什麼?',
     options: [
-      '他很有錢不在乎',
       '他對電影和社區的情感超越了利潤考量',
+      '他很有錢不在乎',
       '他不懂做生意',
       '他想出名'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '這句話反映了陳清松重開戲院的動機不只是賺錢,更是對電影文化的熱愛和對社區的情感,體現了小企業主對理念的堅持。'
   },
   {
-    question: '新民生戲院最終在2026年熄燈，主要原因是？',
+    type: 'options',
+    question: '新民生戲院最終在2026年熄燈,主要原因是?',
     options: [
+      '無法抵擋串流平台崛起、大型影城壟斷、成本壓力',
       '老闆不想做了',
       '電影不好看',
-      '無法抵擋串流平台崛起、大型影城壟斷、成本壓力',
       '政府禁止營業'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '新民生戲院在2026年熄燈,主要因為Netflix等串流平台改變觀影習慣、大型連鎖影城壟斷市場、加上疫情後成本壓力,最終無法維持經營。'
   }
 ]
 
-function generateSocialQuestion() {
-  const q = socialPool[Math.floor(Math.random() * socialPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
-// ── 數學題庫（市占率）─────────────────────────
-function generateMathQuestion() {
-  const type = Math.floor(Math.random() * 3)
-
-  if (type === 0) {
-    // 計算市占率
-    const total = (Math.floor(Math.random() * 4) + 2) * 100  // 200, 300, 400, 500
-    const part = [40, 50, 60, 75, 80, 100, 120, 150][Math.floor(Math.random() * 8)]
-    const share = Math.round((part / total) * 100)
-    const wrong1 = Math.round((total / part) * 100)
-    const wrong2 = total - part
-    const wrong3 = share + 10
-    const options = [String(share), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(share)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `全台灣戲院總營收 ${total} 億元，某連鎖影城營收 ${part} 億元，它的市占率是多少%？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 1) {
-    // 已知市占率，求營收
-    const total = (Math.floor(Math.random() * 4) + 2) * 100
-    const share = [20, 25, 30, 40, 50][Math.floor(Math.random() * 5)]
-    const part = total * (share / 100)
-    const wrong1 = total - share
-    const wrong2 = total + share
-    const wrong3 = share
-    const options = [String(part), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(part)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `全台灣戲院總營收 ${total} 億元，某連鎖影城市占率 ${share}%，它的營收是多少億元？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else {
-    // 市占率比較
-    const compA = [30, 35, 40][Math.floor(Math.random() * 3)]
-    const compB = [20, 25][Math.floor(Math.random() * 2)]
-    const compC = 100 - compA - compB
-    const diff = compA - compB
-    const wrong1 = compA + compB
-    const wrong2 = compA
-    const wrong3 = compB
-    const options = [String(diff), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(diff)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `市場上有三家公司，A公司市占率 ${compA}%，B公司 ${compB}%，C公司 ${compC}%。A公司比B公司多佔多少%的市場？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  }
-}
-
-// ── 科學題庫（電力來源）───────────────────────
-const sciencePool = [
+// ==========================================
+// 數學:市占率
+// ==========================================
+const mathQuestions = [
+  // 計算市占率
   {
-    question: '台灣目前主要的發電方式是什麼？',
-    options: ['太陽能', '風力', '火力發電（燃煤、天然氣）', '地熱'],
-    answer: 2
+    type: 'options',
+    question: '全台灣戲院總營收 200 億元,某連鎖影城營收 40 億元,它的市占率是多少%?',
+    options: ['20', '500', '160', '30'],
+    answer: 0,
+    displayAnswer: '市占率 = (該公司營收 ÷ 總營收) × 100% = (40 ÷ 200) × 100% = 20%'
   },
   {
-    question: '火力發電的能源轉換過程是？',
+    type: 'options',
+    question: '全台灣戲院總營收 300 億元,某連鎖影城營收 75 億元,它的市占率是多少%?',
+    options: ['25', '400', '225', '35'],
+    answer: 0,
+    displayAnswer: '市占率 = (75 ÷ 300) × 100% = 25%'
+  },
+  {
+    type: 'options',
+    question: '全台灣戲院總營收 400 億元,某連鎖影城營收 100 億元,它的市占率是多少%?',
+    options: ['25', '400', '300', '35'],
+    answer: 0,
+    displayAnswer: '市占率 = (100 ÷ 400) × 100% = 25%'
+  },
+  {
+    type: 'options',
+    question: '全台灣戲院總營收 500 億元,某連鎖影城營收 150 億元,它的市占率是多少%?',
+    options: ['30', '333', '350', '40'],
+    answer: 0,
+    displayAnswer: '市占率 = (150 ÷ 500) × 100% = 30%'
+  },
+  // 已知市占率,求營收
+  {
+    type: 'options',
+    question: '全台灣戲院總營收 200 億元,某連鎖影城市占率 20%,它的營收是多少億元?',
+    options: ['40', '180', '220', '20'],
+    answer: 0,
+    displayAnswer: '營收 = 總營收 × 市占率 = 200 × 20% = 200 × 0.2 = 40億元'
+  },
+  {
+    type: 'options',
+    question: '全台灣戲院總營收 300 億元,某連鎖影城市占率 25%,它的營收是多少億元?',
+    options: ['75', '275', '325', '25'],
+    answer: 0,
+    displayAnswer: '營收 = 總營收 × 市占率 = 300 × 25% = 300 × 0.25 = 75億元'
+  },
+  {
+    type: 'options',
+    question: '全台灣戲院總營收 400 億元,某連鎖影城市占率 30%,它的營收是多少億元?',
+    options: ['120', '370', '430', '30'],
+    answer: 0,
+    displayAnswer: '營收 = 總營收 × 市占率 = 400 × 30% = 400 × 0.3 = 120億元'
+  },
+  {
+    type: 'options',
+    question: '全台灣戲院總營收 500 億元,某連鎖影城市占率 50%,它的營收是多少億元?',
+    options: ['250', '450', '550', '50'],
+    answer: 0,
+    displayAnswer: '營收 = 總營收 × 市占率 = 500 × 50% = 500 × 0.5 = 250億元'
+  },
+  // 市占率比較
+  {
+    type: 'options',
+    question: '市場上有三家公司,A公司市占率 30%,B公司 20%,C公司 50%。A公司比B公司多佔多少%的市場?',
+    options: ['10', '50', '30', '20'],
+    answer: 0,
+    displayAnswer: 'A公司比B公司多佔的市場 = 30% - 20% = 10%'
+  },
+  {
+    type: 'options',
+    question: '市場上有三家公司,A公司市占率 35%,B公司 25%,C公司 40%。A公司比B公司多佔多少%的市場?',
+    options: ['10', '60', '35', '25'],
+    answer: 0,
+    displayAnswer: 'A公司比B公司多佔的市場 = 35% - 25% = 10%'
+  },
+  {
+    type: 'options',
+    question: '市場上有三家公司,A公司市占率 40%,B公司 20%,C公司 40%。A公司比B公司多佔多少%的市場?',
+    options: ['20', '60', '40', '20'],
+    answer: 0,
+    displayAnswer: 'A公司比B公司多佔的市場 = 40% - 20% = 20%'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 科學:電力來源
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '台灣目前主要的發電方式是什麼?',
+    options: ['火力發電(燃煤、天然氣)', '太陽能', '風力', '地熱'],
+    answer: 0,
+    displayAnswer: '台灣目前主要的發電方式是火力發電,包括燃煤和天然氣發電,約占總發電量的80%以上,是台灣最主要的電力來源。'
+  },
+  {
+    type: 'options',
+    question: '火力發電的能源轉換過程是?',
     options: [
+      '化學能(燃料)→ 熱能 → 動能 → 電能',
       '太陽能 → 電能',
-      '化學能（燃料）→ 熱能 → 動能 → 電能',
       '動能 → 電能',
       '電能 → 熱能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '火力發電:燃燒煤炭或天然氣(化學能)產生熱能,加熱水產生蒸氣,推動渦輪機(動能),帶動發電機產生電能。'
   },
   {
-    question: '水力發電的原理是？',
+    type: 'options',
+    question: '水力發電的原理是?',
     options: [
+      '利用水的位能(高度差)推動渦輪發電',
       '燃燒水產生電力',
-      '利用水的位能（高度差）推動渦輪發電',
       '把水加熱變成蒸氣',
       '水直接變成電'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '水力發電利用水從高處落下的位能,推動水輪機旋轉,帶動發電機產生電能。能源轉換:位能 → 動能 → 電能。'
   },
   {
-    question: '為什麼火力發電會造成空氣污染？',
+    type: 'options',
+    question: '為什麼火力發電會造成空氣污染?',
     options: [
-      '發電廠太吵',
       '燃燒煤炭或天然氣會產生二氧化碳和其他污染物',
+      '發電廠太吵',
       '火力發電不會污染',
       '發電廠排放水蒸氣'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '火力發電燃燒化石燃料會產生二氧化碳(溫室氣體)、硫氧化物、氮氧化物等污染物,造成空氣污染和氣候變遷。'
   },
   {
-    question: '再生能源包括哪些？',
+    type: 'options',
+    question: '再生能源包括哪些?',
     options: [
-      '煤炭、石油',
       '太陽能、風能、水力',
+      '煤炭、石油',
       '核能',
       '天然氣'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '再生能源包括太陽能、風能、水力、地熱、生質能等,這些能源可以自然再生,不會耗盡,且發電時碳排放極低。'
   },
   {
-    question: '為什麼再生能源被認為比化石燃料更環保？',
+    type: 'options',
+    question: '為什麼再生能源被認為比化石燃料更環保?',
     options: [
+      '再生能源不會用完,且發電時碳排放極低',
       '再生能源比較便宜',
-      '再生能源不會用完，且發電時碳排放極低',
       '再生能源速度更快',
       '再生能源可以自己生長'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '再生能源不會耗盡,且發電過程幾乎不產生溫室氣體和空氣污染物,比燃燒化石燃料更環保,是能源轉型的重要方向。'
   },
   {
-    question: '太陽能發電的原理是？',
+    type: 'options',
+    question: '太陽能發電的原理是?',
     options: [
-      '燃燒太陽光',
       '太陽能板將光能直接轉換成電能',
+      '燃燒太陽光',
       '用太陽加熱水',
       '反射陽光產生電'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '太陽能板利用光電效應,將太陽光能直接轉換成電能,不需要燃燒任何燃料,是最乾淨的發電方式之一。'
   },
   {
-    question: '為什麼台灣不能完全依靠再生能源？',
+    type: 'options',
+    question: '為什麼台灣不能完全依靠再生能源?',
     options: [
-      '再生能源不存在',
       '受天氣影響、供電不穩定、儲能技術還在發展中',
+      '再生能源不存在',
       '政府不想用',
       '再生能源太貴'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '再生能源受天氣影響大(太陽能需陽光、風力需風),供電不穩定,加上儲能技術還在發展,目前無法完全取代傳統發電方式。'
   }
 ]
 
-function generateScienceQuestion() {
-  const q = sciencePool[Math.floor(Math.random() * sciencePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day3 = {

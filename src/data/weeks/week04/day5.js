@@ -1,166 +1,192 @@
 // src/data/weeks/week04/day5.js
 // W4 Day5：節氣的畫與歌（藝術收尾）
 
-// ===== 詞彙總複習 =====
-const generateVocabularyQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「比例尺」的功能是什麼？',
-      options: [
-        '測量尺子的長度',
-        '說明地圖（或縮圖）與實際大小的縮放倍數關係',
-        '計算比例的分子和分母',
-        '繪製數學比例題的工具'
-      ],
-      answer: 1,
-      explanation: '比例尺是地圖或縮圖上，說明「圖上距離：實際距離」的比值，讓使用者能算出實際尺寸。'
-    },
-    {
-      type: 'choice',
-      question: '「北回歸線」這個詞的意思是什麼？',
-      options: [
-        '北極附近的一條線',
-        '北緯23.5度，太陽在夏至時直射的最北界線，也是熱帶與副熱帶的分界',
-        '連接台灣北部和南部的鐵路線',
-        '台灣北部地區的海岸線'
-      ],
-      answer: 1,
-      explanation: '北回歸線是北緯23.5°，夏至時太陽直射此線，是熱帶（線以南）和副熱帶（線以北）的氣候分界線。通過台灣嘉義縣。'
-    },
-    {
-      type: 'choice',
-      question: '「焚風」是什麼現象？',
-      options: [
-        '森林大火造成的熱風',
-        '海邊吹來的溫暖海風',
-        '氣流越過山脈後在背風坡下降增溫，形成乾熱的風',
-        '夏天午後的雷陣雨前的熱風'
-      ],
-      answer: 2,
-      explanation: '焚風（Föhn effect）是氣流翻越山脈後，在背風坡急速下降時絕熱增溫，形成又熱又乾的風。台灣花蓮、台東因中央山脈常出現此現象。'
-    },
-    {
-      type: 'choice',
-      question: '「縮圖」和「擴圖」的共同原則是什麼？',
-      options: [
-        '只改變面積，不改變形狀',
-        '所有長度按同一比例縮放，角度不變，形狀相似',
-        '只改變長度，不改變寬度',
-        '縮圖要改變顏色，擴圖要改變角度'
-      ],
-      answer: 1,
-      explanation: '縮圖和擴圖都是等比例縮放：所有長度乘（或除）同一個比例，所有角度保持不變，縮放前後的圖形「形狀相同，大小不同」，稱為相似形。'
-    },
-    {
-      type: 'choice',
-      question: '「輻射」和「對流」最主要的差別是什麼？',
-      options: [
-        '輻射只發生在固體中，對流只發生在液體中',
-        '輻射不需要介質（可在真空中傳播），對流需要流體（液體或氣體）的物理流動',
-        '輻射比對流傳熱快',
-        '對流不需要介質，輻射需要介質'
-      ],
-      answer: 1,
-      explanation: '輻射以電磁波形式傳播，不需要任何介質（可穿越真空）；對流必須透過流體（液體或氣體）的物質流動來傳熱，需要有介質存在。'
-    },
-    {
-      type: 'choice',
-      question: '「節氣」和「農曆月份」有什麼不同？',
-      options: [
-        '節氣和農曆月份是同一件事',
-        '節氣反映地球繞太陽的位置（太陽曆），農曆月份反映月相週期（陰曆）',
-        '節氣只在冬天有，農曆月份一年12個月都有',
-        '節氣是中國發明的，農曆月份是台灣發明的'
-      ],
-      answer: 1,
-      explanation: '節氣依太陽在黃道上的位置（太陽曆）定義，一年24個，反映氣候變化；農曆月份以月相為基礎（陰曆），一個月約29.5天。農曆是兩者的結合（陰陽合曆）。'
-    },
-    {
-      type: 'choice',
-      question: '「等高線」在地圖上代表什麼？',
-      options: [
-        '連接氣溫相同地點的線',
-        '連接海拔高度相同地點的線，用來表示地形起伏',
-        '連接雨量相同地點的線',
-        '連接距離海邊相同的地點的線'
-      ],
-      answer: 1,
-      explanation: '等高線是地圖上連接相同海拔高度各點的曲線，等高線密集代表坡度陡，稀疏代表坡度緩，可讓二維地圖呈現三維地形。'
-    },
-    {
-      type: 'choice',
-      question: '「番界」在清領時期台灣代表什麼？',
-      options: [
-        '台灣和清朝中國大陸之間的海上邊界',
-        '清朝劃定的漢人開墾區和原住民土地之間的界線',
-        '台灣不同縣市之間的行政邊界',
-        '海盜活動範圍的邊界'
-      ],
-      answer: 1,
-      explanation: '番界是清朝在台灣設立的一道界線，東側為「番地」（原住民地）、西側為漢人開墾區，以土牛溝或木柵為標記，目的是減少漢番衝突。'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 詞彙總複習
+// ==========================================
+const vocabQuestions = [
+  {
+    type: 'options',
+    question: '「比例尺」的功能是什麼?',
+    options: [
+      '說明地圖(或縮圖)與實際大小的縮放倍數關係',
+      '測量尺子的長度',
+      '計算比例的分子和分母',
+      '繪製數學比例題的工具'
+    ],
+    answer: 0,
+    displayAnswer: '比例尺是地圖或縮圖上,說明「圖上距離:實際距離」的比值,讓使用者能算出實際尺寸。'
+  },
+  {
+    type: 'options',
+    question: '「北回歸線」這個詞的意思是什麼?',
+    options: [
+      '北緯23.5度,太陽在夏至時直射的最北界線,也是熱帶與副熱帶的分界',
+      '北極附近的一條線',
+      '連接台灣北部和南部的鐵路線',
+      '台灣北部地區的海岸線'
+    ],
+    answer: 0,
+    displayAnswer: '北回歸線是北緯23.5°,夏至時太陽直射此線,是熱帶(線以南)和副熱帶(線以北)的氣候分界線。通過台灣嘉義縣。'
+  },
+  {
+    type: 'options',
+    question: '「焚風」是什麼現象?',
+    options: [
+      '氣流越過山脈後在背風坡下降增溫,形成乾熱的風',
+      '森林大火造成的熱風',
+      '海邊吹來的溫暖海風',
+      '夏天午後的雷陣雨前的熱風'
+    ],
+    answer: 0,
+    displayAnswer: '焚風(Föhn effect)是氣流翻越山脈後,在背風坡急速下降時絕熱增溫,形成又熱又乾的風。台灣花蓮、台東因中央山脈常出現此現象。'
+  },
+  {
+    type: 'options',
+    question: '「縮圖」和「擴圖」的共同原則是什麼?',
+    options: [
+      '所有長度按同一比例縮放,角度不變,形狀相似',
+      '只改變面積,不改變形狀',
+      '只改變長度,不改變寬度',
+      '縮圖要改變顏色,擴圖要改變角度'
+    ],
+    answer: 0,
+    displayAnswer: '縮圖和擴圖都是等比例縮放:所有長度乘(或除)同一個比例,所有角度保持不變,縮放前後的圖形「形狀相同,大小不同」,稱為相似形。'
+  },
+  {
+    type: 'options',
+    question: '「輻射」和「對流」最主要的差別是什麼?',
+    options: [
+      '輻射不需要介質(可在真空中傳播),對流需要流體(液體或氣體)的物理流動',
+      '輻射只發生在固體中,對流只發生在液體中',
+      '輻射比對流傳熱快',
+      '對流不需要介質,輻射需要介質'
+    ],
+    answer: 0,
+    displayAnswer: '輻射以電磁波形式傳播,不需要任何介質(可穿越真空);對流必須透過流體(液體或氣體)的物質流動來傳熱,需要有介質存在。'
+  },
+  {
+    type: 'options',
+    question: '「節氣」和「農曆月份」有什麼不同?',
+    options: [
+      '節氣反映地球繞太陽的位置(太陽曆),農曆月份反映月相週期(陰曆)',
+      '節氣和農曆月份是同一件事',
+      '節氣只在冬天有,農曆月份一年12個月都有',
+      '節氣是中國發明的,農曆月份是台灣發明的'
+    ],
+    answer: 0,
+    displayAnswer: '節氣依太陽在黃道上的位置(太陽曆)定義,一年24個,反映氣候變化;農曆月份以月相為基礎(陰曆),一個月約29.5天。農曆是兩者的結合(陰陽合曆)。'
+  },
+  {
+    type: 'options',
+    question: '「等高線」在地圖上代表什麼?',
+    options: [
+      '連接海拔高度相同地點的線,用來表示地形起伏',
+      '連接氣溫相同地點的線',
+      '連接雨量相同地點的線',
+      '連接距離海邊相同的地點的線'
+    ],
+    answer: 0,
+    displayAnswer: '等高線是地圖上連接相同海拔高度各點的曲線,等高線密集代表坡度陡,稀疏代表坡度緩,可讓二維地圖呈現三維地形。'
+  },
+  {
+    type: 'options',
+    question: '「番界」在清領時期台灣代表什麼?',
+    options: [
+      '清朝劃定的漢人開墾區和原住民土地之間的界線',
+      '台灣和清朝中國大陸之間的海上邊界',
+      '台灣不同縣市之間的行政邊界',
+      '海盜活動範圍的邊界'
+    ],
+    answer: 0,
+    displayAnswer: '番界是清朝在台灣設立的一道界線,東側為「番地」(原住民地)、西側為漢人開墾區,以土牛溝或木柵為標記,目的是減少漢番衝突。'
+  }
+]
+
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkVocabularyAnswer = (q, a) => parseInt(a) === q.answer
+// ==========================================
+// 數學延伸:相似形預覽
+// ==========================================
+const mathQuestions = [
+  {
+    type: 'options',
+    question: '兩個三角形,一個邊長是 3、4、5 公分,另一個邊長是 6、8、10 公分。這兩個三角形有什麼關係?',
+    options: [
+      '相似形——形狀相同、大小不同,邊長比都是 1:2',
+      '完全相同(全等)',
+      '沒有特別關係',
+      '一個是另一個的縮圖,但比例不固定'
+    ],
+    answer: 0,
+    displayAnswer: '6/3=8/4=10/5=2,三邊比相同(都是1:2),且角度相同,所以是相似三角形。縮圖擴圖的圖形,就是相似形。'
+  },
+  {
+    type: 'options',
+    question: '一張照片長10公分、寬6公分,放大後寬變成15公分,長應變成多少公分?',
+    options: ['25公分', '18公分', '20公分', '30公分'],
+    answer: 0,
+    displayAnswer: '寬的放大比:15÷6=2.5倍,長也放大2.5倍:10×2.5=25公分。相似形的各邊按同比例放大。'
+  },
+  {
+    type: 'options',
+    question: '一個長方形長12公分、寬8公分,與另一個長方形長9公分、寬6公分,兩者是相似形嗎?',
+    options: [
+      '是,因為 12/9 = 8/6 = 4/3,比例相同',
+      '否,因為長度不同',
+      '是,因為都是長方形',
+      '否,因為面積不同'
+    ],
+    answer: 0,
+    displayAnswer: '12/9=4/3,8/6=4/3,兩組對應邊的比相同,所以是相似形(長寬比例相同)。'
+  },
+  {
+    type: 'options',
+    question: '縮圖時長度縮為原來的1/3,面積變成原來的多少?',
+    options: ['1/9', '1/3', '1/6', '1/27'],
+    answer: 0,
+    displayAnswer: '長度縮1/3倍,面積縮(1/3)²=1/9倍。長度和面積的縮放倍數關係:面積縮放 = 長度縮放的平方。'
+  },
+  {
+    type: 'options',
+    question: '一張台灣全圖(比例尺1:1000000),測量台灣南北長度約4公分。台灣實際南北長度約多少公里?',
+    options: ['400公里', '4公里', '40公里', '4000公里'],
+    answer: 0,
+    displayAnswer: '4×1000000=4000000公分=40000公尺=400公里。台灣南北長約400公里,這個估算很合理!'
+  }
+]
 
-// ===== 數學延伸：相似形預覽 =====
-const generateSimilarShapeQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '兩個三角形，一個邊長是 3、4、5 公分，另一個邊長是 6、8、10 公分。這兩個三角形有什麼關係？',
-      options: [
-        '完全相同（全等）',
-        '相似形——形狀相同、大小不同，邊長比都是 1：2',
-        '沒有特別關係',
-        '一個是另一個的縮圖，但比例不固定'
-      ],
-      answer: 1,
-      explanation: '6/3=8/4=10/5=2，三邊比相同（都是1：2），且角度相同，所以是相似三角形。縮圖擴圖的圖形，就是相似形。'
-    },
-    {
-      type: 'choice',
-      question: '一張照片長10公分、寬6公分，放大後寬變成15公分，長應變成多少公分？',
-      options: ['25公分', '18公分', '20公分', '30公分'],
-      answer: 0,
-      explanation: '寬的放大比：15÷6=2.5倍，長也放大2.5倍：10×2.5=25公分。相似形的各邊按同比例放大。'
-    },
-    {
-      type: 'choice',
-      question: '一個長方形長12公分、寬8公分，與另一個長方形長9公分、寬6公分，兩者是相似形嗎？',
-      options: [
-        '是，因為 12/9 = 8/6 = 4/3，比例相同',
-        '否，因為長度不同',
-        '是，因為都是長方形',
-        '否，因為面積不同'
-      ],
-      answer: 0,
-      explanation: '12/9=4/3，8/6=4/3，兩組對應邊的比相同，所以是相似形（長寬比例相同）。'
-    },
-    {
-      type: 'choice',
-      question: '縮圖時長度縮為原來的1/3，面積變成原來的多少？',
-      options: ['1/3', '1/6', '1/9', '1/27'],
-      answer: 2,
-      explanation: '長度縮1/3倍，面積縮(1/3)²=1/9倍。長度和面積的縮放倍數關係：面積縮放 = 長度縮放的平方。'
-    },
-    {
-      type: 'choice',
-      question: '一張台灣全圖（比例尺1：1000000），測量台灣南北長度約4公分。台灣實際南北長度約多少公里？',
-      options: ['4公里', '40公里', '400公里', '4000公里'],
-      answer: 2,
-      explanation: '4×1000000=4000000公分=40000公尺=400公里。台灣南北長約400公里，這個估算很合理！'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkSimilarShapeAnswer = (q, a) => parseInt(a) === q.answer
+export { generateVocabQuestion, generateMathQuestion }
 
 // ===== 組合成 Day 5 =====
 const day5 = {
@@ -318,8 +344,10 @@ const day5 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateVocabularyQuestion,
-        checkAnswer: checkVocabularyAnswer
+        generator: generateVocabQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -347,8 +375,10 @@ const day5 = {
       },
       practice: {
         questionCount: 4,
-        generator: generateSimilarShapeQuestion,
-        checkAnswer: checkSimilarShapeAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

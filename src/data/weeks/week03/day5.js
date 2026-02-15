@@ -1,160 +1,186 @@
 // src/data/weeks/week03/day5.js
 // W3 Day5：流水的歌（藝術收尾）
 
-// ===== 詞彙總複習 =====
-const generateVocabularyQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '「水系」這個詞的意思是什麼？',
-      options: [
-        '只指一條主要河流',
-        '一條主要河流及其所有支流組成的整體系統',
-        '台灣的自來水管線系統',
-        '雨水收集的設備'
-      ],
-      answer: 1,
-      explanation: '水系是指一條幹流（主要河流）加上所有匯入的支流，形成一個完整的排水網絡。'
-    },
-    {
-      type: 'choice',
-      question: '「比值」和「比」有什麼不同？',
-      options: [
-        '完全相同，沒有差別',
-        '「比」是兩個數的關係（A：B），「比值」是前項除以後項的結果（A÷B）',
-        '「比值」是整數，「比」是分數',
-        '「比」只能用在數學，「比值」只能用在生活'
-      ],
-      answer: 1,
-      explanation: '比（如3：4）表示兩數的關係；比值是具體數值（3÷4=0.75），可以用來比較大小。'
-    },
-    {
-      type: 'choice',
-      question: '「月相」的「相」在這裡是什麼意思？',
-      options: [
-        '互相、彼此',
-        '外觀、形貌、樣子',
-        '相片',
-        '宰相（古代官職）'
-      ],
-      answer: 1,
-      explanation: '「月相」的「相」是外觀、形貌的意思，指月亮從地球看過去的外觀形狀（圓缺）。'
-    },
-    {
-      type: 'choice',
-      question: '「仰角」的「仰」在這裡是什麼意思？',
-      options: [
-        '向下看',
-        '平視',
-        '仰頭向上看',
-        '側著頭看'
-      ],
-      answer: 2,
-      explanation: '「仰」是抬頭向上看的動作，「仰角」就是從水平方向向上看某個目標所形成的角度。'
-    },
-    {
-      type: 'choice',
-      question: '「農曆」又叫「陰陽合曆」，其中「陰」指的是什麼？',
-      options: [
-        '陰暗的天氣',
-        '月亮（月相）',
-        '地面下方',
-        '女性'
-      ],
-      answer: 1,
-      explanation: '中國傳統文化中，月亮屬「陰」，太陽屬「陽」。農曆以月相定月份（陰），以節氣定季節（陽）。'
-    },
-    {
-      type: 'choice',
-      question: '「節氣」的「節」在這裡是什麼意思？',
-      options: [
-        '骨節、關節',
-        '節省、節約',
-        '節點，一年中氣候轉變的時間點',
-        '節拍（音樂）'
-      ],
-      answer: 2,
-      explanation: '「節氣」的「節」是節點、特定時間點的意思，二十四節氣就是一年中24個氣候變化的關鍵時間點。'
-    },
-    {
-      type: 'choice',
-      question: '「灌溉」的意思是什麼？',
-      options: [
-        '把多餘的水排掉',
-        '把水引到農田或植物根部，以助生長',
-        '種植水生植物',
-        '測量河流的水量'
-      ],
-      answer: 1,
-      explanation: '灌溉是人工引水澆灌農田，讓土地獲得充足水分以助農作物生長，是農業文明的重要技術。'
-    },
-    {
-      type: 'choice',
-      question: '「圳路」中的「圳」字，原本指什麼？',
-      options: [
-        '高山',
-        '人工挖掘的引水溝渠',
-        '天然的河流',
-        '水庫'
-      ],
-      answer: 1,
-      explanation: '「圳」是人工挖掘的水道、溝渠，用來引水灌溉。嘉南大圳、桃園大圳都是這樣的人工引水系統。'
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// W3D5: 詞彙總複習
+// ==========================================
+const readingQuestions = [
+  {
+    type: 'options',
+    question: '「水系」這個詞的意思是什麼?',
+    options: [
+      '一條主要河流及其所有支流組成的整體系統',
+      '只指一條主要河流',
+      '台灣的自來水管線系統',
+      '雨水收集的設備'
+    ],
+    answer: 0,
+    displayAnswer: '水系是指一條幹流(主要河流)加上所有匯入的支流,形成一個完整的排水網絡。'
+  },
+  {
+    type: 'options',
+    question: '「比值」和「比」有什麼不同?',
+    options: [
+      '「比」是兩個數的關係(A:B),「比值」是前項除以後項的結果(A÷B)',
+      '完全相同,沒有差別',
+      '「比值」是整數,「比」是分數',
+      '「比」只能用在數學,「比值」只能用在生活'
+    ],
+    answer: 0,
+    displayAnswer: '比(如3:4)表示兩數的關係;比值是具體數值(3÷4=0.75),可以用來比較大小。'
+  },
+  {
+    type: 'options',
+    question: '「月相」的「相」在這裡是什麼意思?',
+    options: [
+      '外觀、形貌、樣子',
+      '互相、彼此',
+      '相片',
+      '宰相(古代官職)'
+    ],
+    answer: 0,
+    displayAnswer: '「月相」的「相」是外觀、形貌的意思,指月亮從地球看過去的外觀形狀(圓缺)。'
+  },
+  {
+    type: 'options',
+    question: '「仰角」的「仰」在這裡是什麼意思?',
+    options: [
+      '仰頭向上看',
+      '向下看',
+      '平視',
+      '側著頭看'
+    ],
+    answer: 0,
+    displayAnswer: '「仰」是抬頭向上看的動作,「仰角」就是從水平方向向上看某個目標所形成的角度。'
+  },
+  {
+    type: 'options',
+    question: '「農曆」又叫「陰陽合曆」,其中「陰」指的是什麼?',
+    options: [
+      '月亮(月相)',
+      '陰暗的天氣',
+      '地面下方',
+      '女性'
+    ],
+    answer: 0,
+    displayAnswer: '中國傳統文化中,月亮屬「陰」,太陽屬「陽」。農曆以月相定月份(陰),以節氣定季節(陽)。'
+  },
+  {
+    type: 'options',
+    question: '「節氣」的「節」在這裡是什麼意思?',
+    options: [
+      '節點,一年中氣候轉變的時間點',
+      '骨節、關節',
+      '節省、節約',
+      '節拍(音樂)'
+    ],
+    answer: 0,
+    displayAnswer: '「節氣」的「節」是節點、特定時間點的意思,二十四節氣就是一年中24個氣候變化的關鍵時間點。'
+  },
+  {
+    type: 'options',
+    question: '「灌溉」的意思是什麼?',
+    options: [
+      '把水引到農田或植物根部,以助生長',
+      '把多餘的水排掉',
+      '種植水生植物',
+      '測量河流的水量'
+    ],
+    answer: 0,
+    displayAnswer: '灌溉是人工引水澆灌農田,讓土地獲得充足水分以助農作物生長,是農業文明的重要技術。'
+  },
+  {
+    type: 'options',
+    question: '「圳路」中的「圳」字,原本指什麼?',
+    options: [
+      '人工挖掘的引水溝渠',
+      '高山',
+      '天然的河流',
+      '水庫'
+    ],
+    answer: 0,
+    displayAnswer: '「圳」是人工挖掘的水道、溝渠,用來引水灌溉。嘉南大圳、桃園大圳都是這樣的人工引水系統。'
+  }
+]
+
+const generateReadingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(readingQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkVocabularyAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
+// ==========================================
+// W3D5: 數學延伸(月相圓面積比例)
+// ==========================================
+const mathQuestions = [
+  {
+    type: 'options',
+    question: '如果滿月的面積是1個完整圓(面積 = πr²),上弦月(半圓)的面積是滿月的幾倍?',
+    options: ['1/2 倍', '1/3 倍', '1/4 倍', '2/3 倍'],
+    answer: 0,
+    displayAnswer: '上弦月是半圓,面積 = 1/2 × πr²,是滿月面積的 1/2 倍。'
+  },
+  {
+    type: 'options',
+    question: '一個圓形的農田,直徑是14公尺,面積大約是多少平方公尺?(π≈3.14)',
+    options: ['153.86 平方公尺', '43.96 平方公尺', '615.44 平方公尺', '21.98 平方公尺'],
+    answer: 0,
+    displayAnswer: '半徑 = 14÷2 = 7公尺,面積 = π × r² = 3.14 × 7² = 3.14 × 49 = 153.86 平方公尺。'
+  },
+  {
+    type: 'options',
+    question: '下弦月(半圓)和眉月(大約1/8圓)的面積比是多少?',
+    options: ['4:1', '2:1', '8:1', '1:4'],
+    answer: 0,
+    displayAnswer: '半圓面積是 πr²/2,1/8 圓面積是 πr²/8,比值 = (πr²/2) ÷ (πr²/8) = 4,所以比是 4:1。'
+  },
+  {
+    type: 'options',
+    question: '圓的面積公式是 πr²,如果半徑變成原來的2倍,面積變成原來的幾倍?',
+    options: ['4倍', '2倍', '8倍', '1/2倍'],
+    answer: 0,
+    displayAnswer: '半徑變2倍,新面積 = π(2r)² = 4πr²,是原來面積的4倍。面積和半徑的平方成正比。'
+  },
+  {
+    type: 'options',
+    question: '一個農民種了一塊圓形的水田,半徑 10 公尺,另一塊正方形旱田邊長 20 公尺。哪塊田面積比較大?(π≈3.14)',
+    options: ['正方形旱田較大', '圓形水田較大', '兩塊一樣大', '無法比較'],
+    answer: 0,
+    displayAnswer: '圓形面積 = 3.14 × 10² = 314 平方公尺;正方形面積 = 20² = 400 平方公尺。正方形旱田面積較大。'
+  }
+]
 
-// ===== 數學延伸：月相圓面積比例 =====
-const generateMoonAreaQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '如果滿月的面積是1個完整圓（面積 = πr²），上弦月（半圓）的面積是滿月的幾倍？',
-      options: ['1/2 倍', '1/3 倍', '1/4 倍', '2/3 倍'],
-      answer: 0,
-      explanation: '上弦月是半圓，面積 = 1/2 × πr²，是滿月面積的 1/2 倍。'
-    },
-    {
-      type: 'choice',
-      question: '一個圓形的農田，直徑是14公尺，面積大約是多少平方公尺？（π≈3.14）',
-      options: ['153.86 平方公尺', '43.96 平方公尺', '615.44 平方公尺', '21.98 平方公尺'],
-      answer: 0,
-      explanation: '半徑 = 14÷2 = 7公尺，面積 = π × r² = 3.14 × 7² = 3.14 × 49 = 153.86 平方公尺。'
-    },
-    {
-      type: 'choice',
-      question: '下弦月（半圓）和眉月（大約1/8圓）的面積比是多少？',
-      options: ['4：1', '2：1', '8：1', '1：4'],
-      answer: 0,
-      explanation: '半圓面積是 πr²/2，1/8 圓面積是 πr²/8，比值 = (πr²/2) ÷ (πr²/8) = 4，所以比是 4：1。'
-    },
-    {
-      type: 'choice',
-      question: '圓的面積公式是 πr²，如果半徑變成原來的2倍，面積變成原來的幾倍？',
-      options: ['2倍', '4倍', '8倍', '1/2倍'],
-      answer: 1,
-      explanation: '半徑變2倍，新面積 = π(2r)² = 4πr²，是原來面積的4倍。面積和半徑的平方成正比。'
-    },
-    {
-      type: 'choice',
-      question: '一個農民種了一塊圓形的水田，半徑 10 公尺，另一塊正方形旱田邊長 20 公尺。哪塊田面積比較大？（π≈3.14）',
-      options: ['正方形旱田較大', '圓形水田較大', '兩塊一樣大', '無法比較'],
-      answer: 0,
-      explanation: '圓形面積 = 3.14 × 10² = 314 平方公尺；正方形面積 = 20² = 400 平方公尺。正方形旱田面積較大。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { 
+  generateMathQuestion,  
+  generateReadingQuestion
 }
 
-const checkMoonAreaAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
 
 // ===== 組合成 Day 5 =====
 const day5 = {
@@ -304,8 +330,10 @@ const day5 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateVocabularyQuestion,
-        checkAnswer: checkVocabularyAnswer
+        generator: generateReadingQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -343,8 +371,10 @@ const day5 = {
       },
       practice: {
         questionCount: 4,
-        generator: generateMoonAreaQuestion,
-        checkAnswer: checkMoonAreaAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

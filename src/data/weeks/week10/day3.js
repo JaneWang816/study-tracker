@@ -1,39 +1,58 @@
 // src/data/weeks/week10/day3.js
 // W10 Day3：分析資料
 
+// 改寫後的題庫 - 使用標準洗牌機制
+
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 練習題庫
+// ==========================================
+
 // ── 社會科題庫（圖表製作）────────────────────
 const socialPool = [
   {
+    type: 'options',
     question: '用來表示「占比」的圖表是哪一種？',
-    options: ['折線圖', '圓形圖', '長條圖', '散佈圖'],
-    answer: 1
+    options: ['圓形圖', '折線圖', '長條圖', '散佈圖'],
+    answer: 0,
+    displayAnswer: '圓形圖'
   },
   {
+    type: 'options',
     question: '用來表示「趨勢變化」的圖表是哪一種？',
-    options: ['圓形圖', '折線圖', '表格', '文字'],
-    answer: 1
+    options: ['折線圖', '圓形圖', '表格', '文字'],
+    answer: 0,
+    displayAnswer: '折線圖'
   },
   {
+    type: 'options',
     question: '圓形圖的所有扇形角度加起來應該是多少度？',
-    options: ['180度', '270度', '360度', '400度'],
-    answer: 2
+    options: ['360度', '180度', '270度', '400度'],
+    answer: 0,
+    displayAnswer: '360度'
   },
   {
+    type: 'options',
     question: '如果某項目占25%，圓形圖上應該是幾度？',
-    options: ['25度', '50度', '75度', '90度'],
-    answer: 3
+    options: ['90度', '25度', '50度', '75度'],
+    answer: 0,
+    displayAnswer: '90度'
   },
   {
+    type: 'options',
     question: '折線圖適合呈現什麼資料？',
     options: [
-      '一次性的占比',
       '隨時間變化的趨勢',
+      '一次性的占比',
       '分類數據',
       '沒有規則的數字'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '隨時間變化的趨勢'
   },
   {
+    type: 'options',
     question: '長條圖適合用來做什麼？',
     options: [
       '比較不同項目的數量',
@@ -41,139 +60,183 @@ const socialPool = [
       '計算角度',
       '寫文章'
     ],
-    answer: 0
+    answer: 0,
+    displayAnswer: '比較不同項目的數量'
   },
   {
+    type: 'options',
     question: '製作圖表時，一定要標註什麼？',
     options: [
-      '顏色',
       '標題、單位、資料來源',
+      '顏色',
       '自己的名字',
       '日期就好'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '標題、單位、資料來源'
   },
   {
+    type: 'options',
     question: '比較表適合用來做什麼？',
     options: [
-      '只寫一個項目',
       '多面向評估比較',
+      '只寫一個項目',
       '畫圖',
       '寫故事'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '多面向評估比較'
   }
 ]
 
-function generateSocialQuestion() {
-  const q = socialPool[Math.floor(Math.random() * socialPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialPool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 數學科題庫（數據分析綜合）──────────────────────
 const mathPool = [
   {
+    type: 'options',
     question: '某項占40%，圓形圖上應該是幾度？',
-    options: ['40度', '90度', '144度', '180度'],
-    answer: 2
+    options: ['144度', '40度', '90度', '180度'],
+    answer: 0,
+    displayAnswer: '144度'
   },
   {
+    type: 'options',
     question: '100的25%是多少？',
-    options: ['20', '25', '30', '35'],
-    answer: 1
+    options: ['25', '20', '30', '35'],
+    answer: 0,
+    displayAnswer: '25'
   },
   {
+    type: 'options',
     question: '某數從100成長到120，成長率是多少？',
-    options: ['10%', '20%', '25%', '30%'],
-    answer: 1
+    options: ['20%', '10%', '25%', '30%'],
+    answer: 0,
+    displayAnswer: '20%'
   },
   {
+    type: 'options',
     question: '如果總數是200，其中一項是50，占多少％？',
-    options: ['20%', '25%', '30%', '40%'],
-    answer: 1
+    options: ['25%', '20%', '30%', '40%'],
+    answer: 0,
+    displayAnswer: '25%'
   },
   {
+    type: 'options',
     question: '圓形圖中，50%應該占幾度？',
-    options: ['90度', '120度', '180度', '360度'],
-    answer: 2
+    options: ['180度', '90度', '120度', '360度'],
+    answer: 0,
+    displayAnswer: '180度'
   },
   {
+    type: 'options',
     question: '某數從80增加到100，成長了多少％？',
-    options: ['20%', '25%', '30%', '40%'],
-    answer: 1
+    options: ['25%', '20%', '30%', '40%'],
+    answer: 0,
+    displayAnswer: '25%'
   },
   {
+    type: 'options',
     question: '400的10%是多少？',
-    options: ['30', '40', '50', '60'],
-    answer: 1
+    options: ['40', '30', '50', '60'],
+    answer: 0,
+    displayAnswer: '40'
   },
   {
+    type: 'options',
     question: '如果占比是20%，圓形圖上是幾度？',
-    options: ['20度', '36度', '72度', '90度'],
-    answer: 2
+    options: ['72度', '20度', '36度', '90度'],
+    answer: 0,
+    displayAnswer: '72度'
   }
 ]
 
-function generateMathQuestion() {
-  const q = mathPool[Math.floor(Math.random() * mathPool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathPool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 科學題庫（發電機原理）────────────────────────────
 const sciencePool = [
   {
+    type: 'options',
     question: '水力發電是利用什麼能量？',
     options: [
-      '水的溫度',
       '水從高處落下的位能',
+      '水的溫度',
       '水的顏色',
       '水的味道'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '水從高處落下的位能'
   },
   {
+    type: 'options',
     question: '風力發電是利用什麼轉動發電機？',
-    options: ['太陽', '風吹動葉片', '水流', '人力'],
-    answer: 1
+    options: ['風吹動葉片', '太陽', '水流', '人力'],
+    answer: 0,
+    displayAnswer: '風吹動葉片'
   },
   {
+    type: 'options',
     question: '太陽能板是利用什麼原理發電？',
     options: [
-      '熱能轉換',
       '光電效應',
+      '熱能轉換',
       '化學反應',
       '摩擦生電'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '光電效應'
   },
   {
+    type: 'options',
     question: '火力發電廠用什麼推動渦輪機？',
-    options: ['風', '水蒸汽', '太陽光', '人力'],
-    answer: 1
+    options: ['水蒸汽', '風', '太陽光', '人力'],
+    answer: 0,
+    displayAnswer: '水蒸汽'
   },
   {
+    type: 'options',
     question: '所有發電方式的共同點是什麼？',
     options: [
-      '都用水',
       '都要轉動（太陽能除外）',
+      '都用水',
       '都很貴',
       '都會爆炸'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '都要轉動（太陽能除外）'
   },
   {
+    type: 'options',
     question: '能量轉換的順序，水力發電是？',
     options: [
       '位能→動能→電能',
@@ -181,124 +244,168 @@ const sciencePool = [
       '熱能→光能→電能',
       '化學能→電能'
     ],
-    answer: 0
+    answer: 0,
+    displayAnswer: '位能→動能→電能'
   },
   {
+    type: 'options',
     question: '風力發電的能量轉換是？',
     options: [
-      '熱能→電能',
       '風的動能→電能',
+      '熱能→電能',
       '位能→電能',
       '化學能→電能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '風的動能→電能'
   },
   {
+    type: 'options',
     question: '太陽能發電「不需要」什麼？',
     options: [
+      '轉動渦輪機',
       '陽光',
       '太陽能板',
-      '轉動渦輪機',
       '電線'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '轉動渦輪機'
   }
 ]
 
-function generateScienceQuestion() {
-  const q = sciencePool[Math.floor(Math.random() * sciencePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(sciencePool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
 // ── 語文題庫（論證結構）──────────────────────────
 const chinesePool = [
   {
+    type: 'options',
     question: '論證的三要素是什麼？',
     options: [
-      '標題、內容、結論',
       '主張、理由、證據',
+      '標題、內容、結論',
       '開頭、中間、結尾',
       '問題、答案、例子'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '主張、理由、證據'
   },
   {
+    type: 'options',
     question: '「台灣應該發展綠能，因為可以減少空氣污染」，這是什麼？',
-    options: ['主張', '理由', '證據', '結論'],
-    answer: 1
+    options: ['理由', '主張', '證據', '結論'],
+    answer: 0,
+    displayAnswer: '理由'
   },
   {
+    type: 'options',
     question: '好的證據應該具備什麼特質？',
     options: [
-      '很誇張',
       '有數據或實例支持',
+      '很誇張',
       '聽起來有道理就好',
       '是自己的想法'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '有數據或實例支持'
   },
   {
+    type: 'options',
     question: '論證文最重要的是什麼？',
     options: [
-      '字數很多',
       '邏輯清楚、有證據支持',
+      '字數很多',
       '用很多成語',
       '寫得很快'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '邏輯清楚、有證據支持'
   },
   {
+    type: 'options',
     question: '下列哪個是好的「證據」？',
     options: [
+      '根據能源局數據，綠能占5.4%',
       '我覺得應該是這樣',
       '大家都說是這樣',
-      '根據能源局數據，綠能占5.4%',
       '聽說好像是'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '根據能源局數據，綠能占5.4%'
   },
   {
+    type: 'options',
     question: '主張和理由的關係是什麼？',
     options: [
-      '沒有關係',
       '理由支持主張',
+      '沒有關係',
       '主張支持理由',
       '互相矛盾'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '理由支持主張'
   },
   {
+    type: 'options',
     question: '「根據研究，多運動能增強免疫力」，這是什麼？',
-    options: ['主張', '理由', '證據', '標題'],
-    answer: 2
+    options: ['證據', '主張', '理由', '標題'],
+    answer: 0,
+    displayAnswer: '證據'
   },
   {
+    type: 'options',
     question: '寫論證文時，為什麼要提供證據？',
     options: [
-      '讓文章變長',
       '增加說服力',
+      '讓文章變長',
       '老師規定的',
       '比較好看'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '增加說服力'
   }
 ]
 
-function generateChineseQuestion() {
-  const q = chinesePool[Math.floor(Math.random() * chinesePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateChineseQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(chinesePool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
+})()
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export {
+  generateSocialQuestion,
+  generateMathQuestion,
+  generateScienceQuestion,
+  generateChineseQuestion
 }
 
 // ── Day 資料 ──────────────────────────────────────

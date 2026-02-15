@@ -1,5 +1,130 @@
 // week09/day5.js - W9 Day 5: 公民的聲音
 
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 練習題庫
+// ==========================================
+
+// 【詞彙總複習】W9 重點詞彙題庫
+const vocabQuestions = [
+  {
+    type: 'options',
+    question: '「民主」的原意是?',
+    options: ['人民統治', '國王統治', '專家統治', '軍隊統治'],
+    answer: 0,
+    displayAnswer: '人民統治'
+  },
+  {
+    type: 'options',
+    question: '台灣在哪一年解除戒嚴?',
+    options: ['1987年', '1979年', '1996年', '2000年'],
+    answer: 0,
+    displayAnswer: '1987年'
+  },
+  {
+    type: 'options',
+    question: '野百合學運發生在哪一年?',
+    options: ['1990年', '1987年', '1996年', '2000年'],
+    answer: 0,
+    displayAnswer: '1990年'
+  },
+  {
+    type: 'options',
+    question: '圓形圖中,100% 等於多少度?',
+    options: ['360°', '180°', '270°', '90°'],
+    answer: 0,
+    displayAnswer: '360°'
+  },
+  {
+    type: 'options',
+    question: '串聯電路的特徵是?',
+    options: ['只有一條路徑', '多條路徑', '各自獨立', '沒有開關'],
+    answer: 0,
+    displayAnswer: '只有一條路徑'
+  },
+  {
+    type: 'options',
+    question: '並聯電路可以比喻成民主制度的哪個特徵?',
+    options: ['權力分立', '獨裁統治', '君主專制', '無政府狀態'],
+    answer: 0,
+    displayAnswer: '權力分立'
+  },
+  {
+    type: 'options',
+    question: '什麼是「公民不服從」?',
+    options: [
+      '當法律不正義時,用和平但違法的方式表達抗議',
+      '暴力抗議',
+      '完全服從政府',
+      '不投票'
+    ],
+    answer: 0,
+    displayAnswer: '當法律不正義時,用和平但違法的方式表達抗議'
+  },
+  {
+    type: 'options',
+    question: '折線圖最適合表示什麼?',
+    options: ['數據隨時間變化', '各部分比例', '地理位置', '人物關係'],
+    answer: 0,
+    displayAnswer: '數據隨時間變化'
+  },
+  {
+    type: 'options',
+    question: '混合電路結合了哪兩種電路?',
+    options: ['串聯和並聯', '直流和交流', '高壓和低壓', '單相和三相'],
+    answer: 0,
+    displayAnswer: '串聯和並聯'
+  },
+  {
+    type: 'options',
+    question: '論說文的核心是什麼?',
+    options: [
+      '透過理由和證據說服讀者',
+      '情緒表達',
+      '攻擊對方',
+      '炫耀文筆'
+    ],
+    answer: 0,
+    displayAnswer: '透過理由和證據說服讀者'
+  },
+  {
+    type: 'options',
+    question: '台灣首次總統直選是在哪一年?',
+    options: ['1996年', '1987年', '1990年', '2000年'],
+    answer: 0,
+    displayAnswer: '1996年'
+  },
+  {
+    type: 'options',
+    question: '二二八事件發生在哪一年?',
+    options: ['1947年', '1945年', '1949年', '1987年'],
+    answer: 0,
+    displayAnswer: '1947年'
+  }
+]
+
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 課程內容
+// ==========================================
+
 const day5 = {
   id: 'day5',
   name: '第五天',
@@ -448,68 +573,7 @@ const day5 = {
       },
       practice: {
         questionCount: 10,
-        questions: [
-          {
-            question: '「民主」的原意是?',
-            options: ['國王統治', '人民統治', '專家統治', '軍隊統治'],
-            answer: 1
-          },
-          {
-            question: '台灣在哪一年解除戒嚴?',
-            options: ['1979 年', '1987 年', '1996 年', '2000 年'],
-            answer: 1
-          },
-          {
-            question: '野百合學運發生在哪一年?',
-            options: ['1987 年', '1990 年', '1996 年', '2000 年'],
-            answer: 1
-          },
-          {
-            question: '圓形圖中,100% 等於多少度?',
-            options: ['180°', '270°', '360°', '90°'],
-            answer: 2
-          },
-          {
-            question: '串聯電路的特徵是?',
-            options: ['多條路徑', '各自獨立', '只有一條路徑', '沒有開關'],
-            answer: 2
-          },
-          {
-            question: '並聯電路可以比喻成民主制度的哪個特徵?',
-            options: ['獨裁統治', '權力分立', '君主專制', '無政府狀態'],
-            answer: 1
-          },
-          {
-            question: '什麼是「公民不服從」?',
-            options: [
-              '暴力抗議',
-              '完全服從政府',
-              '當法律不正義時,用和平但違法的方式表達抗議',
-              '不投票'
-            ],
-            answer: 2
-          },
-          {
-            question: '折線圖最適合表示什麼?',
-            options: ['各部分比例', '數據隨時間變化', '地理位置', '人物關係'],
-            answer: 1
-          },
-          {
-            question: '混合電路結合了哪兩種電路?',
-            options: ['串聯和並聯', '直流和交流', '高壓和低壓', '單相和三相'],
-            answer: 0
-          },
-          {
-            question: '論說文的核心是什麼?',
-            options: [
-              '情緒表達',
-              '透過理由和證據說服讀者',
-              '攻擊對方',
-              '炫耀文筆'
-            ],
-            answer: 1
-          }
-        ]
+        generator: generateVocabQuestion
       }
     },
 

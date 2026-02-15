@@ -1,191 +1,333 @@
 // src/data/weeks/week02/day2.js
 // W2 Day 2：生命的形狀
 
-// ==========================================
-// 數學：公倍數與最小公倍數
-// ==========================================
-const generateLCMQuestion = () => {
-  const pairs = [
-    { a: 4,  b: 6,  lcm: 12 },
-    { a: 3,  b: 5,  lcm: 15 },
-    { a: 6,  b: 9,  lcm: 18 },
-    { a: 4,  b: 10, lcm: 20 },
-    { a: 6,  b: 8,  lcm: 24 },
-    { a: 5,  b: 6,  lcm: 30 },
-    { a: 4,  b: 7,  lcm: 28 },
-    { a: 8,  b: 12, lcm: 24 },
-    { a: 6,  b: 10, lcm: 30 },
-    { a: 9,  b: 12, lcm: 36 },
-    { a: 5,  b: 8,  lcm: 40 },
-    { a: 7,  b: 14, lcm: 14 },
-  ]
-  const pair = pairs[Math.floor(Math.random() * pairs.length)]
-  const wrong = [pair.lcm + pair.a, pair.a * pair.b, pair.lcm - pair.b]
-    .filter(n => n !== pair.lcm && n > 0)
-    .slice(0, 3)
-  const options = [String(pair.lcm), ...wrong.map(String)].sort(() => Math.random() - 0.5)
-  return {
-    question: `${pair.a} 和 ${pair.b} 的最小公倍數是多少？`,
-    options,
-    answer: String(pair.lcm),
-    type: 'choice'
-  }
-}
-
-const generateLCMWordQuestion = () => {
-  const problems = [
-    {
-      question: '每隔 4 天澆一次花，每隔 6 天施一次肥，今天同時澆花又施肥，下次同時進行要等幾天？',
-      answer: '12',
-      options: ['12', '24', '10', '18']
-    },
-    {
-      question: '公車 A 每 6 分鐘一班，公車 B 每 9 分鐘一班，兩班車同時出發後，最少幾分鐘後再次同時出發？',
-      answer: '18',
-      options: ['18', '54', '15', '36']
-    },
-    {
-      question: '有兩個齒輪，大齒輪轉 4 格、小齒輪轉 6 格對齊一次，最少要各轉幾格才能再次對齊？',
-      answer: '12',
-      options: ['12', '24', '10', '18']
-    },
-    {
-      question: '小明每 3 天跑步一次，小華每 5 天跑步一次，今天一起跑步，下次一起跑步要等幾天？',
-      answer: '15',
-      options: ['15', '8', '30', '10']
-    },
-  ]
-  const p = problems[Math.floor(Math.random() * problems.length)]
-  return {
-    question: p.question,
-    options: [...p.options].sort(() => Math.random() - 0.5),
-    answer: p.answer,
-    type: 'choice'
-  }
-}
-
-const generateMathQuestion = () =>
-  Math.random() < 0.5 ? generateLCMQuestion() : generateLCMWordQuestion()
+import { shuffleArray, shuffleOptions } from '../../utils'
 
 // ==========================================
-// 社會：原住民與土地
+// 數學:公倍數與最小公倍數
 // ==========================================
-const socialQBank = [
+const mathQuestions = [
+  // 最小公倍數題型
   {
-    question: '魯凱族視為聖山的是哪一座山？',
+    type: 'options',
+    question: '4 和 6 的最小公倍數是多少?',
+    options: ['12', '24', '18', '8'],
+    answer: 0,
+    displayAnswer: '12'
+  },
+  {
+    type: 'options',
+    question: '3 和 5 的最小公倍數是多少?',
+    options: ['15', '8', '10', '30'],
+    answer: 0,
+    displayAnswer: '15'
+  },
+  {
+    type: 'options',
+    question: '6 和 9 的最小公倍數是多少?',
+    options: ['18', '12', '27', '36'],
+    answer: 0,
+    displayAnswer: '18'
+  },
+  {
+    type: 'options',
+    question: '4 和 10 的最小公倍數是多少?',
+    options: ['20', '14', '40', '10'],
+    answer: 0,
+    displayAnswer: '20'
+  },
+  {
+    type: 'options',
+    question: '6 和 8 的最小公倍數是多少?',
+    options: ['24', '14', '48', '16'],
+    answer: 0,
+    displayAnswer: '24'
+  },
+  {
+    type: 'options',
+    question: '5 和 6 的最小公倍數是多少?',
+    options: ['30', '11', '15', '60'],
+    answer: 0,
+    displayAnswer: '30'
+  },
+  {
+    type: 'options',
+    question: '4 和 7 的最小公倍數是多少?',
+    options: ['28', '11', '14', '21'],
+    answer: 0,
+    displayAnswer: '28'
+  },
+  {
+    type: 'options',
+    question: '8 和 12 的最小公倍數是多少?',
+    options: ['24', '20', '48', '96'],
+    answer: 0,
+    displayAnswer: '24'
+  },
+  {
+    type: 'options',
+    question: '6 和 10 的最小公倍數是多少?',
+    options: ['30', '16', '60', '20'],
+    answer: 0,
+    displayAnswer: '30'
+  },
+  {
+    type: 'options',
+    question: '9 和 12 的最小公倍數是多少?',
+    options: ['36', '21', '18', '108'],
+    answer: 0,
+    displayAnswer: '36'
+  },
+  {
+    type: 'options',
+    question: '5 和 8 的最小公倍數是多少?',
+    options: ['40', '13', '24', '80'],
+    answer: 0,
+    displayAnswer: '40'
+  },
+  {
+    type: 'options',
+    question: '7 和 14 的最小公倍數是多少?',
+    options: ['14', '7', '21', '28'],
+    answer: 0,
+    displayAnswer: '14'
+  },
+  // 應用題型
+  {
+    type: 'options',
+    question: '每隔 4 天澆一次花,每隔 6 天施一次肥,今天同時澆花又施肥,下次同時進行要等幾天?',
+    options: ['12 天', '24 天', '10 天', '18 天'],
+    answer: 0,
+    displayAnswer: '12 天'
+  },
+  {
+    type: 'options',
+    question: '公車 A 每 6 分鐘一班,公車 B 每 9 分鐘一班,兩班車同時出發後,最少幾分鐘後再次同時出發?',
+    options: ['18 分鐘', '54 分鐘', '15 分鐘', '36 分鐘'],
+    answer: 0,
+    displayAnswer: '18 分鐘'
+  },
+  {
+    type: 'options',
+    question: '有兩個齒輪,大齒輪轉 4 格、小齒輪轉 6 格對齊一次,最少要各轉幾格才能再次對齊?',
+    options: ['12 格', '24 格', '10 格', '18 格'],
+    answer: 0,
+    displayAnswer: '12 格'
+  },
+  {
+    type: 'options',
+    question: '小明每 3 天跑步一次,小華每 5 天跑步一次,今天一起跑步,下次一起跑步要等幾天?',
+    options: ['15 天', '8 天', '30 天', '10 天'],
+    answer: 0,
+    displayAnswer: '15 天'
+  }
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+// ==========================================
+// 社會:原住民與土地
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '魯凱族視為聖山的是哪一座山?',
     options: ['大武山', '玉山', '雪山', '合歡山'],
-    answer: '大武山'
+    answer: 0,
+    displayAnswer: '大武山'
   },
   {
-    question: '台灣原住民族的傳統生態知識（TEK）主要是指什麼？',
+    type: 'options',
+    question: '台灣原住民族的傳統生態知識(TEK)主要是指什麼?',
     options: ['祖先代代相傳對自然環境的觀察與智慧', '現代科學研究方法', '政府制定的環境法規', '外來移民帶來的農業技術'],
-    answer: '祖先代代相傳對自然環境的觀察與智慧'
+    answer: 0,
+    displayAnswer: '祖先代代相傳對自然環境的觀察與智慧'
   },
   {
-    question: '台灣目前政府正式認定的原住民族共有幾族？',
+    type: 'options',
+    question: '台灣目前政府正式認定的原住民族共有幾族?',
     options: ['16 族', '10 族', '14 族', '20 族'],
-    answer: '16 族'
+    answer: 0,
+    displayAnswer: '16 族'
   },
   {
-    question: '魯凱族和排灣族的傳統服飾中，常見的動物圖騰是？',
+    type: 'options',
+    question: '魯凱族和排灣族的傳統服飾中,常見的動物圖騰是?',
     options: ['百步蛇', '老鷹', '梅花鹿', '黑熊'],
-    answer: '百步蛇'
+    answer: 0,
+    displayAnswer: '百步蛇'
   },
   {
-    question: '台灣原住民族的傳統領域主要分布在哪裡？',
+    type: 'options',
+    question: '台灣原住民族的傳統領域主要分布在哪裡?',
     options: ['山地與東部海岸', '西部平原', '城市近郊', '離島地區'],
-    answer: '山地與東部海岸'
+    answer: 0,
+    displayAnswer: '山地與東部海岸'
   },
   {
-    question: '以下哪一種行為最能體現原住民族「天人合一」的土地觀？',
+    type: 'options',
+    question: '以下哪一種行為最能體現原住民族「天人合一」的土地觀?',
     options: ['按照動物繁殖季節調整獵捕時間', '盡量多獵捕以儲備糧食', '用化學藥劑驅除害蟲', '圍住土地防止動物進入'],
-    answer: '按照動物繁殖季節調整獵捕時間'
+    answer: 0,
+    displayAnswer: '按照動物繁殖季節調整獵捕時間'
   },
   {
-    question: '魯凱族「巴冷公主」的故事中，公主嫁給了誰？',
+    type: 'options',
+    question: '魯凱族「巴冷公主」的故事中,公主嫁給了誰?',
     options: ['化身為王子的百步蛇神', '來自海洋的漁夫', '鄰族的頭目', '天上的太陽神'],
-    answer: '化身為王子的百步蛇神'
-  },
+    answer: 0,
+    displayAnswer: '化身為王子的百步蛇神'
+  }
 ]
-const generateSocialQuestion = () => {
-  const q = socialQBank[Math.floor(Math.random() * socialQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // ==========================================
-// 科學：植物構造
+// 科學:植物構造
 // ==========================================
-const scienceQBank = [
+const scienceQuestions = [
   {
-    question: '植物種子萌發需要哪三個基本條件？',
+    type: 'options',
+    question: '植物種子萌發需要哪三個基本條件?',
     options: ['適當的水分、空氣和溫度', '陽光、土壤和肥料', '雨水、風和昆蟲', '高溫、乾燥和黑暗'],
-    answer: '適當的水分、空氣和溫度'
+    answer: 0,
+    displayAnswer: '適當的水分、空氣和溫度'
   },
   {
-    question: '種子中的「子葉」主要功能是什麼？',
+    type: 'options',
+    question: '種子中的「子葉」主要功能是什麼?',
     options: ['儲存養分供幼苗生長', '吸收土壤中的水分', '進行光合作用', '保護種子不受傷害'],
-    answer: '儲存養分供幼苗生長'
+    answer: 0,
+    displayAnswer: '儲存養分供幼苗生長'
   },
   {
-    question: '植物的根有哪些主要功能？',
+    type: 'options',
+    question: '植物的根有哪些主要功能?',
     options: ['吸收水分與礦物質、固定植物', '進行光合作用製造養分', '傳輸花粉幫助繁殖', '釋放氧氣到空氣中'],
-    answer: '吸收水分與礦物質、固定植物'
+    answer: 0,
+    displayAnswer: '吸收水分與礦物質、固定植物'
   },
   {
-    question: '植物葉片上的「氣孔」主要功能是什麼？',
-    options: ['與外界交換氣體（吸收 CO₂、釋放 O₂）', '吸收陽光進行光合作用', '儲存水分防止乾燥', '感應光線方向'],
-    answer: '與外界交換氣體（吸收 CO₂、釋放 O₂）'
+    type: 'options',
+    question: '植物葉片上的「氣孔」主要功能是什麼?',
+    options: ['與外界交換氣體(吸收 CO₂、釋放 O₂)', '吸收陽光進行光合作用', '儲存水分防止乾燥', '感應光線方向'],
+    answer: 0,
+    displayAnswer: '與外界交換氣體(吸收 CO₂、釋放 O₂)'
   },
   {
-    question: '植物莖部的導管和韌皮部分別運輸什麼？',
-    options: ['導管運輸水分和礦物質，韌皮部運輸有機養分', '導管運輸養分，韌皮部運輸水分', '兩者都運輸水分', '兩者都運輸養分'],
-    answer: '導管運輸水分和礦物質，韌皮部運輸有機養分'
+    type: 'options',
+    question: '植物莖部的導管和韌皮部分別運輸什麼?',
+    options: ['導管運輸水分和礦物質,韌皮部運輸有機養分', '導管運輸養分,韌皮部運輸水分', '兩者都運輸水分', '兩者都運輸養分'],
+    answer: 0,
+    displayAnswer: '導管運輸水分和礦物質,韌皮部運輸有機養分'
   },
   {
-    question: '光合作用的主要原料是什麼？',
+    type: 'options',
+    question: '光合作用的主要原料是什麼?',
     options: ['二氧化碳和水', '氧氣和葡萄糖', '氮氣和礦物質', '氫氣和陽光'],
-    answer: '二氧化碳和水'
+    answer: 0,
+    displayAnswer: '二氧化碳和水'
   },
   {
-    question: '仙人掌的葉子退化成刺，這是植物哪種適應環境的表現？',
-    options: ['減少水分蒸發，適應乾旱環境', '增加光合作用面積', '保護果實不被動物吃掉', '幫助傳播種子'],
-    answer: '減少水分蒸發，適應乾旱環境'
-  },
+    type: 'options',
+    question: '仙人掌的葉子退化成刺,這是植物哪種適應環境的表現?',
+    options: ['減少水分蒸發,適應乾旱環境', '增加光合作用面積', '保護果實不被動物吃掉', '幫助傳播種子'],
+    answer: 0,
+    displayAnswer: '減少水分蒸發,適應乾旱環境'
+  }
 ]
-const generateScienceQuestion = () => {
-  const q = scienceQBank[Math.floor(Math.random() * scienceQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // ==========================================
-// 閱讀理解：魯凱族
+// 閱讀理解:魯凱族
 // ==========================================
-const readingQBank = [
+const readingQuestions = [
   {
-    question: '魯凱族「蛇卵生人」故事中，蛇蛋是在哪裡被發現的？',
+    type: 'options',
+    question: '魯凱族「蛇卵生人」故事中,蛇蛋是在哪裡被發現的?',
     options: ['山谷中的古甕裡', '大武山頂的石縫中', '大海邊的沙灘上', '老樹的樹洞裡'],
-    answer: '山谷中的古甕裡'
+    answer: 0,
+    displayAnswer: '山谷中的古甕裡'
   },
   {
-    question: '根據魯凱族「蛇孵太陽卵」，太陽產下的兩個卵孵化出了什麼？',
-    options: ['一對男女神，成為頭目的祖先', '兩條巨龍守護部落', '太陽和月亮', '火與水的精靈'],
-    answer: '一對男女神，成為頭目的祖先'
+    type: 'options',
+    question: '根據魯凱族「蛇孵太陽卵」,太陽產下的兩個卵孵化出了什麼?',
+    options: ['一對男女神,成為頭目的祖先', '兩條巨龍守護部落', '太陽和月亮', '火與水的精靈'],
+    answer: 0,
+    displayAnswer: '一對男女神,成為頭目的祖先'
   },
   {
-    question: '「巴冷公主」故事中，百步蛇神向頭目求親時，頭目的態度是？',
-    options: ['給予種種考驗，百步蛇神一一克服', '立刻答應，歡喜嫁女', '拒絕並驅逐百步蛇', '要求百步蛇帶來大量財寶'],
-    answer: '給予種種考驗，百步蛇神一一克服'
+    type: 'options',
+    question: '「巴冷公主」故事中,百步蛇神向頭目求親時,頭目的態度是?',
+    options: ['給予種種考驗,百步蛇神一一克服', '立刻答應,歡喜嫁女', '拒絕並驅逐百步蛇', '要求百步蛇帶來大量財寶'],
+    answer: 0,
+    displayAnswer: '給予種種考驗,百步蛇神一一克服'
   },
   {
-    question: '魯凱族的起源神話中，為什麼頭目家族的祖先特別尊貴？',
+    type: 'options',
+    question: '魯凱族的起源神話中,為什麼頭目家族的祖先特別尊貴?',
     options: ['他們是由百步蛇蛋孵化而生的後代', '他們是第一個登上大武山的人', '他們掌握了火的使用方法', '他們帶領族人渡過大洪水'],
-    answer: '他們是由百步蛇蛋孵化而生的後代'
-  },
+    answer: 0,
+    displayAnswer: '他們是由百步蛇蛋孵化而生的後代'
+  }
 ]
-const generateReadingQuestion = () => {
-  const q = readingQBank[Math.floor(Math.random() * readingQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateReadingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(readingQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion, generateSocialQuestion, generateScienceQuestion, generateReadingQuestion }
 
 // ==========================================
 // Day 2 主體
@@ -252,7 +394,9 @@ const day2 = {
       practice: {
         questionCount: 4,
         generator: generateReadingQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -303,7 +447,9 @@ const day2 = {
       practice: {
         questionCount: 5,
         generator: generateSocialQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -358,7 +504,9 @@ const day2 = {
       practice: {
         questionCount: 5,
         generator: generateMathQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -417,7 +565,9 @@ const day2 = {
       practice: {
         questionCount: 5,
         generator: generateScienceQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 

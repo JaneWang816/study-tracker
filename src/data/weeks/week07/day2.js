@@ -1,174 +1,239 @@
 // src/data/weeks/week07/day2.js
 // W7 Day2：火車怎麼動起來？
 
-// ── 科學題庫（慣性 + 摩擦力）────────────────────
-const sciencePool = [
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 科學:慣性+摩擦力
+// ==========================================
+const scienceQuestions = [
   {
-    question: '什麼是「慣性」？',
+    type: 'options',
+    question: '什麼是「慣性」?',
     options: [
-      '物體越重越容易移動',
       '物體保持原來運動狀態的性質',
+      '物體越重越容易移動',
       '物體摩擦時產生的力',
       '物體加速時產生的熱'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '慣性是物體保持原來運動狀態的性質。靜止的物體傾向保持靜止,運動的物體傾向保持等速直線運動。物體質量越大,慣性越大。'
   },
   {
-    question: '站在公車上，公車突然向前加速，你的身體會往哪個方向傾？',
-    options: ['向前傾', '向後傾', '向左傾', '不動'],
-    answer: 1
-  },
-  {
-    question: '站在公車上，公車突然煞車，你的身體會往哪個方向傾？',
+    type: 'options',
+    question: '站在公車上,公車突然向前加速,你的身體會往哪個方向傾?',
     options: ['向後傾', '向前傾', '向左傾', '不動'],
-    answer: 1
+    answer: 0,
+    displayAnswer: '公車向前加速時,你的身體因為慣性想保持原來的靜止狀態,所以會相對向後傾。這就是為什麼公車啟動時要抓緊扶手。'
   },
   {
-    question: '為什麼火車要提前很遠就開始煞車，不能等到快到站再踩？',
+    type: 'options',
+    question: '站在公車上,公車突然煞車,你的身體會往哪個方向傾?',
+    options: ['向前傾', '向後傾', '向左傾', '不動'],
+    answer: 0,
+    displayAnswer: '公車煞車時,你的身體因為慣性想繼續保持向前運動,所以會向前傾。這就是為什麼車上要有安全帶和扶手。'
+  },
+  {
+    type: 'options',
+    question: '為什麼火車要提前很遠就開始煞車,不能等到快到站再踩?',
     options: [
-      '火車太重，慣性大，需要很長距離才能停下來',
+      '火車太重,慣性大,需要很長距離才能停下來',
       '火車司機反應慢',
-      '鐵軌太滑，摩擦力太大',
+      '鐵軌太滑,摩擦力太大',
       '火車的煞車系統壞了'
     ],
-    answer: 0
+    answer: 0,
+    displayAnswer: '火車質量非常大,慣性也非常大。根據牛頓第一定律,要改變這麼大的慣性需要很長的時間和距離,所以必須提前很遠就開始煞車。'
   },
   {
-    question: '摩擦力的方向通常是？',
+    type: 'options',
+    question: '摩擦力的方向通常是?',
     options: [
-      '和運動方向相同',
       '和運動方向相反',
+      '和運動方向相同',
       '垂直於運動方向',
       '沒有固定方向'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '摩擦力總是阻礙物體的運動,所以方向和運動方向相反。這就是為什麼摩擦力會讓運動的物體減速。'
   },
   {
-    question: '下列哪種情況摩擦力最大？',
+    type: 'options',
+    question: '下列哪種情況摩擦力最大?',
     options: [
-      '輪子在冰面上滾動',
       '輪子在沙地上滾動',
+      '輪子在冰面上滾動',
       '輪子在光滑地板上滾動',
       '輪子在水面上滾動'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '沙地表面粗糙且鬆軟,摩擦力最大。冰面、光滑地板、水面都比較光滑,摩擦力較小。這就是為什麼在沙灘上推車特別費力。'
   },
   {
-    question: '火車的鋼輪在鐵軌上行駛，和汽車輪胎在柏油路上相比，摩擦力如何？',
+    type: 'options',
+    question: '火車的鋼輪在鐵軌上行駛,和汽車輪胎在柏油路上相比,摩擦力如何?',
     options: [
-      '火車摩擦力較大，所以跑得快',
-      '火車摩擦力較小，所以需要很長距離煞車',
+      '火車摩擦力較小,所以需要很長距離煞車',
+      '火車摩擦力較大,所以跑得快',
       '兩者摩擦力一樣大',
       '火車沒有摩擦力'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '鋼輪和鐵軌之間的摩擦力比橡膠輪胎和柏油路小很多,這讓火車更省能源,但也意味著煞車距離更長,需要提前很遠就開始減速。'
   },
   {
-    question: '下列哪個例子最能說明慣性的作用？',
+    type: 'options',
+    question: '下列哪個例子最能說明慣性的作用?',
     options: [
+      '搖晃桌子上的杯子,裡面的水灑出來',
       '蘋果從樹上掉下來',
       '搭電梯上樓時感覺變重',
-      '搖晃桌子上的杯子，裡面的水灑出來',
       '風吹動樹葉'
     ],
-    answer: 2
+    answer: 0,
+    displayAnswer: '搖晃杯子時,杯子運動但水因為慣性想保持原來的靜止狀態,所以會灑出來。這是慣性最典型的例子。蘋果掉下來是重力,搭電梯變重是慣性加重力,風吹樹葉是外力。'
   }
 ]
 
-function generateScienceQuestion() {
-  const q = sciencePool[Math.floor(Math.random() * sciencePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
 
-// ── 數學題庫（速率純計算 + 單位換算）────────────
-function generateMathQuestion() {
-  const type = Math.floor(Math.random() * 4)
-
-  if (type === 0) {
-    // km/h → m/s
-    const kmh = (Math.floor(Math.random() * 8) + 2) * 18  // 36, 54, 72, ..., 180
-    const ms = kmh / 3.6
-    // 設計成整數結果（36km/h=10m/s, 72=20, 108=30, 144=40）
-    const cleanKmh = [36, 72, 108, 144][Math.floor(Math.random() * 4)]
-    const cleanMs = cleanKmh / 3.6
-    const wrong1 = cleanMs + 5
-    const wrong2 = cleanMs - 5 > 0 ? cleanMs - 5 : cleanMs + 10
-    const wrong3 = cleanKmh / 3
-    const options = [String(cleanMs), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(cleanMs)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `時速 ${cleanKmh} 公里換算成公尺/秒，是多少 m/s？（提示：÷3.6）`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 1) {
-    // m/s → km/h
-    const ms = (Math.floor(Math.random() * 5) + 1) * 10   // 10, 20, 30, 40, 50
-    const kmh = ms * 3.6
-    const wrong1 = kmh + 18
-    const wrong2 = kmh - 18 > 0 ? kmh - 18 : kmh + 36
-    const wrong3 = ms * 3
-    const options = [String(kmh), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(kmh)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `速率 ${ms} 公尺/秒換算成公里/小時，是多少 km/h？（提示：×3.6）`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 2) {
-    // 速率計算（整數）
-    const d = (Math.floor(Math.random() * 6) + 2) * 60    // 120–420，60的倍數
-    const t = Math.floor(Math.random() * 3) + 1            // 1–3小時
-    const v = d / t
-    const wrong1 = v + 30
-    const wrong2 = v - 30 > 0 ? v - 30 : v + 60
-    const wrong3 = d + t
-    const options = [String(v), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(v)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `一列火車行駛 ${d} 公里，花了 ${t} 小時，平均速率是多少公里/小時？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else {
-    // 距離計算
-    const v = (Math.floor(Math.random() * 5) + 2) * 40    // 80–240
-    const t = Math.floor(Math.random() * 3) + 1            // 1–3小時
-    const d = v * t
-    const wrong1 = d + 40
-    const wrong2 = d - 40 > 0 ? d - 40 : d + 80
-    const wrong3 = v + t
-    const options = [String(d), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(d)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `火車時速 ${v} 公里，行駛 ${t} 小時，共走幾公里？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
+// ==========================================
+// 數學:速率純計算+單位換算
+// ==========================================
+const mathQuestions = [
+  // km/h → m/s
+  {
+    type: 'options',
+    question: '時速 36 公里換算成公尺/秒,是多少 m/s?(提示:÷3.6)',
+    options: ['10', '15', '5', '12'],
+    answer: 0,
+    displayAnswer: '36 ÷ 3.6 = 10 m/s\n提示:1 km/h = 1000m ÷ 3600s ≈ 0.278 m/s,所以 km/h ÷ 3.6 = m/s'
+  },
+  {
+    type: 'options',
+    question: '時速 72 公里換算成公尺/秒,是多少 m/s?(提示:÷3.6)',
+    options: ['20', '25', '15', '24'],
+    answer: 0,
+    displayAnswer: '72 ÷ 3.6 = 20 m/s'
+  },
+  {
+    type: 'options',
+    question: '時速 108 公里換算成公尺/秒,是多少 m/s?(提示:÷3.6)',
+    options: ['30', '35', '25', '36'],
+    answer: 0,
+    displayAnswer: '108 ÷ 3.6 = 30 m/s'
+  },
+  {
+    type: 'options',
+    question: '時速 144 公里換算成公尺/秒,是多少 m/s?(提示:÷3.6)',
+    options: ['40', '45', '35', '48'],
+    answer: 0,
+    displayAnswer: '144 ÷ 3.6 = 40 m/s'
+  },
+  // m/s → km/h
+  {
+    type: 'options',
+    question: '速率 10 公尺/秒換算成公里/小時,是多少 km/h?(提示:×3.6)',
+    options: ['36', '54', '18', '30'],
+    answer: 0,
+    displayAnswer: '10 × 3.6 = 36 km/h\n提示:m/s × 3.6 = km/h'
+  },
+  {
+    type: 'options',
+    question: '速率 20 公尺/秒換算成公里/小時,是多少 km/h?(提示:×3.6)',
+    options: ['72', '90', '54', '60'],
+    answer: 0,
+    displayAnswer: '20 × 3.6 = 72 km/h'
+  },
+  {
+    type: 'options',
+    question: '速率 30 公尺/秒換算成公里/小時,是多少 km/h?(提示:×3.6)',
+    options: ['108', '126', '90', '90'],
+    answer: 0,
+    displayAnswer: '30 × 3.6 = 108 km/h'
+  },
+  {
+    type: 'options',
+    question: '速率 40 公尺/秒換算成公里/小時,是多少 km/h?(提示:×3.6)',
+    options: ['144', '162', '126', '120'],
+    answer: 0,
+    displayAnswer: '40 × 3.6 = 144 km/h'
+  },
+  // 速率計算
+  {
+    type: 'options',
+    question: '一列火車行駛 120 公里,花了 1 小時,平均速率是多少公里/小時?',
+    options: ['120', '150', '90', '121'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 120 ÷ 1 = 120 km/h'
+  },
+  {
+    type: 'options',
+    question: '一列火車行駛 180 公里,花了 2 小時,平均速率是多少公里/小時?',
+    options: ['90', '120', '60', '182'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 180 ÷ 2 = 90 km/h'
+  },
+  {
+    type: 'options',
+    question: '一列火車行駛 240 公里,花了 3 小時,平均速率是多少公里/小時?',
+    options: ['80', '110', '50', '243'],
+    answer: 0,
+    displayAnswer: '速率 = 距離 ÷ 時間 = 240 ÷ 3 = 80 km/h'
+  },
+  // 距離計算
+  {
+    type: 'options',
+    question: '火車時速 80 公里,行駛 1 小時,共走幾公里?',
+    options: ['80', '120', '40', '81'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 80 × 1 = 80 km'
+  },
+  {
+    type: 'options',
+    question: '火車時速 120 公里,行駛 2 小時,共走幾公里?',
+    options: ['240', '280', '200', '122'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 120 × 2 = 240 km'
+  },
+  {
+    type: 'options',
+    question: '火車時速 160 公里,行駛 3 小時,共走幾公里?',
+    options: ['480', '520', '440', '163'],
+    answer: 0,
+    displayAnswer: '距離 = 速率 × 時間 = 160 × 3 = 480 km'
   }
-}
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateScienceQuestion, generateMathQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day2 = {

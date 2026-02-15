@@ -1,5 +1,5 @@
 // src/pages/LearningSession.jsx
-// 學習流程頁面 - 課程內容 â†’ 練習題 → 下一單元
+// 學習流程頁面 → 課程內容 → 練習題 → 下一單元
 
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -271,6 +271,14 @@ export default function LearningSession() {
           <div key={index} className="block-image">
             <img src={block.src} alt={block.alt || ''} />
             {block.caption && <p className="image-caption">{block.caption}</p>}
+          </div>
+        )
+      
+      case 'svg':
+        return (
+          <div key={index} className="block-svg">
+            <div dangerouslySetInnerHTML={{ __html: block.content }} />
+            {block.caption && <p className="svg-caption">{block.caption}</p>}
           </div>
         )
       

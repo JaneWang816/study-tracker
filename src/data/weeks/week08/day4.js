@@ -1,133 +1,183 @@
 // src/data/weeks/week08/day4.js
 // W8 Day4：動筆日
 
-// ── 數學綜合題庫（W8 所有知識點）────────────────
-function generateMathQuestion() {
-  const type = Math.floor(Math.random() * 5)
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-  if (type === 0) {
-    // 小數與百分比轉換
-    const pairs = [
-      { dec: 0.25, pct: 25 },
-      { dec: 0.5, pct: 50 },
-      { dec: 0.75, pct: 75 },
-      { dec: 0.2, pct: 20 },
-      { dec: 0.4, pct: 40 },
-      { dec: 0.6, pct: 60 }
-    ]
-    const p = pairs[Math.floor(Math.random() * pairs.length)]
-    const isToPercent = Math.random() > 0.5
-    
-    if (isToPercent) {
-      const wrong1 = p.pct + 10
-      const wrong2 = p.dec * 10
-      const wrong3 = p.pct - 10 > 0 ? p.pct - 10 : p.pct + 20
-      const options = [String(p.pct), String(wrong1), String(wrong2), String(wrong3)]
-      const correctText = String(p.pct)
-      for (let i = options.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[options[i], options[j]] = [options[j], options[i]]
-      }
-      return {
-        question: `小數 ${p.dec} 換算成百分比是多少？`,
-        options,
-        answer: options.indexOf(correctText)
-      }
-    } else {
-      const wrong1 = p.pct / 10
-      const wrong2 = p.pct
-      const wrong3 = p.dec * 10
-      const options = [String(p.dec), String(wrong1), String(wrong2), String(wrong3)]
-      const correctText = String(p.dec)
-      for (let i = options.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[options[i], options[j]] = [options[j], options[i]]
-      }
-      return {
-        question: `${p.pct}% 換算成小數是多少？`,
-        options,
-        answer: options.indexOf(correctText)
-      }
-    }
-  } else if (type === 1) {
-    // 成長率計算
-    const old = (Math.floor(Math.random() * 4) + 2) * 50
-    const increase = [10, 20, 25, 50][Math.floor(Math.random() * 4)]
-    const newVal = old + increase
-    const rate = Math.round((increase / old) * 100)
-    const wrong1 = increase
-    const wrong2 = rate + 10
-    const wrong3 = Math.round((newVal / old) * 100)
-    const options = [String(rate), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(rate)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `一家店去年營業額 ${old} 萬元，今年 ${newVal} 萬元，成長率約是多少%？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 2) {
-    // 已知成長率求新值
-    const old = (Math.floor(Math.random() * 4) + 2) * 100
-    const rate = [10, 20, 25, 50][Math.floor(Math.random() * 4)]
-    const newVal = old * (1 + rate / 100)
-    const wrong1 = old + rate
-    const wrong2 = old * (rate / 100)
-    const wrong3 = old - (old * rate / 100)
-    const options = [String(newVal), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(newVal)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `一間公司去年營收 ${old} 億元，今年成長 ${rate}%，今年營收是多少億元？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else if (type === 3) {
-    // 市占率計算
-    const total = (Math.floor(Math.random() * 4) + 2) * 100
-    const part = [40, 50, 60, 75, 80, 100][Math.floor(Math.random() * 6)]
-    const share = Math.round((part / total) * 100)
-    const wrong1 = Math.round((total / part) * 100)
-    const wrong2 = total - part
-    const wrong3 = share + 10
-    const options = [String(share), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(share)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `全台灣某產業總營收 ${total} 億元，A公司營收 ${part} 億元，A公司市占率是多少%？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
-  } else {
-    // 已知市占率求營收
-    const total = (Math.floor(Math.random() * 4) + 2) * 100
-    const share = [20, 25, 30, 40, 50][Math.floor(Math.random() * 5)]
-    const part = total * (share / 100)
-    const wrong1 = total - share
-    const wrong2 = total + share
-    const wrong3 = share
-    const options = [String(part), String(wrong1), String(wrong2), String(wrong3)]
-    const correctText = String(part)
-    for (let i = options.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[options[i], options[j]] = [options[j], options[i]]
-    }
-    return {
-      question: `全台灣某產業總營收 ${total} 億元，B公司市占率 ${share}%，B公司營收是多少億元？`,
-      options,
-      answer: options.indexOf(correctText)
-    }
+// ==========================================
+// 數學綜合:W8所有知識點
+// ==========================================
+const mathQuestions = [
+  // 小數轉百分比
+  {
+    type: 'options',
+    question: '小數 0.25 換算成百分比是多少?',
+    options: ['25', '35', '2.5', '15'],
+    answer: 0,
+    displayAnswer: '0.25 × 100 = 25%'
+  },
+  {
+    type: 'options',
+    question: '小數 0.5 換算成百分比是多少?',
+    options: ['50', '60', '5', '40'],
+    answer: 0,
+    displayAnswer: '0.5 × 100 = 50%'
+  },
+  {
+    type: 'options',
+    question: '小數 0.75 換算成百分比是多少?',
+    options: ['75', '85', '7.5', '65'],
+    answer: 0,
+    displayAnswer: '0.75 × 100 = 75%'
+  },
+  {
+    type: 'options',
+    question: '小數 0.4 換算成百分比是多少?',
+    options: ['40', '50', '4', '30'],
+    answer: 0,
+    displayAnswer: '0.4 × 100 = 40%'
+  },
+  // 百分比轉小數
+  {
+    type: 'options',
+    question: '25% 換算成小數是多少?',
+    options: ['0.25', '2.5', '25', '0.25'],
+    answer: 0,
+    displayAnswer: '25% ÷ 100 = 0.25'
+  },
+  {
+    type: 'options',
+    question: '50% 換算成小數是多少?',
+    options: ['0.5', '5', '50', '0.5'],
+    answer: 0,
+    displayAnswer: '50% ÷ 100 = 0.5'
+  },
+  {
+    type: 'options',
+    question: '20% 換算成小數是多少?',
+    options: ['0.2', '2', '20', '0.2'],
+    answer: 0,
+    displayAnswer: '20% ÷ 100 = 0.2'
+  },
+  {
+    type: 'options',
+    question: '60% 換算成小數是多少?',
+    options: ['0.6', '6', '60', '0.06'],
+    answer: 0,
+    displayAnswer: '60% ÷ 100 = 0.6'
+  },
+  // 成長率計算
+  {
+    type: 'options',
+    question: '一家店去年營業額 100 萬元,今年 110 萬元,成長率約是多少%?',
+    options: ['10', '10', '20', '110'],
+    answer: 0,
+    displayAnswer: '增加量 = 110 - 100 = 10萬元\n成長率 = (10 ÷ 100) × 100% = 10%'
+  },
+  {
+    type: 'options',
+    question: '一家店去年營業額 150 萬元,今年 170 萬元,成長率約是多少%?',
+    options: ['13', '20', '23', '113'],
+    answer: 0,
+    displayAnswer: '增加量 = 170 - 150 = 20萬元\n成長率 = (20 ÷ 150) × 100% ≈ 13%'
+  },
+  {
+    type: 'options',
+    question: '一家店去年營業額 200 萬元,今年 250 萬元,成長率約是多少%?',
+    options: ['25', '50', '35', '125'],
+    answer: 0,
+    displayAnswer: '增加量 = 250 - 200 = 50萬元\n成長率 = (50 ÷ 200) × 100% = 25%'
+  },
+  // 已知成長率求新值
+  {
+    type: 'options',
+    question: '一間公司去年營收 200 億元,今年成長 10%,今年營收是多少億元?',
+    options: ['220', '210', '20', '180'],
+    answer: 0,
+    displayAnswer: '今年營收 = 200 × (1 + 10%) = 200 × 1.1 = 220億元'
+  },
+  {
+    type: 'options',
+    question: '一間公司去年營收 300 億元,今年成長 20%,今年營收是多少億元?',
+    options: ['360', '320', '60', '240'],
+    answer: 0,
+    displayAnswer: '今年營收 = 300 × (1 + 20%) = 300 × 1.2 = 360億元'
+  },
+  {
+    type: 'options',
+    question: '一間公司去年營收 400 億元,今年成長 25%,今年營收是多少億元?',
+    options: ['500', '425', '100', '300'],
+    answer: 0,
+    displayAnswer: '今年營收 = 400 × (1 + 25%) = 400 × 1.25 = 500億元'
+  },
+  {
+    type: 'options',
+    question: '一間公司去年營收 200 億元,今年成長 50%,今年營收是多少億元?',
+    options: ['300', '250', '100', '100'],
+    answer: 0,
+    displayAnswer: '今年營收 = 200 × (1 + 50%) = 200 × 1.5 = 300億元'
+  },
+  // 市占率計算
+  {
+    type: 'options',
+    question: '全台灣某產業總營收 200 億元,A公司營收 40 億元,A公司市占率是多少%?',
+    options: ['20', '500', '160', '30'],
+    answer: 0,
+    displayAnswer: '市占率 = (40 ÷ 200) × 100% = 20%'
+  },
+  {
+    type: 'options',
+    question: '全台灣某產業總營收 300 億元,A公司營收 75 億元,A公司市占率是多少%?',
+    options: ['25', '400', '225', '35'],
+    answer: 0,
+    displayAnswer: '市占率 = (75 ÷ 300) × 100% = 25%'
+  },
+  {
+    type: 'options',
+    question: '全台灣某產業總營收 400 億元,A公司營收 100 億元,A公司市占率是多少%?',
+    options: ['25', '400', '300', '35'],
+    answer: 0,
+    displayAnswer: '市占率 = (100 ÷ 400) × 100% = 25%'
+  },
+  // 已知市占率求營收
+  {
+    type: 'options',
+    question: '全台灣某產業總營收 200 億元,B公司市占率 20%,B公司營收是多少億元?',
+    options: ['40', '180', '220', '20'],
+    answer: 0,
+    displayAnswer: '營收 = 200 × 20% = 200 × 0.2 = 40億元'
+  },
+  {
+    type: 'options',
+    question: '全台灣某產業總營收 300 億元,B公司市占率 30%,B公司營收是多少億元?',
+    options: ['90', '270', '330', '30'],
+    answer: 0,
+    displayAnswer: '營收 = 300 × 30% = 300 × 0.3 = 90億元'
+  },
+  {
+    type: 'options',
+    question: '全台灣某產業總營收 400 億元,B公司市占率 50%,B公司營收是多少億元?',
+    options: ['200', '350', '450', '50'],
+    answer: 0,
+    displayAnswer: '營收 = 400 × 50% = 400 × 0.5 = 200億元'
   }
-}
+]
+
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day4 = {

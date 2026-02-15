@@ -1,105 +1,157 @@
 // src/data/weeks/week02/day5.js
 // W2 Day 5：大地的聲音（藝術收尾）
 
+import { shuffleArray, shuffleOptions } from '../../utils'
+
 // ==========================================
 // W2 詞彙總複習題庫
 // ==========================================
-const vocabQBank = [
+const vocabQuestions = [
   // 地理詞彙
   {
-    question: '「沖積平原」是指？',
+    type: 'options',
+    question: '「沖積平原」是指?',
     options: ['河流搬運泥沙長期堆積形成的平坦地形', '海浪侵蝕海岸形成的平地', '火山爆發後熔岩冷卻形成的平面', '人工開墾山地形成的梯田'],
-    answer: '河流搬運泥沙長期堆積形成的平坦地形'
+    answer: 0,
+    displayAnswer: '河流搬運泥沙長期堆積形成的平坦地形'
   },
   {
-    question: '「縱谷」是指什麼樣的地形？',
+    type: 'options',
+    question: '「縱谷」是指什麼樣的地形?',
     options: ['夾在兩條山脈之間、南北延伸的狹長平坦谷地', '山頂上的寬闊平台', '河流沖刷形成的深V型峽谷', '火山口積水形成的湖泊'],
-    answer: '夾在兩條山脈之間、南北延伸的狹長平坦谷地'
+    answer: 0,
+    displayAnswer: '夾在兩條山脈之間、南北延伸的狹長平坦谷地'
   },
   // 數學詞彙
   {
-    question: '「互質」是指兩個數的關係為何？',
-    options: ['最大公因數為 1，除了 1 以外沒有其他公因數', '兩個數都是質數', '兩個數相乘等於 1', '兩個數的差等於 1'],
-    answer: '最大公因數為 1，除了 1 以外沒有其他公因數'
+    type: 'options',
+    question: '「互質」是指兩個數的關係為何?',
+    options: ['最大公因數為 1,除了 1 以外沒有其他公因數', '兩個數都是質數', '兩個數相乘等於 1', '兩個數的差等於 1'],
+    answer: 0,
+    displayAnswer: '最大公因數為 1,除了 1 以外沒有其他公因數'
   },
   {
-    question: '質因數分解中，「質因數」是指？',
+    type: 'options',
+    question: '質因數分解中,「質因數」是指?',
     options: ['分解後得到的每一個質數因數', '最大的那個因數', '分解後得到的所有偶數', '只有兩位數的因數'],
-    answer: '分解後得到的每一個質數因數'
+    answer: 0,
+    displayAnswer: '分解後得到的每一個質數因數'
   },
   // 科學詞彙
   {
-    question: '「光合作用」的產物是什麼？',
-    options: ['葡萄糖（有機養分）和氧氣', '二氧化碳和水', '氮氣和礦物質', '葉綠素和陽光'],
-    answer: '葡萄糖（有機養分）和氧氣'
+    type: 'options',
+    question: '「光合作用」的產物是什麼?',
+    options: ['葡萄糖(有機養分)和氧氣', '二氧化碳和水', '氮氣和礦物質', '葉綠素和陽光'],
+    answer: 0,
+    displayAnswer: '葡萄糖(有機養分)和氧氣'
   },
   {
-    question: '植物「導管」的功能是？',
-    options: ['從根部向上運輸水分和礦物質', '從葉部向下運輸有機養分', '交換氣體（呼吸作用）', '儲存多餘的糖分'],
-    answer: '從根部向上運輸水分和礦物質'
+    type: 'options',
+    question: '植物「導管」的功能是?',
+    options: ['從根部向上運輸水分和礦物質', '從葉部向下運輸有機養分', '交換氣體(呼吸作用)', '儲存多餘的糖分'],
+    answer: 0,
+    displayAnswer: '從根部向上運輸水分和礦物質'
   },
   // 文化詞彙
   {
-    question: '「TEK」代表什麼？',
-    options: ['傳統生態知識（Traditional Ecological Knowledge）', '台灣環境法規', '特有種動植物調查', '現代科技農業技術'],
-    answer: '傳統生態知識（Traditional Ecological Knowledge）'
+    type: 'options',
+    question: '「TEK」代表什麼?',
+    options: ['傳統生態知識(Traditional Ecological Knowledge)', '台灣環境法規', '特有種動植物調查', '現代科技農業技術'],
+    answer: 0,
+    displayAnswer: '傳統生態知識(Traditional Ecological Knowledge)'
   },
   {
-    question: '「活化石」銀杏被稱為「活化石」的原因是？',
-    options: ['它的外形與億萬年前的化石幾乎相同，幾乎沒有演化', '它的葉子會變成化石', '它是從化石中復原的物種', '它的壽命可達一億年'],
-    answer: '它的外形與億萬年前的化石幾乎相同，幾乎沒有演化'
+    type: 'options',
+    question: '「活化石」銀杏被稱為「活化石」的原因是?',
+    options: ['它的外形與億萬年前的化石幾乎相同,幾乎沒有演化', '它的葉子會變成化石', '它是從化石中復原的物種', '它的壽命可達一億年'],
+    answer: 0,
+    displayAnswer: '它的外形與億萬年前的化石幾乎相同,幾乎沒有演化'
   },
   // 跨科整合
   {
-    question: '台灣的山脈地形影響了哪些方面？（選出最完整的答案）',
+    type: 'options',
+    question: '台灣的山脈地形影響了哪些方面?(選出最完整的答案)',
     options: [
-      '氣候、生物分布、原住民族分布、河流流向，幾乎影響了所有自然和人文現象',
+      '氣候、生物分布、原住民族分布、河流流向,幾乎影響了所有自然和人文現象',
       '只影響了農業和交通',
       '只影響了原住民族的分布',
       '只影響了氣候和降雨'
     ],
-    answer: '氣候、生物分布、原住民族分布、河流流向，幾乎影響了所有自然和人文現象'
-  },
+    answer: 0,
+    displayAnswer: '氣候、生物分布、原住民族分布、河流流向,幾乎影響了所有自然和人文現象'
+  }
 ]
-const generateVocabQuestion = () => {
-  const q = vocabQBank[Math.floor(Math.random() * vocabQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateVocabQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(vocabQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // ==========================================
-// 閱讀理解：鄒族（最終章）
+// 閱讀理解:鄒族(最終章)
 // ==========================================
-const readingQBank = [
+const readingQuestions = [
   {
-    question: '鄒族神話中，洪水退去後，蛇幫助族人做了什麼事？',
-    options: ['引導大家走下山坡，將土岩挖掘成為溪流', '帶領族人找到新的獵場', '教族人如何種植農作物', '守護部落不讓敵人入侵'],
-    answer: '引導大家走下山坡，將土岩挖掘成為溪流'
+    type: 'options',
+    question: '鄒族神話中,洪水退去後,蛇幫助族人做了什麼事?',
+    options: ['引導大家走下山坡,將土岩挖掘成為溪流', '帶領族人找到新的獵場', '教族人如何種植農作物', '守護部落不讓敵人入侵'],
+    answer: 0,
+    displayAnswer: '引導大家走下山坡,將土岩挖掘成為溪流'
   },
   {
-    question: '根據整篇文章，台灣各原住民族的蛇故事有什麼共通之處？',
+    type: 'options',
+    question: '根據整篇文章,台灣各原住民族的蛇故事有什麼共通之處?',
     options: ['蛇都與族群的起源、土地和自然規律密切相關', '所有族群都害怕蛇', '蛇只出現在祭典和儀式中', '蛇的故事只有排灣族和魯凱族才有'],
-    answer: '蛇都與族群的起源、土地和自然規律密切相關'
+    answer: 0,
+    displayAnswer: '蛇都與族群的起源、土地和自然規律密切相關'
   },
   {
-    question: '文章說「人類透過這些神話、傳說故事，不斷尋求與蛇和平共存的原則」，這句話的意思是？',
-    options: ['神話故事反映了祖先如何與自然環境建立和諧的相處之道', '原住民族的祖先不怕蛇，把蛇當寵物', '所有的神話都是假的，只是娛樂用途', '蛇真的會說話，可以跟人類溝通'],
-    answer: '神話故事反映了祖先如何與自然環境建立和諧的相處之道'
+    type: 'options',
+    question: '文章說「人類透過這些神話、傳說故事,不斷尋求與蛇和平共存的原則」,這句話的意思是?',
+    options: ['神話故事反映了祖先如何與自然環境建立和諧的相處之道', '原住民族的祖先不怕蛇,把蛇當寵物', '所有的神話都是假的,只是娛樂用途', '蛇真的會說話,可以跟人類溝通'],
+    answer: 0,
+    displayAnswer: '神話故事反映了祖先如何與自然環境建立和諧的相處之道'
   },
   {
-    question: '這篇文章最主要想傳達的核心訊息是什麼？',
+    type: 'options',
+    question: '這篇文章最主要想傳達的核心訊息是什麼?',
     options: [
-      '台灣原住民族透過豐富多彩的蛇神話，展現了與大自然共存的智慧和文化深度',
-      '百步蛇是台灣最危險的蛇，要小心避開',
-      '原住民族的故事都是迷信，沒有科學根據',
+      '台灣原住民族透過豐富多彩的蛇神話,展現了與大自然共存的智慧和文化深度',
+      '百步蛇是台灣最危險的蛇,要小心避開',
+      '原住民族的故事都是迷信,沒有科學根據',
       '只有排灣族和魯凱族才有值得研究的文化'
     ],
-    answer: '台灣原住民族透過豐富多彩的蛇神話，展現了與大自然共存的智慧和文化深度'
-  },
+    answer: 0,
+    displayAnswer: '台灣原住民族透過豐富多彩的蛇神話,展現了與大自然共存的智慧和文化深度'
+  }
 ]
-const generateReadingQuestion = () => {
-  const q = readingQBank[Math.floor(Math.random() * readingQBank.length)]
-  return { ...q, options: [...q.options].sort(() => Math.random() - 0.5), type: 'choice' }
-}
+
+const generateReadingQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(readingQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateVocabQuestion, generateReadingQuestion }
 
 // ==========================================
 // Day 5 主體
@@ -140,7 +192,7 @@ const day5 = {
                 content: '在臺灣原住民族文化當中，尚流傳著許多關於蛇的傳說故事，如今，這些保留了生存寓意及濃厚族人色彩的故事、圖騰，透過藝術家與文學家的巧手，衍生為手工藝品、服飾、文學、設計等文化創意產業的驚艷色彩，傳承這文化的瑰寶，不僅是臺灣的重要文化資產，也給予代代人們無數靈感及啟發。'
               },
               {
-                type: 'quote',
+                type: 'text',
                 content: '人類透過這些神話、傳說故事，不斷尋求與蛇和平共存的原則。',
                 author: '《臺灣原住民族與蛇》，《原住民族》雜誌 580 期，2013'
               },
@@ -155,7 +207,9 @@ const day5 = {
       practice: {
         questionCount: 4,
         generator: generateReadingQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -258,7 +312,7 @@ const day5 = {
                 content: '這週的核心概念是「規律」。我們在地形中看到規律（山脈由西到東），在數字中找到規律（公因數、公倍數），在植物中發現規律（生長構造、環境適應），也在神話中感受規律（每個族群都透過蛇的故事尋求與自然共存的規則）。'
               },
               {
-                type: 'quote',
+                type: 'text',
                 content: '人類透過這些神話、傳說故事，不斷尋求與蛇和平共存的原則。',
                 author: '《臺灣原住民族與蛇》'
               },
@@ -273,7 +327,9 @@ const day5 = {
       practice: {
         questionCount: 5,
         generator: generateVocabQuestion,
-        checkAnswer: (q, ans) => ans.trim() === q.answer
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     }
   ]

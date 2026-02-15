@@ -1,141 +1,197 @@
 // src/data/weeks/week10/day4.js
 // W10 Day4：得出結論
 
-// ── 綜合題庫（混合所有主題）────────────────────
+// 改寫後的綜合題庫 - 使用標準洗牌機制
+
+import { shuffleArray, shuffleOptions } from '../../utils'
+
+// ==========================================
+// 綜合練習題庫（混合所有主題）
+// ==========================================
+
 const comprehensivePool = [
-  // 探究方法
+  // ── 探究方法 ──
   {
+    type: 'options',
     question: '探究報告的第一步應該是什麼？',
-    options: ['馬上寫結論', '先發現問題', '直接提建議', '畫圖表'],
-    answer: 1
+    options: ['先發現問題', '馬上寫結論', '直接提建議', '畫圖表'],
+    answer: 0,
+    displayAnswer: '先發現問題'
   },
   {
+    type: 'options',
     question: '為什麼要記錄資料來源？',
     options: [
-      '讓報告看起來比較厚',
       '方便查證和確認可信度',
+      '讓報告看起來比較厚',
       '老師規定的',
       '隨便寫就好'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '方便查證和確認可信度'
   },
-  // 數學計算
+  
+  // ── 數學計算 ──
   {
+    type: 'options',
     question: '某項占30%，在圓形圖上應該是幾度？',
-    options: ['30度', '60度', '90度', '108度'],
-    answer: 3
+    options: ['108度', '30度', '60度', '90度'],
+    answer: 0,
+    displayAnswer: '108度'
   },
   {
+    type: 'options',
     question: '數字從50成長到75，成長率是多少？',
-    options: ['25%', '33%', '50%', '75%'],
-    answer: 2
+    options: ['50%', '25%', '33%', '75%'],
+    answer: 0,
+    displayAnswer: '50%'
   },
   {
+    type: 'options',
     question: '五個數字：10, 20, 20, 30, 40，眾數是多少？',
-    options: ['10', '20', '30', '40'],
-    answer: 1
+    options: ['20', '10', '30', '40'],
+    answer: 0,
+    displayAnswer: '20'
   },
   {
+    type: 'options',
     question: '400的15%是多少？',
-    options: ['40', '50', '60', '70'],
-    answer: 2
+    options: ['60', '40', '50', '70'],
+    answer: 0,
+    displayAnswer: '60'
   },
-  // 能源知識
+  
+  // ── 能源知識 ──
   {
+    type: 'options',
     question: '台灣2020年發電占比最高的是？',
-    options: ['太陽能', '風力', '火力', '核能'],
-    answer: 2
+    options: ['火力', '太陽能', '風力', '核能'],
+    answer: 0,
+    displayAnswer: '火力'
   },
   {
+    type: 'options',
     question: '再生能源的特點是什麼？',
     options: [
-      '會用完',
       '用了還會再長出來',
+      '會用完',
       '只有台灣有',
       '很貴'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '用了還會再長出來'
   },
   {
+    type: 'options',
     question: '綠能的致命傷是什麼？',
-    options: ['太貴', '不穩定', '太重', '太危險'],
-    answer: 1
+    options: ['不穩定', '太貴', '太重', '太危險'],
+    answer: 0,
+    displayAnswer: '不穩定'
   },
   {
+    type: 'options',
     question: '儲能系統的目的是什麼？',
     options: [
-      '儲存水',
       '解決綠能不穩定的問題',
+      '儲存水',
       '儲存垃圾',
       '發電'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '解決綠能不穩定的問題'
   },
-  // 科學原理
+  
+  // ── 科學原理 ──
   {
+    type: 'options',
     question: '奧斯特發現了什麼？',
     options: [
-      '磁場產生電流',
       '電流產生磁場',
+      '磁場產生電流',
       '光產生熱',
       '熱產生光'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '電流產生磁場'
   },
   {
+    type: 'options',
     question: '法拉第發現了什麼？',
     options: [
-      '電流產生磁場',
       '磁場變化產生電流',
+      '電流產生磁場',
       '水力發電',
       '太陽能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '磁場變化產生電流'
   },
   {
+    type: 'options',
     question: '太陽能發電的特別之處是什麼？',
     options: [
-      '需要很大的渦輪機',
       '不需要轉動，直接轉換',
+      '需要很大的渦輪機',
       '需要燃燒',
       '需要核能'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '不需要轉動，直接轉換'
   },
-  // 圖表與分析
+  
+  // ── 圖表與分析 ──
   {
+    type: 'options',
     question: '用來表示「占比」的圖表是？',
-    options: ['折線圖', '圓形圖', '散布圖', '心智圖'],
-    answer: 1
+    options: ['圓形圖', '折線圖', '散布圖', '心智圖'],
+    answer: 0,
+    displayAnswer: '圓形圖'
   },
   {
+    type: 'options',
     question: '用來表示「趨勢變化」的圖表是？',
-    options: ['圓形圖', '折線圖', '表格', '照片'],
-    answer: 1
+    options: ['折線圖', '圓形圖', '表格', '照片'],
+    answer: 0,
+    displayAnswer: '折線圖'
   },
-  // 論證與寫作
+  
+  // ── 論證與寫作 ──
   {
+    type: 'options',
     question: '論證的三要素是？',
     options: [
-      '開頭、中間、結尾',
       '主張、理由、證據',
+      '開頭、中間、結尾',
       '標題、內容、圖片',
       '問題、答案、例子'
     ],
-    answer: 1
+    answer: 0,
+    displayAnswer: '主張、理由、證據'
   }
 ]
 
-function generateComprehensiveQuestion() {
-  const q = comprehensivePool[Math.floor(Math.random() * comprehensivePool.length)]
-  const correctText = q.options[q.answer]
-  const shuffled = [...q.options]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+const generateComprehensiveQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(comprehensivePool)
+      currentIndex = 0
+    }
+    
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    
+    return shuffleOptions(question)
   }
-  return { question: q.question, options: shuffled, answer: shuffled.indexOf(correctText) }
-}
+})()
+
+// ==========================================
+// 導出生成器
+// ==========================================
+
+export { generateComprehensiveQuestion }
 
 // ── Day 資料 ──────────────────────────────────────
 const day4 = {

@@ -1,119 +1,132 @@
 // src/data/weeks/week01/day5.js
 // 第1週 - 第五天：島嶼的聲音——藝術欣賞與本週收尾
 
+import { shuffleArray, shuffleOptions } from '../../utils'
+
 // ==========================================
 // 練習題生成器
 // ==========================================
 
 // 【數學】從圖騰幾何出題——拼板舟的數學
-// 素材：達悟族拼板舟圖騰（同心圓、波浪紋、對稱）
+// 素材:達悟族拼板舟圖騰(同心圓、波浪紋、對稱)
 const mathQuestions = [
   // ── 拼板舟木板數量 ──
   {
     type: 'options',
-    question: '達悟族的大拼板舟由 27 塊木板組成，小拼板舟由 21 塊組成。大船比小船多幾塊木板？',
-    options: ['4 塊', '6 塊', '8 塊', '9 塊'],
-    answer: 1,
-    displayAnswer: '6 塊（27 - 21 = 6）'
+    question: '達悟族的大拼板舟由 27 塊木板組成,小拼板舟由 21 塊組成。大船比小船多幾塊木板？',
+    options: ['6 塊', '4 塊', '8 塊', '9 塊'],
+    answer: 0,
+    displayAnswer: '6 塊(27 - 21 = 6)'
   },
   {
     type: 'options',
-    question: '一個部落要同時造 3 艘大船（各 27 塊）和 2 艘小船（各 21 塊），共需要幾塊木板？',
-    options: ['111 塊', '117 塊', '123 塊', '129 塊'],
-    answer: 2,
-    displayAnswer: '123 塊（3×27 + 2×21 = 81 + 42 = 123）'
+    question: '一個部落要同時造 3 艘大船(各 27 塊)和 2 艘小船(各 21 塊),共需要幾塊木板？',
+    options: ['123 塊', '111 塊', '117 塊', '129 塊'],
+    answer: 0,
+    displayAnswer: '123 塊(3×27 + 2×21 = 81 + 42 = 123)'
   },
   {
     type: 'options',
-    question: '大拼板舟 27 塊木板，分成龍骨、舷板、甲板三個部位。如果三個部位各佔 1/3，每個部位各有幾塊？',
-    options: ['7 塊', '8 塊', '9 塊', '無法整除'],
-    answer: 2,
-    displayAnswer: '9 塊（27 ÷ 3 = 9）'
+    question: '大拼板舟 27 塊木板,分成龍骨、舷板、甲板三個部位。如果三個部位各佔 1/3,每個部位各有幾塊？',
+    options: ['9 塊', '7 塊', '8 塊', '無法整除'],
+    answer: 0,
+    displayAnswer: '9 塊(27 ÷ 3 = 9)'
   },
   // ── 船眼紋的同心圓幾何 ──
   {
     type: 'options',
     question: '「船眼紋」是由 3 個同心圓組成的圖案。最小圓半徑 2 公分、中圓半徑 4 公分、最大圓半徑 6 公分。每個圓之間的距離相差幾公分？',
-    options: ['1 公分', '2 公分', '3 公分', '4 公分'],
-    answer: 1,
-    displayAnswer: '2 公分（4-2=2，6-4=2，等差增加）'
+    options: ['2 公分', '1 公分', '3 公分', '4 公分'],
+    answer: 0,
+    displayAnswer: '2 公分(4-2=2,6-4=2,等差增加)'
   },
   {
     type: 'options',
-    question: '船眼紋是圓形圖案，放在船首「左右兩側」各一個，船尾也是「左右兩側」各一個。一艘船共有幾個船眼紋？',
-    options: ['2 個', '4 個', '6 個', '8 個'],
-    answer: 1,
-    displayAnswer: '4 個（船首左右各1 + 船尾左右各1 = 4）'
+    question: '船眼紋是圓形圖案,放在船首「左右兩側」各一個,船尾也是「左右兩側」各一個。一艘船共有幾個船眼紋？',
+    options: ['4 個', '2 個', '6 個', '8 個'],
+    answer: 0,
+    displayAnswer: '4 個(船首左右各1 + 船尾左右各1 = 4)'
   },
   // ── 波浪紋的對稱與規律 ──
   {
     type: 'options',
-    question: '波浪紋是「連續 V 字型」圖案。一段船舷上有 12 個 V 字，如果左右舷各一段，整艘船共有幾個 V 字？',
-    options: ['12 個', '24 個', '36 個', '48 個'],
-    answer: 1,
-    displayAnswer: '24 個（12 × 2 = 24，左舷加右舷）'
+    question: '波浪紋是「連續 V 字型」圖案。一段船舷上有 12 個 V 字,如果左右舷各一段,整艘船共有幾個 V 字？',
+    options: ['24 個', '12 個', '36 個', '48 個'],
+    answer: 0,
+    displayAnswer: '24 個(12 × 2 = 24,左舷加右舷)'
   },
   {
     type: 'options',
-    question: '一艘拼板舟的船身，左側波浪紋的圖案和右側是「對稱」的。這種左右對稱在數學上叫做什麼？',
-    options: ['旋轉對稱', '線對稱（軸對稱）', '點對稱', '平移對稱'],
-    answer: 1,
-    displayAnswer: '線對稱（軸對稱）——以船的中心線為軸，左右互為鏡像'
+    question: '一艘拼板舟的船身,左側波浪紋的圖案和右側是「對稱」的。這種左右對稱在數學上叫做什麼？',
+    options: ['線對稱(軸對稱)', '旋轉對稱', '點對稱', '平移對稱'],
+    answer: 0,
+    displayAnswer: '線對稱(軸對稱)——以船的中心線為軸,左右互為鏡像'
   },
   // ── 音樂節拍 ──
   {
     type: 'options',
-    question: '原住民傳統歌謠常用「一拍一字」的唱法。一首歌共 48 個字，每 4 個字一小節，這首歌共幾小節？',
-    options: ['8 小節', '12 小節', '16 小節', '24 小節'],
-    answer: 1,
-    displayAnswer: '12 小節（48 ÷ 4 = 12）'
+    question: '原住民傳統歌謠常用「一拍一字」的唱法。一首歌共 48 個字,每 4 個字一小節,這首歌共幾小節？',
+    options: ['12 小節', '8 小節', '16 小節', '24 小節'],
+    answer: 0,
+    displayAnswer: '12 小節(48 ÷ 4 = 12)'
   },
   {
     type: 'options',
-    question: '桑布伊的一首歌，主歌重複 2 次、副歌重複 3 次，每次主歌 8 小節、每次副歌 4 小節。這首歌共幾小節？',
-    options: ['20 小節', '28 小節', '24 小節', '32 小節'],
-    answer: 1,
-    displayAnswer: '28 小節（2×8 + 3×4 = 16 + 12 = 28）'
+    question: '桑布伊的一首歌,主歌重複 2 次、副歌重複 3 次,每次主歌 8 小節、每次副歌 4 小節。這首歌共幾小節？',
+    options: ['28 小節', '20 小節', '24 小節', '32 小節'],
+    answer: 0,
+    displayAnswer: '28 小節(2×8 + 3×4 = 16 + 12 = 28)'
   },
   // ── 《海洋奇緣》距離推算 ──
   {
     type: 'options',
-    question: '電影《海洋奇緣》中，Moana 從她的島嶼出發尋找毛伊。假設她的船速是每天 150 公里，航行了 6 天，她共走了幾公里？',
-    options: ['750 公里', '900 公里', '1,050 公里', '1,200 公里'],
-    answer: 1,
-    displayAnswer: '900 公里（150 × 6 = 900）'
+    question: '電影《海洋奇緣》中,Moana 從她的島嶼出發尋找毛伊。假設她的船速是每天 150 公里,航行了 6 天,她共走了幾公里？',
+    options: ['900 公里', '750 公里', '1,050 公里', '1,200 公里'],
+    answer: 0,
+    displayAnswer: '900 公里(150 × 6 = 900)'
   }
 ]
 
-const generateMathQuestion = () => {
-  return mathQuestions[Math.floor(Math.random() * mathQuestions.length)]
-}
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
 // 【語文】W1 總複習——詞彙與概念統整
 const chineseQuestions = [
   // ── Day 1 詞彙複習 ──
   {
     type: 'options',
-    question: '「北極星」在達悟族的航海文化中，最重要的功能是？',
+    question: '「北極星」在達悟族的航海文化中,最重要的功能是？',
     options: [
+      '指出北方,協助在大海上辨別方向',
       '當夜晚照明的燈',
-      '指出北方，協助在大海上辨別方向',
       '預測未來的天氣',
       '標示魚群的位置'
     ],
-    answer: 1,
-    displayAnswer: '指出北方，因為北極星幾乎正好位在北天極'
+    answer: 0,
+    displayAnswer: '指出北方,因為北極星幾乎正好位在北天極'
   },
   {
     type: 'options',
-    question: '「南島語系」這個詞，「語系」是指什麼？',
+    question: '「南島語系」這個詞,「語系」是指什麼？',
     options: [
-      '南方的語言',
       '有共同起源、彼此相關聯的一群語言',
+      '南方的語言',
       '說話很好聽的語言',
       '只有島嶼上才有的語言'
     ],
-    answer: 1,
+    answer: 0,
     displayAnswer: '有共同起源、彼此相關聯的一群語言'
   },
   // ── Day 2 詞彙複習 ──
@@ -121,65 +134,78 @@ const chineseQuestions = [
     type: 'options',
     question: '「UTC+8」的意思是？',
     options: [
+      '台灣比國際標準時間(格林威治)早 8 小時',
       '台灣有 8 個時區',
-      '台灣比國際標準時間（格林威治）早 8 小時',
       '台灣位在東經 8 度',
       '台灣每天日照 8 小時'
     ],
-    answer: 1,
-    displayAnswer: '台灣位在東經 120°，120÷15=8，比 UTC 早 8 小時'
+    answer: 0,
+    displayAnswer: '台灣位在東經 120°,120÷15=8,比 UTC 早 8 小時'
   },
   // ── Day 3 詞彙複習 ──
   {
     type: 'options',
-    question: '「出台灣說」（Out of Taiwan）的核心依據是？',
+    question: '「出台灣說」(Out of Taiwan)的核心依據是？',
     options: [
+      '台灣的南島語言多樣性最高,語言樹的根最深',
       '台灣是最大的南島民族國家',
-      '台灣的南島語言多樣性最高，語言樹的根最深',
       '台灣的考古遺址比其他地方多',
       '台灣人的長相最像波里尼西亞人'
     ],
-    answer: 1,
-    displayAnswer: '台灣有最高的南島語言多樣性，代表語言在此「根最深」'
+    answer: 0,
+    displayAnswer: '台灣有最高的南島語言多樣性,代表語言在此「根最深」'
   },
   // ── Day 4 寫作複習 ──
   {
     type: 'options',
     question: '說明文和記敘文最大的不同是？',
     options: [
+      '說明文以清楚傳達知識為目的,不以情感故事為主',
       '說明文比較長',
-      '說明文以清楚傳達知識為目的，不以情感故事為主',
       '說明文需要對話',
       '說明文一定要有圖片'
     ],
-    answer: 1,
-    displayAnswer: '說明文的目的是讓讀者「理解事物」，不是讓讀者「感動」或「進入故事」'
+    answer: 0,
+    displayAnswer: '說明文的目的是讓讀者「理解事物」,不是讓讀者「感動」或「進入故事」'
   },
   // ── W1 核心概念 ──
   {
     type: 'options',
-    question: '這週的核心概念「定位」，除了地圖上的座標，還有什麼更深的意涵？',
+    question: '這週的核心概念「定位」,除了地圖上的座標,還有什麼更深的意涵？',
     options: [
-      '只有數學才有定位的概念',
       '一個地方在歷史、文化、人心中的位置和意義',
+      '只有數學才有定位的概念',
       '定位就是 GPS 的功能',
       '定位只有在海上才需要'
     ],
-    answer: 1,
-    displayAnswer: '「定位」不只是座標，也是一個人、一個地方在世界上的意義與位置'
+    answer: 0,
+    displayAnswer: '「定位」不只是座標,也是一個人、一個地方在世界上的意義與位置'
   },
   {
     type: 'options',
-    question: '《大海浮夢》這週貫穿五天的閱讀，主角夏曼・藍波安是哪個族的作家？',
-    options: ['阿美族', '達悟族（雅美族）', '排灣族', '泰雅族'],
-    answer: 1,
-    displayAnswer: '達悟族（雅美族），來自蘭嶼，是台灣最重要的原住民海洋文學作家之一'
+    question: '《大海浮夢》這週貫穿五天的閱讀,主角夏曼・藍波安是哪個族的作家？',
+    options: ['達悟族(雅美族)', '阿美族', '排灣族', '泰雅族'],
+    answer: 0,
+    displayAnswer: '達悟族(雅美族),來自蘭嶼,是台灣最重要的原住民海洋文學作家之一'
   }
 ]
 
-const generateChineseQuestion = () => {
-  return chineseQuestions[Math.floor(Math.random() * chineseQuestions.length)]
-}
+const generateChineseQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(chineseQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateMathQuestion, generateChineseQuestion }
 
 // ==========================================
 // Day 5 資料
@@ -212,7 +238,7 @@ const day5 = {
                 content: '這週，我們跟著《大海浮夢》的故事，做了一段旅行：\n\n第一天：夏曼・藍波安躺在海底，感受海水的力量——\n我們問：「我在哪裡？」\n\n第二天：他站在蘭嶼的礁石上，望向北方的台灣——\n我們問：「台灣在哪裡？」\n\n第三天：他的祖先從菲律賓巴丹島，向北航行到蘭嶼——\n我們問：「我們從哪裡來？」\n\n第四天：我們拿起筆，試著說清楚自己的家鄉——\n我們問：「我要如何讓別人知道我在哪裡？」\n\n今天，第五天，讀最後一段。'
               },
               {
-                type: 'quote',
+                type: 'text',
                 content: '當飛魚季結束，海面漸漸平靜。\n\n我站在礁岩上，看著最後一艘船劃回港灣。\n\n這艘船，大概跟我祖先的船差不多吧——\n同樣的木頭，同樣的海，同樣的雙手。\n\n但是有一樣東西不一樣了：\n\n祖先的船往外開，尋找新的島嶼；\n我的船，划回來。\n\n也許「回來」，才是這一切旅行的終點。\n你離開，是為了知道自己是誰。\n你回來，是因為你終於知道了。',
                 author: '改寫自夏曼・藍波安作品精神'
               }

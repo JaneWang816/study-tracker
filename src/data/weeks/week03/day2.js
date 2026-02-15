@@ -1,224 +1,251 @@
 // src/data/weeks/week03/day2.js
 // W3 Day2：水怎麼養活了台灣？
 
-// ===== 社會：水利工程與圳路 =====
-const generateWaterworkQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '嘉南大圳是誰設計的？',
-      options: ['劉銘傳', '八田與一', '鄭成功', '連雅堂'],
-      answer: 1,
-      explanation: '八田與一是日治時代的日本水利工程師，設計並主持興建了嘉南大圳。'
-    },
-    {
-      type: 'choice',
-      question: '嘉南大圳完工於哪個時期，灌溉了多少公頃的農田？',
-      options: ['清朝，灌溉5萬公頃', '日治時期，灌溉15萬公頃', '戰後，灌溉30萬公頃', '明鄭時期，灌溉3萬公頃'],
-      answer: 1,
-      explanation: '嘉南大圳於1930年完工（日治時期），灌溉面積約15萬公頃，大幅提升了台灣南部的農業生產力。'
-    },
-    {
-      type: 'choice',
-      question: '桃園台地為什麼需要人工埤塘？',
-      options: ['桃園地區雨量太少', '桃園台地地形較高，沒有自然河流流過', '桃園的土質不適合種稻', '桃園是海埔新生地，土地太鹹'],
-      answer: 1,
-      explanation: '桃園台地因地勢較高，無自然河流，先人挖掘大量埤塘（人工水庫）儲水，所以桃園有「千塘之鄉」的稱號。'
-    },
-    {
-      type: 'choice',
-      question: '嘉南大圳採用「三年輪作制度」，以下說明何者正確？',
-      options: ['每三年才灌溉一次，節省水資源', '把農地分三批，輪流種水稻、甘蔗和雜糧，讓土地休息', '只種三種作物，水稻、甘蔗和玉米', '每三年更換一次圳路的路線'],
-      answer: 1,
-      explanation: '三年輪作制讓每塊農地輪流種植水稻、甘蔗、雜糧，避免土地過度使用，是保護土地肥力的智慧。'
-    },
-    {
-      type: 'choice',
-      question: '圳路的主要功能是什麼？',
-      options: ['排放工廠廢水', '引導河水灌溉農田', '防止颱風造成水災', '作為水上交通要道'],
-      answer: 1,
-      explanation: '圳路是人工挖掘的水道，用來從河流引水，分送到農田灌溉，是農業社會的重要基礎設施。'
-    },
-    {
-      type: 'choice',
-      question: '台灣古代的水利建設（如圳路）主要解決了什麼問題？',
-      options: ['讓河水不再氾濫', '把水從有水的地方引到缺水的農田', '讓台灣的雨量增加', '讓農民不需要勞動'],
-      answer: 1,
-      explanation: '台灣雨量分布不均，圳路讓農民能把水從有水的溪流引到缺水的旱地，解決灌溉問題。'
-    },
-    {
-      type: 'choice',
-      question: '「烏山頭水庫」和嘉南大圳有什麼關係？',
-      options: ['烏山頭水庫是嘉南大圳的水源儲水庫', '兩者完全沒有關係', '烏山頭水庫比嘉南大圳早一百年建造', '烏山頭水庫是用來防洪，不是灌溉'],
-      answer: 0,
-      explanation: '烏山頭水庫是八田與一設計嘉南大圳系統的一部分，作為水源調節水庫，枯水期時放水灌溉農田。'
-    }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+import { shuffleArray, shuffleOptions } from '../../utils'
 
-const checkWaterworkAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
-
-// ===== 數學：比的化簡 =====
-const generateRatioSimplifyQuestion = () => {
-  const types = ['simplify', 'equivalent', 'apply']
-  const t = types[Math.floor(Math.random() * types.length)]
-
-  if (t === 'simplify') {
-    const pairs = [
-      { a: 6, b: 4, sa: 3, sb: 2 },
-      { a: 8, b: 12, sa: 2, sb: 3 },
-      { a: 10, b: 15, sa: 2, sb: 3 },
-      { a: 9, b: 12, sa: 3, sb: 4 },
-      { a: 14, b: 21, sa: 2, sb: 3 },
-      { a: 15, b: 10, sa: 3, sb: 2 },
-      { a: 24, b: 16, sa: 3, sb: 2 }
-    ]
-    const p = pairs[Math.floor(Math.random() * pairs.length)]
-    const options = [
-      `${p.sa}：${p.sb}`,
-      `${p.sb}：${p.sa}`,
-      `${p.a / 2}：${p.b / 2}`,
-      `1：${p.b / p.a}`
-    ]
-    const shuffled = [...options]
-    shuffled.sort(() => Math.random() - 0.5)
-    const correct = shuffled.indexOf(`${p.sa}：${p.sb}`)
-    return {
-      type: 'choice',
-      question: `把比 ${p.a}：${p.b} 化成最簡比是？`,
-      options: shuffled,
-      answer: correct,
-      explanation: `${p.a} 和 ${p.b} 的最大公因數是 ${p.a / p.sa}，兩者都除以 ${p.a / p.sa}，得到最簡比 ${p.sa}：${p.sb}。`
-    }
+// ==========================================
+// 社會:水利工程與圳路
+// ==========================================
+const socialQuestions = [
+  {
+    type: 'options',
+    question: '嘉南大圳是誰設計的?',
+    options: ['八田與一', '劉銘傳', '鄭成功', '連雅堂'],
+    answer: 0,
+    displayAnswer: '八田與一是日治時代的日本水利工程師,設計並主持興建了嘉南大圳。'
+  },
+  {
+    type: 'options',
+    question: '嘉南大圳完工於哪個時期,灌溉了多少公頃的農田?',
+    options: ['日治時期,灌溉15萬公頃', '清朝,灌溉5萬公頃', '戰後,灌溉30萬公頃', '明鄭時期,灌溉3萬公頃'],
+    answer: 0,
+    displayAnswer: '嘉南大圳於1930年完工(日治時期),灌溉面積約15萬公頃,大幅提升了台灣南部的農業生產力。'
+  },
+  {
+    type: 'options',
+    question: '桃園台地為什麼需要人工埤塘?',
+    options: ['桃園台地地形較高,沒有自然河流流過', '桃園地區雨量太少', '桃園的土質不適合種稻', '桃園是海埔新生地,土地太鹹'],
+    answer: 0,
+    displayAnswer: '桃園台地因地勢較高,無自然河流,先人挖掘大量埤塘(人工水庫)儲水,所以桃園有「千塘之鄉」的稱號。'
+  },
+  {
+    type: 'options',
+    question: '嘉南大圳採用「三年輪作制度」,以下說明何者正確?',
+    options: ['把農地分三批,輪流種水稻、甘蔗和雜糧,讓土地休息', '每三年才灌溉一次,節省水資源', '只種三種作物,水稻、甘蔗和玉米', '每三年更換一次圳路的路線'],
+    answer: 0,
+    displayAnswer: '三年輪作制讓每塊農地輪流種植水稻、甘蔗、雜糧,避免土地過度使用,是保護土地肥力的智慧。'
+  },
+  {
+    type: 'options',
+    question: '圳路的主要功能是什麼?',
+    options: ['引導河水灌溉農田', '排放工廠廢水', '防止颱風造成水災', '作為水上交通要道'],
+    answer: 0,
+    displayAnswer: '圳路是人工挖掘的水道,用來從河流引水,分送到農田灌溉,是農業社會的重要基礎設施。'
+  },
+  {
+    type: 'options',
+    question: '台灣古代的水利建設(如圳路)主要解決了什麼問題?',
+    options: ['把水從有水的地方引到缺水的農田', '讓河水不再氾濫', '讓台灣的雨量增加', '讓農民不需要勞動'],
+    answer: 0,
+    displayAnswer: '台灣雨量分布不均,圳路讓農民能把水從有水的溪流引到缺水的旱地,解決灌溉問題。'
+  },
+  {
+    type: 'options',
+    question: '「烏山頭水庫」和嘉南大圳有什麼關係?',
+    options: ['烏山頭水庫是嘉南大圳的水源儲水庫', '兩者完全沒有關係', '烏山頭水庫比嘉南大圳早一百年建造', '烏山頭水庫是用來防洪,不是灌溉'],
+    answer: 0,
+    displayAnswer: '烏山頭水庫是八田與一設計嘉南大圳系統的一部分,作為水源調節水庫,枯水期時放水灌溉農田。'
   }
+]
 
-  if (t === 'equivalent') {
-    const base = [
-      { a: 2, b: 3 }, { a: 3, b: 4 }, { a: 1, b: 2 }, { a: 3, b: 5 }
-    ]
-    const b = base[Math.floor(Math.random() * base.length)]
-    const k = Math.floor(Math.random() * 3) + 2
-    const bigger = { a: b.a * k, b: b.b * k }
-    const options = [
-      `${b.a}：${b.b}`,
-      `${b.a + 1}：${b.b + 1}`,
-      `${b.a * 2 + 1}：${b.b * 2}`,
-      `${b.b}：${b.a}`
-    ]
-    const shuffled = [...options].sort(() => Math.random() - 0.5)
-    const correct = shuffled.indexOf(`${b.a}：${b.b}`)
-    return {
-      type: 'choice',
-      question: `${bigger.a}：${bigger.b} 化簡後等於哪個比？`,
-      options: shuffled,
-      answer: correct,
-      explanation: `${bigger.a} 和 ${bigger.b} 都是 ${k} 的倍數，都除以 ${k} 得到最簡比 ${b.a}：${b.b}。`
+const generateSocialQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(socialQuestions)
+      currentIndex = 0
     }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
   }
+})()
 
-  // apply：水量分配情境
-  const scenarios = [
-    { total: 600, ratio: [2, 3], unit: '公升', names: ['A農田', 'B農田'] },
-    { total: 500, ratio: [3, 2], unit: '公升', names: ['上游', '下游'] },
-    { total: 900, ratio: [1, 2], unit: '公頃', names: ['旱地', '水田'] }
-  ]
-  const s = scenarios[Math.floor(Math.random() * scenarios.length)]
-  const totalParts = s.ratio[0] + s.ratio[1]
-  const share1 = (s.total / totalParts) * s.ratio[0]
-  const share2 = s.total - share1
-  const options = [
-    `${s.names[0]}：${share1}${s.unit}，${s.names[1]}：${share2}${s.unit}`,
-    `${s.names[0]}：${share2}${s.unit}，${s.names[1]}：${share1}${s.unit}`,
-    `${s.names[0]}：${s.total / 2}${s.unit}，${s.names[1]}：${s.total / 2}${s.unit}`,
-    `${s.names[0]}：${s.ratio[0] * 100}${s.unit}，${s.names[1]}：${s.ratio[1] * 100}${s.unit}`
-  ]
-  const shuffled = [...options].sort(() => Math.random() - 0.5)
-  const correct = shuffled.indexOf(options[0])
-  return {
-    type: 'choice',
-    question: `圳路今日共有 ${s.total}${s.unit} 的水，按照 ${s.ratio[0]}：${s.ratio[1]} 的比例分配給${s.names[0]}和${s.names[1]}，各得多少？`,
-    options: shuffled,
-    answer: correct,
-    explanation: `總份數 = ${s.ratio[0]} + ${s.ratio[1]} = ${totalParts}，每份 = ${s.total} ÷ ${totalParts} = ${s.total / totalParts}${s.unit}。${s.names[0]}得 ${s.ratio[0]} 份 = ${share1}${s.unit}，${s.names[1]}得 ${s.ratio[1]} 份 = ${share2}${s.unit}。`
+// ==========================================
+// 數學:比的化簡
+// ==========================================
+const mathQuestions = [
+  // 化簡比
+  {
+    type: 'options',
+    question: '把比 6:4 化成最簡比是?',
+    options: ['3:2', '2:3', '3:4', '1:2'],
+    answer: 0,
+    displayAnswer: '6 和 4 的最大公因數是 2,兩者都除以 2,得到最簡比 3:2。'
+  },
+  {
+    type: 'options',
+    question: '把比 8:12 化成最簡比是?',
+    options: ['2:3', '4:6', '1:2', '3:2'],
+    answer: 0,
+    displayAnswer: '8 和 12 的最大公因數是 4,兩者都除以 4,得到最簡比 2:3。'
+  },
+  {
+    type: 'options',
+    question: '把比 10:15 化成最簡比是?',
+    options: ['2:3', '5:7', '1:2', '3:2'],
+    answer: 0,
+    displayAnswer: '10 和 15 的最大公因數是 5,兩者都除以 5,得到最簡比 2:3。'
+  },
+  {
+    type: 'options',
+    question: '把比 9:12 化成最簡比是?',
+    options: ['3:4', '2:3', '4:3', '1:2'],
+    answer: 0,
+    displayAnswer: '9 和 12 的最大公因數是 3,兩者都除以 3,得到最簡比 3:4。'
+  },
+  {
+    type: 'options',
+    question: '把比 14:21 化成最簡比是?',
+    options: ['2:3', '7:10', '1:2', '3:2'],
+    answer: 0,
+    displayAnswer: '14 和 21 的最大公因數是 7,兩者都除以 7,得到最簡比 2:3。'
+  },
+  {
+    type: 'options',
+    question: '把比 15:10 化成最簡比是?',
+    options: ['3:2', '2:3', '5:3', '1:2'],
+    answer: 0,
+    displayAnswer: '15 和 10 的最大公因數是 5,兩者都除以 5,得到最簡比 3:2。'
+  },
+  // 等值比判斷
+  {
+    type: 'options',
+    question: '6:9 化簡後等於哪個比?',
+    options: ['2:3', '3:4', '1:2', '3:2'],
+    answer: 0,
+    displayAnswer: '6 和 9 都是 3 的倍數,都除以 3 得到最簡比 2:3。'
+  },
+  {
+    type: 'options',
+    question: '12:8 化簡後等於哪個比?',
+    options: ['3:2', '2:3', '4:3', '1:2'],
+    answer: 0,
+    displayAnswer: '12 和 8 都是 4 的倍數,都除以 4 得到最簡比 3:2。'
+  },
+  // 應用題
+  {
+    type: 'options',
+    question: '圳路今日共有 600 公升的水,按照 2:3 的比例分配給A農田和B農田,各得多少?',
+    options: ['A農田:240公升,B農田:360公升', 'A農田:360公升,B農田:240公升', 'A農田:300公升,B農田:300公升', 'A農田:200公升,B農田:400公升'],
+    answer: 0,
+    displayAnswer: '總份數 = 2 + 3 = 5,每份 = 600 ÷ 5 = 120公升。A農田得 2 份 = 240公升,B農田得 3 份 = 360公升。'
+  },
+  {
+    type: 'options',
+    question: '圳路今日共有 500 公升的水,按照 3:2 的比例分配給上游和下游,各得多少?',
+    options: ['上游:300公升,下游:200公升', '上游:200公升,下游:300公升', '上游:250公升,下游:250公升', '上游:150公升,下游:350公升'],
+    answer: 0,
+    displayAnswer: '總份數 = 3 + 2 = 5,每份 = 500 ÷ 5 = 100公升。上游得 3 份 = 300公升,下游得 2 份 = 200公升。'
   }
-}
+]
 
-const checkRatioSimplifyAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
-
-// ===== 科學：月相成因 =====
-const generateMoonCauseQuestion = () => {
-  const questions = [
-    {
-      type: 'choice',
-      question: '為什麼我們看到的月亮形狀會一直改變？',
-      options: [
-        '月亮本身的形狀在改變',
-        '地球的影子遮住了月亮不同的部分',
-        '月亮繞地球公轉，被太陽照亮的部分從地球看起來不同',
-        '太陽的亮度每天不同，照亮月亮的程度也不同'
-      ],
-      answer: 2,
-      explanation: '月亮本身是球形，不會改變。月相變化是因為月亮繞地球公轉，從地球看到月亮被太陽照亮的面積比例不同。'
-    },
-    {
-      type: 'choice',
-      question: '上弦月通常在一天中的什麼時候可以觀察到？',
-      options: ['清晨（日出前後）', '正中午', '傍晚到半夜', '只有雨天才看得到'],
-      answer: 2,
-      explanation: '上弦月出現在月相前半段，太陽下山後從西方天空升起，傍晚到半夜是觀察的好時機。'
-    },
-    {
-      type: 'choice',
-      question: '下弦月通常在一天中的什麼時候可以觀察到？',
-      options: ['傍晚', '半夜到清晨', '正午', '日落時'],
-      answer: 1,
-      explanation: '下弦月出現在月相後半段，半夜從東方升起，清晨時仍可見，因此是「清晨的月亮」。'
-    },
-    {
-      type: 'choice',
-      question: '月食（月全食）是什麼情況下發生的？',
-      options: [
-        '月亮遮住了太陽',
-        '地球的影子遮住了月亮',
-        '太陽的影子遮住了月亮',
-        '月亮飛到了地球的另一側'
-      ],
-      answer: 1,
-      explanation: '月食發生在滿月時，地球恰好在太陽和月亮之間，地球的影子遮住了月亮，使月亮變暗。'
-    },
-    {
-      type: 'choice',
-      question: '農曆初一是新月，初七、初八前後是什麼月相？',
-      options: ['滿月', '上弦月', '下弦月', '殘月'],
-      answer: 1,
-      explanation: '農曆初一是新月，經過約7天到上弦月，月相週期中上弦月約在初七、初八前後出現。'
-    },
-    {
-      type: 'choice',
-      question: '滿月時，月亮、地球、太陽三者的相對位置是？',
-      options: [
-        '月亮在地球和太陽之間',
-        '地球在月亮和太陽之間',
-        '太陽在地球和月亮之間',
-        '三者形成正三角形'
-      ],
-      answer: 1,
-      explanation: '滿月時，太陽、地球、月亮三者幾乎成一直線，地球在中間，月亮被太陽完整照亮，所以我們看到圓形的滿月。'
+const generateMathQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(mathQuestions)
+      currentIndex = 0
     }
-  ]
-  const idx = Math.floor(Math.random() * questions.length)
-  return questions[idx]
-}
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
 
-const checkMoonCauseAnswer = (question, userAnswer) => {
-  return parseInt(userAnswer) === question.answer
-}
+// ==========================================
+// 科學:月相成因
+// ==========================================
+const scienceQuestions = [
+  {
+    type: 'options',
+    question: '為什麼我們看到的月亮形狀會一直改變?',
+    options: [
+      '月亮繞地球公轉,被太陽照亮的部分從地球看起來不同',
+      '月亮本身的形狀在改變',
+      '地球的影子遮住了月亮不同的部分',
+      '太陽的亮度每天不同,照亮月亮的程度也不同'
+    ],
+    answer: 0,
+    displayAnswer: '月亮本身是球形,不會改變。月相變化是因為月亮繞地球公轉,從地球看到月亮被太陽照亮的面積比例不同。'
+  },
+  {
+    type: 'options',
+    question: '上弦月通常在一天中的什麼時候可以觀察到?',
+    options: ['傍晚到半夜', '清晨(日出前後)', '正中午', '只有雨天才看得到'],
+    answer: 0,
+    displayAnswer: '上弦月出現在月相前半段,太陽下山後從西方天空升起,傍晚到半夜是觀察的好時機。'
+  },
+  {
+    type: 'options',
+    question: '下弦月通常在一天中的什麼時候可以觀察到?',
+    options: ['半夜到清晨', '傍晚', '正午', '日落時'],
+    answer: 0,
+    displayAnswer: '下弦月出現在月相後半段,半夜從東方升起,清晨時仍可見,因此是「清晨的月亮」。'
+  },
+  {
+    type: 'options',
+    question: '月食(月全食)是什麼情況下發生的?',
+    options: [
+      '地球的影子遮住了月亮',
+      '月亮遮住了太陽',
+      '太陽的影子遮住了月亮',
+      '月亮飛到了地球的另一側'
+    ],
+    answer: 0,
+    displayAnswer: '月食發生在滿月時,地球恰好在太陽和月亮之間,地球的影子遮住了月亮,使月亮變暗。'
+  },
+  {
+    type: 'options',
+    question: '農曆初一是新月,初七、初八前後是什麼月相?',
+    options: ['上弦月', '滿月', '下弦月', '殘月'],
+    answer: 0,
+    displayAnswer: '農曆初一是新月,經過約7天到上弦月,月相週期中上弦月約在初七、初八前後出現。'
+  },
+  {
+    type: 'options',
+    question: '滿月時,月亮、地球、太陽三者的相對位置是?',
+    options: [
+      '地球在月亮和太陽之間',
+      '月亮在地球和太陽之間',
+      '太陽在地球和月亮之間',
+      '三者形成正三角形'
+    ],
+    answer: 0,
+    displayAnswer: '滿月時,太陽、地球、月亮三者幾乎成一直線,地球在中間,月亮被太陽完整照亮,所以我們看到圓形的滿月。'
+  }
+]
+
+const generateScienceQuestion = (() => {
+  let shuffledBank = []
+  let currentIndex = 0
+  
+  return () => {
+    if (currentIndex >= shuffledBank.length) {
+      shuffledBank = shuffleArray(scienceQuestions)
+      currentIndex = 0
+    }
+    const question = shuffledBank[currentIndex]
+    currentIndex++
+    return shuffleOptions(question)
+  }
+})()
+
+export { generateSocialQuestion, generateMathQuestion, generateScienceQuestion }
 
 // ===== 組合成 Day 2 =====
 const day2 = {
@@ -328,8 +355,10 @@ const day2 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateWaterworkQuestion,
-        checkAnswer: checkWaterworkAnswer
+        generator: generateSocialQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -384,8 +413,10 @@ const day2 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateRatioSimplifyQuestion,
-        checkAnswer: checkRatioSimplifyAnswer
+        generator: generateMathQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
@@ -444,8 +475,10 @@ const day2 = {
       },
       practice: {
         questionCount: 5,
-        generator: generateMoonCauseQuestion,
-        checkAnswer: checkMoonCauseAnswer
+        generator: generateScienceQuestion,
+        checkAnswer: (question, userAnswer) => {
+          return parseInt(userAnswer) === question.answer
+        }
       }
     },
 
