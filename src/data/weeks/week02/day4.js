@@ -308,7 +308,7 @@ const day4 = {
       },
       practice: {
         questionCount: 6,
-        generator: generateReadingQuestion,
+        generator: generateMathQuestion,
         checkAnswer: (question, userAnswer) => {
           return parseInt(userAnswer) === question.answer
         }
