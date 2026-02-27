@@ -37,14 +37,22 @@ const mathQuestions = [
     answer: 0,
     displayAnswer: '15 分鐘'
   },
-  // 質因數情境
+  // 因數與倍數
   {
     type: 'options',
-    question: '一塊 48 平方公尺的土地要平均分割成正方形小塊,每塊邊長最大可以是幾公尺(需整除)?提示:48 = 2⁴ × 3',
-    options: ['4 公尺', '6 公尺', '8 公尺', '12 公尺'],
+    question: '17 的倍數中，最接近 500 且不超過 500 的是多少?',
+    options: ['493', '497', '510', '483'],
     answer: 0,
-    displayAnswer: '4 公尺'
+    displayAnswer: '493'
   },
+  {
+    type: 'options',
+    question: '若要使 4311 成為 11 的倍數，最少要再加多少?',
+    options: ['1', '2', '3', '4'],
+    answer: 0,
+    displayAnswer: '1'
+  },
+  // 質因數分解
   {
     type: 'options',
     question: '一條蛇身上有 60 個鱗片花紋,60 的質因數分解是什麼?',
