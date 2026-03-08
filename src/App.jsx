@@ -21,6 +21,8 @@ import DailyFlashcardsReview from './pages/DailyFlashcardsReview'
 import DailyPhonics from './pages/DailyPhonics'
 import DailyPhonicsSession from './pages/DailyPhonicsSession'
 import DailyMultiplication from './pages/DailyMultiplication'
+import DailyVocabulary from './pages/DailyVocabulary'
+import DailyVocabularySession from './pages/DailyVocabularySession'
 
 import './App.css'
 
@@ -67,6 +69,15 @@ function App() {
           {/* 每日練習 - 乘法速算 */}
           <Route path="/daily/multiplication" element={
             <ProtectedRoute><DailyMultiplication /></ProtectedRoute>
+          } />
+
+          {/* 每日練習 - 單字練習 */}
+          <Route path="/daily/vocabulary" element={
+            <ProtectedRoute><DailyVocabulary /></ProtectedRoute>
+          } />
+          
+          <Route path="/daily/vocabulary/:deckId/session" element={
+            <ProtectedRoute><DailyVocabularySession /></ProtectedRoute>
           } />
           
           {/* 週頁面 - 天數選擇 */}
