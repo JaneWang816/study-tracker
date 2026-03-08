@@ -311,7 +311,7 @@ export default function DailyVocabularySession() {
             fontSize: '14px',
             color: 'var(--text-light)'
           }}>
-            💡 提示：{currentQuestion.hint}
+            💡 句意：{currentQuestion.hint}
           </div>
         )}
         

@@ -108,7 +108,7 @@ export const generateQuestions = (allCards) => {
     questions.push({
       type: 'cloze',
       question: clozeQuestion,
-      hint: card.front,  // 中文提示
+      hint: card.note2 || card.front,  // 優先使用 note2（句子解釋），沒有則用 front
       options,
       answer: answerIndex,
       correctAnswer: card.back
