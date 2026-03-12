@@ -55,7 +55,8 @@ export default function Home() {
         'flashcards': { name: '字卡複習', icon: '🎴', color: [245, 158, 11] },
         'phonics': { name: '自然發音', icon: '🔤', color: [16, 185, 129] },
         'multiplication': { name: '乘法速算', icon: '⚡', color: [139, 92, 246] },
-        'vocabulary': { name: '單字練習', icon: '📝', color: [6, 182, 212] }
+        'vocabulary': { name: '單字練習', icon: '📝', color: [6, 182, 212] },
+        'quiz': { name: '題庫複習', icon: '🧠', color: [14, 165, 233] }
       }
 
       // 四則運算難度名稱對照
@@ -199,7 +200,7 @@ export default function Home() {
       let yPos = 112
 
       // 遍歷每個模組分組
-      const moduleOrder = ['arithmetic', 'flashcards', 'phonics', 'multiplication', 'vocabulary']
+      const moduleOrder = ['arithmetic', 'flashcards', 'phonics', 'multiplication', 'vocabulary', 'quiz']
       
       moduleOrder.forEach(moduleKey => {
         const moduleSessions = groupedSessions[moduleKey]
@@ -599,6 +600,55 @@ export default function Home() {
               </div>
               <div style={{ fontSize: '24px', color: 'var(--text-light)' }}>→</div>
             </div>
+
+            {/* 題庫複習 */}
+            <div
+              onClick={() => navigate('/daily/quiz')}
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: 'var(--shadow)',
+                borderLeft: '4px solid #0EA5E9',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'var(--shadow)'
+              }}
+            >
+              <div style={{
+                width: '60px',
+                height: '60px',
+                background: '#0EA5E9',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+                flexShrink: 0
+              }}>
+                🧠
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '18px', marginBottom: '4px', fontWeight: 600 }}>
+                  題庫複習
+                </h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-light)' }}>
+                  社會、自然、國語綜合
+                </p>
+              </div>
+              <div style={{ fontSize: '24px', color: 'var(--text-light)' }}>→</div>
+            </div>
+
           </div>
         </section>
 
@@ -634,6 +684,28 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        {/* 題庫管理（低調入口） */}
+        <div
+          onClick={() => navigate('/admin/quiz')}
+          style={{
+            marginTop: '24px',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            color: 'var(--text-light)',
+            fontSize: '13px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            width: 'fit-content'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-light)'}
+        >
+          ⚙️ 題庫管理
+        </div>
+
       </main>
     </div>
   )

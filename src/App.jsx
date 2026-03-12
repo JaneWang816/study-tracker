@@ -23,6 +23,9 @@ import DailyPhonicsSession from './pages/DailyPhonicsSession'
 import DailyMultiplication from './pages/DailyMultiplication'
 import DailyVocabulary from './pages/DailyVocabulary'
 import DailyVocabularySession from './pages/DailyVocabularySession'
+import QuizReview from './pages/QuizReview'
+import QuizReviewSession from './pages/QuizReviewSession'
+import QuizAdmin from './pages/QuizAdmin'
 
 import './App.css'
 
@@ -78,6 +81,20 @@ function App() {
           
           <Route path="/daily/vocabulary/:deckId/session" element={
             <ProtectedRoute><DailyVocabularySession /></ProtectedRoute>
+          } />
+
+          {/* 每日練習 - 題庫複習 */}
+          <Route path="/daily/quiz" element={
+            <ProtectedRoute><QuizReview /></ProtectedRoute>
+          } />
+
+          <Route path="/daily/quiz/session" element={
+            <ProtectedRoute><QuizReviewSession /></ProtectedRoute>
+          } />
+
+          {/* 題庫管理 */}
+          <Route path="/admin/quiz" element={
+            <ProtectedRoute><QuizAdmin /></ProtectedRoute>
           } />
           
           {/* 週頁面 - 天數選擇 */}
