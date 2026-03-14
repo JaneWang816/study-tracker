@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { getTaiwanISOString } from '../utils/timezone'
 
-const TOTAL = 20
+const TOTAL = 25
 
 const FETCH_PLAN = [
   { subject: 'social',  types: ['review'],                       count: 4, label: '社會',    icon: '🌏' },
@@ -12,6 +12,7 @@ const FETCH_PLAN = [
   { subject: 'chinese', types: ['pronunciation', 'orthography'], count: 4, label: '字音字形', icon: '📝' },
   { subject: 'chinese', types: ['meaning'],                      count: 4, label: '詞義',    icon: '💬' },
   { subject: 'chinese', types: ['idiom'],                        count: 4, label: '成語',    icon: '📖' },
+  { subject: 'chinese', types: ['culture'],                      count: 5, label: '國學常識', icon: '📜' },
 ]
 
 const shuffleArray = (arr) => {
@@ -32,6 +33,32 @@ const shuffleOptions = (options) => {
   }
 }
 
+// 加權抽樣：weight = 1 / (correct_count + 1)
+// 答對 0 次 → 1.0，答對 1 次 → 0.5，答對 3 次 → 0.25
+const weightedSample = (pool, statsMap, count) => {
+  const weighted = pool.map(q => ({
+    q,
+    weight: 1 / ((statsMap[q.id]?.correct_count ?? 0) + 1)
+  }))
+
+  const selected = []
+  const remaining = [...weighted]
+
+  while (selected.length < count && remaining.length > 0) {
+    const totalWeight = remaining.reduce((sum, item) => sum + item.weight, 0)
+    let rand = Math.random() * totalWeight
+    let idx = 0
+    for (let i = 0; i < remaining.length; i++) {
+      rand -= remaining[i].weight
+      if (rand <= 0) { idx = i; break }
+    }
+    selected.push(remaining[idx].q)
+    remaining.splice(idx, 1)
+  }
+
+  return selected
+}
+
 export default function QuizReviewSession() {
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -48,6 +75,7 @@ export default function QuizReviewSession() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
+        // 各組題目（多撈讓加權有足夠母群）
         const batches = await Promise.all(
           FETCH_PLAN.map(plan =>
             supabase
@@ -55,11 +83,10 @@ export default function QuizReviewSession() {
               .select('*')
               .eq('subject', plan.subject)
               .in('type', plan.types)
-              .limit(plan.count * 5)
+              .limit(plan.count * 10)
           )
         )
 
-        // 檢查是否有分組題目不足
         const shortGroups = batches
           .map((res, i) => ({ ...FETCH_PLAN[i], count: res.data?.length ?? 0 }))
           .filter(g => g.count === 0)
@@ -70,10 +97,23 @@ export default function QuizReviewSession() {
           return
         }
 
+        // 撈該使用者的答對統計
+        const allQuestionIds = batches.flatMap(res => (res.data || []).map(q => q.id))
+        const { data: statsData } = await supabase
+          .from('user_quiz_stats')
+          .select('question_id, correct_count')
+          .eq('user_id', user.id)
+          .in('question_id', allQuestionIds)
+
+        const statsMap = {}
+        ;(statsData || []).forEach(s => { statsMap[s.question_id] = s })
+
+        // 加權抽題
         const allGroups = batches.map((res, i) => {
           const plan = FETCH_PLAN[i]
-          const shuffled = shuffleArray(res.data || []).slice(0, plan.count)
-          return shuffled.map(q => {
+          const pool = res.data || []
+          const picked = weightedSample(pool, statsMap, plan.count)
+          return picked.map(q => {
             const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options)
             const { options, correctIndex } = shuffleOptions(opts)
             return { ...q, shuffledOptions: options, correctIndex, groupLabel: plan.label, groupIcon: plan.icon }
@@ -119,10 +159,11 @@ export default function QuizReviewSession() {
     setIsSubmitted(true)
 
     try {
+      // 1. 寫入 practice_sessions
       await supabase.from('practice_sessions').insert({
         user_id: user.id,
         subject: 'daily',
-        module: 'quiz_review',
+        module: 'quiz',
         topic: 'mixed_20',
         total_questions: questions.length,
         correct_count: correctCount,
@@ -130,12 +171,33 @@ export default function QuizReviewSession() {
         duration,
         created_at: getTaiwanISOString()
       })
+
+      // 2. 更新 user_quiz_stats
+      // bigint 在 JS 可能是 number，明確轉成整數避免型別不符
+      const correctIds = detailedResults.filter(r => r.isCorrect).map(r => parseInt(r.question.id))
+      const wrongIds   = detailedResults.filter(r => !r.isCorrect).map(r => parseInt(r.question.id))
+
+      if (correctIds.length > 0) {
+        const { error: e1 } = await supabase.rpc('increment_quiz_stats', {
+          p_user_id: user.id,
+          p_question_ids: correctIds,
+          p_add_correct: true
+        })
+        if (e1) console.error('increment correct 失敗:', e1)
+      }
+      if (wrongIds.length > 0) {
+        const { error: e2 } = await supabase.rpc('increment_quiz_stats', {
+          p_user_id: user.id,
+          p_question_ids: wrongIds,
+          p_add_correct: false
+        })
+        if (e2) console.error('increment wrong 失敗:', e2)
+      }
     } catch (err) {
       console.error('儲存記錄失敗:', err)
     }
   }
 
-  // ── Loading / Error ──────────────────────────────────
   if (loading) return <div className="loading">載入題目中...</div>
 
   if (error) return (
@@ -145,7 +207,6 @@ export default function QuizReviewSession() {
     </div>
   )
 
-  // ── 結果頁面 ──────────────────────────────────────────
   if (isSubmitted && results) {
     const groupStats = FETCH_PLAN.map(plan => {
       const groupResults = results.detailedResults.filter(r => r.question.groupLabel === plan.label)
@@ -157,7 +218,6 @@ export default function QuizReviewSession() {
       <div className="page-container">
         <div className="result-container">
           <h1>複習完成！</h1>
-
           <div className="result-summary">
             <div className="result-score">
               <div className="score-circle" style={{
@@ -228,7 +288,6 @@ export default function QuizReviewSession() {
     )
   }
 
-  // ── 作答頁面 ──────────────────────────────────────────
   const userSelected = userAnswers[currentQuestion.id] ?? -1
 
   return (

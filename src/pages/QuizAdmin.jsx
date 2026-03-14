@@ -13,7 +13,8 @@ const TYPES = [
   { id: 'orthography',   label: '字形' },
   { id: 'idiom',         label: '成語' },
   { id: 'review',        label: '課程複習' },
-  { id: 'meaning',       label: '詞義' }
+  { id: 'meaning',       label: '詞義' },
+  { id: 'culture',       label: '國學常識' }
 ]
 
 const EMPTY_FORM = {
@@ -138,7 +139,7 @@ export default function QuizAdmin() {
   }
 
   const SUBJECT_LABELS = { chinese: '國語', social: '社會', science: '自然' }
-  const TYPE_LABELS = { pronunciation: '字音', orthography: '字形', idiom: '成語', review: '課程複習' }
+  const TYPE_LABELS = { pronunciation: '字音', orthography: '字形', idiom: '成語', review: '課程複習', meaning: '詞義', culture: '國學常識' }
 
   return (
     <div className="page-container">
