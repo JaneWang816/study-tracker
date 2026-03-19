@@ -18,12 +18,13 @@ const FETCH_PLAN = [
 const shuffleArray = (arr) => {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]]
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
   }
   return a
 }
 
+// 洗牌選項，回傳新的 shuffledOptions 和 correctIndex
 const shuffleOptions = (options) => {
   const indexed = options.map((opt, i) => ({ opt, isCorrect: i === 0 }))
   const shuffled = shuffleArray(indexed)
@@ -33,17 +34,26 @@ const shuffleOptions = (options) => {
   }
 }
 
-// 加權抽樣：weight = 1 / (correct_count + 1)
-// 答對 0 次 → 1.0，答對 1 次 → 0.5，答對 3 次 → 0.25
+// 對已有 shuffledOptions 的題目物件重新洗牌，回傳新物件
+const reshuffleQuestion = (q) => {
+  // shuffledOptions 裡 correctIndex 位置的那個就是正確答案
+  const correctText = q.shuffledOptions[q.correctIndex]
+  const newOptions = shuffleArray([...q.shuffledOptions])
+  return {
+    ...q,
+    shuffledOptions: newOptions,
+    correctIndex: newOptions.indexOf(correctText)
+  }
+}
+
+// 加權抽樣
 const weightedSample = (pool, statsMap, count) => {
   const weighted = pool.map(q => ({
     q,
     weight: 1 / ((statsMap[q.id]?.correct_count ?? 0) + 1)
   }))
-
   const selected = []
   const remaining = [...weighted]
-
   while (selected.length < count && remaining.length > 0) {
     const totalWeight = remaining.reduce((sum, item) => sum + item.weight, 0)
     let rand = Math.random() * totalWeight
@@ -55,7 +65,6 @@ const weightedSample = (pool, statsMap, count) => {
     selected.push(remaining[idx].q)
     remaining.splice(idx, 1)
   }
-
   return selected
 }
 
@@ -72,10 +81,21 @@ export default function QuizReviewSession() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // 錯題複習相關 state
+  const [phase, setPhase] = useState('main')       // 'main' | 'review'
+  const [wrongQueue, setWrongQueue] = useState([])  // 待複習題目（已重新洗牌）
+  const [reviewIndex, setReviewIndex] = useState(0)
+  const [reviewSelected, setReviewSelected] = useState(-1)
+  const [reviewFeedback, setReviewFeedback] = useState(null) // { correct }
+
+  // 當前題目
+  const currentQuestion = phase === 'main'
+    ? questions[currentIndex]
+    : wrongQueue[reviewIndex]
+
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        // 各組題目（多撈讓加權有足夠母群）
         const batches = await Promise.all(
           FETCH_PLAN.map(plan =>
             supabase
@@ -97,7 +117,6 @@ export default function QuizReviewSession() {
           return
         }
 
-        // 撈該使用者的答對統計
         const allQuestionIds = batches.flatMap(res => (res.data || []).map(q => q.id))
         const { data: statsData } = await supabase
           .from('user_quiz_stats')
@@ -108,7 +127,6 @@ export default function QuizReviewSession() {
         const statsMap = {}
         ;(statsData || []).forEach(s => { statsMap[s.question_id] = s })
 
-        // 加權抽題
         const allGroups = batches.map((res, i) => {
           const plan = FETCH_PLAN[i]
           const pool = res.data || []
@@ -132,10 +150,10 @@ export default function QuizReviewSession() {
     fetchAll()
   }, [])
 
-  const currentQuestion = questions[currentIndex]
+  // ── 第一輪 ────────────────────────────────────────────────
 
   const handleSelect = (optionIndex) => {
-    if (isSubmitted) return
+    if (phase !== 'main') return
     setUserAnswers(prev => ({ ...prev, [currentQuestion.id]: optionIndex }))
   }
 
@@ -143,6 +161,7 @@ export default function QuizReviewSession() {
   const handlePrev = () => { if (currentIndex > 0) setCurrentIndex(i => i - 1) }
   const handleJumpTo = (i) => setCurrentIndex(i)
 
+  // 交卷：計算結果，存 DB，決定是否進入補考
   const handleSubmit = async () => {
     let correctCount = 0
     const detailedResults = questions.map(q => {
@@ -156,10 +175,9 @@ export default function QuizReviewSession() {
     const score = Math.round((correctCount / questions.length) * 100)
 
     setResults({ detailedResults, correctCount, totalQuestions: questions.length, score, duration })
-    setIsSubmitted(true)
 
+    // DB 只記錄第一輪
     try {
-      // 1. 寫入 practice_sessions
       await supabase.from('practice_sessions').insert({
         user_id: user.id,
         subject: 'daily',
@@ -172,31 +190,77 @@ export default function QuizReviewSession() {
         created_at: getTaiwanISOString()
       })
 
-      // 2. 更新 user_quiz_stats
-      // bigint 在 JS 可能是 number，明確轉成整數避免型別不符
       const correctIds = detailedResults.filter(r => r.isCorrect).map(r => parseInt(r.question.id))
       const wrongIds   = detailedResults.filter(r => !r.isCorrect).map(r => parseInt(r.question.id))
 
       if (correctIds.length > 0) {
         const { error: e1 } = await supabase.rpc('increment_quiz_stats', {
-          p_user_id: user.id,
-          p_question_ids: correctIds,
-          p_add_correct: true
+          p_user_id: user.id, p_question_ids: correctIds, p_add_correct: true
         })
         if (e1) console.error('increment correct 失敗:', e1)
       }
       if (wrongIds.length > 0) {
         const { error: e2 } = await supabase.rpc('increment_quiz_stats', {
-          p_user_id: user.id,
-          p_question_ids: wrongIds,
-          p_add_correct: false
+          p_user_id: user.id, p_question_ids: wrongIds, p_add_correct: false
         })
         if (e2) console.error('increment wrong 失敗:', e2)
       }
     } catch (err) {
       console.error('儲存記錄失敗:', err)
     }
+
+    const wrong = detailedResults
+      .filter(r => !r.isCorrect)
+      .map(r => reshuffleQuestion(r.question))
+
+    if (wrong.length === 0) {
+      setIsSubmitted(true)
+    } else {
+      setWrongQueue(wrong)
+      setReviewIndex(0)
+      setReviewSelected(-1)
+      setReviewFeedback(null)
+      setPhase('review')
+    }
   }
+
+  // ── 補考階段 ──────────────────────────────────────────────
+
+  const handleReviewSelect = (optionIndex) => {
+    if (reviewFeedback) return
+    setReviewSelected(optionIndex)
+  }
+
+  const handleReviewConfirm = () => {
+    if (reviewSelected < 0) return
+    const isCorrect = reviewSelected === currentQuestion.correctIndex
+    setReviewFeedback({ correct: isCorrect })
+  }
+
+  const handleReviewNext = () => {
+    if (reviewFeedback?.correct) {
+      const remaining = wrongQueue.filter((_, i) => i !== reviewIndex)
+      if (remaining.length === 0) {
+        setIsSubmitted(true)
+      } else {
+        setWrongQueue(remaining)
+        setReviewIndex(reviewIndex >= remaining.length ? 0 : reviewIndex)
+        setReviewSelected(-1)
+        setReviewFeedback(null)
+      }
+    } else {
+      // 答錯：重新洗牌後移到佇列末尾
+      const reshuffled = reshuffleQuestion(currentQuestion)
+      const newQueue = wrongQueue.filter((_, i) => i !== reviewIndex)
+      newQueue.push(reshuffled)
+      setWrongQueue(newQueue)
+      setReviewIndex(reviewIndex >= newQueue.length ? 0 : reviewIndex)
+      setReviewSelected(-1)
+      setReviewFeedback(null)
+    }
+  }
+
+  // ── Loading / Error ───────────────────────────────────────
 
   if (loading) return <div className="loading">載入題目中...</div>
 
@@ -206,6 +270,8 @@ export default function QuizReviewSession() {
       <button onClick={() => navigate('/daily/quiz')} className="btn">返回</button>
     </div>
   )
+
+  // ── 結果頁面 ──────────────────────────────────────────────
 
   if (isSubmitted && results) {
     const groupStats = FETCH_PLAN.map(plan => {
@@ -254,7 +320,7 @@ export default function QuizReviewSession() {
 
           {results.detailedResults.filter(r => !r.isCorrect).length > 0 && (
             <div className="wrong-questions">
-              <h3>錯題複習</h3>
+              <h3>第一輪答錯的題目</h3>
               {results.detailedResults.filter(r => !r.isCorrect).map((r, i) => (
                 <div key={i} className="wrong-question-item">
                   <div className="question-meta">
@@ -287,6 +353,122 @@ export default function QuizReviewSession() {
       </div>
     )
   }
+
+  // ── 補考頁面 ──────────────────────────────────────────────
+
+  if (phase === 'review' && currentQuestion) {
+    return (
+      <div className="page-container">
+        <div className="practice-header">
+          <div className="progress-info">
+            <span className="current-question" style={{ color: '#D97706', fontWeight: 600 }}>
+              錯題複習｜還剩 {wrongQueue.length} 題
+            </span>
+            <span className="question-type-tag">
+              {currentQuestion.groupIcon} {currentQuestion.groupLabel}
+            </span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: '100%', background: '#F59E0B' }} />
+          </div>
+        </div>
+
+        <div style={{
+          margin: '0 0 16px',
+          padding: '10px 20px',
+          background: '#FEF3C7',
+          borderRadius: '10px',
+          fontSize: '14px',
+          color: '#92400E',
+          textAlign: 'center',
+          fontWeight: 500
+        }}>
+          ⚠️ 剛才答錯的題目來複習一下！答對才能繼續下一題
+        </div>
+
+        <div className="question-container">
+          <div className="question-text">{currentQuestion.question}</div>
+          <div className="options-grid">
+            {currentQuestion.shuffledOptions.map((opt, i) => {
+              const isSelected = reviewSelected === i
+              const isCorrect = i === currentQuestion.correctIndex
+              let className = 'option-btn'
+              if (reviewFeedback) {
+                if (isCorrect) className += ' correct-highlight'
+                else if (isSelected) className += ' wrong-highlight'
+              } else if (isSelected) {
+                className += ' selected'
+              }
+              return (
+                <button
+                  key={i}
+                  className={className}
+                  onClick={() => handleReviewSelect(i)}
+                  disabled={!!reviewFeedback}
+                  style={{
+                    background: reviewFeedback
+                      ? isCorrect ? '#D1FAE5' : isSelected ? '#FEE2E2' : undefined
+                      : isSelected ? '#FEF3C7' : undefined,
+                    borderColor: reviewFeedback
+                      ? isCorrect ? '#10B981' : isSelected ? '#EF4444' : undefined
+                      : isSelected ? '#F59E0B' : undefined
+                  }}
+                >
+                  {opt}
+                </button>
+              )
+            })}
+          </div>
+
+          {!reviewFeedback ? (
+            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+              <button
+                onClick={handleReviewConfirm}
+                disabled={reviewSelected < 0}
+                className="btn-submit"
+                style={{ background: '#F59E0B', borderColor: '#F59E0B' }}
+              >
+                確認答案
+              </button>
+            </div>
+          ) : (
+            <div style={{ marginTop: '24px', textAlign: 'center' }}>
+              <div style={{
+                display: 'inline-block',
+                padding: '16px 32px',
+                background: reviewFeedback.correct ? '#D1FAE5' : '#FEE2E2',
+                borderRadius: '12px',
+                marginBottom: '16px',
+                fontWeight: 600,
+                color: reviewFeedback.correct ? '#065F46' : '#991B1B'
+              }}>
+                {reviewFeedback.correct ? '✓ 答對了！' : `✗ 答錯了，正確答案：${currentQuestion.answer}`}
+              </div>
+              {currentQuestion.explanation && (
+                <div style={{
+                  margin: '0 auto 16px',
+                  padding: '10px 16px',
+                  background: '#FFFDE7',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  color: '#636E72',
+                  maxWidth: '500px'
+                }}>
+                  💡 {currentQuestion.explanation}
+                </div>
+              )}
+              <br />
+              <button onClick={handleReviewNext} className="btn-submit">
+                {reviewFeedback.correct ? '下一題' : '再試一次'}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ── 作答頁面（第一輪）────────────────────────────────────
 
   const userSelected = userAnswers[currentQuestion.id] ?? -1
 
