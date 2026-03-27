@@ -1,12 +1,37 @@
+// src/pages/QuizReview.jsx
+// 題庫複習入口 - 選擇四個練習模式
+
 import { useNavigate } from 'react-router-dom'
 
-const BREAKDOWN = [
-  { subject: 'social',   types: ['review'],                       count: 4, label: '社會',    icon: '🌏' },
-  { subject: 'science',  types: ['review'],                       count: 4, label: '自然',    icon: '🔬' },
-  { subject: 'chinese',  types: ['pronunciation', 'orthography'], count: 4, label: '字音字形', icon: '📝' },
-  { subject: 'chinese',  types: ['meaning'],                      count: 4, label: '詞義',    icon: '💬' },
-  { subject: 'chinese',  types: ['idiom'],                        count: 4, label: '成語',    icon: '📖' },
-  { subject: 'chinese',  types: ['culture'],                      count: 5, label: '國學常識', icon: '📜' },
+const MODES = [
+  {
+    id: 'social',
+    label: '社會題庫',
+    desc: '地理、歷史、社會科複習',
+    icon: '🌏',
+    color: '#3B82F6',
+  },
+  {
+    id: 'science',
+    label: '自然題庫',
+    desc: '自然科學複習',
+    icon: '🔬',
+    color: '#10B981',
+  },
+  {
+    id: 'phonics',
+    label: '字音字形',
+    desc: '注音、字形辨析練習',
+    icon: '📝',
+    color: '#F59E0B',
+  },
+  {
+    id: 'culture',
+    label: '國學常識',
+    desc: '成語、詞義、文化常識',
+    icon: '📜',
+    color: '#8B5CF6',
+  },
 ]
 
 export default function QuizReview() {
@@ -15,33 +40,67 @@ export default function QuizReview() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <button onClick={() => navigate('/')} className="btn-back">← 返回首頁</button>
+        <button onClick={() => navigate('/daily')} className="btn-back">← 返回</button>
         <h1><span className="icon">🧠</span> 題庫複習</h1>
-        <p className="page-desc">從已學內容隨機出題，固定 25 題</p>
+        <p className="page-desc">選擇題型，每次隨機出 20 題</p>
       </div>
 
       <div className="practice-setup">
-        <div className="setup-section">
-          <h3>今日題型</h3>
-          <div className="breakdown-list">
-            {BREAKDOWN.map((item, i) => (
-              <div key={i} className="breakdown-item">
-                <span className="breakdown-icon">{item.icon}</span>
-                <span className="breakdown-label">{item.label}</span>
-                <span className="breakdown-count">{item.count} 題</span>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+          gap: '16px',
+        }}>
+          {MODES.map(mode => (
+            <div
+              key={mode.id}
+              onClick={() => navigate('/daily/quiz/session', { state: { mode: mode.id } })}
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '24px 20px',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: 'var(--shadow)',
+                borderLeft: `4px solid ${mode.color}`,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)'
+                e.currentTarget.style.boxShadow = 'var(--shadow-lg)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'var(--shadow)'
+              }}
+            >
+              <div style={{
+                width: '56px',
+                height: '56px',
+                background: mode.color,
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '26px',
+                flexShrink: 0,
+              }}>
+                {mode.icon}
               </div>
-            ))}
-            <div className="breakdown-item breakdown-total">
-              <span className="breakdown-icon">　</span>
-              <span className="breakdown-label">合計</span>
-              <span className="breakdown-count">25 題</span>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>
+                  {mode.label}
+                </h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-light)' }}>
+                  {mode.desc}
+                </p>
+              </div>
+              <div style={{ fontSize: '20px', color: 'var(--text-light)' }}>→</div>
             </div>
-          </div>
+          ))}
         </div>
-
-        <button className="btn-start" onClick={() => navigate('/daily/quiz/session')}>
-          開始複習
-        </button>
       </div>
     </div>
   )

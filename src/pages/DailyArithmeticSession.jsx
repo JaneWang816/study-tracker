@@ -246,7 +246,7 @@ export default function DailyArithmeticSession() {
             <button onClick={() => navigate('/daily/arithmetic')} className="btn-primary">
               再練一次
             </button>
-            <button onClick={() => navigate('/')} className="btn">
+            <button onClick={() => navigate('/daily')} className="btn">
               返回首頁
             </button>
           </div>

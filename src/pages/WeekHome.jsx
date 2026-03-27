@@ -15,7 +15,7 @@ export default function WeekHome() {
       <div className="page-container">
         <div className="error-message">
           <h2>找不到此週課程</h2>
-          <button className="btn btn-primary" onClick={() => navigate('/')}>
+          <button className="btn btn-primary" onClick={() => navigate('/learn')}>
             返回首頁
           </button>
         </div>
@@ -28,7 +28,7 @@ export default function WeekHome() {
   return (
     <div className="page-container">
       <header className="page-header">
-        <button className="btn-back" onClick={() => navigate('/')}>
+        <button className="btn-back" onClick={() => navigate('/learn')}>
           ← 返回
         </button>
         <div className="header-content">

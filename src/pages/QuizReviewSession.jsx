@@ -1,19 +1,40 @@
+// src/pages/QuizReviewSession.jsx
+// 題庫複習 session - 依 mode 出 20 題，含錯題補考
+
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { getTaiwanISOString } from '../utils/timezone'
 
-const TOTAL = 25
+const TOTAL = 20
 
-const FETCH_PLAN = [
-  { subject: 'social',  types: ['review'],                       count: 4, label: '社會',    icon: '🌏' },
-  { subject: 'science', types: ['review'],                       count: 4, label: '自然',    icon: '🔬' },
-  { subject: 'chinese', types: ['pronunciation', 'orthography'], count: 4, label: '字音字形', icon: '📝' },
-  { subject: 'chinese', types: ['meaning'],                      count: 4, label: '詞義',    icon: '💬' },
-  { subject: 'chinese', types: ['idiom'],                        count: 4, label: '成語',    icon: '📖' },
-  { subject: 'chinese', types: ['culture'],                      count: 5, label: '國學常識', icon: '📜' },
-]
+// 各模式的 fetch 計劃
+const FETCH_PLANS = {
+  social: [
+    { subject: 'social', types: ['review'], count: 20, label: '社會', icon: '🌏' },
+  ],
+  science: [
+    { subject: 'science', types: ['review'], count: 20, label: '自然', icon: '🔬' },
+  ],
+  phonics: [
+    { subject: 'chinese', types: ['pronunciation', 'orthography'], count: 20, label: '字音字形', icon: '📝' },
+  ],
+  culture: [
+    { subject: 'chinese', types: ['idiom'],   count: 8,  label: '成語',    icon: '📖' },
+    { subject: 'chinese', types: ['culture'], count: 8,  label: '國學常識', icon: '📜' },
+    { subject: 'chinese', types: ['meaning'], count: 4,  label: '詞義',    icon: '💬' },
+  ],
+}
+
+const MODE_META = {
+  social:  { label: '社會題庫', icon: '🌏', topic: 'social_20',  color: '#3B82F6' },
+  science: { label: '自然題庫', icon: '🔬', topic: 'science_20', color: '#10B981' },
+  phonics: { label: '字音字形', icon: '📝', topic: 'phonics_20', color: '#F59E0B' },
+  culture: { label: '國學常識', icon: '📜', topic: 'culture_20', color: '#8B5CF6' },
+}
+
+// ── 工具函式 ──────────────────────────────────────────────────
 
 const shuffleArray = (arr) => {
   const a = [...arr]
@@ -24,7 +45,6 @@ const shuffleArray = (arr) => {
   return a
 }
 
-// 洗牌選項，回傳新的 shuffledOptions 和 correctIndex
 const shuffleOptions = (options) => {
   const indexed = options.map((opt, i) => ({ opt, isCorrect: i === 0 }))
   const shuffled = shuffleArray(indexed)
@@ -34,9 +54,7 @@ const shuffleOptions = (options) => {
   }
 }
 
-// 對已有 shuffledOptions 的題目物件重新洗牌，回傳新物件
 const reshuffleQuestion = (q) => {
-  // shuffledOptions 裡 correctIndex 位置的那個就是正確答案
   const correctText = q.shuffledOptions[q.correctIndex]
   const newOptions = shuffleArray([...q.shuffledOptions])
   return {
@@ -46,7 +64,6 @@ const reshuffleQuestion = (q) => {
   }
 }
 
-// 加權抽樣
 const weightedSample = (pool, statsMap, count) => {
   const weighted = pool.map(q => ({
     q,
@@ -68,9 +85,16 @@ const weightedSample = (pool, statsMap, count) => {
   return selected
 }
 
+// ── 主元件 ────────────────────────────────────────────────────
+
 export default function QuizReviewSession() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user } = useAuth()
+
+  const mode = location.state?.mode ?? 'social'
+  const meta = MODE_META[mode] ?? MODE_META.social
+  const fetchPlan = FETCH_PLANS[mode] ?? FETCH_PLANS.social
 
   const [questions, setQuestions] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -81,23 +105,24 @@ export default function QuizReviewSession() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // 錯題複習相關 state
-  const [phase, setPhase] = useState('main')       // 'main' | 'review'
-  const [wrongQueue, setWrongQueue] = useState([])  // 待複習題目（已重新洗牌）
+  // 錯題複習
+  const [phase, setPhase] = useState('main')
+  const [wrongQueue, setWrongQueue] = useState([])
   const [reviewIndex, setReviewIndex] = useState(0)
   const [reviewSelected, setReviewSelected] = useState(-1)
-  const [reviewFeedback, setReviewFeedback] = useState(null) // { correct }
+  const [reviewFeedback, setReviewFeedback] = useState(null)
 
-  // 當前題目
   const currentQuestion = phase === 'main'
     ? questions[currentIndex]
     : wrongQueue[reviewIndex]
+
+  // ── 載入題目 ─────────────────────────────────────────────────
 
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const batches = await Promise.all(
-          FETCH_PLAN.map(plan =>
+          fetchPlan.map(plan =>
             supabase
               .from('quiz_questions')
               .select('*')
@@ -107,38 +132,37 @@ export default function QuizReviewSession() {
           )
         )
 
-        const shortGroups = batches
-          .map((res, i) => ({ ...FETCH_PLAN[i], count: res.data?.length ?? 0 }))
+        const emptyGroups = batches
+          .map((res, i) => ({ ...fetchPlan[i], count: res.data?.length ?? 0 }))
           .filter(g => g.count === 0)
 
-        if (shortGroups.length > 0) {
-          const missing = shortGroups.map(g => g.label).join('、')
+        if (emptyGroups.length > 0) {
+          const missing = emptyGroups.map(g => g.label).join('、')
           setError(`「${missing}」尚無題目，請先透過後台新增。`)
           return
         }
 
-        const allQuestionIds = batches.flatMap(res => (res.data || []).map(q => q.id))
+        const allIds = batches.flatMap(res => (res.data || []).map(q => q.id))
         const { data: statsData } = await supabase
           .from('user_quiz_stats')
           .select('question_id, correct_count')
           .eq('user_id', user.id)
-          .in('question_id', allQuestionIds)
+          .in('question_id', allIds)
 
         const statsMap = {}
         ;(statsData || []).forEach(s => { statsMap[s.question_id] = s })
 
-        const allGroups = batches.map((res, i) => {
-          const plan = FETCH_PLAN[i]
+        const picked = batches.flatMap((res, i) => {
+          const plan = fetchPlan[i]
           const pool = res.data || []
-          const picked = weightedSample(pool, statsMap, plan.count)
-          return picked.map(q => {
+          return weightedSample(pool, statsMap, plan.count).map(q => {
             const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options)
             const { options, correctIndex } = shuffleOptions(opts)
             return { ...q, shuffledOptions: options, correctIndex, groupLabel: plan.label, groupIcon: plan.icon }
           })
         })
 
-        setQuestions(allGroups.flat())
+        setQuestions(shuffleArray(picked))
       } catch (err) {
         console.error('題目載入失敗:', err)
         setError('題目載入失敗，請重試')
@@ -150,18 +174,17 @@ export default function QuizReviewSession() {
     fetchAll()
   }, [])
 
-  // ── 第一輪 ────────────────────────────────────────────────
+  // ── 第一輪 ────────────────────────────────────────────────────
 
-  const handleSelect = (optionIndex) => {
+  const handleSelect = (i) => {
     if (phase !== 'main') return
-    setUserAnswers(prev => ({ ...prev, [currentQuestion.id]: optionIndex }))
+    setUserAnswers(prev => ({ ...prev, [currentQuestion.id]: i }))
   }
 
   const handleNext = () => { if (currentIndex < questions.length - 1) setCurrentIndex(i => i + 1) }
   const handlePrev = () => { if (currentIndex > 0) setCurrentIndex(i => i - 1) }
   const handleJumpTo = (i) => setCurrentIndex(i)
 
-  // 交卷：計算結果，存 DB，決定是否進入補考
   const handleSubmit = async () => {
     let correctCount = 0
     const detailedResults = questions.map(q => {
@@ -176,13 +199,12 @@ export default function QuizReviewSession() {
 
     setResults({ detailedResults, correctCount, totalQuestions: questions.length, score, duration })
 
-    // DB 只記錄第一輪
     try {
       await supabase.from('practice_sessions').insert({
         user_id: user.id,
         subject: 'daily',
         module: 'quiz',
-        topic: 'mixed_20',
+        topic: meta.topic,
         total_questions: questions.length,
         correct_count: correctCount,
         score,
@@ -224,11 +246,11 @@ export default function QuizReviewSession() {
     }
   }
 
-  // ── 補考階段 ──────────────────────────────────────────────
+  // ── 補考階段 ──────────────────────────────────────────────────
 
-  const handleReviewSelect = (optionIndex) => {
+  const handleReviewSelect = (i) => {
     if (reviewFeedback) return
-    setReviewSelected(optionIndex)
+    setReviewSelected(i)
   }
 
   const handleReviewConfirm = () => {
@@ -239,84 +261,81 @@ export default function QuizReviewSession() {
 
   const handleReviewNext = () => {
     if (reviewFeedback?.correct) {
-      const remaining = wrongQueue.filter((_, i) => i !== reviewIndex)
-      if (remaining.length === 0) {
+      const next = wrongQueue.filter((_, i) => i !== reviewIndex)
+      if (next.length === 0) {
+        setPhase('done')
         setIsSubmitted(true)
       } else {
-        setWrongQueue(remaining)
-        setReviewIndex(reviewIndex >= remaining.length ? 0 : reviewIndex)
+        setWrongQueue(next)
+        setReviewIndex(0)
         setReviewSelected(-1)
         setReviewFeedback(null)
       }
     } else {
-      // 答錯：重新洗牌後移到佇列末尾
-      const reshuffled = reshuffleQuestion(currentQuestion)
-      const newQueue = wrongQueue.filter((_, i) => i !== reviewIndex)
-      newQueue.push(reshuffled)
-      setWrongQueue(newQueue)
-      setReviewIndex(reviewIndex >= newQueue.length ? 0 : reviewIndex)
+      setWrongQueue(prev => {
+        const updated = [...prev]
+        updated[reviewIndex] = reshuffleQuestion(updated[reviewIndex])
+        return updated
+      })
       setReviewSelected(-1)
       setReviewFeedback(null)
     }
   }
 
-  // ── Loading / Error ───────────────────────────────────────
-
-  if (loading) return <div className="loading">載入題目中...</div>
-
-  if (error) return (
-    <div className="page-container">
-      <p className="error-msg">{error}</p>
-      <button onClick={() => navigate('/daily/quiz')} className="btn">返回</button>
-    </div>
-  )
-
-  // ── 結果頁面 ──────────────────────────────────────────────
+  // ── 結果頁 ────────────────────────────────────────────────────
 
   if (isSubmitted && results) {
-    const groupStats = FETCH_PLAN.map(plan => {
-      const groupResults = results.detailedResults.filter(r => r.question.groupLabel === plan.label)
-      const correct = groupResults.filter(r => r.isCorrect).length
-      return { label: plan.label, icon: plan.icon, correct, total: plan.count }
+    const groupStats = fetchPlan.map(plan => {
+      const group = results.detailedResults.filter(r => r.question.groupLabel === plan.label)
+      return {
+        icon: plan.icon,
+        label: plan.label,
+        correct: group.filter(r => r.isCorrect).length,
+        total: group.length
+      }
     })
 
     return (
       <div className="page-container">
         <div className="result-container">
-          <h1>複習完成！</h1>
-          <div className="result-summary">
-            <div className="result-score">
-              <div className="score-circle" style={{
-                background: results.score >= 80 ? '#00D2A0' : results.score >= 60 ? '#F59E0B' : '#EF4444'
-              }}>
-                {results.score}
-              </div>
-              <div className="score-label">分</div>
+          <div className="result-header">
+            <h2>
+              {meta.icon} {meta.label}
+            </h2>
+            <div className="score-circle">
+              <span className="score-number">{results.score}</span>
+              <span className="score-label">分</span>
             </div>
             <div className="result-stats">
               <div className="stat-item">
-                <div className="stat-label">答對題數</div>
-                <div className="stat-value">{results.correctCount} / {results.totalQuestions}</div>
+                <span className="stat-value">{results.correctCount}</span>
+                <span className="stat-label">答對</span>
               </div>
               <div className="stat-item">
-                <div className="stat-label">耗時</div>
-                <div className="stat-value">
-                  {Math.floor(results.duration / 60)} 分 {results.duration % 60} 秒
-                </div>
+                <span className="stat-value">{results.totalQuestions - results.correctCount}</span>
+                <span className="stat-label">答錯</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">
+                  {Math.floor(results.duration / 60)}:{String(results.duration % 60).padStart(2, '0')}
+                </span>
+                <span className="stat-label">時間</span>
               </div>
             </div>
           </div>
 
-          <div className="group-stats">
-            {groupStats.map((g, i) => (
-              <div key={i} className="group-stat-item">
-                <span>{g.icon} {g.label}</span>
-                <span className={g.correct === g.total ? 'all-correct' : ''}>
-                  {g.correct} / {g.total}
-                </span>
-              </div>
-            ))}
-          </div>
+          {fetchPlan.length > 1 && (
+            <div className="group-stats">
+              {groupStats.map((g, i) => (
+                <div key={i} className="group-stat-item">
+                  <span>{g.icon} {g.label}</span>
+                  <span className={g.correct === g.total ? 'all-correct' : ''}>
+                    {g.correct} / {g.total}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {results.detailedResults.filter(r => !r.isCorrect).length > 0 && (
             <div className="wrong-questions">
@@ -347,16 +366,41 @@ export default function QuizReviewSession() {
 
           <div className="result-actions">
             <button onClick={() => navigate('/daily/quiz')} className="btn-primary">再練一次</button>
-            <button onClick={() => navigate('/')} className="btn">返回首頁</button>
+            <button onClick={() => navigate('/daily')} className="btn">返回每日練習</button>
           </div>
         </div>
       </div>
     )
   }
 
-  // ── 補考頁面 ──────────────────────────────────────────────
+  // ── 載入 / 錯誤 ───────────────────────────────────────────────
 
-  if (phase === 'review' && currentQuestion) {
+  if (loading) {
+    return (
+      <div className="page-container">
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-light)' }}>
+          載入題目中…
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="page-container">
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <p style={{ color: '#EF4444', marginBottom: '24px' }}>{error}</p>
+          <button onClick={() => navigate('/daily/quiz')} className="btn-primary">返回</button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!currentQuestion) return null
+
+  // ── 補考頁面 ──────────────────────────────────────────────────
+
+  if (phase === 'review') {
     return (
       <div className="page-container">
         <div className="practice-header">
@@ -468,7 +512,7 @@ export default function QuizReviewSession() {
     )
   }
 
-  // ── 作答頁面（第一輪）────────────────────────────────────
+  // ── 作答頁面（第一輪）────────────────────────────────────────
 
   const userSelected = userAnswers[currentQuestion.id] ?? -1
 
@@ -477,20 +521,25 @@ export default function QuizReviewSession() {
       <div className="practice-header">
         <div className="progress-info">
           <span className="current-question">第 {currentIndex + 1} 題</span>
-          <span className="question-type-tag">
-            {currentQuestion.groupIcon} {currentQuestion.groupLabel}
+          <span className="question-type-tag" style={{ color: meta.color }}>
+            {meta.icon} {meta.label}
           </span>
           <span className="total-questions">共 {TOTAL} 題</span>
         </div>
         <div className="progress-bar">
           <div
             className="progress-fill"
-            style={{ width: `${((currentIndex + 1) / TOTAL) * 100}%` }}
+            style={{ width: `${((currentIndex + 1) / TOTAL) * 100}%`, background: meta.color }}
           />
         </div>
       </div>
 
       <div className="question-container">
+        {questions[currentIndex]?.groupLabel && fetchPlan.length > 1 && (
+          <div style={{ fontSize: '13px', color: 'var(--text-light)', marginBottom: '8px' }}>
+            {questions[currentIndex].groupIcon} {questions[currentIndex].groupLabel}
+          </div>
+        )}
         <div className="question-text">{currentQuestion.question}</div>
         <div className="options-grid">
           {currentQuestion.shuffledOptions.map((opt, i) => (
@@ -521,7 +570,6 @@ export default function QuizReviewSession() {
           <button
             key={q.id}
             onClick={() => handleJumpTo(i)}
-            title={FETCH_PLAN[Math.floor(i / 4)]?.label}
             className={`question-number ${i === currentIndex ? 'current' : ''} ${userAnswers[q.id] != null ? 'answered' : ''}`}
           >
             {i + 1}

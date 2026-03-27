@@ -281,7 +281,7 @@ export default function DailyPhonicsSession() {
             <button onClick={() => navigate('/daily/phonics')} className="btn btn-primary">
               返回選擇
             </button>
-            <button onClick={() => navigate('/')} className="btn btn-outline">
+            <button onClick={() => navigate('/daily')} className="btn btn-outline">
               返回首頁
             </button>
           </div>

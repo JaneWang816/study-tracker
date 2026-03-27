@@ -312,7 +312,7 @@ export default function DailyVocabularySession() {
             <button onClick={() => navigate('/daily/vocabulary')} className="btn btn-outline">
               返回字卡組
             </button>
-            <button onClick={() => navigate('/')} className="btn btn-outline">
+            <button onClick={() => navigate('/daily')} className="btn btn-outline">
               返回首頁
             </button>
           </div>

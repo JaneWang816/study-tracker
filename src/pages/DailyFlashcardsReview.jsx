@@ -326,7 +326,7 @@ export default function DailyFlashcardsReview() {
             <button onClick={() => navigate('/daily/flashcards')} className="btn btn-primary">
               返回字卡列表
             </button>
-            <button onClick={() => navigate('/')} className="btn btn-outline">
+            <button onClick={() => navigate('/daily')} className="btn btn-outline">
               返回首頁
             </button>
           </div>

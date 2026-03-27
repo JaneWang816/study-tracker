@@ -76,7 +76,7 @@ export default function DailyFlashcards() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <button onClick={() => navigate('/')} className="btn-back">
+        <button onClick={() => navigate('/daily')} className="btn-back">
           ← 返回首頁
         </button>
         <div className="header-content">

@@ -258,8 +258,8 @@ export default function DailyMultiplication() {
             <button onClick={() => window.location.reload()} className="btn btn-primary">
               再練一次
             </button>
-            <button onClick={() => navigate('/')} className="btn btn-outline">
-              返回首頁
+            <button onClick={() => navigate('/daily')} className="btn btn-outline">
+              返回每日練習
             </button>
           </div>
         </div>
@@ -273,7 +273,7 @@ export default function DailyMultiplication() {
     return (
       <div className="page-container">
         <div className="practice-header">
-          <button onClick={() => navigate('/')} className="btn-back">← 返回</button>
+          <button onClick={() => navigate('/daily')} className="btn-back">← 返回</button>
           <div style={{ flex: 1, textAlign: 'center' }}>
             <h2>⚡ 乘法速算</h2>
             <p style={{ fontSize: '14px', color: '#D97706', marginTop: '4px', fontWeight: 600 }}>
@@ -307,7 +307,21 @@ export default function DailyMultiplication() {
               分數轉小數
             </div>
           )}
-          <div className="question-text">{currentQuestion.question} = ?</div>
+          {currentQuestion.type === 'unit' && (
+            <div style={{
+              fontSize: '13px',
+              color: '#4F46E5',
+              background: '#EEF2FF',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              marginBottom: '12px',
+              whiteSpace: 'pre-line',
+              lineHeight: 1.6
+            }}>
+              📌 {currentQuestion.hint}
+            </div>
+          )}
+          <div className="question-text">{currentQuestion.question}{currentQuestion.type !== 'unit' ? ' = ?' : ''}</div>
 
           <div className="answer-inputs">
             <input
@@ -384,11 +398,11 @@ export default function DailyMultiplication() {
   return (
     <div className="page-container">
       <div className="practice-header">
-        <button onClick={() => navigate('/')} className="btn-back">← 返回</button>
+        <button onClick={() => navigate('/daily')} className="btn-back">← 返回</button>
         <div style={{ flex: 1, textAlign: 'center' }}>
           <h2>⚡ 乘法速算</h2>
           <p style={{ fontSize: '14px', color: 'var(--text-light)', marginTop: '4px' }}>
-            固定 20 題 · 已答 {Object.keys(userAnswers).length} 題
+            固定 25 題 · 已答 {Object.keys(userAnswers).length} 題
           </p>
         </div>
         <button onClick={handleSubmit} className="btn btn-primary">
@@ -410,7 +424,21 @@ export default function DailyMultiplication() {
             分數轉小數
           </div>
         )}
-        <div className="question-text">{currentQuestion.question} = ?</div>
+        {currentQuestion.type === 'unit' && (
+          <div style={{
+            fontSize: '13px',
+            color: '#4F46E5',
+            background: '#EEF2FF',
+            borderRadius: '8px',
+            padding: '8px 12px',
+            marginBottom: '12px',
+            whiteSpace: 'pre-line',
+            lineHeight: 1.6
+          }}>
+            📌 {currentQuestion.hint}
+          </div>
+        )}
+        <div className="question-text">{currentQuestion.question}{currentQuestion.type !== 'unit' ? ' = ?' : ''}</div>
 
         <div className="answer-inputs">
           <input
