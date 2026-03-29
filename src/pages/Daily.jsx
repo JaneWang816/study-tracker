@@ -108,7 +108,17 @@ export default function Daily() {
       pdf.setFontSize(12)
       pdf.text('🎉 今天辛苦了！繼續保持每日練習的好習慣！', 105, yPos, { align: 'center' })
 
-      pdf.save(`學習成果_${todayStr}.pdf`)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+
+      if (isIOS) {
+        const blob = pdf.output('blob')
+        const url = URL.createObjectURL(blob)
+        window.open(url, '_blank')
+        setTimeout(() => URL.revokeObjectURL(url), 10000)
+      } else {
+        pdf.save(`學習成果_${todayStr}.pdf`)
+      }
     } catch (error) {
       console.error('匯出失敗:', error)
       alert('匯出失敗，請稍後再試')
@@ -119,7 +129,7 @@ export default function Daily() {
     { id: 'arithmetic',     label: '四則運算', desc: '每日基礎運算練習', icon: '🔢', color: '#FF6B6B', path: '/daily/arithmetic' },
     { id: 'flashcards',     label: '背字卡',   desc: '間隔複習',         icon: '🎴', color: '#F59E0B', path: '/daily/flashcards' },
     { id: 'phonics',        label: '自然發音', desc: '聽音選字練習',     icon: '🔤', color: '#10B981', path: '/daily/phonics' },
-    { id: 'multiplication', label: '乘法速算', desc: '25 題挑戰',        icon: '⚡', color: '#8B5CF6', path: '/daily/multiplication' },
+    { id: 'multiplication', label: '乘法速算', desc: '20 題挑戰',        icon: '⚡', color: '#8B5CF6', path: '/daily/multiplication' },
     { id: 'vocabulary',     label: '單字練習', desc: '週次單字測驗',     icon: '📝', color: '#0EA5E9', path: '/daily/vocabulary' },
     { id: 'quiz',           label: '題庫複習', desc: '綜合題型練習',     icon: '🧠', color: '#EC4899', path: '/daily/quiz' },
   ]
