@@ -39,6 +39,7 @@ export default function DailyPhonicsSession() {
   const [userAnswers, setUserAnswers] = useState({})
   const [feedback, setFeedback] = useState(null)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [results, setResults] = useState(null)
   const [startTime] = useState(Date.now())
 
@@ -160,6 +161,8 @@ export default function DailyPhonicsSession() {
 
   // ── 儲存結果（只記錄第一輪）─────────────────────────────
   const submitResults = async (finalAnswers) => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
     const correctCount = Object.values(finalAnswers).filter(a => a.correct).length
     const totalQuestions = questions.length
     const score = Math.round((correctCount / totalQuestions) * 100)

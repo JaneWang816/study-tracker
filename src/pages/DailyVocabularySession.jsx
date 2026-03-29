@@ -37,6 +37,7 @@ export default function DailyVocabularySession() {
   const [selectedAnswer, setSelectedAnswer] = useState(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [results, setResults] = useState(null)
   const [startTime] = useState(Date.now())
 
@@ -122,6 +123,8 @@ export default function DailyVocabularySession() {
 
   // 提交結果：存 DB，決定是否進入補考
   const submitResults = () => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
     const correctCount = Object.values(userAnswers).filter(a => a.isCorrect).length
     const score = Math.round((correctCount / questions.length) * 100)
     const duration = Math.floor((Date.now() - startTime) / 1000)

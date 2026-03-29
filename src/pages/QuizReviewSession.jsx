@@ -101,6 +101,7 @@ export default function QuizReviewSession() {
   const [userAnswers, setUserAnswers] = useState({})
   const [startTime] = useState(Date.now())
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -186,6 +187,8 @@ export default function QuizReviewSession() {
   const handleJumpTo = (i) => setCurrentIndex(i)
 
   const handleSubmit = async () => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
     let correctCount = 0
     const detailedResults = questions.map(q => {
       const selected = userAnswers[q.id] ?? -1
@@ -559,7 +562,7 @@ export default function QuizReviewSession() {
           ← 上一題
         </button>
         {currentIndex === questions.length - 1 ? (
-          <button onClick={handleSubmit} className="btn-submit">交卷</button>
+          <button onClick={handleSubmit} className="btn-submit" disabled={isSubmitting}>{isSubmitting ? '處理中…' : '交卷'}</button>
         ) : (
           <button onClick={handleNext} className="btn-nav">下一題 →</button>
         )}

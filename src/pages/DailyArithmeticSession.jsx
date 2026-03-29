@@ -19,6 +19,7 @@ export default function DailyArithmeticSession() {
   const [userAnswers, setUserAnswers] = useState({})
   const [startTime] = useState(Date.now())
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [results, setResults] = useState(null)
 
   // 錯題複習相關 state
@@ -58,6 +59,8 @@ export default function DailyArithmeticSession() {
 
   // 交卷：計算結果，儲存 DB，決定是否進入補考
   const handleSubmit = async () => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
     let correctCount = 0
     const detailedResults = questions.map(q => {
       const userAns = userAnswers[q.id]
@@ -405,8 +408,8 @@ export default function DailyArithmeticSession() {
         </button>
 
         {currentIndex === questions.length - 1 ? (
-          <button onClick={handleSubmit} className="btn-submit">
-            交卷
+          <button onClick={handleSubmit} className="btn-submit" disabled={isSubmitting}>
+            {isSubmitting ? '處理中…' : '交卷'}
           </button>
         ) : (
           <button onClick={handleNext} className="btn-nav">

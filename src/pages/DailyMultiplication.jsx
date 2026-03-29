@@ -14,6 +14,7 @@ export default function DailyMultiplication() {
   const [userAnswers, setUserAnswers] = useState({})
   const [currentAnswer, setCurrentAnswer] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [results, setResults] = useState(null)
   const [startTime] = useState(Date.now())
 
@@ -405,8 +406,8 @@ export default function DailyMultiplication() {
             固定 25 題 · 已答 {Object.keys(userAnswers).length} 題
           </p>
         </div>
-        <button onClick={handleSubmit} className="btn btn-primary">
-          交卷
+        <button onClick={handleSubmit} className="btn btn-primary" disabled={isSubmitting}>
+          {isSubmitting ? '處理中…' : '交卷'}
         </button>
       </div>
 
