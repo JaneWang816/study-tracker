@@ -1,6 +1,7 @@
 // src/pages/Daily.jsx
 // 每日練習首頁 - 路由：/daily
 
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -11,26 +12,28 @@ export default function Daily() {
   const navigate = useNavigate()
   const { user } = useAuth()
 
+  const todayStr = (() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  })()
+  const [selectedDate, setSelectedDate] = useState(todayStr)
+
   const exportTodayReport = async () => {
     try {
-      const today = new Date()
-      const year = today.getFullYear()
-      const month = String(today.getMonth() + 1).padStart(2, '0')
-      const day = String(today.getDate()).padStart(2, '0')
-      const todayStr = `${year}-${month}-${day}`
+      const [year, month, day] = selectedDate.split('-')
 
       const { data: sessions, error } = await supabase
         .from('practice_sessions')
         .select('*')
         .eq('user_id', user.id)
-        .gte('created_at', `${todayStr}T00:00:00`)
-        .lte('created_at', `${todayStr}T23:59:59`)
+        .gte('created_at', `${selectedDate}T00:00:00`)
+        .lte('created_at', `${selectedDate}T23:59:59`)
         .order('created_at', { ascending: true })
 
       if (error) throw error
 
       if (!sessions || sessions.length === 0) {
-        alert('今天還沒有任何練習記錄喔！')
+        alert(`${year}/${month}/${day} 沒有任何練習記錄`)
         return
       }
 
@@ -40,7 +43,7 @@ export default function Daily() {
       pdf.setFont('NotoSansTC')
 
       pdf.setFontSize(20)
-      pdf.text('今日學習成果報告', 105, 20, { align: 'center' })
+      pdf.text('學習成果報告', 105, 20, { align: 'center' })
       pdf.setFontSize(12)
       pdf.text(`日期：${year}/${month}/${day}`, 105, 30, { align: 'center' })
       pdf.text(`學習者：${user.email}`, 105, 38, { align: 'center' })
@@ -117,7 +120,7 @@ export default function Daily() {
         window.open(url, '_blank')
         setTimeout(() => URL.revokeObjectURL(url), 10000)
       } else {
-        pdf.save(`學習成果_${todayStr}.pdf`)
+        pdf.save(`學習成果_${selectedDate}.pdf`)
       }
     } catch (error) {
       console.error('匯出失敗:', error)
@@ -129,7 +132,7 @@ export default function Daily() {
     { id: 'arithmetic',     label: '四則運算', desc: '每日基礎運算練習', icon: '🔢', color: '#FF6B6B', path: '/daily/arithmetic' },
     { id: 'flashcards',     label: '背字卡',   desc: '間隔複習',         icon: '🎴', color: '#F59E0B', path: '/daily/flashcards' },
     { id: 'phonics',        label: '自然發音', desc: '聽音選字練習',     icon: '🔤', color: '#10B981', path: '/daily/phonics' },
-    { id: 'multiplication', label: '乘法速算', desc: '25 題挑戰',        icon: '⚡', color: '#8B5CF6', path: '/daily/multiplication' },
+    { id: 'multiplication', label: '乘法速算', desc: '20 題挑戰',        icon: '⚡', color: '#8B5CF6', path: '/daily/multiplication' },
     { id: 'vocabulary',     label: '單字練習', desc: '週次單字測驗',     icon: '📝', color: '#0EA5E9', path: '/daily/vocabulary' },
     { id: 'quiz',           label: '題庫複習', desc: '綜合題型練習',     icon: '🧠', color: '#EC4899', path: '/daily/quiz' },
   ]
@@ -144,13 +147,30 @@ export default function Daily() {
           <h1>⚡ 每日練習</h1>
           <p>保持每日練習，鞏固基礎能力</p>
         </div>
-        <button 
-          className="btn btn-secondary" 
-          onClick={exportTodayReport}
-          title="匯出今日所有練習記錄"
-        >
-          📄 今日成果
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <input
+            type="date"
+            value={selectedDate}
+            max={todayStr}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            style={{
+              padding: '8px 10px',
+              borderRadius: '10px',
+              border: '1px solid #E5E7EB',
+              fontSize: '14px',
+              color: 'var(--text-dark)',
+              background: 'white',
+              cursor: 'pointer',
+            }}
+          />
+          <button
+            className="btn btn-secondary"
+            onClick={exportTodayReport}
+            title="匯出所選日期的練習記錄"
+          >
+            📄 匯出成果
+          </button>
+        </div>
       </header>
 
       <main className="main-content">
