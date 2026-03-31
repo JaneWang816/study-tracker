@@ -35,7 +35,6 @@ export default function DailyVocabularySession() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userAnswers, setUserAnswers] = useState({})
   const [selectedAnswer, setSelectedAnswer] = useState(null)
-  const [showFeedback, setShowFeedback] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [results, setResults] = useState(null)
@@ -91,41 +90,60 @@ export default function DailyVocabularySession() {
   // ── 第一輪 ────────────────────────────────────────────────
 
   const handleSelectAnswer = (optionIndex) => {
-    if (showFeedback) return
+    if (isSubmitting) return
     setSelectedAnswer(optionIndex)
   }
 
-  const handleConfirmAnswer = () => {
-    if (selectedAnswer === null) return
-    const isCorrect = checkAnswer(currentQuestion, selectedAnswer)
-    setUserAnswers(prev => ({
-      ...prev,
-      [currentIndex]: {
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(i => i - 1)
+      setSelectedAnswer(prev => userAnswers[currentIndex - 1]?.userAnswer ?? null)
+    }
+  }
+
+  const handleNext = () => {
+    if (selectedAnswer !== null) {
+      setUserAnswers(prev => ({
+        ...prev,
+        [currentIndex]: {
+          question: currentQuestion.question,
+          type: currentQuestion.type,
+          userAnswer: selectedAnswer,
+          correctAnswer: currentQuestion.answer,
+          isCorrect: checkAnswer(currentQuestion, selectedAnswer)
+        }
+      }))
+    }
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex(i => i + 1)
+      setSelectedAnswer(null)
+    }
+  }
+
+  // 交卷：統計第一輪結果，進入補考或完成
+  const handleSubmit = () => {
+    if (isSubmitting) return
+
+    // 把當前頁未儲存的選擇一併納入
+    const finalAnswers = { ...userAnswers }
+    if (selectedAnswer !== null && finalAnswers[currentIndex] == null) {
+      finalAnswers[currentIndex] = {
         question: currentQuestion.question,
         type: currentQuestion.type,
         userAnswer: selectedAnswer,
         correctAnswer: currentQuestion.answer,
-        isCorrect
+        isCorrect: checkAnswer(currentQuestion, selectedAnswer)
       }
-    }))
-    setShowFeedback(true)
-  }
-
-  const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(currentIndex + 1)
-      setSelectedAnswer(null)
-      setShowFeedback(false)
-    } else {
-      submitResults()
     }
-  }
 
-  // 提交結果：存 DB，決定是否進入補考
-  const submitResults = () => {
-    if (isSubmitting) return
+    const answeredCount = Object.keys(finalAnswers).length
+    if (answeredCount < questions.length) {
+      if (!window.confirm(`還有 ${questions.length - answeredCount} 題未作答，確定交卷嗎？`)) return
+    }
+
     setIsSubmitting(true)
-    const correctCount = Object.values(userAnswers).filter(a => a.isCorrect).length
+
+    const correctCount = Object.values(finalAnswers).filter(a => a.isCorrect).length
     const score = Math.round((correctCount / questions.length) * 100)
     const duration = Math.floor((Date.now() - startTime) / 1000)
 
@@ -133,17 +151,15 @@ export default function DailyVocabularySession() {
       question: q.question,
       type: q.type,
       options: q.options,
-      userAnswer: userAnswers[idx]?.userAnswer,
+      userAnswer: finalAnswers[idx]?.userAnswer ?? null,
       correctAnswer: q.answer,
-      isCorrect: userAnswers[idx]?.isCorrect || false
+      isCorrect: finalAnswers[idx]?.isCorrect || false
     }))
 
     setResults({ detailedResults, correctCount, totalQuestions: questions.length, score, duration })
-
-    // DB 只記錄第一輪
     saveToPracticeSessions(correctCount, score, duration)
 
-    const wrong = questions.filter((_, idx) => !userAnswers[idx]?.isCorrect)
+    const wrong = questions.filter((_, idx) => !finalAnswers[idx]?.isCorrect)
 
     if (wrong.length === 0) {
       setIsSubmitted(true)
@@ -174,9 +190,22 @@ export default function DailyVocabularySession() {
   }
 
   const handleJumpTo = (index) => {
-    if (showFeedback) return
+    if (isSubmitting) return
+    // 儲存當前選擇再跳題
+    if (selectedAnswer !== null) {
+      setUserAnswers(prev => ({
+        ...prev,
+        [currentIndex]: {
+          question: currentQuestion.question,
+          type: currentQuestion.type,
+          userAnswer: selectedAnswer,
+          correctAnswer: currentQuestion.answer,
+          isCorrect: checkAnswer(currentQuestion, selectedAnswer)
+        }
+      }))
+    }
     setCurrentIndex(index)
-    setSelectedAnswer(null)
+    setSelectedAnswer(userAnswers[index]?.userAnswer ?? null)
   }
 
   // ── 補考階段 ──────────────────────────────────────────────
@@ -492,7 +521,7 @@ export default function DailyVocabularySession() {
         <div style={{ flex: 1, textAlign: 'center' }}>
           <h2>📝 單字練習 - {deck?.title}</h2>
           <p style={{ fontSize: '14px', color: 'var(--text-light)', marginTop: '4px' }}>
-            {currentIndex + 1} / 20 題
+            {currentIndex + 1} / {questions.length}　已選 {Object.keys(userAnswers).length} 題
           </p>
         </div>
         <div style={{ width: '80px' }} />
@@ -501,7 +530,7 @@ export default function DailyVocabularySession() {
       <div className="practice-progress">
         <div
           className="practice-progress-fill"
-          style={{ width: `${((currentIndex + 1) / 20) * 100}%` }}
+          style={{ width: `${(Object.keys(userAnswers).length / questions.length) * 100}%` }}
         />
       </div>
 
@@ -540,31 +569,23 @@ export default function DailyVocabularySession() {
             let bgColor = 'white'
             let borderColor = '#E5E7EB'
 
-            if (showFeedback) {
-              if (isCorrect) {
-                bgColor = '#D1FAE5'
-                borderColor = '#10B981'
-              } else if (isSelected && !isCorrect) {
-                bgColor = '#FEE2E2'
-                borderColor = '#EF4444'
-              }
-            } else if (isSelected) {
-              bgColor = '#E0F2FE'
-              borderColor = '#06B6D4'
+            if (isSelected) {
+              bgColor = '#EFF6FF'
+              borderColor = '#3B82F6'
             }
 
             return (
               <button
                 key={index}
                 onClick={() => handleSelectAnswer(index)}
-                disabled={showFeedback}
+                disabled={!!reviewFeedback}
                 style={{
                   background: bgColor,
                   border: `2px solid ${borderColor}`,
                   borderRadius: '12px',
                   padding: '20px',
                   fontSize: '16px',
-                  cursor: showFeedback ? 'default' : 'pointer',
+                  cursor: reviewFeedback ? 'default' : 'pointer',
                   transition: 'all 0.2s',
                   textAlign: 'left',
                   fontWeight: isSelected ? 600 : 400
@@ -593,39 +614,31 @@ export default function DailyVocabularySession() {
           })}
         </div>
 
-        {!showFeedback ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginTop: '32px' }}>
           <button
-            onClick={handleConfirmAnswer}
-            disabled={selectedAnswer === null}
-            className="btn btn-primary"
-            style={{ marginTop: '32px', fontSize: '18px', padding: '16px 48px' }}
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+            className="btn-nav"
           >
-            確認答案
+            ← 上一題
           </button>
-        ) : (
-          <div style={{ marginTop: '32px' }}>
-            <div style={{
-              background: userAnswers[currentIndex]?.isCorrect ? '#D1FAE5' : '#FEE2E2',
-              border: `2px solid ${userAnswers[currentIndex]?.isCorrect ? '#10B981' : '#EF4444'}`,
-              borderRadius: '12px',
-              padding: '16px 24px',
-              marginBottom: '16px',
-              textAlign: 'center',
-              fontSize: '16px',
-              fontWeight: 600,
-              color: userAnswers[currentIndex]?.isCorrect ? '#065F46' : '#991B1B'
-            }}>
-              {userAnswers[currentIndex]?.isCorrect ? '✓ 答對了！' : '✗ 答錯了'}
-            </div>
-            <button
-              onClick={handleNext}
-              className="btn btn-primary"
-              style={{ fontSize: '18px', padding: '16px 48px' }}
-            >
-              {currentIndex < questions.length - 1 ? '下一題' : '完成'}
-            </button>
-          </div>
-        )}
+          <button
+            onClick={handleNext}
+            disabled={currentIndex === questions.length - 1}
+            className="btn-nav"
+          >
+            下一題 →
+          </button>
+          <div style={{ width: '1px', height: '32px', background: '#E5E7EB', margin: '0 4px' }} />
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="btn btn-primary"
+            style={{ fontSize: '14px', padding: '10px 20px' }}
+          >
+            {isSubmitting ? '處理中…' : '交卷 ✓'}
+          </button>
+        </div>
       </div>
 
       {/* 題號導航 */}
@@ -634,7 +647,6 @@ export default function DailyVocabularySession() {
           <button
             key={idx}
             onClick={() => handleJumpTo(idx)}
-            disabled={showFeedback}
             className={`question-number-btn ${idx === currentIndex ? 'current' : ''} ${userAnswers[idx] ? 'answered' : ''}`}
           >
             {idx + 1}
