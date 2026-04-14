@@ -180,7 +180,7 @@ const mathQuestions = [
   {
     type: 'options',
     question: '市場上有三家公司,A公司市占率 40%,B公司 20%,C公司 40%。A公司比B公司多佔多少%的市場?',
-    options: ['20', '60', '40', '20'],
+    options: ['20', '60', '40', '10'],
     answer: 0,
     displayAnswer: 'A公司比B公司多佔的市場 = 40% - 20% = 20%'
   }
