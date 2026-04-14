@@ -259,7 +259,7 @@ const day4 = {
       practice: {
         questionCount: 6,
         generator: generateMathQuestion,
-        checkAnswer: (q, a) => parseFloat(a) === parseFloat(q.options[q.answer])
+        checkAnswer: (q, a) => parseInt(a) === q.answer
       }
     },
     {
