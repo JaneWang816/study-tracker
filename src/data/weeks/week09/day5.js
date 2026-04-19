@@ -573,7 +573,8 @@ const day5 = {
       },
       practice: {
         questionCount: 10,
-        generator: generateVocabQuestion
+        generator: generateVocabQuestion,
+        checkAnswer: (q, a) => parseInt(a) === q.answer
       }
     },
 
