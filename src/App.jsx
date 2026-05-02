@@ -1,21 +1,19 @@
 // src/App.jsx
-// 主應用程式 - 路由設定
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 
 // 頁面
 import Login from './pages/Login'
-import Home from './pages/Home'           // 主選單（每日練習 / 自學課程）
-import Daily from './pages/Daily'         // 每日練習總覽
-import LearnHome from './pages/LearnHome' // 自學課程週次選擇
+import Home from './pages/Home'
+import Daily from './pages/Daily'
+import LearnHome from './pages/LearnHome'
 import WeekHome from './pages/WeekHome'
 import DayHome from './pages/DayHome'
 import LearningSession from './pages/LearningSession'
 import DayComplete from './pages/DayComplete'
 
-// 每日練習頁面
+// 每日練習
 import DailyArithmetic from './pages/DailyArithmetic'
 import DailyArithmeticSession from './pages/DailyArithmeticSession'
 import DailyFlashcards from './pages/DailyFlashcards'
@@ -28,6 +26,13 @@ import DailyVocabularySession from './pages/DailyVocabularySession'
 import QuizReview from './pages/QuizReview'
 import QuizReviewSession from './pages/QuizReviewSession'
 import QuizAdmin from './pages/QuizAdmin'
+
+// 中小學銜接
+import BridgeHome from './pages/BridgeHome'
+import BridgeAdmin from './pages/BridgeAdmin'
+import BridgeMathHome from './pages/BridgeMathHome'
+import BridgeMathUnit from './pages/BridgeMathUnit'
+import BridgePracticeSession from './pages/BridgePracticeSession'
 
 import './App.css'
 
@@ -104,6 +109,28 @@ function App() {
             <ProtectedRoute><QuizAdmin /></ProtectedRoute>
           } />
 
+          {/* ── 中小學銜接 ── */}
+          <Route path="/bridge" element={
+            <ProtectedRoute><BridgeHome /></ProtectedRoute>
+          } />
+          <Route path="/bridge/admin" element={
+            <ProtectedRoute><BridgeAdmin /></ProtectedRoute>
+          } />
+          <Route path="/bridge/math" element={
+            <ProtectedRoute><BridgeMathHome /></ProtectedRoute>
+          } />
+          <Route path="/bridge/math/unit/:unitId" element={
+            <ProtectedRoute><BridgeMathUnit /></ProtectedRoute>
+          } />
+          {/* 單元題庫練習 */}
+          <Route path="/bridge/math/practice/:unitId" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+          {/* 錯題本 */}
+          <Route path="/bridge/math/practice/wrong" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+
           {/* 週頁面 - 天數選擇 */}
           <Route path="/:weekId" element={
             <ProtectedRoute><WeekHome /></ProtectedRoute>
@@ -114,12 +141,12 @@ function App() {
             <ProtectedRoute><DayHome /></ProtectedRoute>
           } />
 
-          {/* 學習流程 - 課程 + 練習 */}
+          {/* 學習流程 */}
           <Route path="/:weekId/:dayId/learn" element={
             <ProtectedRoute><LearningSession /></ProtectedRoute>
           } />
 
-          {/* 完成頁 - 當日總結 */}
+          {/* 完成頁 */}
           <Route path="/:weekId/:dayId/complete" element={
             <ProtectedRoute><DayComplete /></ProtectedRoute>
           } />
