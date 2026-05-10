@@ -31,7 +31,7 @@ const mathQuestionsPool = [
   },
   {
     type: 'options',
-    question: '承上題,如果捕到 50 公斤飛魚,每公斤要賣多少錢?',
+    question: '一位漁民出海補魚, 總收入為2000元,如果捕到 50 公斤飛魚,每公斤要賣多少錢?',
     options: ['24元', '40元', '50元', '100元'],
     correctAnswer: '40元',
     explanation: '設每公斤 y 元:50y = 2000,y = 40'
