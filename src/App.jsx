@@ -32,6 +32,8 @@ import BridgeHome from './pages/BridgeHome'
 import BridgeAdmin from './pages/BridgeAdmin'
 import BridgeMathHome from './pages/BridgeMathHome'
 import BridgeMathUnit from './pages/BridgeMathUnit'
+import BridgeChineseHome from './pages/BridgeChineseHome'
+import BridgeChineseUnit from './pages/BridgeChineseUnit'
 import BridgePracticeSession from './pages/BridgePracticeSession'
 
 import './App.css'
@@ -122,12 +124,38 @@ function App() {
           <Route path="/bridge/math/unit/:unitId" element={
             <ProtectedRoute><BridgeMathUnit /></ProtectedRoute>
           } />
+
+          {/* 綜合複習（固定路徑，放在動態路由前） */}
+          <Route path="/bridge/math/综合" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+
+          {/* 單元錯題複習（固定路徑，放在 /:unitId 前） */}
+          <Route path="/bridge/math/practice/wrong" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+
           {/* 單元題庫練習 */}
           <Route path="/bridge/math/practice/:unitId" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
-          {/* 錯題本 */}
-          <Route path="/bridge/math/practice/wrong" element={
+
+          {/* 跨基礎+精熟的單元錯題複習 */}
+          <Route path="/bridge/math/unit-wrong/:unitId" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+
+          {/* ── 銜接國文 ── */}
+          <Route path="/bridge/chinese" element={
+            <ProtectedRoute><BridgeChineseHome /></ProtectedRoute>
+          } />
+          <Route path="/bridge/chinese/unit/:unitId" element={
+            <ProtectedRoute><BridgeChineseUnit /></ProtectedRoute>
+          } />
+          <Route path="/bridge/chinese/practice/wrong" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+          <Route path="/bridge/chinese/practice/:unitId" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
 
