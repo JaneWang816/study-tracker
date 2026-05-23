@@ -10,6 +10,8 @@ const USER_ID = '0c4ec0e9-872f-4e18-ae17-c95894bd820c'
 const SUBJECT_MAP = {
   math:    'a1000000-0000-0000-0000-000000000001',
   chinese: 'a1000000-0000-0000-0000-000000000002',
+  bio:     'b1000000-0000-0000-0000-000000000001',
+  chemistry: 'b1000000-0000-0000-0000-000000000002',
 }
 
 function getSubjectFromPath() {
@@ -365,6 +367,21 @@ export default function BridgePracticeSession() {
 
           <div className="question-card" style={{ marginBottom: '20px' }}>
             <div className="question-text" style={{ whiteSpace: 'pre-line' }}>{q.content}</div>
+            {q.image_url && (
+              <div style={{ margin: '16px 0', textAlign: 'center' }}>
+                <img
+                  src={q.image_url}
+                  alt="題目圖片"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '280px',
+                    borderRadius: '8px',
+                    border: '1px solid #E2E8F0',
+                    objectFit: 'contain'
+                  }}
+                />
+              </div>
+            )}
             <div className="options-grid">
               {q.shuffledOptions.map((opt, idx) => {
                 let cls = 'option-btn'
@@ -402,15 +419,28 @@ export default function BridgePracticeSession() {
             <div>
               <div style={{
                 textAlign: 'center', marginBottom: '16px',
-                fontSize: '18px', fontWeight: 700, color: '#16A34A'
+                fontSize: '18px', fontWeight: 700,
+                color: selected === q.correctIndex ? '#16A34A' : '#DC2626'
               }}>
-                ✅ 答對了！
+                {selected === q.correctIndex ? '✅ 答對了！' : '❌ 答錯了！'}
                 {isWrongMode && q.consecutive_correct >= 3 && (
                   <span style={{ fontSize: '14px', marginLeft: '8px', color: '#16A34A' }}>
                     🎓 畢業！
                   </span>
                 )}
               </div>
+
+              {q.explanation && (
+                <div style={{
+                  background: '#F0FDF4', border: '1px solid #BBF7D0',
+                  borderRadius: '10px', padding: '14px 16px',
+                  fontSize: '14px', color: '#166534', lineHeight: 1.7,
+                  marginBottom: '16px'
+                }}>
+                  <span style={{ fontWeight: 700 }}>解析：</span>{q.explanation}
+                </div>
+              )}
+
               <button
                 className="btn btn-large"
                 style={{

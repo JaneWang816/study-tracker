@@ -8,8 +8,8 @@ const SUBJECTS = [
   { id: 'geography', label: '地理', icon: '🌏', color: '#059669', bg: '#ECFDF5', available: false },
   { id: 'history',   label: '歷史', icon: '🏛️', color: '#D97706', bg: '#FFFBEB', available: false },
   { id: 'civics',    label: '公民', icon: '⚖️', color: '#0891B2', bg: '#ECFEFF', available: false },
-  { id: 'biology',   label: '生物', icon: '🌿', color: '#16A34A', bg: '#F0FDF4', available: false },
-  { id: 'chemistry', label: '理化', icon: '⚗️', color: '#9333EA', bg: '#FAF5FF', available: false },
+  { id: 'bio',   label: '生物', icon: '🌿', color: '#16A34A', bg: '#F0FDF4', available: true  },
+  { id: 'chemistry', label: '理化', icon: '⚗️', color: '#9333EA', bg: '#FAF5FF', available: true },
   { id: 'earth',     label: '地科', icon: '🌍', color: '#EA580C', bg: '#FFF7ED', available: false },
 ]
 

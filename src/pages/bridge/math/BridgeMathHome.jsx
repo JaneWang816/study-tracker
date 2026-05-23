@@ -1,7 +1,7 @@
 // src/pages/BridgeMathHome.jsx
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../../../lib/supabase'
 
 const SUBJECT_ID = 'a1000000-0000-0000-0000-000000000001'
 

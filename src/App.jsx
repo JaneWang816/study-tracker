@@ -30,11 +30,15 @@ import QuizAdmin from './pages/QuizAdmin'
 // 中小學銜接
 import BridgeHome from './pages/BridgeHome'
 import BridgeAdmin from './pages/BridgeAdmin'
-import BridgeMathHome from './pages/BridgeMathHome'
-import BridgeMathUnit from './pages/BridgeMathUnit'
-import BridgeChineseHome from './pages/BridgeChineseHome'
-import BridgeChineseUnit from './pages/BridgeChineseUnit'
+import BridgeMathHome from './pages/bridge/math/BridgeMathHome'
+import BridgeMathUnit from './pages/bridge/math/BridgeMathUnit'
+import BridgeChineseHome from './pages/bridge/chinese/BridgeChineseHome'
+import BridgeChineseUnit from './pages/bridge/chinese/BridgeChineseUnit'
 import BridgePracticeSession from './pages/BridgePracticeSession'
+import BridgeBiologyHome from './pages/bridge/bio/BridgeBiologyHome'
+import BridgeBiologyUnit from './pages/bridge/bio/BridgeBiologyUnit'
+import BridgeChemistryHome from './pages/bridge/chemistry/BridgeChemistryHome'
+import BridgeChemistryUnit from './pages/bridge/chemistry/BridgeChemistryUnit'
 
 import './App.css'
 
@@ -157,6 +161,34 @@ function App() {
           } />
           <Route path="/bridge/chinese/practice/:unitId" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+
+          {/* ── 銜接生物 ── */}
+          <Route path="/bridge/bio" element={
+            <ProtectedRoute><BridgeBiologyHome /></ProtectedRoute>
+          } />
+          <Route path="/bridge/bio/unit/:unitId" element={
+            <ProtectedRoute><BridgeBiologyUnit /></ProtectedRoute>
+          } />
+          <Route path="/bridge/bio/practice/wrong" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+          <Route path="/bridge/bio/practice/:unitId" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+
+           {/* ── 銜接理化 ── */}
+          <Route path="/bridge/chemistry" element={
+            <BridgeChemistryHome />
+          } />
+          <Route path="/bridge/chemistry/unit/:unitId" element={
+            <BridgeChemistryUnit />
+          } />
+          <Route path="/bridge/chemistry/practice/wrong" element={
+            <BridgePracticeSession />
+          } />
+          <Route path="/bridge/chemistry/practice/:unitId" element={
+            <BridgePracticeSession />
           } />
 
           {/* 週頁面 - 天數選擇 */}

@@ -1,25 +1,24 @@
-// src/pages/BridgeChineseHome.jsx
+// src/pages/bridge/chemistry/BridgeChemistryHome.jsx
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../../../lib/supabase'
 
-const SUBJECT_ID = 'a1000000-0000-0000-0000-000000000002'
+const SUBJECT_ID = 'b1000000-0000-0000-0000-000000000002'
 
 const UNITS = [
-  { id: 'a5000000-0000-0000-0000-000000000001', order: 1,  title: '字形辨識',     icon: '🔤', desc: '形似字辨識、改錯題' },
-  { id: 'a5000000-0000-0000-0000-000000000002', order: 2,  title: '字音辨識',     icon: '🔊', desc: '多音字、形似字字音辨識' },
-  { id: 'a5000000-0000-0000-0000-000000000003', order: 3,  title: '字義辨識',     icon: '📖', desc: '單字字義、相同國字比較' },
-  { id: 'a5000000-0000-0000-0000-000000000004', order: 4,  title: '形音義綜合',   icon: '🗂️', desc: '字形、字音、字義綜合練習' },
-  { id: 'a5000000-0000-0000-0000-000000000005', order: 5,  title: '語詞運用',     icon: '💬', desc: '疊字詞、狀聲詞、近反義詞、量詞' },
-  { id: 'a5000000-0000-0000-0000-000000000006', order: 6,  title: '成語',         icon: '📜', desc: '成語意義、典故、填空、運用' },
-  { id: 'a5000000-0000-0000-0000-000000000007', order: 7,  title: '語詞成語綜合', icon: '🧩', desc: '借代修辭、外來語、臺灣地名' },
-  { id: 'a5000000-0000-0000-0000-000000000008', order: 8,  title: '語文常識（一）', icon: '📚', desc: '工具書、標點符號、中文字構造、書法' },
-  { id: 'a5000000-0000-0000-0000-000000000009', order: 9,  title: '語文常識（二）', icon: '🗓️', desc: '天干地支、詞性、句型、書信、修辭' },
-  { id: 'a5000000-0000-0000-0000-000000000010', order: 10, title: '國學常識',     icon: '🏛️', desc: '新詩、古典韻文、國學常識' },
-  { id: 'a5000000-0000-0000-0000-000000000011', order: 11, title: '閱讀理解',     icon: '📝', desc: '文句判斷、白話文、文言文、閱讀題組' },
+  { id: 'b5000000-0000-0000-0000-000000000020', order: 1,  title: '水溶液',             icon: '💧', desc: '溶質溶劑、溶解度、酸鹼性、指示劑、中和、導電性' },
+  { id: 'b5000000-0000-0000-0000-000000000021', order: 2,  title: '空氣',               icon: '🌬️', desc: '空氣組成、氮氣氧氣性質、氧氣製造、二氧化碳製造與性質' },
+  { id: 'b5000000-0000-0000-0000-000000000022', order: 3,  title: '聲音',               icon: '🔊', desc: '聲音的產生、傳播、速度、音量音調音色' },
+  { id: 'b5000000-0000-0000-0000-000000000023', order: 4,  title: '光',                 icon: '💡', desc: '光的直進、反射、折射、透鏡成像' },
+  { id: 'b5000000-0000-0000-0000-000000000024', order: 5,  title: '物理變化與化學變化', icon: '⚗️', desc: '物理變化與化學變化的定義與辨別' },
+  { id: 'b5000000-0000-0000-0000-000000000025', order: 6,  title: '熱對物質的影響與熱傳播', icon: '🌡️', desc: '熱脹冷縮、比熱、熱傳導對流輻射' },
+  { id: 'b5000000-0000-0000-0000-000000000026', order: 7,  title: '力與運動',           icon: '🏃', desc: '力的三要素、重力摩擦力彈力、速度加速度' },
+  { id: 'b5000000-0000-0000-0000-000000000027', order: 8,  title: '簡單機械',           icon: '⚙️', desc: '槓桿、滑輪、斜面、輪軸' },
+  { id: 'b5000000-0000-0000-0000-000000000028', order: 9,  title: '電',                 icon: '⚡', desc: '電流、電壓、電阻、串並聯電路' },
+  { id: 'b5000000-0000-0000-0000-000000000029', order: 10, title: '磁',                 icon: '🧲', desc: '磁鐵性質、地磁、電磁感應' },
 ]
 
-export default function BridgeChineseHome() {
+export default function BridgeChemistryHome() {
   const navigate = useNavigate()
   const [wrongCounts, setWrongCounts] = useState({})
   const [totalWrong, setTotalWrong] = useState(0)
@@ -55,7 +54,7 @@ export default function BridgeChineseHome() {
       <header className="page-header">
         <button className="btn-back" onClick={() => navigate('/bridge')}>← 返回</button>
         <div className="header-content center">
-          <h1>📖 銜接國文</h1>
+          <h1>⚗️ 銜接理化</h1>
           <p>選擇單元開始練習</p>
         </div>
       </header>
@@ -66,7 +65,7 @@ export default function BridgeChineseHome() {
           {/* 錯題本入口 */}
           {totalWrong > 0 && (
             <div
-              onClick={() => navigate('/bridge/chinese/practice/wrong')}
+              onClick={() => navigate('/bridge/chemistry/practice/wrong')}
               style={{
                 background: 'linear-gradient(135deg, #FEF2F2, #FFF)',
                 border: '2px solid #FCA5A5', borderRadius: '16px',
@@ -104,7 +103,7 @@ export default function BridgeChineseHome() {
                 >
                   {/* 知識整理列 */}
                   <div
-                    onClick={() => navigate(`/bridge/chinese/unit/${unit.id}`)}
+                    onClick={() => navigate(`/bridge/chemistry/unit/${unit.id}`)}
                     style={{
                       display: 'flex', alignItems: 'center', gap: '16px',
                       padding: '16px 20px', cursor: 'pointer',
@@ -144,32 +143,32 @@ export default function BridgeChineseHome() {
                   {/* 練習按鈕列 */}
                   <div
                     onClick={() => qCount > 0
-                      ? navigate(`/bridge/chinese/practice/${unit.id}`)
+                      ? navigate(`/bridge/chemistry/practice/${unit.id}`)
                       : null
                     }
                     style={{
                       display: 'flex', alignItems: 'center', gap: '12px',
                       padding: '12px 20px',
                       cursor: qCount > 0 ? 'pointer' : 'default',
-                      background: qCount > 0 ? '#F0FDF4' : '#FAFAFA',
+                      background: qCount > 0 ? '#FFF7ED' : '#FAFAFA',
                       transition: 'background 0.15s'
                     }}
                     onMouseEnter={e => {
-                      if (qCount > 0) e.currentTarget.style.background = '#DCFCE7'
+                      if (qCount > 0) e.currentTarget.style.background = '#FFEDD5'
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = qCount > 0 ? '#F0FDF4' : '#FAFAFA'
+                      e.currentTarget.style.background = qCount > 0 ? '#FFF7ED' : '#FAFAFA'
                     }}
                   >
                     <span style={{ fontSize: '16px' }}>✏️</span>
                     <span style={{
                       fontSize: '14px', fontWeight: 600,
-                      color: qCount > 0 ? '#16A34A' : 'var(--text-light)'
+                      color: qCount > 0 ? '#EA580C' : 'var(--text-light)'
                     }}>
                       {qCount > 0 ? `開始練習（${qCount} 題）` : '題目準備中'}
                     </span>
                     {qCount > 0 && (
-                      <span style={{ marginLeft: 'auto', fontSize: '16px', color: '#86EFAC' }}>›</span>
+                      <span style={{ marginLeft: 'auto', fontSize: '16px', color: '#FDBA74' }}>›</span>
                     )}
                   </div>
                 </div>
