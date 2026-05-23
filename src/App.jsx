@@ -134,7 +134,7 @@ function App() {
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
 
-          {/* 單元錯題複習（固定路徑，放在 /:unitId 前） */}
+          {/* 科目首頁錯題本（固定路徑，放在 /:unitId 前） */}
           <Route path="/bridge/math/practice/wrong" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
@@ -144,8 +144,8 @@ function App() {
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
 
-          {/* 跨基礎+精熟的單元錯題複習 */}
-          <Route path="/bridge/math/unit-wrong/:unitId" element={
+          {/* 單元錯題複習 */}
+          <Route path="/bridge/math/unit/:unitId/wrong" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
 
@@ -156,10 +156,16 @@ function App() {
           <Route path="/bridge/chinese/unit/:unitId" element={
             <ProtectedRoute><BridgeChineseUnit /></ProtectedRoute>
           } />
+          <Route path="/bridge/chinese/综合" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
           <Route path="/bridge/chinese/practice/wrong" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
           <Route path="/bridge/chinese/practice/:unitId" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+          <Route path="/bridge/chinese/unit/:unitId/wrong" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
 
@@ -170,25 +176,37 @@ function App() {
           <Route path="/bridge/bio/unit/:unitId" element={
             <ProtectedRoute><BridgeBiologyUnit /></ProtectedRoute>
           } />
+          <Route path="/bridge/bio/综合" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
           <Route path="/bridge/bio/practice/wrong" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
           <Route path="/bridge/bio/practice/:unitId" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
+          <Route path="/bridge/bio/unit/:unitId/wrong" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
 
            {/* ── 銜接理化 ── */}
           <Route path="/bridge/chemistry" element={
-            <BridgeChemistryHome />
+            <ProtectedRoute><BridgeChemistryHome /></ProtectedRoute>
           } />
           <Route path="/bridge/chemistry/unit/:unitId" element={
-            <BridgeChemistryUnit />
+            <ProtectedRoute><BridgeChemistryUnit /></ProtectedRoute>
+          } />
+          <Route path="/bridge/chemistry/综合" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
           <Route path="/bridge/chemistry/practice/wrong" element={
-            <BridgePracticeSession />
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
           <Route path="/bridge/chemistry/practice/:unitId" element={
-            <BridgePracticeSession />
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
+          } />
+          <Route path="/bridge/chemistry/unit/:unitId/wrong" element={
+            <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
 
           {/* 週頁面 - 天數選擇 */}

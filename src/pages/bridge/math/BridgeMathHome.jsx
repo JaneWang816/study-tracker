@@ -1,4 +1,4 @@
-// src/pages/BridgeMathHome.jsx
+// src/pages/bridge/math/BridgeMathHome.jsx
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
@@ -23,139 +23,40 @@ const UNITS = [
   { order: 15, title: '速率（一）',           icon: '🚀', desc: '時間換算、速率公式、時速分速秒速',       basicId: 'c1290000-0000-0000-0000-000000000001', advId: 'c1300000-0000-0000-0000-000000000001' },
   { order: 16, title: '速率（二）',           icon: '🚄', desc: '同地反向、異地相向、追趕、火車過橋',     basicId: 'c1310000-0000-0000-0000-000000000001', advId: 'c1320000-0000-0000-0000-000000000001' },
   { order: 17, title: '平均數、眾數與統計圖表', icon: '📊', desc: '算術平均數、加權平均數、中位數、統計圖', basicId: 'c1330000-0000-0000-0000-000000000001', advId: 'c1340000-0000-0000-0000-000000000001' },
-  { order: 18, title: '應用問題（一）',         icon: '📝', desc: '和差問題、年齡問題、雞兔問題',          basicId: 'c1350000-0000-0000-0000-000000000001', advId: 'c1360000-0000-0000-0000-000000000001' },
-  { order: 19, title: '應用問題（二）',         icon: '🧩', desc: '工程問題、分項對消、集合、餘數',        basicId: 'c1370000-0000-0000-0000-000000000001', advId: 'c1380000-0000-0000-0000-000000000001' },
-  { order: 20, title: '排列組合與機率',         icon: '🎲', desc: '列舉法、乘法原理、加法原理、排列、組合', basicId: 'c1390000-0000-0000-0000-000000000001', advId: 'c1400000-0000-0000-0000-000000000001' },
+  { order: 18, title: '應用問題（一）',        icon: '📝', desc: '和差問題、年齡問題、雞兔問題',          basicId: 'c1350000-0000-0000-0000-000000000001', advId: 'c1360000-0000-0000-0000-000000000001' },
+  { order: 19, title: '應用問題（二）',        icon: '🧩', desc: '工程問題、分項對消、集合、餘數',        basicId: 'c1370000-0000-0000-0000-000000000001', advId: 'c1380000-0000-0000-0000-000000000001' },
+  { order: 20, title: '排列組合與機率',        icon: '🎲', desc: '列舉法、乘法原理、加法原理、排列、組合', basicId: 'c1390000-0000-0000-0000-000000000001', advId: 'c1400000-0000-0000-0000-000000000001' },
   { order: 21, title: '代數',               icon: '🔡', desc: '未知數、式子化簡、等量公理、移項、應用題', basicId: 'c1410000-0000-0000-0000-000000000001', advId: 'c1420000-0000-0000-0000-000000000001' },
 ]
-
-// 綜合複習彈窗
-function ComprehensiveModal({ totalCount, onClose, onStart }) {
-  const [mode, setMode] = useState('random')
-  const [count, setCount] = useState(20)
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100
-    }}>
-      <div style={{
-        background: 'white', borderRadius: '20px', padding: '28px 24px',
-        width: '320px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)'
-      }}>
-        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px', textAlign: 'center' }}>
-          🔄 綜合複習
-        </h3>
-
-        {/* 模式選擇 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-          {[
-            { val: 'random', label: '全題庫隨機出題', icon: '🎲' },
-            { val: 'wrong',  label: '錯題複習',       icon: '📋' },
-          ].map(opt => (
-            <div
-              key={opt.val}
-              onClick={() => setMode(opt.val)}
-              style={{
-                padding: '14px 16px', borderRadius: '12px', cursor: 'pointer',
-                border: `2px solid ${mode === opt.val ? '#2563EB' : '#E2E8F0'}`,
-                background: mode === opt.val ? '#EFF6FF' : 'white',
-                display: 'flex', alignItems: 'center', gap: '10px',
-                transition: 'all 0.15s'
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>{opt.icon}</span>
-              <span style={{ fontSize: '15px', fontWeight: mode === opt.val ? 700 : 400, color: mode === opt.val ? '#2563EB' : 'inherit' }}>
-                {opt.label}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* 題數選擇（僅隨機模式） */}
-        {mode === 'random' && (
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ fontSize: '13px', color: 'var(--text-light)', marginBottom: '10px' }}>
-              題數（共 {totalCount} 題）
-            </div>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {[10, 20, 30, 50].map(n => (
-                <button
-                  key={n}
-                  onClick={() => setCount(Math.min(n, totalCount))}
-                  style={{
-                    padding: '8px 16px', borderRadius: '10px', border: '2px solid',
-                    borderColor: count === Math.min(n, totalCount) ? '#2563EB' : '#E2E8F0',
-                    background: count === Math.min(n, totalCount) ? '#EFF6FF' : 'white',
-                    color: count === Math.min(n, totalCount) ? '#2563EB' : 'inherit',
-                    fontWeight: count === Math.min(n, totalCount) ? 700 : 400,
-                    cursor: 'pointer', fontSize: '14px'
-                  }}
-                >
-                  {Math.min(n, totalCount)}題
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button
-            onClick={onClose}
-            style={{
-              flex: 1, padding: '12px', borderRadius: '12px',
-              border: '2px solid #E2E8F0', background: 'white',
-              cursor: 'pointer', fontSize: '15px', fontWeight: 600
-            }}
-          >
-            取消
-          </button>
-          <button
-            onClick={() => onStart(mode, count)}
-            style={{
-              flex: 2, padding: '12px', borderRadius: '12px',
-              border: 'none', background: '#2563EB', color: 'white',
-              cursor: 'pointer', fontSize: '15px', fontWeight: 700
-            }}
-          >
-            開始
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default function BridgeMathHome() {
   const navigate = useNavigate()
   const [wrongCounts, setWrongCounts] = useState({})
   const [totalWrong, setTotalWrong] = useState(0)
-  const [totalCount, setTotalCount] = useState(0)
-  const [showModal, setShowModal] = useState(false)
+  const [totalAttempted, setTotalAttempted] = useState(0)
+  const [showCountPicker, setShowCountPicker] = useState(false)
 
   useEffect(() => { fetchStats() }, [])
 
   async function fetchStats() {
     const { data } = await supabase
       .from('questions')
-      .select('unit_id, wrong_count, consecutive_correct')
+      .select('unit_id, wrong_count, consecutive_correct, attempt_count')
       .eq('subject_id', SUBJECT_ID)
     if (!data) return
-    setTotalCount(data.length)
     const counts = {}
     let total = 0
+    let attempted = 0
     data.forEach(q => {
       if (q.wrong_count > 0 && q.consecutive_correct < 3) {
         counts[q.unit_id] = (counts[q.unit_id] || 0) + 1
         total++
       }
+      if (q.attempt_count > 0) attempted++
     })
     setWrongCounts(counts)
     setTotalWrong(total)
-  }
-
-  function handleStartComprehensive(mode, count) {
-    setShowModal(false)
-    navigate(`/bridge/math/综合?mode=${mode}&count=${count}`)
+    setTotalAttempted(attempted)
   }
 
   return (
@@ -171,51 +72,102 @@ export default function BridgeMathHome() {
       <main className="main-content">
         <div style={{ maxWidth: '720px', margin: '0 auto' }}>
 
-          {/* 綜合複習按鈕 */}
-          <button
-            onClick={() => setShowModal(true)}
-            style={{
-              width: '100%', padding: '18px 24px', marginBottom: '16px',
-              background: 'linear-gradient(135deg, #2563EB, #7C3AED)',
-              border: 'none', borderRadius: '16px', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: '16px',
-              boxShadow: '0 4px 12px rgba(37,99,235,0.3)', transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <div style={{ fontSize: '32px' }}>🔄</div>
-            <div style={{ flex: 1, textAlign: 'left' }}>
-              <div style={{ fontSize: '17px', fontWeight: 700, color: 'white' }}>綜合複習</div>
-              <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.8)', marginTop: '2px' }}>
-                全題庫隨機出題 或 跨單元錯題複習
-              </div>
-            </div>
-            <div style={{ fontSize: '20px', color: 'white' }}>→</div>
-          </button>
+          {/* 錯題本 + 隨機抽題 並排列 */}
+          {(totalWrong > 0 || totalAttempted > 0) && (
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
 
-          {/* 錯題本入口 */}
-          {totalWrong > 0 && (
-            <div
-              onClick={() => navigate('/bridge/math/practice/wrong')}
-              style={{
-                background: 'linear-gradient(135deg, #FEF2F2, #FFF)',
-                border: '2px solid #FCA5A5', borderRadius: '16px',
-                padding: '18px 24px', marginBottom: '24px', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '16px',
-                transition: 'all 0.2s', boxShadow: 'var(--shadow)'
-              }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              <div style={{ fontSize: '32px' }}>📋</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '17px', fontWeight: 700, color: '#DC2626' }}>錯題本</div>
-                <div style={{ fontSize: '13px', color: 'var(--text-light)', marginTop: '2px' }}>
-                  共 {totalWrong} 題待複習（連續答對3次可退出）
+              {/* 錯題本 */}
+              {totalWrong > 0 && (
+                <div
+                  onClick={() => navigate('/bridge/math/practice/wrong')}
+                  style={{
+                    flex: 1, background: 'linear-gradient(135deg, #FEF2F2, #FFF)',
+                    border: '2px solid #FCA5A5', borderRadius: '16px',
+                    padding: '16px 20px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    transition: 'all 0.2s', boxShadow: 'var(--shadow)'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{ fontSize: '28px' }}>📋</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: 700, color: '#DC2626' }}>錯題本</div>
+                    <div style={{ fontSize: '13px', color: '#EF4444', marginTop: '2px' }}>
+                      {totalWrong} 題待複習
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '18px', color: '#FCA5A5' }}>›</div>
                 </div>
-              </div>
-              <div style={{ fontSize: '20px', color: '#DC2626' }}>→</div>
+              )}
+
+              {/* 隨機抽題 */}
+              {totalAttempted > 0 && !showCountPicker && (
+                <div
+                  onClick={() => setShowCountPicker(true)}
+                  style={{
+                    flex: 1, background: 'linear-gradient(135deg, #EFF6FF, #FFF)',
+                    border: '2px solid #93C5FD', borderRadius: '16px',
+                    padding: '16px 20px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    transition: 'all 0.2s', boxShadow: 'var(--shadow)'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{ fontSize: '28px' }}>🎲</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: 700, color: '#2563EB' }}>隨機抽題</div>
+                    <div style={{ fontSize: '13px', color: '#3B82F6', marginTop: '2px' }}>
+                      已作答 {totalAttempted} 題中抽選
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '18px', color: '#93C5FD' }}>›</div>
+                </div>
+              )}
+
+              {/* 題數選擇器 */}
+              {totalAttempted > 0 && showCountPicker && (
+                <div style={{
+                  flex: 1, background: 'linear-gradient(135deg, #EFF6FF, #FFF)',
+                  border: '2px solid #93C5FD', borderRadius: '16px',
+                  padding: '16px 20px', boxShadow: 'var(--shadow)'
+                }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#2563EB', marginBottom: '10px' }}>
+                    🎲 選擇題數
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {[10, 20, 30, 50].filter(n => n <= totalAttempted).map(n => (
+                      <button
+                        key={n}
+                        onClick={() => {
+                          setShowCountPicker(false)
+                          navigate(`/bridge/math/综合?mode=random&count=${n}`)
+                        }}
+                        style={{
+                          flex: 1, minWidth: '48px', padding: '8px 4px',
+                          background: '#2563EB', color: 'white',
+                          border: 'none', borderRadius: '8px',
+                          fontSize: '14px', fontWeight: 700, cursor: 'pointer'
+                        }}
+                      >
+                        {n} 題
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setShowCountPicker(false)}
+                      style={{
+                        flex: 1, minWidth: '48px', padding: '8px 4px',
+                        background: '#F1F5F9', color: 'var(--text-light)',
+                        border: 'none', borderRadius: '8px',
+                        fontSize: '14px', fontWeight: 700, cursor: 'pointer'
+                      }}
+                    >
+                      取消
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -226,84 +178,120 @@ export default function BridgeMathHome() {
               const advWrong = wrongCounts[unit.advId] || 0
               const unitTotalWrong = basicWrong + advWrong
               return (
-                <div key={unit.order} style={{
-                  background: 'white', borderRadius: '16px', padding: '18px 20px',
-                  boxShadow: 'var(--shadow)', border: '2px solid transparent',
-                }}>
-                  {/* 單元標題列 - 點擊進知識整理 */}
+                <div
+                  key={unit.order}
+                  style={{
+                    background: 'white', borderRadius: '16px',
+                    border: '1px solid var(--border)',
+                    boxShadow: 'var(--shadow)', overflow: 'hidden'
+                  }}
+                >
+                  {/* 知識整理列 */}
                   <div
                     onClick={() => navigate(`/bridge/math/unit/${unit.basicId}`)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px', cursor: 'pointer' }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '16px',
+                      padding: '16px 20px', cursor: 'pointer',
+                      borderBottom: '1px solid var(--border)',
+                      transition: 'background 0.15s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#F8FAFC'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'white'}
                   >
-                    <div style={{
-                      width: '42px', height: '42px', background: '#EFF6FF',
-                      borderRadius: '12px', display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', fontSize: '20px', flexShrink: 0
-                    }}>
+                    <div style={{ fontSize: '28px', minWidth: '36px', textAlign: 'center' }}>
                       {unit.icon}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '12px', color: '#2563EB', fontWeight: 600, marginBottom: '2px' }}>
-                        單元 {unit.order}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-dark)' }}>
+                          第{unit.order}單元　{unit.title}
+                        </span>
+                        {unitTotalWrong > 0 && (
+                          <span style={{
+                            background: '#FEE2E2', color: '#DC2626',
+                            fontSize: '11px', fontWeight: 700,
+                            padding: '2px 8px', borderRadius: '10px'
+                          }}>
+                            {unitTotalWrong} 錯題
+                          </span>
+                        )}
                       </div>
-                      <div style={{ fontSize: '16px', fontWeight: 700 }}>{unit.title}</div>
-                      <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '2px' }}>{unit.desc}</div>
-                      <div style={{ fontSize: '11px', color: '#2563EB', marginTop: '4px' }}>📖 點此查看重點整理 ›</div>
+                      <div style={{ fontSize: '13px', color: 'var(--text-light)', marginTop: '3px' }}>
+                        {unit.desc}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>
+                      知識整理 ›
                     </div>
                   </div>
 
-                  {/* 按鈕列：基礎篇、精熟篇，有錯題才顯示錯題複習 */}
-                  <div style={{ display: 'grid', gridTemplateColumns: unitTotalWrong > 0 ? '1fr 1fr 1fr' : '1fr 1fr', gap: '10px' }}>
+                  {/* 練習按鈕列：基礎 | 精熟 | 錯題（有錯題才出現） */}
+                  <div style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
 
-                    <button
+                    {/* 基礎篇 */}
+                    <div
                       onClick={() => navigate(`/bridge/math/practice/${unit.basicId}`)}
                       style={{
-                        padding: '12px 10px', borderRadius: '12px', border: '2px solid #BFDBFE',
-                        background: '#EFF6FF', cursor: 'pointer', textAlign: 'center',
-                        transition: 'all 0.2s'
+                        flex: 1, display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', gap: '6px',
+                        padding: '12px 10px', cursor: 'pointer',
+                        background: '#EFF6FF',
+                        borderRight: '1px solid var(--border)',
+                        transition: 'background 0.15s'
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#DBEAFE'; e.currentTarget.style.borderColor = '#2563EB' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = '#EFF6FF'; e.currentTarget.style.borderColor = '#BFDBFE' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#DBEAFE'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#EFF6FF'}
                     >
-                      <div style={{ fontSize: '16px', marginBottom: '4px' }}>📘</div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#2563EB' }}>基礎篇</div>
+                      <span style={{ fontSize: '14px' }}>📘</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#2563EB' }}>
+                        基礎篇
+                      </span>
                       {basicWrong > 0 && (
-                        <div style={{ fontSize: '11px', color: '#DC2626', marginTop: '3px' }}>錯{basicWrong}題</div>
+                        <span style={{ fontSize: '11px', color: '#DC2626' }}>({basicWrong}錯)</span>
                       )}
-                    </button>
+                    </div>
 
-                    <button
+                    {/* 精熟篇 */}
+                    <div
                       onClick={() => navigate(`/bridge/math/practice/${unit.advId}`)}
                       style={{
-                        padding: '12px 10px', borderRadius: '12px', border: '2px solid #D8B4FE',
-                        background: '#FAF5FF', cursor: 'pointer', textAlign: 'center',
-                        transition: 'all 0.2s'
+                        flex: 1, display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', gap: '6px',
+                        padding: '12px 10px', cursor: 'pointer',
+                        background: '#FAF5FF',
+                        borderRight: unitTotalWrong > 0 ? '1px solid var(--border)' : 'none',
+                        transition: 'background 0.15s'
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#EDE9FE'; e.currentTarget.style.borderColor = '#7C3AED' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = '#FAF5FF'; e.currentTarget.style.borderColor = '#D8B4FE' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#EDE9FE'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#FAF5FF'}
                     >
-                      <div style={{ fontSize: '16px', marginBottom: '4px' }}>📗</div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#7C3AED' }}>精熟篇</div>
+                      <span style={{ fontSize: '14px' }}>📗</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#7C3AED' }}>
+                        精熟篇
+                      </span>
                       {advWrong > 0 && (
-                        <div style={{ fontSize: '11px', color: '#DC2626', marginTop: '3px' }}>錯{advWrong}題</div>
+                        <span style={{ fontSize: '11px', color: '#DC2626' }}>({advWrong}錯)</span>
                       )}
-                    </button>
+                    </div>
 
+                    {/* 錯題複習（有錯題才顯示） */}
                     {unitTotalWrong > 0 && (
-                      <button
-                        onClick={() => navigate(`/bridge/math/unit-wrong/${unit.basicId}`)}
+                      <div
+                        onClick={() => navigate(`/bridge/math/unit/${unit.basicId}/wrong`)}
                         style={{
-                          padding: '12px 10px', borderRadius: '12px', border: '2px solid #FCA5A5',
-                          background: '#FEF2F2', cursor: 'pointer', textAlign: 'center',
-                          transition: 'all 0.2s'
+                          width: '90px', display: 'flex', alignItems: 'center',
+                          justifyContent: 'center', gap: '4px',
+                          padding: '12px 8px', cursor: 'pointer',
+                          background: '#FEF2F2', transition: 'background 0.15s'
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#FEE2E2'; e.currentTarget.style.borderColor = '#DC2626' }}
-                        onMouseLeave={e => { e.currentTarget.style.background = '#FEF2F2'; e.currentTarget.style.borderColor = '#FCA5A5' }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#FEF2F2'}
                       >
-                        <div style={{ fontSize: '16px', marginBottom: '4px' }}>📋</div>
-                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#DC2626' }}>錯題複習</div>
-                        <div style={{ fontSize: '11px', color: '#DC2626', marginTop: '3px' }}>{unitTotalWrong}題</div>
-                      </button>
+                        <span style={{ fontSize: '13px' }}>📋</span>
+                        <span style={{ fontSize: '12px', fontWeight: 700, color: '#DC2626' }}>
+                          錯題({unitTotalWrong})
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -312,14 +300,6 @@ export default function BridgeMathHome() {
           </div>
         </div>
       </main>
-
-      {showModal && (
-        <ComprehensiveModal
-          totalCount={totalCount}
-          onClose={() => setShowModal(false)}
-          onStart={handleStartComprehensive}
-        />
-      )}
     </div>
   )
 }

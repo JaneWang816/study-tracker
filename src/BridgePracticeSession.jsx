@@ -192,14 +192,10 @@ export default function BridgePracticeSession() {
         .gt('wrong_count', 0)
         .lt('consecutive_correct', 3)
     } else if (isComprehensive && compMode === 'random') {
-      // 已作答題目中加權排序後抽 compCount 題
-      // 優先：練習次數少 → 答錯次數多 → 隨機擾動
-      const { data: all } = await query.gt('attempt_count', 0)
+      // 全題庫隨機抽 compCount 題
+      const { data: all } = await query
       if (!all || all.length === 0) { setPhase('empty'); return }
-      const weighted = all
-        .map(q => ({ ...q, _score: q.attempt_count * 10 - q.wrong_count * 3 + Math.random() * 5 }))
-        .sort((a, b) => a._score - b._score)
-      const picked = weighted.slice(0, compCount)
+      const picked = shuffle(all).slice(0, compCount)
       totalRef.current = picked.length
       correctRef.current = 0
       setQuestions(picked.map(prepareQuestion))

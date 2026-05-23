@@ -1,4 +1,4 @@
-// src/pages/BridgeChineseHome.jsx
+// src/pages/bridge/chinese/BridgeChineseHome.jsx
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
@@ -6,17 +6,17 @@ import { supabase } from '../../../lib/supabase'
 const SUBJECT_ID = 'a1000000-0000-0000-0000-000000000002'
 
 const UNITS = [
-  { id: 'a5000000-0000-0000-0000-000000000001', order: 1,  title: '字形辨識',     icon: '🔤', desc: '形似字辨識、改錯題' },
-  { id: 'a5000000-0000-0000-0000-000000000002', order: 2,  title: '字音辨識',     icon: '🔊', desc: '多音字、形似字字音辨識' },
-  { id: 'a5000000-0000-0000-0000-000000000003', order: 3,  title: '字義辨識',     icon: '📖', desc: '單字字義、相同國字比較' },
-  { id: 'a5000000-0000-0000-0000-000000000004', order: 4,  title: '形音義綜合',   icon: '🗂️', desc: '字形、字音、字義綜合練習' },
-  { id: 'a5000000-0000-0000-0000-000000000005', order: 5,  title: '語詞運用',     icon: '💬', desc: '疊字詞、狀聲詞、近反義詞、量詞' },
-  { id: 'a5000000-0000-0000-0000-000000000006', order: 6,  title: '成語',         icon: '📜', desc: '成語意義、典故、填空、運用' },
-  { id: 'a5000000-0000-0000-0000-000000000007', order: 7,  title: '語詞成語綜合', icon: '🧩', desc: '借代修辭、外來語、臺灣地名' },
+  { id: 'a5000000-0000-0000-0000-000000000001', order: 1,  title: '字形辨識',       icon: '🔤', desc: '形似字辨識、改錯題' },
+  { id: 'a5000000-0000-0000-0000-000000000002', order: 2,  title: '字音辨識',       icon: '🔊', desc: '多音字、形似字字音辨識' },
+  { id: 'a5000000-0000-0000-0000-000000000003', order: 3,  title: '字義辨識',       icon: '📖', desc: '單字字義、相同國字比較' },
+  { id: 'a5000000-0000-0000-0000-000000000004', order: 4,  title: '形音義綜合',     icon: '🗂️', desc: '字形、字音、字義綜合練習' },
+  { id: 'a5000000-0000-0000-0000-000000000005', order: 5,  title: '語詞運用',       icon: '💬', desc: '疊字詞、狀聲詞、近反義詞、量詞' },
+  { id: 'a5000000-0000-0000-0000-000000000006', order: 6,  title: '成語',           icon: '📜', desc: '成語意義、典故、填空、運用' },
+  { id: 'a5000000-0000-0000-0000-000000000007', order: 7,  title: '語詞成語綜合',   icon: '🧩', desc: '借代修辭、外來語、臺灣地名' },
   { id: 'a5000000-0000-0000-0000-000000000008', order: 8,  title: '語文常識（一）', icon: '📚', desc: '工具書、標點符號、中文字構造、書法' },
   { id: 'a5000000-0000-0000-0000-000000000009', order: 9,  title: '語文常識（二）', icon: '🗓️', desc: '天干地支、詞性、句型、書信、修辭' },
-  { id: 'a5000000-0000-0000-0000-000000000010', order: 10, title: '國學常識',     icon: '🏛️', desc: '新詩、古典韻文、國學常識' },
-  { id: 'a5000000-0000-0000-0000-000000000011', order: 11, title: '閱讀理解',     icon: '📝', desc: '文句判斷、白話文、文言文、閱讀題組' },
+  { id: 'a5000000-0000-0000-0000-000000000010', order: 10, title: '國學常識',       icon: '🏛️', desc: '新詩、古典韻文、國學常識' },
+  { id: 'a5000000-0000-0000-0000-000000000011', order: 11, title: '閱讀理解',       icon: '📝', desc: '文句判斷、白話文、文言文、閱讀題組' },
 ]
 
 export default function BridgeChineseHome() {
@@ -24,10 +24,10 @@ export default function BridgeChineseHome() {
   const [wrongCounts, setWrongCounts] = useState({})
   const [totalWrong, setTotalWrong] = useState(0)
   const [questionCounts, setQuestionCounts] = useState({})
+  const [totalAttempted, setTotalAttempted] = useState(0)
+  const [showCountPicker, setShowCountPicker] = useState(false)
 
-  useEffect(() => {
-    fetchStats()
-  }, [])
+  useEffect(() => { fetchStats() }, [])
 
   async function fetchStats() {
     const { data } = await supabase
@@ -38,16 +38,19 @@ export default function BridgeChineseHome() {
     const wrong = {}
     const counts = {}
     let total = 0
+    let attempted = 0
     data.forEach(q => {
       counts[q.unit_id] = (counts[q.unit_id] || 0) + 1
       if (q.wrong_count > 0 && q.consecutive_correct < 3) {
         wrong[q.unit_id] = (wrong[q.unit_id] || 0) + 1
         total++
       }
+      if (q.attempt_count > 0) attempted++
     })
     setWrongCounts(wrong)
     setTotalWrong(total)
     setQuestionCounts(counts)
+    setTotalAttempted(attempted)
   }
 
   return (
@@ -63,28 +66,102 @@ export default function BridgeChineseHome() {
       <main className="main-content">
         <div style={{ maxWidth: '720px', margin: '0 auto' }}>
 
-          {/* 錯題本入口 */}
-          {totalWrong > 0 && (
-            <div
-              onClick={() => navigate('/bridge/chinese/practice/wrong')}
-              style={{
-                background: 'linear-gradient(135deg, #FEF2F2, #FFF)',
-                border: '2px solid #FCA5A5', borderRadius: '16px',
-                padding: '20px 24px', marginBottom: '24px', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '16px',
-                transition: 'all 0.2s', boxShadow: 'var(--shadow)'
-              }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              <div style={{ fontSize: '36px' }}>📋</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '17px', fontWeight: 700, color: '#DC2626' }}>錯題本</div>
-                <div style={{ fontSize: '14px', color: '#EF4444', marginTop: '2px' }}>
-                  共 {totalWrong} 題待複習
+          {/* 錯題本 + 隨機抽題 並排列 */}
+          {(totalWrong > 0 || totalAttempted > 0) && (
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+
+              {/* 錯題本 */}
+              {totalWrong > 0 && (
+                <div
+                  onClick={() => navigate('/bridge/chinese/practice/wrong')}
+                  style={{
+                    flex: 1, background: 'linear-gradient(135deg, #FEF2F2, #FFF)',
+                    border: '2px solid #FCA5A5', borderRadius: '16px',
+                    padding: '16px 20px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    transition: 'all 0.2s', boxShadow: 'var(--shadow)'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{ fontSize: '28px' }}>📋</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: 700, color: '#DC2626' }}>錯題本</div>
+                    <div style={{ fontSize: '13px', color: '#EF4444', marginTop: '2px' }}>
+                      {totalWrong} 題待複習
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '18px', color: '#FCA5A5' }}>›</div>
                 </div>
-              </div>
-              <div style={{ fontSize: '20px', color: '#FCA5A5' }}>›</div>
+              )}
+
+              {/* 隨機抽題 */}
+              {totalAttempted > 0 && !showCountPicker && (
+                <div
+                  onClick={() => setShowCountPicker(true)}
+                  style={{
+                    flex: 1, background: 'linear-gradient(135deg, #EFF6FF, #FFF)',
+                    border: '2px solid #93C5FD', borderRadius: '16px',
+                    padding: '16px 20px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    transition: 'all 0.2s', boxShadow: 'var(--shadow)'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{ fontSize: '28px' }}>🎲</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: 700, color: '#2563EB' }}>隨機抽題</div>
+                    <div style={{ fontSize: '13px', color: '#3B82F6', marginTop: '2px' }}>
+                      已作答 {totalAttempted} 題中抽選
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '18px', color: '#93C5FD' }}>›</div>
+                </div>
+              )}
+
+              {/* 題數選擇器 */}
+              {totalAttempted > 0 && showCountPicker && (
+                <div style={{
+                  flex: 1, background: 'linear-gradient(135deg, #EFF6FF, #FFF)',
+                  border: '2px solid #93C5FD', borderRadius: '16px',
+                  padding: '16px 20px', boxShadow: 'var(--shadow)'
+                }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#2563EB', marginBottom: '10px' }}>
+                    🎲 選擇題數
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {[10, 20, 30, 50].filter(n => n <= totalAttempted).map(n => (
+                      <button
+                        key={n}
+                        onClick={() => {
+                          setShowCountPicker(false)
+                          navigate(`/bridge/chinese/综合?mode=random&count=${n}`)
+                        }}
+                        style={{
+                          flex: 1, minWidth: '48px', padding: '8px 4px',
+                          background: '#2563EB', color: 'white',
+                          border: 'none', borderRadius: '8px',
+                          fontSize: '14px', fontWeight: 700, cursor: 'pointer'
+                        }}
+                      >
+                        {n} 題
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setShowCountPicker(false)}
+                      style={{
+                        flex: 1, minWidth: '48px', padding: '8px 4px',
+                        background: '#F1F5F9', color: 'var(--text-light)',
+                        border: 'none', borderRadius: '8px',
+                        fontSize: '14px', fontWeight: 700, cursor: 'pointer'
+                      }}
+                    >
+                      取消
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -142,34 +219,56 @@ export default function BridgeChineseHome() {
                   </div>
 
                   {/* 練習按鈕列 */}
-                  <div
-                    onClick={() => qCount > 0
-                      ? navigate(`/bridge/chinese/practice/${unit.id}`)
-                      : null
-                    }
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '12px',
-                      padding: '12px 20px',
-                      cursor: qCount > 0 ? 'pointer' : 'default',
-                      background: qCount > 0 ? '#F0FDF4' : '#FAFAFA',
-                      transition: 'background 0.15s'
-                    }}
-                    onMouseEnter={e => {
-                      if (qCount > 0) e.currentTarget.style.background = '#DCFCE7'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = qCount > 0 ? '#F0FDF4' : '#FAFAFA'
-                    }}
-                  >
-                    <span style={{ fontSize: '16px' }}>✏️</span>
-                    <span style={{
-                      fontSize: '14px', fontWeight: 600,
-                      color: qCount > 0 ? '#16A34A' : 'var(--text-light)'
-                    }}>
-                      {qCount > 0 ? `開始練習（${qCount} 題）` : '題目準備中'}
-                    </span>
-                    {qCount > 0 && (
-                      <span style={{ marginLeft: 'auto', fontSize: '16px', color: '#86EFAC' }}>›</span>
+                  <div style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
+                    <div
+                      onClick={() => qCount > 0
+                        ? navigate(`/bridge/chinese/practice/${unit.id}`)
+                        : null
+                      }
+                      style={{
+                        flex: 1, display: 'flex', alignItems: 'center', gap: '10px',
+                        padding: '12px 20px',
+                        cursor: qCount > 0 ? 'pointer' : 'default',
+                        background: qCount > 0 ? '#F0FDF4' : '#FAFAFA',
+                        transition: 'background 0.15s',
+                        borderRight: hasWrong ? '1px solid var(--border)' : 'none'
+                      }}
+                      onMouseEnter={e => {
+                        if (qCount > 0) e.currentTarget.style.background = '#DCFCE7'
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = qCount > 0 ? '#F0FDF4' : '#FAFAFA'
+                      }}
+                    >
+                      <span style={{ fontSize: '15px' }}>✏️</span>
+                      <span style={{
+                        fontSize: '14px', fontWeight: 600,
+                        color: qCount > 0 ? '#16A34A' : 'var(--text-light)'
+                      }}>
+                        {qCount > 0 ? `練習（${qCount} 題）` : '題目準備中'}
+                      </span>
+                      {qCount > 0 && (
+                        <span style={{ marginLeft: 'auto', fontSize: '15px', color: '#86EFAC' }}>›</span>
+                      )}
+                    </div>
+
+                    {hasWrong && (
+                      <div
+                        onClick={() => navigate(`/bridge/chinese/unit/${unit.id}/wrong`)}
+                        style={{
+                          width: '130px', display: 'flex', alignItems: 'center',
+                          justifyContent: 'center', gap: '6px',
+                          padding: '12px 16px', cursor: 'pointer',
+                          background: '#FEF2F2', transition: 'background 0.15s'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#FEF2F2'}
+                      >
+                        <span style={{ fontSize: '14px' }}>📋</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#DC2626' }}>
+                          錯題（{wrongCounts[unit.id]}）
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>
