@@ -39,6 +39,8 @@ import BridgeBiologyHome from './pages/bridge/bio/BridgeBiologyHome'
 import BridgeBiologyUnit from './pages/bridge/bio/BridgeBiologyUnit'
 import BridgeChemistryHome from './pages/bridge/chemistry/BridgeChemistryHome'
 import BridgeChemistryUnit from './pages/bridge/chemistry/BridgeChemistryUnit'
+import BridgeEarthHome from './pages/bridge/earth/BridgeEarthHome'
+import BridgeEarthUnit from './pages/bridge/earth/BridgeEarthUnit'
 
 import './App.css'
 
@@ -208,6 +210,14 @@ function App() {
           <Route path="/bridge/chemistry/unit/:unitId/wrong" element={
             <ProtectedRoute><BridgePracticeSession /></ProtectedRoute>
           } />
+
+          {/* ── 銜接地科 ── */}
+          <Route path="/bridge/earth" element={<ProtectedRoute><BridgeEarthHome /></ProtectedRoute>} />
+          <Route path="/bridge/earth/unit/:unitId" element={<ProtectedRoute><BridgeEarthUnit /></ProtectedRoute>} />
+          <Route path="/bridge/earth/综合" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/earth/practice/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/earth/practice/:unitId" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/earth/unit/:unitId/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
 
           {/* 週頁面 - 天數選擇 */}
           <Route path="/:weekId" element={

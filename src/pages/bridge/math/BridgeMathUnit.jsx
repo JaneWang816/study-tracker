@@ -1,55 +1,61 @@
 // src/pages/bridge/math/BridgeMathUnit.jsx
 // 外殼元件：動態載入各單元資料
 import { useNavigate, useParams } from 'react-router-dom'
-import { useState, useEffect } from 'react'
 
 // basicId → 單元編號對照
-const UNIT_ID_MAP = {
-  'c1010000-0000-0000-0000-000000000001': '01',
-  'c1030000-0000-0000-0000-000000000001': '02',
-  'c1050000-0000-0000-0000-000000000001': '03',
-  'c1070000-0000-0000-0000-000000000001': '04',
-  'c1090000-0000-0000-0000-000000000001': '05',
-  'c1110000-0000-0000-0000-000000000001': '06',
-  'c1130000-0000-0000-0000-000000000001': '07',
-  'c1150000-0000-0000-0000-000000000001': '08',
-  'c1170000-0000-0000-0000-000000000001': '09',
-  'c1190000-0000-0000-0000-000000000001': '10',
-  'c1210000-0000-0000-0000-000000000001': '11',
-  'c1230000-0000-0000-0000-000000000001': '12',
-  'c1250000-0000-0000-0000-000000000001': '13',
-  'c1270000-0000-0000-0000-000000000001': '14',
-  'c1290000-0000-0000-0000-000000000001': '15',
-  'c1310000-0000-0000-0000-000000000001': '16',
-  'c1330000-0000-0000-0000-000000000001': '17',
-  'c1350000-0000-0000-0000-000000000001': '18',
-  'c1370000-0000-0000-0000-000000000001': '19',
-  'c1390000-0000-0000-0000-000000000001': '20',
-  'c1410000-0000-0000-0000-000000000001': '21',
+
+// 靜態 import 對照表（Vite build 需要靜態路徑，不可用字串拼接）
+import MathUnit01 from './units/MathUnit01'
+import MathUnit02 from './units/MathUnit02'
+import MathUnit03 from './units/MathUnit03'
+import MathUnit04 from './units/MathUnit04'
+import MathUnit05 from './units/MathUnit05'
+import MathUnit06 from './units/MathUnit06'
+import MathUnit07 from './units/MathUnit07'
+import MathUnit08 from './units/MathUnit08'
+import MathUnit09 from './units/MathUnit09'
+import MathUnit10 from './units/MathUnit10'
+import MathUnit11 from './units/MathUnit11'
+import MathUnit12 from './units/MathUnit12'
+import MathUnit13 from './units/MathUnit13'
+import MathUnit14 from './units/MathUnit14'
+import MathUnit15 from './units/MathUnit15'
+import MathUnit16 from './units/MathUnit16'
+import MathUnit17 from './units/MathUnit17'
+import MathUnit18 from './units/MathUnit18'
+import MathUnit19 from './units/MathUnit19'
+import MathUnit20 from './units/MathUnit20'
+import MathUnit21 from './units/MathUnit21'
+
+const UNIT_DATA_MAP = {
+  'c1010000-0000-0000-0000-000000000001': MathUnit01,
+  'c1030000-0000-0000-0000-000000000001': MathUnit02,
+  'c1050000-0000-0000-0000-000000000001': MathUnit03,
+  'c1070000-0000-0000-0000-000000000001': MathUnit04,
+  'c1090000-0000-0000-0000-000000000001': MathUnit05,
+  'c1110000-0000-0000-0000-000000000001': MathUnit06,
+  'c1130000-0000-0000-0000-000000000001': MathUnit07,
+  'c1150000-0000-0000-0000-000000000001': MathUnit08,
+  'c1170000-0000-0000-0000-000000000001': MathUnit09,
+  'c1190000-0000-0000-0000-000000000001': MathUnit10,
+  'c1210000-0000-0000-0000-000000000001': MathUnit11,
+  'c1230000-0000-0000-0000-000000000001': MathUnit12,
+  'c1250000-0000-0000-0000-000000000001': MathUnit13,
+  'c1270000-0000-0000-0000-000000000001': MathUnit14,
+  'c1290000-0000-0000-0000-000000000001': MathUnit15,
+  'c1310000-0000-0000-0000-000000000001': MathUnit16,
+  'c1330000-0000-0000-0000-000000000001': MathUnit17,
+  'c1350000-0000-0000-0000-000000000001': MathUnit18,
+  'c1370000-0000-0000-0000-000000000001': MathUnit19,
+  'c1390000-0000-0000-0000-000000000001': MathUnit20,
+  'c1410000-0000-0000-0000-000000000001': MathUnit21,
 }
 
 export default function BridgeMathUnit() {
   const { unitId } = useParams()
   const navigate = useNavigate()
-  const [unitData, setUnitData] = useState(null)
-  const [loading, setLoading] = useState(true)
 
-  const unitNum = UNIT_ID_MAP[unitId]
-
-  useEffect(() => {
-    if (!unitNum) { setLoading(false); return }
-    import(`./units/MathUnit${unitNum}`)
-      .then(mod => { setUnitData(mod.default); setLoading(false) })
-      .catch(() => { setLoading(false) })
-  }, [unitNum])
-
-  if (loading) return (
-    <div className="page-container">
-      <main className="main-content" style={{ textAlign: 'center', paddingTop: '80px' }}>
-        <p style={{ color: 'var(--text-light)' }}>載入中⋯</p>
-      </main>
-    </div>
-  )
+  const unitData = UNIT_DATA_MAP[unitId]
 
   if (!unitData) return (
     <div className="page-container">
