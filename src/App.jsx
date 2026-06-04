@@ -41,6 +41,12 @@ import BridgeChemistryHome from './pages/bridge/chemistry/BridgeChemistryHome'
 import BridgeChemistryUnit from './pages/bridge/chemistry/BridgeChemistryUnit'
 import BridgeEarthHome from './pages/bridge/earth/BridgeEarthHome'
 import BridgeEarthUnit from './pages/bridge/earth/BridgeEarthUnit'
+import BridgeGeographyHome from './pages/bridge/geography/BridgeGeographyHome'
+import BridgeGeographyUnit from './pages/bridge/geography/BridgeGeographyUnit'
+import BridgeHistoryHome from './pages/bridge/history/BridgeHistoryHome'
+import BridgeHistoryUnit from './pages/bridge/history/BridgeHistoryUnit'
+import BridgeCivicsHome from './pages/bridge/civics/BridgeCivicsHome'
+import BridgeCivicsUnit from './pages/bridge/civics/BridgeCivicsUnit'
 
 import './App.css'
 
@@ -219,6 +225,30 @@ function App() {
           <Route path="/bridge/earth/practice/:unitId" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
           <Route path="/bridge/earth/unit/:unitId/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
 
+          {/* ── 銜接地理 ── */}
+          <Route path="/bridge/geography" element={<ProtectedRoute><BridgeGeographyHome /></ProtectedRoute>} />
+          <Route path="/bridge/geography/unit/:unitId" element={<ProtectedRoute><BridgeGeographyUnit /></ProtectedRoute>} />
+          <Route path="/bridge/geography/综合" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/geography/practice/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/geography/practice/:unitId" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/geography/unit/:unitId/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+ 
+          {/* ── 銜接歷史 ── */}
+          <Route path="/bridge/history" element={<ProtectedRoute><BridgeHistoryHome /></ProtectedRoute>} />
+          <Route path="/bridge/history/unit/:unitId" element={<ProtectedRoute><BridgeHistoryUnit /></ProtectedRoute>} />
+          <Route path="/bridge/history/综合" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/history/practice/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/history/practice/:unitId" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/history/unit/:unitId/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+ 
+          {/* ── 銜接公民 ── */}
+          <Route path="/bridge/civics" element={<ProtectedRoute><BridgeCivicsHome /></ProtectedRoute>} />
+          <Route path="/bridge/civics/unit/:unitId" element={<ProtectedRoute><BridgeCivicsUnit /></ProtectedRoute>} />
+          <Route path="/bridge/civics/综合" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/civics/practice/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/civics/practice/:unitId" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/civics/unit/:unitId/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          
           {/* 週頁面 - 天數選擇 */}
           <Route path="/:weekId" element={
             <ProtectedRoute><WeekHome /></ProtectedRoute>
