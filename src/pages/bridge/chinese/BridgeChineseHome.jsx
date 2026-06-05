@@ -25,6 +25,7 @@ export default function BridgeChineseHome() {
   const [totalWrong, setTotalWrong] = useState(0)
   const [questionCounts, setQuestionCounts] = useState({})
   const [totalAttempted, setTotalAttempted] = useState(0)
+  const [newCounts, setNewCounts] = useState({})
   const [showCountPicker, setShowCountPicker] = useState(false)
 
   useEffect(() => { fetchStats() }, [])
@@ -37,10 +38,12 @@ export default function BridgeChineseHome() {
     if (!data) return
     const wrong = {}
     const counts = {}
+    const newC = {}
     let total = 0
     let attempted = 0
     data.forEach(q => {
       counts[q.unit_id] = (counts[q.unit_id] || 0) + 1
+      if (q.attempt_count === 0) newC[q.unit_id] = (newC[q.unit_id] || 0) + 1
       if (q.wrong_count > 0 && q.consecutive_correct < 3) {
         wrong[q.unit_id] = (wrong[q.unit_id] || 0) + 1
         total++
@@ -50,6 +53,7 @@ export default function BridgeChineseHome() {
     setWrongCounts(wrong)
     setTotalWrong(total)
     setQuestionCounts(counts)
+    setNewCounts(newC)
     setTotalAttempted(attempted)
   }
 
@@ -170,6 +174,7 @@ export default function BridgeChineseHome() {
             {UNITS.map(unit => {
               const hasWrong = wrongCounts[unit.id] > 0
               const qCount = questionCounts[unit.id] || 0
+              const newCount = newCounts[unit.id] || 0
               return (
                 <div
                   key={unit.id}
@@ -231,7 +236,7 @@ export default function BridgeChineseHome() {
                         cursor: qCount > 0 ? 'pointer' : 'default',
                         background: qCount > 0 ? '#F0FDF4' : '#FAFAFA',
                         transition: 'background 0.15s',
-                        borderRight: hasWrong ? '1px solid var(--border)' : 'none'
+                        borderRight: (newCount > 0 || hasWrong) ? '1px solid var(--border)' : 'none'
                       }}
                       onMouseEnter={e => {
                         if (qCount > 0) e.currentTarget.style.background = '#DCFCE7'
@@ -252,7 +257,18 @@ export default function BridgeChineseHome() {
                       )}
                     </div>
 
-                    {hasWrong && (
+                    {newCount > 0 && (
+                      <div
+                        onClick={() => navigate(`/bridge/chinese/practice/${unit.id}?mode=new`)}
+                        style={{ width: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px', cursor: 'pointer', background: '#EFF6FF', borderRight: hasWrong ? '1px solid var(--border)' : 'none', transition: 'background 0.15s' }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#DBEAFE'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#EFF6FF'}
+                      >
+                        <span style={{ fontSize: '14px' }}>🆕</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#2563EB' }}>新題（{newCount}）</span>
+                      </div>
+                    )}
+                                        {hasWrong && (
                       <div
                         onClick={() => navigate(`/bridge/chinese/unit/${unit.id}/wrong`)}
                         style={{

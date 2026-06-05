@@ -1,7 +1,9 @@
 // src/pages/bridge/chinese/BridgeChineseUnit.jsx
 import { useNavigate, useParams } from 'react-router-dom'
-import { useState, useEffect, Suspense, lazy } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const SUBJECT_ID = 'a1000000-0000-0000-0000-000000000002'
 
@@ -19,64 +21,36 @@ const UNIT_META = {
   'a5000000-0000-0000-0000-000000000011': { order: 11, title: '閱讀理解',       icon: '📝' },
 }
 
-// 單元 UUID → 對應的 unit 檔案編號
-const UNIT_ORDER_MAP = {
-  'a5000000-0000-0000-0000-000000000001': '01',
-  'a5000000-0000-0000-0000-000000000002': '02',
-  'a5000000-0000-0000-0000-000000000003': '03',
-  'a5000000-0000-0000-0000-000000000004': '04',
-  'a5000000-0000-0000-0000-000000000005': '05',
-  'a5000000-0000-0000-0000-000000000006': '06',
-  'a5000000-0000-0000-0000-000000000007': '07',
-  'a5000000-0000-0000-0000-000000000008': '08',
-  'a5000000-0000-0000-0000-000000000009': '09',
-  'a5000000-0000-0000-0000-000000000010': '10',
-  'a5000000-0000-0000-0000-000000000011': '11',
-}
-
-// lazy import：只在點進該單元時才載入對應檔案
-const unitComponents = {
-  '01': lazy(() => import('./units/ChineseUnit01')),
-  '02': lazy(() => import('./units/ChineseUnit02')),
-  '03': lazy(() => import('./units/ChineseUnit03')),
-  '04': lazy(() => import('./units/ChineseUnit04')),
-  '05': lazy(() => import('./units/ChineseUnit05')),
-  '06': lazy(() => import('./units/ChineseUnit06')),
-  '07': lazy(() => import('./units/ChineseUnit07')),
-  '08': lazy(() => import('./units/ChineseUnit08')),
-  '09': lazy(() => import('./units/ChineseUnit09')),
-  '10': lazy(() => import('./units/ChineseUnit10')),
-  '11': lazy(() => import('./units/ChineseUnit11')),
-}
-
-function LoadingContent() {
-  return (
-    <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-light)' }}>
-      載入中⋯
-    </div>
-  )
-}
-
 export default function BridgeChineseUnit() {
   const navigate = useNavigate()
   const { unitId } = useParams()
+  const [content, setContent] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [questionCount, setQuestionCount] = useState(0)
 
-  const meta = UNIT_META[unitId] || { order: '?', title: '未知單元', icon: '📄' }
-  const unitNum = UNIT_ORDER_MAP[unitId]
-  const UnitContent = unitNum ? unitComponents[unitNum] : null
+  const meta = UNIT_META[unitId] || { order: '?', title: '未知單元', icon: '📖' }
 
   useEffect(() => {
-    fetchQuestionCount()
+    fetchData()
   }, [unitId])
 
-  async function fetchQuestionCount() {
-    const { count } = await supabase
-      .from('questions')
-      .select('id', { count: 'exact', head: true })
-      .eq('subject_id', SUBJECT_ID)
-      .eq('unit_id', unitId)
+  async function fetchData() {
+    setLoading(true)
+    const [{ data: unitData }, { count }] = await Promise.all([
+      supabase
+        .from('units')
+        .select('content')
+        .eq('id', unitId)
+        .single(),
+      supabase
+        .from('questions')
+        .select('id', { count: 'exact', head: true })
+        .eq('subject_id', SUBJECT_ID)
+        .eq('unit_id', unitId)
+    ])
+    setContent(unitData?.content || null)
     setQuestionCount(count || 0)
+    setLoading(false)
   }
 
   return (
@@ -92,14 +66,30 @@ export default function BridgeChineseUnit() {
       <main className="main-content">
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
 
-          <Suspense fallback={<LoadingContent />}>
-            {UnitContent ? <UnitContent /> : <LoadingContent />}
-          </Suspense>
+          {/* 內容區 */}
+          <div style={{
+            background: 'white', borderRadius: '16px', padding: '32px',
+            boxShadow: 'var(--shadow)', marginBottom: '24px',
+            lineHeight: 1.9, fontSize: '15px', color: 'var(--text-dark)'
+          }}>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-light)' }}>
+                載入中⋯
+              </div>
+            ) : content ? (
+              <div className="chinese-markdown">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-light)' }}>
+                本單元重點整理建置中⋯
+              </div>
+            )}
+          </div>
 
           {/* 底部按鈕 */}
           <div style={{
-            marginTop: '32px', paddingTop: '24px',
-            borderTop: '1px solid var(--border)',
+            paddingTop: '8px',
             display: 'flex', justifyContent: 'center', gap: '16px'
           }}>
             <button className="btn btn-outline" onClick={() => navigate('/bridge/chinese')}>
@@ -117,6 +107,55 @@ export default function BridgeChineseUnit() {
 
         </div>
       </main>
+
+      <style>{`
+        .chinese-markdown h2 {
+          font-size: 18px; font-weight: 700; margin: 28px 0 12px;
+          color: var(--text-dark);
+          border-left: 4px solid #D97706; padding-left: 12px;
+        }
+        .chinese-markdown h3 {
+          font-size: 16px; font-weight: 700; margin: 20px 0 8px;
+          color: var(--text-dark);
+        }
+        .chinese-markdown p { margin: 0 0 12px; }
+        .chinese-markdown blockquote {
+          background: #FFF7ED; border: 1px solid #FED7AA;
+          border-left: 4px solid #F59E0B;
+          border-radius: 8px; padding: 12px 16px;
+          margin: 0 0 16px; color: #92400E;
+          font-size: 14px; line-height: 1.7;
+        }
+        .chinese-markdown blockquote p { margin: 0; }
+        .chinese-markdown img {
+          max-width: 100%; border-radius: 8px;
+          margin: 16px auto; display: block;
+          border: 1px solid var(--border);
+        }
+        .chinese-markdown table {
+          width: 100%; border-collapse: collapse;
+          margin: 16px 0; font-size: 14px;
+        }
+        .chinese-markdown th {
+          background: #FFF7ED; padding: 10px 12px;
+          text-align: left; border: 1px solid #FED7AA;
+          font-weight: 600; color: #92400E;
+        }
+        .chinese-markdown td {
+          padding: 10px 12px; border: 1px solid #E2E8F0;
+          vertical-align: top; line-height: 1.6;
+        }
+        .chinese-markdown tr:nth-child(even) td { background: #FFFBF5; }
+        .chinese-markdown ul { padding-left: 20px; margin: 8px 0 12px; }
+        .chinese-markdown li { margin-bottom: 6px; }
+        .chinese-markdown strong { color: #B45309; }
+        /* 字形比較用：國字大字顯示 */
+        .chinese-markdown td:first-child {
+          font-size: 20px; font-weight: 700;
+          text-align: center; color: #1E293B;
+          min-width: 48px;
+        }
+      `}</style>
     </div>
   )
 }

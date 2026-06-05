@@ -26,6 +26,7 @@ export default function BridgeCivicsHome() {
   const [totalWrong, setTotalWrong] = useState(0)
   const [questionCounts, setQuestionCounts] = useState({})
   const [totalAttempted, setTotalAttempted] = useState(0)
+  const [newCounts, setNewCounts] = useState({})
   const [showCountPicker, setShowCountPicker] = useState(false)
 
   useEffect(() => { fetchStats() }, [])
@@ -36,14 +37,15 @@ export default function BridgeCivicsHome() {
       .select('unit_id, wrong_count, consecutive_correct, attempt_count')
       .eq('subject_id', SUBJECT_ID)
     if (!data) return
-    const wrong = {}, counts = {}
+    const wrong = {}, counts = {}, newC = {}
     let total = 0, attempted = 0
     data.forEach(q => {
       counts[q.unit_id] = (counts[q.unit_id] || 0) + 1
+      if (q.attempt_count === 0) newC[q.unit_id] = (newC[q.unit_id] || 0) + 1
       if (q.wrong_count > 0 && q.consecutive_correct < 3) { wrong[q.unit_id] = (wrong[q.unit_id] || 0) + 1; total++ }
       if (q.attempt_count > 0) attempted++
     })
-    setWrongCounts(wrong); setTotalWrong(total); setQuestionCounts(counts); setTotalAttempted(attempted)
+    setWrongCounts(wrong); setTotalWrong(total); setQuestionCounts(counts); setNewCounts(newC); setTotalAttempted(attempted)
   }
 
   return (
@@ -107,6 +109,7 @@ export default function BridgeCivicsHome() {
             {UNITS.map(unit => {
               const hasWrong = wrongCounts[unit.id] > 0
               const qCount = questionCounts[unit.id] || 0
+              const newCount = newCounts[unit.id] || 0
               return (
                 <div key={unit.id} style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border)', boxShadow: 'var(--shadow)', overflow: 'hidden' }}>
                   <div onClick={() => navigate(`/bridge/civics/unit/${unit.id}`)}
@@ -125,14 +128,23 @@ export default function BridgeCivicsHome() {
                   </div>
                   <div style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
                     <div onClick={() => qCount > 0 ? navigate(`/bridge/civics/practice/${unit.id}`) : null}
-                      style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', cursor: qCount > 0 ? 'pointer' : 'default', background: qCount > 0 ? '#F0FDF4' : '#FAFAFA', transition: 'background 0.15s', borderRight: hasWrong ? '1px solid var(--border)' : 'none' }}
+                      style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', cursor: qCount > 0 ? 'pointer' : 'default', background: qCount > 0 ? '#F0FDF4' : '#FAFAFA', transition: 'background 0.15s', borderRight: (newCount > 0 || hasWrong) ? '1px solid var(--border)' : 'none' }}
                       onMouseEnter={e => { if (qCount > 0) e.currentTarget.style.background = '#DCFCE7' }}
                       onMouseLeave={e => { e.currentTarget.style.background = qCount > 0 ? '#F0FDF4' : '#FAFAFA' }}>
                       <span style={{ fontSize: '15px' }}>✏️</span>
                       <span style={{ fontSize: '14px', fontWeight: 600, color: qCount > 0 ? '#16A34A' : 'var(--text-light)' }}>{qCount > 0 ? `練習（${qCount} 題）` : '題目準備中'}</span>
                       {qCount > 0 && <span style={{ marginLeft: 'auto', fontSize: '15px', color: '#86EFAC' }}>›</span>}
                     </div>
-                    {hasWrong && (
+                    {newCount > 0 && (
+                      <div onClick={() => navigate(`/bridge/civics/practice/${unit.id}?mode=new`)}
+                        style={{ width: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px', cursor: 'pointer', background: '#EFF6FF', borderRight: hasWrong ? '1px solid var(--border)' : 'none', transition: 'background 0.15s' }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#DBEAFE'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#EFF6FF'}>
+                        <span style={{ fontSize: '14px' }}>🆕</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#2563EB' }}>新題({newCount})</span>
+                      </div>
+                    )}
+                                        {hasWrong && (
                       <div onClick={() => navigate(`/bridge/civics/unit/${unit.id}/wrong`)}
                         style={{ width: '130px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px', cursor: 'pointer', background: '#FEF2F2', transition: 'background 0.15s' }}
                         onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}

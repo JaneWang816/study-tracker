@@ -22,6 +22,7 @@ export default function BridgeEarthHome() {
   const [wrongCounts, setWrongCounts] = useState({})
   const [totalWrong, setTotalWrong] = useState(0)
   const [questionCounts, setQuestionCounts] = useState({})
+  const [newCounts, setNewCounts] = useState({})
   const [totalAttempted, setTotalAttempted] = useState(0)
   const [showCountPicker, setShowCountPicker] = useState(false)
 
@@ -37,10 +38,12 @@ export default function BridgeEarthHome() {
     if (!data) return
     const wrong = {}
     const counts = {}
+    const newC = {}
     let total = 0
     let attempted = 0
     data.forEach(q => {
       counts[q.unit_id] = (counts[q.unit_id] || 0) + 1
+      if (q.attempt_count === 0) newC[q.unit_id] = (newC[q.unit_id] || 0) + 1
       if (q.wrong_count > 0 && q.consecutive_correct < 3) {
         wrong[q.unit_id] = (wrong[q.unit_id] || 0) + 1
         total++
@@ -50,6 +53,7 @@ export default function BridgeEarthHome() {
     setWrongCounts(wrong)
     setTotalWrong(total)
     setQuestionCounts(counts)
+    setNewCounts(newC)
     setTotalAttempted(attempted)
   }
 
@@ -171,97 +175,70 @@ export default function BridgeEarthHome() {
             {UNITS.map(unit => {
               const hasWrong = wrongCounts[unit.id] > 0
               const qCount = questionCounts[unit.id] || 0
+              const newCount = newCounts[unit.id] || 0
               return (
                 <div
                   key={unit.id}
-                  style={{
-                    background: 'white', borderRadius: '16px',
-                    border: '1px solid var(--border)',
-                    boxShadow: 'var(--shadow)', overflow: 'hidden'
-                  }}
+                  style={{ background: 'white', borderRadius: '16px', border: '1px solid var(--border)', boxShadow: 'var(--shadow)', overflow: 'hidden' }}
                 >
                   {/* 知識整理列 */}
                   <div
                     onClick={() => navigate(`/bridge/earth/unit/${unit.id}`)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '16px',
-                      padding: '16px 20px', cursor: 'pointer',
-                      borderBottom: '1px solid var(--border)',
-                      transition: 'background 0.15s'
-                    }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', cursor: 'pointer', borderBottom: '1px solid var(--border)', transition: 'background 0.15s' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#F8FAFC'}
                     onMouseLeave={e => e.currentTarget.style.background = 'white'}
                   >
-                    <div style={{ fontSize: '28px', minWidth: '36px', textAlign: 'center' }}>
-                      {unit.icon}
-                    </div>
+                    <div style={{ fontSize: '28px', minWidth: '36px', textAlign: 'center' }}>{unit.icon}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-dark)' }}>
-                          第{unit.order}單元　{unit.title}
-                        </span>
+                        <span style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-dark)' }}>第{unit.order}單元　{unit.title}</span>
                         {hasWrong && (
-                          <span style={{
-                            background: '#FEE2E2', color: '#DC2626',
-                            fontSize: '11px', fontWeight: 700,
-                            padding: '2px 8px', borderRadius: '10px'
-                          }}>
+                          <span style={{ background: '#FEE2E2', color: '#DC2626', fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '10px' }}>
                             {wrongCounts[unit.id]} 錯題
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: '13px', color: 'var(--text-light)', marginTop: '3px' }}>
-                        {unit.desc}
-                      </div>
+                      <div style={{ fontSize: '13px', color: 'var(--text-light)', marginTop: '3px' }}>{unit.desc}</div>
                     </div>
-                    <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>
-                      知識整理 ›
-                    </div>
+                    <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>知識整理 ›</div>
                   </div>
 
                   {/* 練習按鈕列 */}
                   <div style={{ display: 'flex', borderTop: '1px solid var(--border)' }}>
                     <div
                       onClick={() => qCount > 0 ? navigate(`/bridge/earth/practice/${unit.id}`) : null}
-                      style={{
-                        flex: 1, display: 'flex', alignItems: 'center', gap: '10px',
-                        padding: '12px 20px',
-                        cursor: qCount > 0 ? 'pointer' : 'default',
-                        background: qCount > 0 ? '#ECFDF5' : '#FAFAFA',
-                        transition: 'background 0.15s',
-                        borderRight: hasWrong ? '1px solid var(--border)' : 'none'
-                      }}
+                      style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', cursor: qCount > 0 ? 'pointer' : 'default', background: qCount > 0 ? '#ECFDF5' : '#FAFAFA', transition: 'background 0.15s', borderRight: (newCount > 0 || hasWrong) ? '1px solid var(--border)' : 'none' }}
                       onMouseEnter={e => { if (qCount > 0) e.currentTarget.style.background = '#D1FAE5' }}
                       onMouseLeave={e => { e.currentTarget.style.background = qCount > 0 ? '#ECFDF5' : '#FAFAFA' }}
                     >
                       <span style={{ fontSize: '15px' }}>✏️</span>
-                      <span style={{
-                        fontSize: '14px', fontWeight: 600,
-                        color: qCount > 0 ? '#059669' : 'var(--text-light)'
-                      }}>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: qCount > 0 ? '#059669' : 'var(--text-light)' }}>
                         {qCount > 0 ? `練習（${qCount} 題）` : '題目準備中'}
                       </span>
-                      {qCount > 0 && (
-                        <span style={{ marginLeft: 'auto', fontSize: '15px', color: '#6EE7B7' }}>›</span>
-                      )}
+                      {qCount > 0 && <span style={{ marginLeft: 'auto', fontSize: '15px', color: '#6EE7B7' }}>›</span>}
                     </div>
+
+                    {newCount > 0 && (
+                      <div
+                        onClick={() => navigate(`/bridge/earth/practice/${unit.id}?mode=new`)}
+                        style={{ width: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px', cursor: 'pointer', background: '#EFF6FF', borderRight: hasWrong ? '1px solid var(--border)' : 'none', transition: 'background 0.15s' }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#DBEAFE'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#EFF6FF'}
+                      >
+                        <span style={{ fontSize: '14px' }}>🆕</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#2563EB' }}>新題（{newCount}）</span>
+                      </div>
+                    )}
 
                     {hasWrong && (
                       <div
                         onClick={() => navigate(`/bridge/earth/unit/${unit.id}/wrong`)}
-                        style={{
-                          width: '130px', display: 'flex', alignItems: 'center',
-                          justifyContent: 'center', gap: '6px',
-                          padding: '12px 16px', cursor: 'pointer',
-                          background: '#FEF2F2', transition: 'background 0.15s'
-                        }}
+                        style={{ width: '130px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px', cursor: 'pointer', background: '#FEF2F2', transition: 'background 0.15s' }}
                         onMouseEnter={e => e.currentTarget.style.background = '#FEE2E2'}
                         onMouseLeave={e => e.currentTarget.style.background = '#FEF2F2'}
                       >
                         <span style={{ fontSize: '14px' }}>📋</span>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#DC2626' }}>
-                          錯題（{wrongCounts[unit.id]}）
-                        </span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#DC2626' }}>錯題（{wrongCounts[unit.id]}）</span>
                       </div>
                     )}
                   </div>
