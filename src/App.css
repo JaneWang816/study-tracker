@@ -2444,3 +2444,43 @@ input.answer-input {
   color: var(--text-light);
   font-style: italic;
 }
+
+.english-markdown h2 {
+  color: #0891B2;
+  border-left: 4px solid #0891B2;
+  padding-left: 0.6rem;
+  margin-top: 1.5rem;
+}
+.english-markdown h3 {
+  color: #0e7490;
+  margin-top: 1.2rem;
+}
+.english-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+}
+.english-markdown th {
+  background: #0891B2;
+  color: #fff;
+  padding: 0.4rem 0.75rem;
+  text-align: left;
+}
+.english-markdown td {
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid #e0f2fe;
+}
+.english-markdown tr:nth-child(even) td {
+  background: #f0f9ff;
+}
+.english-markdown code {
+  background: #e0f2fe;
+  color: #0e7490;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+.english-markdown strong {
+  color: #0e7490;
+}

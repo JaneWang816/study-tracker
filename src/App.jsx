@@ -47,6 +47,8 @@ import BridgeHistoryHome from './pages/bridge/history/BridgeHistoryHome'
 import BridgeHistoryUnit from './pages/bridge/history/BridgeHistoryUnit'
 import BridgeCivicsHome from './pages/bridge/civics/BridgeCivicsHome'
 import BridgeCivicsUnit from './pages/bridge/civics/BridgeCivicsUnit'
+import BridgeEnglishHome from './pages/bridge/english/BridgeEnglishHome'
+import BridgeEnglishUnit from './pages/bridge/english/BridgeEnglishUnit'
 
 import './App.css'
 
@@ -248,7 +250,15 @@ function App() {
           <Route path="/bridge/civics/practice/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
           <Route path="/bridge/civics/practice/:unitId" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
           <Route path="/bridge/civics/unit/:unitId/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
-          
+
+          {/* 銜接英文 */}
+          <Route path="/bridge/english" element={<ProtectedRoute><BridgeEnglishHome /></ProtectedRoute>} />
+          <Route path="/bridge/english/unit/:unitId" element={<ProtectedRoute><BridgeEnglishUnit /></ProtectedRoute>} />
+          <Route path="/bridge/english/综合" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/english/practice/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/english/practice/:unitId" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+          <Route path="/bridge/english/unit/:unitId/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+
           {/* 週頁面 - 天數選擇 */}
           <Route path="/:weekId" element={
             <ProtectedRoute><WeekHome /></ProtectedRoute>

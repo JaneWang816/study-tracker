@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 const SUBJECTS = [
   { id: 'chinese',   label: '國文', icon: '📝', color: '#DC2626', bg: '#FEF2F2', available: true  },
   { id: 'math',      label: '數學', icon: '🔢', color: '#2563EB', bg: '#EFF6FF', available: true  },
-  { id: 'english',   label: '英文', icon: '🔤', color: '#7C3AED', bg: '#F5F3FF', available: false },
+  { id: 'english',   label: '英文', icon: '🔤', color: '#7C3AED', bg: '#F5F3FF', available: true },
   { id: 'geography', label: '地理', icon: '🌏', color: '#059669', bg: '#ECFDF5', available: true },
   { id: 'history',   label: '歷史', icon: '🏛️', color: '#D97706', bg: '#FFFBEB', available: true },
   { id: 'civics',    label: '公民', icon: '⚖️', color: '#0891B2', bg: '#ECFEFF', available: true },
