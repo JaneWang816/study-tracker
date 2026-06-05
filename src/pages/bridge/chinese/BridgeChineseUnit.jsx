@@ -140,10 +140,15 @@ export default function BridgeChineseUnit() {
           background: #FFF7ED; padding: 10px 12px;
           text-align: left; border: 1px solid #FED7AA;
           font-weight: 600; color: #92400E;
+          white-space: nowrap;
         }
         .chinese-markdown td {
           padding: 10px 12px; border: 1px solid #E2E8F0;
           vertical-align: top; line-height: 1.6;
+        }
+        /* 注音欄（第二欄）不換行 */
+        .chinese-markdown td:nth-child(2) {
+          white-space: nowrap; min-width: 72px;
         }
         .chinese-markdown tr:nth-child(even) td { background: #FFFBF5; }
         .chinese-markdown ul { padding-left: 20px; margin: 8px 0 12px; }
