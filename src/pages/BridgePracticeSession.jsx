@@ -12,12 +12,7 @@ const SUBJECT_MAP = {
   chinese: 'a1000000-0000-0000-0000-000000000002',
   bio:     'b1000000-0000-0000-0000-000000000001',
   chemistry: 'b1000000-0000-0000-0000-000000000002',
-  earth: 'b1000000-0000-0000-0000-000000000003',
-  geography: 'd1000000-0000-0000-0000-000000000001',
-  history:   'e1000000-0000-0000-0000-000000000001',
-  civics:    'f1000000-0000-0000-0000-000000000001',
   english: 'c1000000-0000-0000-0000-000000000003',
-
 }
 
 function getSubjectFromPath() {
@@ -110,7 +105,8 @@ function shuffle(arr) {
   return a
 }
 
-function prepareQuestion(q) {
+function prepareQuestion(q, parentQ = null) {
+  if (!q.options) return null
   const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options)
   const answerIndex = parseInt(String(q.answer).replace(/["\\]/g, ''))
   const correctText = options[answerIndex]
@@ -120,8 +116,45 @@ function prepareQuestion(q) {
     shuffledOptions: shuffled,
     correctIndex: shuffled.indexOf(correctText),
     originalOptions: options,
+    groupContent: parentQ ? parentQ.content : null,
+    groupImageUrl: parentQ ? parentQ.image_url : null,
   }
 }
+
+function buildQueue(data) {
+  const parents = {}
+  const children = {}
+  const standalones = []
+
+  for (const q of data) {
+    if (q.is_group && !q.parent_id) {
+      parents[q.id] = q
+    } else if (q.parent_id) {
+      if (!children[q.parent_id]) children[q.parent_id] = []
+      children[q.parent_id].push(q)
+    } else {
+      // options が null の場合は parent 題が is_group=null で混入している可能性があるためスキップ
+      if (q.options !== null && q.options !== undefined) {
+        standalones.push(q)
+      }
+    }
+  }
+
+  const groups = []
+  for (const parentId of Object.keys(children)) {
+    const parentQ = parents[parentId] || null
+    const sorted = (children[parentId] || [])
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
+      .map(c => prepareQuestion(c, parentQ))
+    groups.push(sorted)
+  }
+
+  const preparedStandalones = standalones.map(q => prepareQuestion(q)).filter(Boolean)
+  const units = [...preparedStandalones.map(q => [q]), ...groups]
+  const shuffledUnits = shuffle(units)
+  return shuffledUnits.flat()
+}
+
 
 export default function BridgePracticeSession() {
   const { unitId } = useParams()
@@ -133,34 +166,28 @@ export default function BridgePracticeSession() {
   // 判斷模式
   // /bridge/:subject/practice/wrong           → 單元錯題複習
   // /bridge/:subject/practice/:unitId         → 單元練習
-  // /bridge/:subject/practice/:unitId?mode=new → 只練新題
   // /bridge/:subject/综合?mode=random&count=X → 全題庫隨機
   // /bridge/:subject/综合?mode=wrong          → 全錯題複習
   const isUnitWrong = unitId === 'wrong' || window.location.pathname.endsWith('/wrong')
   const isComprehensive = window.location.pathname.includes('/综合')
   const compMode = searchParams.get('mode')   // 'random' | 'wrong'
   const compCount = parseInt(searchParams.get('count') || '20')
-  const isNewMode = !isUnitWrong && !isComprehensive && searchParams.get('mode') === 'new'
-
-  const [phase, setPhase] = useState('loading')
-  const [questions, setQuestions] = useState([])
-  const [current, setCurrent] = useState(0)
-  const [selected, setSelected] = useState(null)
-  const [showResult, setShowResult] = useState(false)
-  const [startTime] = useState(Date.now())
-  const isSubmitting = useRef(false)
-  const totalRef = useRef(0)
-  const correctRef = useRef(0)
-  const wrongQuestionsRef = useRef([])   // 本次練習答錯的題目
-  const [completeWrongs, setCompleteWrongs] = useState([])  // 完成後傳給 CompleteScreen
-
-  // isWrongMode 依賴 phase，必須在 state 宣告之後
-  const isWrongMode = isUnitWrong || (isComprehensive && compMode === 'wrong') || phase === 'wrong-review' || phase === 'session-wrong'
+  const isWrongMode = isUnitWrong || (isComprehensive && compMode === 'wrong')
 
   // badge 顏色：錯題=紅，精熟=紫，基礎=藍
   const isAdv = unitId && UNIT_TITLES[unitId]?.includes('精熟')
   const modeColor = isWrongMode ? '#DC2626' : isAdv ? '#7C3AED' : '#2563EB'
   const modeBg = isWrongMode ? '#FEF2F2' : isAdv ? '#FAF5FF' : '#EFF6FF'
+
+  const [phase, setPhase] = useState('loading')
+  const [questions, setQuestions] = useState([])
+  const [current, setCurrent] = useState(0)
+  const [selected, setSelected] = useState(null)
+  const [showResult, setShowResult] = useState(false)   // 答對後短暫顯示結果再自動跳題
+  const [startTime] = useState(Date.now())
+  const isSubmitting = useRef(false)
+  const totalRef = useRef(0)
+  const correctRef = useRef(0)
 
   useEffect(() => { loadQuestions() }, [unitId])
 
@@ -204,29 +231,25 @@ export default function BridgePracticeSession() {
         .gt('wrong_count', 0)
         .lt('consecutive_correct', 3)
     } else if (isComprehensive && compMode === 'random') {
-      // 已作答題目中加權排序後抽 compCount 題
-      // 優先：練習次數少 → 答錯次數多 → 隨機擾動
-      const { data: all } = await query.gt('attempt_count', 0)
+      // 全題庫隨機抽 compCount 題
+      const { data: all } = await query
       if (!all || all.length === 0) { setPhase('empty'); return }
-      const weighted = all
-        .map(q => ({ ...q, _score: q.attempt_count * 10 - q.wrong_count * 3 + Math.random() * 5 }))
-        .sort((a, b) => a._score - b._score)
-      const picked = weighted.slice(0, compCount)
+      const queue = buildQueue(all)
+      const picked = queue.slice(0, compCount)
       totalRef.current = picked.length
       correctRef.current = 0
-      setQuestions(picked.map(prepareQuestion))
+      setQuestions(picked)
       setPhase('practice')
       return
     } else {
-      // 單元練習：全部題目 or 只練新題
+      // 單元練習：全部題目隨機順序
       query = query.eq('unit_id', unitId)
-      if (isNewMode) query = query.eq('attempt_count', 0)
     }
 
     const { data, error } = await query
     if (error || !data || data.length === 0) { setPhase('empty'); return }
 
-    const prepared = shuffle(data).map(prepareQuestion)
+    const prepared = buildQueue(data)
     totalRef.current = prepared.length
     correctRef.current = 0
     setQuestions(prepared)
@@ -255,19 +278,19 @@ export default function BridgePracticeSession() {
       last_attempted_at: new Date().toISOString(),
     }).eq('id', q.id)
 
+    // 更新本地 state
     const updatedQ = { ...q, attempt_count: newAttempt, wrong_count: newWrong, consecutive_correct: newConsec }
 
     if (isCorrect) {
       correctRef.current += 1
+      setShowResult(true)
+      setQuestions(prev => prev.map((item, i) => i === current ? updatedQ : item))
     } else {
-      // 記錄錯題（避免重複）
-      if (!wrongQuestionsRef.current.find(w => w.id === q.id)) {
-        wrongQuestionsRef.current.push(updatedQ)
-      }
+      // 答錯：重新洗牌選項，留在同一題重試
+      const retried = prepareQuestion({ ...updatedQ }, updatedQ.groupContent ? { content: updatedQ.groupContent, image_url: updatedQ.groupImageUrl } : null)
+      setQuestions(prev => prev.map((item, i) => i === current ? retried : item))
+      setSelected(null)
     }
-    // 無論對錯，顯示結果，不重試
-    setQuestions(prev => prev.map((item, i) => i === current ? updatedQ : item))
-    setShowResult(true)
 
     isSubmitting.current = false
   }
@@ -279,7 +302,6 @@ export default function BridgePracticeSession() {
       setCurrent(c => c + 1)
     } else {
       await saveSession()
-      setCompleteWrongs(wrongQuestionsRef.current.map(prepareQuestion))
       setPhase('complete')
     }
   }
@@ -302,7 +324,7 @@ export default function BridgePracticeSession() {
     }).eq('id', q.id)
 
     if (!isCorrect) {
-      const retried = prepareQuestion({ ...q, consecutive_correct: 0, wrong_count: newWrong })
+      const retried = prepareQuestion({ ...q, consecutive_correct: 0, wrong_count: newWrong }, q.groupContent ? { content: q.groupContent, image_url: q.groupImageUrl } : null)
       setQuestions(prev => prev.map((item, i) => i === current ? retried : item))
       setSelected(null)
       isSubmitting.current = false
@@ -347,42 +369,6 @@ export default function BridgePracticeSession() {
     }
   }
 
-  // 當次錯題複習：答對一次就移出，答錯重試（不寫DB）
-  async function handleSessionWrongConfirm() {
-    if (selected === null || showResult || isSubmitting.current) return
-    isSubmitting.current = true
-
-    const q = questions[current]
-    const isCorrect = selected === q.correctIndex
-
-    if (!isCorrect) {
-      // 答錯：重新洗牌，留在原題
-      const retried = prepareQuestion({ ...q })
-      setQuestions(prev => prev.map((item, i) => i === current ? retried : item))
-      setSelected(null)
-      isSubmitting.current = false
-      return
-    }
-
-    // 答對：標記過關，顯示結果
-    correctRef.current += 1
-    setShowResult(true)
-    isSubmitting.current = false
-  }
-
-  async function handleSessionWrongNext() {
-    setShowResult(false)
-    setSelected(null)
-    // 移出已過關的題目
-    const remaining = questions.filter((_, i) => i !== current)
-    if (remaining.length === 0) {
-      setPhase('complete')
-      return
-    }
-    setQuestions(remaining)
-    setCurrent(c => Math.min(c, remaining.length - 1))
-  }
-
   async function saveSession() {
     const duration = Math.round((Date.now() - startTime) / 1000)
     let topic = '錯題複習'
@@ -416,15 +402,6 @@ export default function BridgePracticeSession() {
       total={totalRef.current}
       correct={correctRef.current}
       isWrongMode={isWrongMode}
-      wrongQuestions={completeWrongs}
-      onStartWrongReview={() => {
-        wrongQuestionsRef.current = []
-        setQuestions(completeWrongs)
-        setCurrent(0)
-        setSelected(null)
-        setShowResult(false)
-        setPhase('session-wrong')
-      }}
       onBack={() => navigate(backPath)}
     />
   )
@@ -433,7 +410,6 @@ export default function BridgePracticeSession() {
 
   // badge 文字
   let badgeText = UNIT_TITLES[unitId] || '練習'
-  if (isNewMode) badgeText = (UNIT_TITLES[unitId] || '練習') + '・只練新題'
   if (isUnitWrong) badgeText = '錯題複習'
   if (isComprehensive && compMode === 'random') badgeText = `綜合練習（${questions.length}題）`
   if (isComprehensive && compMode === 'wrong') badgeText = '全科錯題複習'
@@ -462,7 +438,7 @@ export default function BridgePracticeSession() {
       <main className="main-content">
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
 
-          {phase === 'wrong-review' && (
+          {isWrongMode && (
             <div style={{
               background: '#FEF2F2', border: '1px solid #FCA5A5',
               borderRadius: '10px', padding: '10px 16px',
@@ -473,7 +449,39 @@ export default function BridgePracticeSession() {
           )}
 
           <div className="question-card" style={{ marginBottom: '20px' }}>
+            {/* 題組：上方顯示 parent 的文章/對話/圖表 */}
+            {q.groupContent && (
+              <div style={{
+                background: '#F8FAFC',
+                border: '1px solid #CBD5E1',
+                borderRadius: '8px',
+                padding: '14px 16px',
+                marginBottom: '16px',
+                fontSize: '14px',
+                lineHeight: 1.8,
+                color: '#334155',
+                whiteSpace: 'pre-line',
+              }}>
+                {q.groupImageUrl && (
+                  <div style={{ marginBottom: '12px', textAlign: 'center' }}>
+                    <img
+                      src={q.groupImageUrl}
+                      alt="題組圖片"
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '320px',
+                        borderRadius: '6px',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  </div>
+                )}
+                {q.groupContent}
+              </div>
+            )}
+            {/* 題幹 */}
             <div className="question-text" style={{ whiteSpace: 'pre-line' }}>{q.content}</div>
+            {/* 題目本身附圖（非題組圖） */}
             {q.image_url && (
               <div style={{ margin: '16px 0', textAlign: 'center' }}>
                 <img
@@ -517,11 +525,7 @@ export default function BridgePracticeSession() {
             <button
               className="btn btn-primary btn-large"
               style={{ width: '100%', background: modeColor, borderColor: modeColor }}
-              onClick={
-                phase === 'wrong-review' ? handleWrongConfirm
-                : phase === 'session-wrong' ? handleSessionWrongConfirm
-                : handleConfirm
-              }
+              onClick={isWrongMode ? handleWrongConfirm : handleConfirm}
               disabled={selected === null}
             >
               確認答案
@@ -534,7 +538,7 @@ export default function BridgePracticeSession() {
                 color: selected === q.correctIndex ? '#16A34A' : '#DC2626'
               }}>
                 {selected === q.correctIndex ? '✅ 答對了！' : '❌ 答錯了！'}
-                {phase === 'wrong-review' && q.consecutive_correct >= 3 && (
+                {isWrongMode && q.consecutive_correct >= 3 && (
                   <span style={{ fontSize: '14px', marginLeft: '8px', color: '#16A34A' }}>
                     🎓 畢業！
                   </span>
@@ -559,17 +563,11 @@ export default function BridgePracticeSession() {
                   border: 'none', borderRadius: '10px', cursor: 'pointer',
                   padding: '16px', fontWeight: 700, fontSize: '16px'
                 }}
-                onClick={
-                  phase === 'wrong-review' ? handleWrongNext
-                  : phase === 'session-wrong' ? handleSessionWrongNext
-                  : handleNext
-                }
+                onClick={isWrongMode ? handleWrongNext : handleNext}
               >
-                {phase === 'wrong-review'
+                {isWrongMode
                   ? (questions.filter((_, i) => i !== current).length === 0 && q.consecutive_correct >= 3
                     ? '完成複習' : '下一題 →')
-                  : phase === 'session-wrong'
-                  ? (questions.length === 1 ? '完成複習' : '下一題 →')
                   : (current + 1 < questions.length ? '下一題 →' : '完成練習')
                 }
               </button>
@@ -603,58 +601,43 @@ function EmptyScreen({ message, onBack }) {
   )
 }
 
-function CompleteScreen({ total, correct, isWrongMode, wrongQuestions, onStartWrongReview, onBack }) {
-  const rate = total > 0 ? Math.round((correct / total) * 100) : 100
-  const rateColor = rate >= 80 ? '#16A34A' : rate >= 60 ? '#D97706' : '#DC2626'
-  const rateBg   = rate >= 80 ? '#ECFDF5' : rate >= 60 ? '#FEF3C7' : '#FEF2F2'
-  const hasWrong = wrongQuestions && wrongQuestions.length > 0
+function CompleteScreen({ total, correct, isWrongMode, onBack }) {
+  const score = total > 0 ? Math.round((correct / total) * 100) : 100
   return (
     <div className="page-container">
       <main className="main-content" style={{ textAlign: 'center', paddingTop: '60px' }}>
         <div style={{ fontSize: '72px', marginBottom: '16px' }}>
-          {isWrongMode ? '🎓' : rate >= 80 ? '🎉' : rate >= 60 ? '👍' : '💪'}
+          {isWrongMode ? '🎓' : score >= 80 ? '🎉' : score >= 60 ? '👍' : '💪'}
         </div>
-        <h2 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>
           {isWrongMode ? '錯題複習完成！' : '練習完成！'}
         </h2>
         {!isWrongMode && (
-          <div style={{
-            display: 'inline-flex', flexDirection: 'column', gap: '12px',
-            background: rateBg, borderRadius: '20px',
-            padding: '24px 48px', marginBottom: '32px'
-          }}>
-            <div style={{ fontSize: '15px', color: '#64748B' }}>
-              共 <strong style={{ color: '#1E293B' }}>{total}</strong> 題
+          <>
+            <p style={{ color: 'var(--text-light)', marginBottom: '32px' }}>
+              答對 {correct} / {total} 題
+            </p>
+            <div style={{
+              display: 'inline-block', padding: '20px 48px',
+              background: score >= 80 ? '#ECFDF5' : score >= 60 ? '#FEF3C7' : '#FEF2F2',
+              borderRadius: '20px', marginBottom: '32px'
+            }}>
+              <span style={{
+                fontSize: '48px', fontWeight: 800,
+                color: score >= 80 ? '#16A34A' : score >= 60 ? '#D97706' : '#DC2626'
+              }}>
+                {score}分
+              </span>
             </div>
-            <div style={{ fontSize: '15px', color: '#64748B' }}>
-              答對 <strong style={{ color: '#16A34A' }}>{correct}</strong> 題
-              ／ 答錯 <strong style={{ color: '#DC2626' }}>{total - correct}</strong> 題
-            </div>
-            <div style={{ fontSize: '40px', fontWeight: 800, color: rateColor, lineHeight: 1 }}>
-              答對率 {rate}%
-            </div>
-          </div>
+          </>
         )}
         {isWrongMode && (
           <p style={{ color: 'var(--text-light)', marginBottom: '32px' }}>
             共畢業 {correct} 題，繼續加油！
           </p>
         )}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
-          {!isWrongMode && hasWrong && (
-            <button
-              className="btn btn-large"
-              style={{
-                width: '240px', background: '#DC2626', color: 'white',
-                border: 'none', borderRadius: '10px', cursor: 'pointer',
-                padding: '14px', fontWeight: 700, fontSize: '16px'
-              }}
-              onClick={onStartWrongReview}
-            >
-              📋 複習錯題（{wrongQuestions.length} 題）
-            </button>
-          )}
-          <button className="btn btn-primary btn-large" style={{ width: '240px' }} onClick={onBack}>
+        <div>
+          <button className="btn btn-primary btn-large" onClick={onBack}>
             返回單元列表
           </button>
         </div>
