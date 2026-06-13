@@ -2484,3 +2484,21 @@ input.answer-input {
 .english-markdown strong {
   color: #0e7490;
 }
+/* ========== Markdown 圖片大小限制 ========== */
+.math-markdown img,
+.chinese-markdown img,
+.bio-markdown img,
+.chem-markdown img,
+.earth-markdown img,
+.geo-markdown img,
+.hist-markdown img,
+.civ-markdown img,
+.english-markdown img {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 12px auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}

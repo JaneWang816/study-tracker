@@ -174,6 +174,11 @@ export default function BridgeMathUnit() {
           vertical-align: top;
         }
         .math-markdown tr:nth-child(even) td { background: #F8FAFC; }
+        .math-markdown img {
+          max-width: 360px; width: 100%; height: auto;
+          display: block; margin: 12px auto;
+          border-radius: 8px; border: 1px solid #BFDBFE;
+        }
         .math-markdown code {
           background: #EFF6FF; color: #1D4ED8;
           padding: 2px 6px; border-radius: 4px;
