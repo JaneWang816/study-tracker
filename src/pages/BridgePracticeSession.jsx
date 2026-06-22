@@ -409,27 +409,15 @@ export default function BridgePracticeSession() {
   async function handleWrongNext() {
     setShowResult(false)
     setSelected(null)
-    const q = questions[current]
-    const graduated = q.consecutive_correct >= 3
-
-    if (graduated) {
-      // 已畢業，移出佇列
-      const remaining = questions.filter((_, i) => i !== current)
-      if (remaining.length === 0) {
-        await saveSession()
-        setPhase('complete')
-        return
-      }
-      setQuestions(remaining)
-      setCurrent(c => Math.min(c, remaining.length - 1))
-    } else {
-      // 未畢業，繼續下一題
-      if (current + 1 < questions.length) {
-        setCurrent(c => c + 1)
-      } else {
-        setCurrent(0)  // 循環回第一題
-      }
+    // 答對即移出當次佇列（畢業與否由累積 consecutive_correct 決定，不在此判斷）
+    const remaining = questions.filter((_, i) => i !== current)
+    if (remaining.length === 0) {
+      await saveSession()
+      setPhase('complete')
+      return
     }
+    setQuestions(remaining)
+    setCurrent(c => Math.min(c, remaining.length - 1))
   }
 
   async function saveSession(overrideTotal) {
@@ -720,9 +708,9 @@ export default function BridgePracticeSession() {
                 color: selected === q.correctIndex ? '#16A34A' : '#DC2626'
               }}>
                 {selected === q.correctIndex ? '✅ 答對了！' : '❌ 答錯了！'}
-                {isWrongMode && q.consecutive_correct >= 3 && (
-                  <span style={{ fontSize: '14px', marginLeft: '8px', color: '#16A34A' }}>
-                    🎓 畢業！
+                {isWrongMode && (
+                  <span style={{ fontSize: '14px', marginLeft: '8px', color: q.consecutive_correct >= 3 ? '#16A34A' : '#D97706' }}>
+                    {q.consecutive_correct >= 3 ? '🎓 累積達標！' : `📈 累積連對 ${q.consecutive_correct}/3 次`}
                   </span>
                 )}
               </div>
@@ -748,8 +736,7 @@ export default function BridgePracticeSession() {
                 onClick={isWrongMode ? handleWrongNext : handleNext}
               >
                 {isWrongMode
-                  ? (questions.filter((_, i) => i !== current).length === 0 && q.consecutive_correct >= 3
-                    ? '完成複習' : '下一題 →')
+                  ? (questions.length === 1 ? '完成複習 🎉' : '下一題 →')
                   : (current + 1 < questions.length ? '下一題 →' : '查看成績')
                 }
               </button>
