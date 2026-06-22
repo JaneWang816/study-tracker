@@ -34,6 +34,8 @@ export default function BridgeMathUnit() {
   const { unitId } = useParams()
   const navigate = useNavigate()
   const [content, setContent] = useState(null)
+  const [basicCount, setBasicCount] = useState(null)
+  const [advCount, setAdvCount] = useState(null)
   const [loading, setLoading] = useState(true)
 
   const unitData = UNIT_DATA_MAP[unitId]
@@ -44,12 +46,15 @@ export default function BridgeMathUnit() {
 
   async function fetchContent() {
     setLoading(true)
-    const { data } = await supabase
-      .from('units')
-      .select('content')
-      .eq('id', unitId)
-      .single()
+    const ud = UNIT_DATA_MAP[unitId]
+    const [{ data }, { count: bc }, { count: ac }] = await Promise.all([
+      supabase.from('units').select('content').eq('id', unitId).single(),
+      supabase.from('questions').select('id', { count: 'exact', head: true }).eq('unit_id', ud?.basicId || unitId),
+      supabase.from('questions').select('id', { count: 'exact', head: true }).eq('unit_id', ud?.advId || unitId),
+    ])
     setContent(data?.content || null)
+    setBasicCount(bc || 0)
+    setAdvCount(ac || 0)
     setLoading(false)
   }
 
@@ -116,7 +121,9 @@ export default function BridgeMathUnit() {
             >
               <div style={{ fontSize: '22px', marginBottom: '6px' }}>📘</div>
               <div style={{ fontSize: '15px', fontWeight: 700, color: '#2563EB' }}>基礎題庫</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '4px' }}>實戰演練</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '4px' }}>
+                {basicCount !== null ? `${basicCount} 題` : '載入中…'}
+              </div>
             </button>
 
             <button
@@ -131,7 +138,9 @@ export default function BridgeMathUnit() {
             >
               <div style={{ fontSize: '22px', marginBottom: '6px' }}>📗</div>
               <div style={{ fontSize: '15px', fontWeight: 700, color: '#7C3AED' }}>精熟題庫</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '4px' }}>步步高升</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '4px' }}>
+                {advCount !== null ? `${advCount} 題` : '載入中…'}
+              </div>
             </button>
           </div>
 
