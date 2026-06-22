@@ -34,6 +34,7 @@ export default function BridgeMathHome() {
   const [wrongCounts, setWrongCounts] = useState({})
   const [totalWrong, setTotalWrong] = useState(0)
   const [totalAttempted, setTotalAttempted] = useState(0)
+  const [questionCounts, setQuestionCounts] = useState({})
   const [showCountPicker, setShowCountPicker] = useState(false)
 
   useEffect(() => { fetchStats() }, [])
@@ -41,20 +42,26 @@ export default function BridgeMathHome() {
   async function fetchStats() {
     const { data } = await supabase
       .from('questions')
-      .select('unit_id, wrong_count, consecutive_correct, attempt_count')
+      .select('unit_id, wrong_count, consecutive_correct, attempt_count, is_group, options')
       .eq('subject_id', SUBJECT_ID)
     if (!data) return
-    const counts = {}
+    const wrong = {}
+    const qCounts = {}
     let total = 0
     let attempted = 0
     data.forEach(q => {
+      // 只統計非 parent 題（options 不為 null）的總題數
+      if (q.options !== null) {
+        qCounts[q.unit_id] = (qCounts[q.unit_id] || 0) + 1
+      }
       if (q.wrong_count > 0 && q.consecutive_correct < 3) {
-        counts[q.unit_id] = (counts[q.unit_id] || 0) + 1
+        wrong[q.unit_id] = (wrong[q.unit_id] || 0) + 1
         total++
       }
       if (q.attempt_count > 0) attempted++
     })
-    setWrongCounts(counts)
+    setWrongCounts(wrong)
+    setQuestionCounts(qCounts)
     setTotalWrong(total)
     setTotalAttempted(attempted)
   }
@@ -177,6 +184,8 @@ export default function BridgeMathHome() {
               const basicWrong = wrongCounts[unit.basicId] || 0
               const advWrong = wrongCounts[unit.advId] || 0
               const unitTotalWrong = basicWrong + advWrong
+              const basicCount = questionCounts[unit.basicId] || 0
+              const advCount = questionCounts[unit.advId] || 0
               return (
                 <div
                   key={unit.order}
@@ -246,6 +255,9 @@ export default function BridgeMathHome() {
                       <span style={{ fontSize: '13px', fontWeight: 700, color: '#2563EB' }}>
                         基礎篇
                       </span>
+                      <span style={{ fontSize: '12px', color: '#3B82F6' }}>
+                        {basicCount > 0 ? `${basicCount}題` : ''}
+                      </span>
                       {basicWrong > 0 && (
                         <span style={{ fontSize: '11px', color: '#DC2626' }}>({basicWrong}錯)</span>
                       )}
@@ -268,6 +280,9 @@ export default function BridgeMathHome() {
                       <span style={{ fontSize: '14px' }}>📗</span>
                       <span style={{ fontSize: '13px', fontWeight: 700, color: '#7C3AED' }}>
                         精熟篇
+                      </span>
+                      <span style={{ fontSize: '12px', color: '#7C3AED' }}>
+                        {advCount > 0 ? `${advCount}題` : ''}
                       </span>
                       {advWrong > 0 && (
                         <span style={{ fontSize: '11px', color: '#DC2626' }}>({advWrong}錯)</span>
