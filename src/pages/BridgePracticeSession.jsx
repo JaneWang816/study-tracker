@@ -109,13 +109,27 @@ function prepareQuestion(q, parentQ = null) {
   if (!q.options) return null
   const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options)
   const answerIndex = parseInt(String(q.answer).replace(/["\\]/g, ''))
-  const correctText = options[answerIndex]
-  const shuffled = shuffle(options)
+
+  // C型題：選項為圖片
+  const optImgs = q.option_image_urls
+    ? (Array.isArray(q.option_image_urls) ? q.option_image_urls : JSON.parse(q.option_image_urls))
+    : null
+  const isImageOptions = optImgs && optImgs.length > 0
+
+  // shuffle 時同步搬移圖片 URL
+  const indices = options.map((_, i) => i)
+  const shuffledIndices = shuffle(indices)
+  const shuffled = shuffledIndices.map(i => options[i])
+  const shuffledImgs = isImageOptions ? shuffledIndices.map(i => optImgs[i]) : null
+  const correctShuffledIndex = shuffledIndices.indexOf(answerIndex)
+
   return {
     ...q,
     shuffledOptions: shuffled,
-    correctIndex: shuffled.indexOf(correctText),
+    shuffledOptionImgs: shuffledImgs,
+    correctIndex: correctShuffledIndex,
     originalOptions: options,
+    isImageOptions,
     groupContent: parentQ ? parentQ.content : null,
     groupImageUrl: parentQ ? parentQ.image_url : null,
   }
@@ -667,15 +681,17 @@ export default function BridgePracticeSession() {
                 />
               </div>
             )}
-            <div className="options-grid">
+            <div className={q.isImageOptions ? 'options-grid options-grid-image' : 'options-grid'}>
               {q.shuffledOptions.map((opt, idx) => {
                 let cls = 'option-btn'
+                if (q.isImageOptions) cls += ' option-btn-image'
                 if (showResult) {
                   if (idx === q.correctIndex) cls += ' correct'
                   else if (idx === selected && idx !== q.correctIndex) cls += ' wrong'
                 } else if (idx === selected) {
                   cls += ' selected'
                 }
+                const imgUrl = q.shuffledOptionImgs ? q.shuffledOptionImgs[idx] : null
                 return (
                   <button
                     key={idx}
@@ -684,7 +700,22 @@ export default function BridgePracticeSession() {
                     disabled={showResult}
                   >
                     <span className="option-label">{idx + 1}</span>
-                    <span className="option-text">{opt}</span>
+                    {imgUrl ? (
+                      <img
+                        src={imgUrl}
+                        alt={`選項${idx + 1}`}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '160px',
+                          objectFit: 'contain',
+                          borderRadius: '4px',
+                          display: 'block',
+                          margin: '4px auto 0',
+                        }}
+                      />
+                    ) : (
+                      <span className="option-text">{opt}</span>
+                    )}
                   </button>
                 )
               })}
