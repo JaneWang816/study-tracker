@@ -520,19 +520,29 @@ export default function BridgePracticeSession() {
                   <img src={q.image_url} alt="題目圖片" style={{ maxWidth: '100%', maxHeight: '280px', borderRadius: '8px', border: '1px solid #E2E8F0', objectFit: 'contain' }} />
                 </div>
               )}
-              <div className="options-grid">
+              <div className={q.isImageOptions ? 'options-grid options-grid-image' : 'options-grid'}>
                 {q.shuffledOptions.map((opt, idx) => {
                   let cls = 'option-btn'
+                  if (q.isImageOptions) cls += ' option-btn-image'
                   if (showResult) {
                     if (idx === q.correctIndex) cls += ' correct'
                     else if (idx === selected && idx !== q.correctIndex) cls += ' wrong'
                   } else if (idx === selected) {
                     cls += ' selected'
                   }
+                  const imgUrl = q.shuffledOptionImgs ? q.shuffledOptionImgs[idx] : null
                   return (
                     <button key={idx} className={cls} onClick={() => !showResult && setSelected(idx)} disabled={showResult}>
                       <span className="option-label">{idx + 1}</span>
-                      <span className="option-text">{opt}</span>
+                      {imgUrl ? (
+                        <img
+                          src={imgUrl}
+                          alt={`選項${idx + 1}`}
+                          style={{ maxWidth: '100%', maxHeight: '160px', objectFit: 'contain', borderRadius: '4px', display: 'block', margin: '4px auto 0' }}
+                        />
+                      ) : (
+                        <span className="option-text">{opt}</span>
+                      )}
                     </button>
                   )
                 })}
