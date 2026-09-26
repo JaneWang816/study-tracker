@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
-import { getG7Subject, LEVELS } from '../../config/g7'
+import { getG7Subject, LEVELS, G7_EDITOR_IDS } from '../../config/g7'
 import { fetchProgress, withProgress, isWrong } from './progress'
 
 export default function G7SubjectHome() {
@@ -35,7 +35,7 @@ export default function G7SubjectHome() {
         ? supabase.from('units').select('id, title, order, topic_id').in('topic_id', topicIds).order('order')
         : Promise.resolve({ data: [] }),
       supabase.from('questions')
-        .select('id, unit_id, difficulty, is_group, parent_id')
+        .select('id, unit_id, difficulty, is_group, parent_id, exam_source')
         .eq('subject_id', meta.subjectId),
       fetchProgress(user.id),
     ])
@@ -128,6 +128,16 @@ export default function G7SubjectHome() {
                     </div>
                   )}
                 </div>
+              )}
+
+              {G7_EDITOR_IDS.includes(user?.id) && (
+                <button onClick={() => navigate(`/g7/${subject}/add`)} style={{
+                  width: '100%', marginBottom: '24px', padding: '12px', borderRadius: '12px', font: 'inherit',
+                  fontSize: '15px', fontWeight: 700, cursor: 'pointer', color: meta.color,
+                  background: 'white', border: `2px dashed ${meta.color}66`,
+                }}>
+                  ➕ 新增考試題
+                </button>
               )}
 
               {topics.length === 0 && (

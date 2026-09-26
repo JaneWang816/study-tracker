@@ -427,6 +427,12 @@ function QuestionCard({ q, selected, showResult, onSelect }) {
           {q.groupContent}
         </div>
       )}
+      {q.exam_source && (
+        <div style={{ display: 'inline-block', marginBottom: '10px', padding: '2px 10px', borderRadius: '999px',
+          background: '#FEF3C7', color: '#B45309', fontSize: '12px', fontWeight: 700 }}>
+          📝 {q.exam_source}
+        </div>
+      )}
       <div className="question-text" style={{ whiteSpace: 'pre-line' }}>{q.content}</div>
       {q.image_url && (
         <div style={{ margin: '16px 0', textAlign: 'center' }}>

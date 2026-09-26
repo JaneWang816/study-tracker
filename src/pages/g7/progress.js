@@ -39,8 +39,8 @@ export async function saveProgress(userId, questionId, next) {
   if (error) console.error('寫入作答紀錄失敗：', error)
 }
 
-// 在錯題本中：曾答錯，或曾標記「我不確定」，且尚未有把握地連續答對達標
+// 在錯題本中：曾答錯、曾標記「我不確定」，或是考試錯題（exam_source），且尚未有把握地連續答對達標
 export function isWrong(q) {
-  const flagged = (q.wrong_count || 0) > 0 || q.marked_for_review
+  const flagged = (q.wrong_count || 0) > 0 || q.marked_for_review || !!q.exam_source
   return flagged && (q.consecutive_correct || 0) < GRADUATE_STREAK
 }
