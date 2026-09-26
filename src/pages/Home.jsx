@@ -24,7 +24,7 @@ export default function Home() {
           今天想做什麼？
         </h2>
 
-        {/* 主要功能：每日練習 + 中小學銜接 */}
+        {/* 主要功能：每日練習 + 中小學銜接 + 七年級複習 */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
@@ -45,6 +45,14 @@ export default function Home() {
             icon="🌉" title="中小學銜接"
             desc={<>國文、數學、英文<br />地理、歷史、公民、生物、理化、地科</>}
             label="開始銜接 →"
+          />
+          <HomeCard
+            onClick={() => navigate('/g7')}
+            gradient="linear-gradient(135deg, #2563EB, #60A5FA)"
+            hoverColor="#2563EB" tagBg="#EFF6FF" tagColor="#2563EB"
+            icon="📘" title="七年級複習"
+            desc={<>國文、英文、數學<br />地理、歷史、公民、生物</>}
+            label="開始複習 →"
           />
         </div>
 

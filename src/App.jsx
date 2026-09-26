@@ -50,6 +50,11 @@ import BridgeCivicsUnit from './pages/bridge/civics/BridgeCivicsUnit'
 import BridgeEnglishHome from './pages/bridge/english/BridgeEnglishHome'
 import BridgeEnglishUnit from './pages/bridge/english/BridgeEnglishUnit'
 
+// 七年級複習
+import G7Home from './pages/g7/G7Home'
+import G7SubjectHome from './pages/g7/G7SubjectHome'
+import G7PracticeSession from './pages/g7/G7PracticeSession'
+
 import './App.css'
 
 function App() {
@@ -258,6 +263,11 @@ function App() {
           <Route path="/bridge/english/practice/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
           <Route path="/bridge/english/practice/:unitId" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
           <Route path="/bridge/english/unit/:unitId/wrong" element={<ProtectedRoute><BridgePracticeSession /></ProtectedRoute>} />
+
+          {/* ── 七年級複習（7 科共用元件）── */}
+          <Route path="/g7" element={<ProtectedRoute><G7Home /></ProtectedRoute>} />
+          <Route path="/g7/:subject" element={<ProtectedRoute><G7SubjectHome /></ProtectedRoute>} />
+          <Route path="/g7/:subject/practice" element={<ProtectedRoute><G7PracticeSession /></ProtectedRoute>} />
 
           {/* 週頁面 - 天數選擇 */}
           <Route path="/:weekId" element={
