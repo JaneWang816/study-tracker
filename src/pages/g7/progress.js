@@ -7,10 +7,12 @@ const EMPTY = { attempt_count: 0, wrong_count: 0, consecutive_correct: 0, marked
 
 // 讀取某位使用者的所有作答紀錄 → Map(question_id → 紀錄)
 export async function fetchProgress(userId) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('question_progress')
     .select('question_id, attempt_count, wrong_count, consecutive_correct, marked_for_review, last_attempted_at')
     .eq('user_id', userId)
+  if (error) console.error('讀取作答紀錄失敗：', error)
+  console.info(`[G7] 使用者 ${userId}：讀到 ${data?.length ?? 0} 筆作答紀錄`)
   return new Map((data || []).map(r => [r.question_id, r]))
 }
 
