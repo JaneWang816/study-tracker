@@ -5,8 +5,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { getG7Subject, LEVELS, GRADUATE_STREAK } from '../../config/g7'
 
+// 在錯題本中：曾答錯，或曾標記「我不確定」，且尚未連續答對達標
 function isWrong(q) {
-  return (q.wrong_count || 0) > 0 && (q.consecutive_correct || 0) < GRADUATE_STREAK
+  const flagged = (q.wrong_count || 0) > 0 || q.marked_for_review
+  return flagged && (q.consecutive_correct || 0) < GRADUATE_STREAK
 }
 
 export default function G7SubjectHome() {
@@ -36,7 +38,7 @@ export default function G7SubjectHome() {
         ? supabase.from('units').select('id, title, order, topic_id').in('topic_id', topicIds).order('order')
         : Promise.resolve({ data: [] }),
       supabase.from('questions')
-        .select('unit_id, difficulty, is_group, parent_id, attempt_count, wrong_count, consecutive_correct')
+        .select('unit_id, difficulty, is_group, parent_id, attempt_count, wrong_count, consecutive_correct, marked_for_review')
         .eq('subject_id', meta.subjectId),
     ])
 

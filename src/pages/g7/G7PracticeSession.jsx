@@ -34,8 +34,10 @@ function parseJson(v) {
   return Array.isArray(v) ? v : JSON.parse(v)
 }
 
+// 在錯題本中：曾答錯，或曾標記「我不確定」，且尚未連續答對達標
 function isWrong(q) {
-  return (q.wrong_count || 0) > 0 && (q.consecutive_correct || 0) < GRADUATE_STREAK
+  const flagged = (q.wrong_count || 0) > 0 || q.marked_for_review
+  return flagged && (q.consecutive_correct || 0) < GRADUATE_STREAK
 }
 
 // 打亂選項（圖片選項同步搬移），算出打亂後的正解位置
@@ -84,16 +86,16 @@ function takeUpTo(items, limit) {
   return picked
 }
 
-// 單元練習排序：未做過的優先（隨機），其次是最久沒做的
+// 單元練習排序：
+//   1. 未做過的優先（隨機）
+//   2. 做過的：連續答對次數少的優先（只答對一次可能是猜對），同分時最久沒做的優先
 function prioritize(items) {
   const fresh = shuffle(items.filter(it => it.some(q => !q.attempt_count)))
+  const streak = it => Math.min(...it.map(q => q.consecutive_correct || 0))
+  const oldest = it => Math.min(...it.map(q => new Date(q.last_attempted_at || 0).getTime()))
   const done = items
     .filter(it => it.every(q => q.attempt_count))
-    .sort((a, b) => {
-      const ta = Math.min(...a.map(q => new Date(q.last_attempted_at || 0).getTime()))
-      const tb = Math.min(...b.map(q => new Date(q.last_attempted_at || 0).getTime()))
-      return ta - tb
-    })
+    .sort((a, b) => streak(a) - streak(b) || oldest(a) - oldest(b))
   return [...fresh, ...done]
 }
 
@@ -120,6 +122,7 @@ export default function G7PracticeSession() {
   const [questions, setQuestions] = useState([])
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState(null)
+  const [unsure, setUnsure] = useState(false)
   const [showResult, setShowResult] = useState(false)
   const [startTime] = useState(Date.now())
   const isSubmitting = useRef(false)
@@ -167,11 +170,17 @@ export default function G7PracticeSession() {
     setPhase('practice')
   }
 
-  async function recordAttempt(q, isCorrect) {
+  async function recordAttempt(q, isCorrect, isUnsure = false) {
+    const confident = isCorrect && !isUnsure
+    const streak = confident ? (q.consecutive_correct || 0) + 1 : 0
     const next = {
       attempt_count: (q.attempt_count || 0) + 1,
       wrong_count: isCorrect ? (q.wrong_count || 0) : (q.wrong_count || 0) + 1,
-      consecutive_correct: isCorrect ? (q.consecutive_correct || 0) + 1 : 0,
+      consecutive_correct: streak,
+      // 答對但不確定 → 標記進錯題本；連續答對達標 → 清除標記
+      marked_for_review: (isCorrect && isUnsure) ? true
+        : streak >= GRADUATE_STREAK ? false
+        : !!q.marked_for_review,
       last_attempted_at: new Date().toISOString(),
     }
     await supabase.from('questions').update(next).eq('id', q.id)
@@ -188,10 +197,10 @@ export default function G7PracticeSession() {
     isSubmitting.current = true
     const q = questions[current]
     const isCorrect = selected === q.correctIndex
-    const updatedQ = await recordAttempt(q, isCorrect)
+    const updatedQ = await recordAttempt(q, isCorrect, unsure)
     if (isCorrect) correctRef.current += 1
     else sessionWrongRef.current = [...sessionWrongRef.current, reshuffle(updatedQ)]
-    setQuestions(prev => prev.map((item, i) => i === current ? updatedQ : item))
+    setQuestions(prev => prev.map((item, i) => i === current ? { ...updatedQ, wasUnsure: unsure } : item))
     setShowResult(true)
     isSubmitting.current = false
   }
@@ -199,6 +208,7 @@ export default function G7PracticeSession() {
   async function handleNext() {
     setShowResult(false)
     setSelected(null)
+    setUnsure(false)
     if (current + 1 < questions.length) { setCurrent(c => c + 1); return }
     await finish()
   }
@@ -245,15 +255,16 @@ export default function G7PracticeSession() {
     isSubmitting.current = true
     const q = questions[current]
     const isCorrect = selected === q.correctIndex
-    const updatedQ = await recordAttempt(q, isCorrect)
+    const updatedQ = await recordAttempt(q, isCorrect, unsure)
     if (!isCorrect) {
+      setUnsure(false)
       setQuestions(prev => prev.map((item, i) => i === current ? reshuffle(updatedQ) : item))
       setSelected(null)
       isSubmitting.current = false
       return
     }
     if (updatedQ.consecutive_correct >= GRADUATE_STREAK) correctRef.current += 1
-    setQuestions(prev => prev.map((item, i) => i === current ? updatedQ : item))
+    setQuestions(prev => prev.map((item, i) => i === current ? { ...updatedQ, wasUnsure: unsure } : item))
     setShowResult(true)
     isSubmitting.current = false
   }
@@ -261,6 +272,7 @@ export default function G7PracticeSession() {
   async function handleWrongNext() {
     setShowResult(false)
     setSelected(null)
+    setUnsure(false)
     const remaining = questions.filter((_, i) => i !== current)
     if (remaining.length === 0) {
       await saveSession()
@@ -333,15 +345,22 @@ export default function G7PracticeSession() {
       progress={isWrongMode ? 1 - (questions.length - 1) / totalRef.current : (current + 1) / questions.length}
       onExit={isWrongMode ? null : handleEarlyExit}
     >
-      {isWrongMode && <Notice>📋 錯題複習：累積連續答對 {GRADUATE_STREAK} 次就會移出錯題本</Notice>}
+      {isWrongMode && <Notice>📋 錯題複習：有把握地連續答對 {GRADUATE_STREAK} 次，就會移出錯題本</Notice>}
       <QuestionCard q={q} selected={selected} showResult={showResult} onSelect={setSelected} />
       {!showResult ? (
-        <ConfirmButton color={modeColor} disabled={selected === null}
-          onClick={isWrongMode ? handleWrongConfirm : handleConfirm} />
+        <>
+          <UnsureToggle checked={unsure} onChange={setUnsure} />
+          <ConfirmButton color={modeColor} disabled={selected === null}
+            onClick={isWrongMode ? handleWrongConfirm : handleConfirm} />
+        </>
       ) : (
         <ResultPanel
           correct={isCorrect}
-          extra={isWrongMode ? (q.consecutive_correct >= GRADUATE_STREAK ? '🎓 已從錯題本畢業！' : `📈 累積連對 ${q.consecutive_correct}/${GRADUATE_STREAK}`) : null}
+          extra={isCorrect && q.wasUnsure
+            ? '🤔 已放進錯題本，之後再練習'
+            : isWrongMode
+              ? (q.consecutive_correct >= GRADUATE_STREAK ? '🎓 已從錯題本畢業！' : `📈 累積連對 ${q.consecutive_correct}/${GRADUATE_STREAK}`)
+              : null}
           explanation={q.explanation}
           color={modeColor}
           nextLabel={isWrongMode
@@ -435,6 +454,22 @@ function QuestionCard({ q, selected, showResult, onSelect }) {
         })}
       </div>
     </div>
+  )
+}
+
+function UnsureToggle({ checked, onChange }) {
+  return (
+    <label style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+      marginBottom: '12px', padding: '10px', borderRadius: '10px', cursor: 'pointer',
+      background: checked ? '#FFFBEB' : 'transparent',
+      border: `1px solid ${checked ? '#FCD34D' : 'var(--border)'}`,
+      fontSize: '15px', color: checked ? '#B45309' : 'var(--text-light)', userSelect: 'none',
+    }}>
+      <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)}
+        style={{ width: '18px', height: '18px', accentColor: '#D97706' }} />
+      🤔 我不確定
+    </label>
   )
 }
 
