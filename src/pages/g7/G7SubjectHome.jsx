@@ -3,18 +3,15 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { getG7Subject, LEVELS, GRADUATE_STREAK } from '../../config/g7'
-
-// 在錯題本中：曾答錯，或曾標記「我不確定」，且尚未連續答對達標
-function isWrong(q) {
-  const flagged = (q.wrong_count || 0) > 0 || q.marked_for_review
-  return flagged && (q.consecutive_correct || 0) < GRADUATE_STREAK
-}
+import { useAuth } from '../../contexts/AuthContext'
+import { getG7Subject, LEVELS } from '../../config/g7'
+import { fetchProgress, withProgress, isWrong } from './progress'
 
 export default function G7SubjectHome() {
   const navigate = useNavigate()
   const { subject } = useParams()
   const meta = getG7Subject(subject)
+  const { user } = useAuth()
 
   const [loading, setLoading] = useState(true)
   const [topics, setTopics] = useState([])      // [{ id, title, units: [...] }]
@@ -23,7 +20,7 @@ export default function G7SubjectHome() {
   const [totalAttempted, setTotalAttempted] = useState(0)
   const [showCountPicker, setShowCountPicker] = useState(false)
 
-  useEffect(() => { if (meta) fetchAll() }, [subject])
+  useEffect(() => { if (meta && user) fetchAll() }, [subject, user])
 
   async function fetchAll() {
     setLoading(true)
@@ -33,14 +30,16 @@ export default function G7SubjectHome() {
       .order('order')
 
     const topicIds = (topicRows || []).map(t => t.id)
-    const [{ data: unitRows }, { data: qRows }] = await Promise.all([
+    const [{ data: unitRows }, { data: qRaw }, progress] = await Promise.all([
       topicIds.length
         ? supabase.from('units').select('id, title, order, topic_id').in('topic_id', topicIds).order('order')
         : Promise.resolve({ data: [] }),
       supabase.from('questions')
-        .select('unit_id, difficulty, is_group, parent_id, attempt_count, wrong_count, consecutive_correct, marked_for_review')
+        .select('id, unit_id, difficulty, is_group, parent_id')
         .eq('subject_id', meta.subjectId),
+      fetchProgress(user.id),
     ])
+    const qRows = withProgress(qRaw || [], progress)
 
     const s = {}
     let wrongSum = 0, attemptedSum = 0

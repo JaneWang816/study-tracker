@@ -16,7 +16,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { getG7Subject, LEVELS, SESSION_SIZE, GRADUATE_STREAK, G7_USER_ID } from '../../config/g7'
+import { useAuth } from '../../contexts/AuthContext'
+import { getG7Subject, LEVELS, SESSION_SIZE, GRADUATE_STREAK } from '../../config/g7'
+import { fetchProgress, withProgress, saveProgress, isWrong } from './progress'
 
 // ── 工具函式 ────────────────────────────────────────────────
 
@@ -32,12 +34,6 @@ function shuffle(arr) {
 function parseJson(v) {
   if (v === null || v === undefined) return null
   return Array.isArray(v) ? v : JSON.parse(v)
-}
-
-// 在錯題本中：曾答錯，或曾標記「我不確定」，且尚未連續答對達標
-function isWrong(q) {
-  const flagged = (q.wrong_count || 0) > 0 || q.marked_for_review
-  return flagged && (q.consecutive_correct || 0) < GRADUATE_STREAK
 }
 
 // 打亂選項（圖片選項同步搬移），算出打亂後的正解位置
@@ -106,6 +102,7 @@ export default function G7PracticeSession() {
   const { subject } = useParams()
   const [searchParams] = useSearchParams()
   const meta = getG7Subject(subject)
+  const { user } = useAuth()
 
   const unitId = searchParams.get('unit')
   const level = searchParams.get('level') === 'advanced' ? 'advanced' : 'basic'
@@ -132,17 +129,19 @@ export default function G7PracticeSession() {
   const [wrongCurrent, setWrongCurrent] = useState(0)
   const sessionWrongRef = useRef([])
 
-  useEffect(() => { if (meta) loadQuestions() }, [subject, unitId, level, mode])
+  useEffect(() => { if (meta && user) loadQuestions() }, [subject, unitId, level, mode, user])
 
   async function loadQuestions() {
-    const [{ data, error }, unitRes] = await Promise.all([
+    const [{ data: raw, error }, unitRes, progress] = await Promise.all([
       supabase.from('questions').select('*').eq('subject_id', meta.subjectId),
       unitId
         ? supabase.from('units').select('title').eq('id', unitId).single()
         : Promise.resolve({ data: null }),
+      fetchProgress(user.id),
     ])
     if (unitRes.data) setUnitTitle(unitRes.data.title)
-    if (error || !data) { setPhase('empty'); return }
+    if (error || !raw) { setPhase('empty'); return }
+    const data = withProgress(raw, progress)
 
     const scoped = unitId ? data.filter(q => q.unit_id === unitId) : data
     const parents = Object.fromEntries(scoped.filter(q => q.is_group && !q.parent_id).map(q => [q.id, q]))
@@ -183,7 +182,7 @@ export default function G7PracticeSession() {
         : !!q.marked_for_review,
       last_attempted_at: new Date().toISOString(),
     }
-    await supabase.from('questions').update(next).eq('id', q.id)
+    await saveProgress(user.id, q.id, next)
     return { ...q, ...next }
   }
 
@@ -290,7 +289,7 @@ export default function G7PracticeSession() {
     if (isWrongMode) { module = 'wrong_review'; topic = unitTitle ? `${unitTitle}（錯題）` : '整科錯題' }
     if (mode === 'random') { module = 'random'; topic = '隨機抽題' }
     await supabase.from('practice_sessions').insert({
-      user_id: G7_USER_ID,
+      user_id: user.id,
       subject: `g7_${subject}`,
       module,
       topic,

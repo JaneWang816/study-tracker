@@ -2,8 +2,6 @@
 // 七年級複習：唯一需要手寫的設定
 // 單元清單不寫在這裡，一律從資料庫 topics → units 讀取
 
-export const G7_USER_ID = '0c4ec0e9-872f-4e18-ae17-c95894bd820c'
-
 // 每回合題數上限（減少 3C 時間）
 export const SESSION_SIZE = 10
 
