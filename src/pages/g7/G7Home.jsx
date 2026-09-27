@@ -1,10 +1,22 @@
 // src/pages/g7/G7Home.jsx
 // 七年級複習首頁：7 個科目
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
 import { G7_SUBJECTS } from '../../config/g7'
 
 export default function G7Home() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const [isGuardian, setIsGuardian] = useState(false)
+
+  // 有對應孩子的家長才顯示報表按鈕
+  useEffect(() => {
+    if (!user) return
+    supabase.from('g7_guardians').select('student_id', { count: 'exact', head: true }).eq('guardian_id', user.id)
+      .then(({ count }) => setIsGuardian((count || 0) > 0))
+  }, [user])
 
   return (
     <div className="page-container">
@@ -14,6 +26,9 @@ export default function G7Home() {
           <h1>📘 七年級複習</h1>
           <p>選擇科目</p>
         </div>
+        {isGuardian && (
+          <button className="btn-back" onClick={() => navigate('/g7/report')}>📊 報表</button>
+        )}
       </header>
 
       <main className="main-content">

@@ -18,7 +18,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { getG7Subject, LEVELS, SESSION_SIZE, GRADUATE_STREAK } from '../../config/g7'
-import { fetchProgress, withProgress, saveProgress, isWrong } from './progress'
+import { fetchProgress, withProgress, saveProgress, logAnswer, isWrong } from './progress'
 
 // ── 工具函式 ────────────────────────────────────────────────
 
@@ -123,6 +123,7 @@ export default function G7PracticeSession() {
   const [showResult, setShowResult] = useState(false)
   const [startTime] = useState(Date.now())
   const isSubmitting = useRef(false)
+  const sessionId = useRef(crypto.randomUUID())   // 作答日誌用：同一回合共用
   const totalRef = useRef(0)
   const correctRef = useRef(0)
   const [sessionWrong, setSessionWrong] = useState([])
@@ -169,7 +170,7 @@ export default function G7PracticeSession() {
     setPhase('practice')
   }
 
-  async function recordAttempt(q, isCorrect, isUnsure = false) {
+  async function recordAttempt(q, isCorrect, isUnsure = false, chosen = null) {
     const confident = isCorrect && !isUnsure
     const streak = confident ? (q.consecutive_correct || 0) + 1 : 0
     const next = {
@@ -182,7 +183,10 @@ export default function G7PracticeSession() {
         : !!q.marked_for_review,
       last_attempted_at: new Date().toISOString(),
     }
-    await saveProgress(user.id, q.id, next)
+    await Promise.all([
+      saveProgress(user.id, q.id, next),
+      logAnswer(user.id, q, { sessionId: sessionId.current, mode, isCorrect, isUnsure, chosen }),
+    ])
     return { ...q, ...next }
   }
 
@@ -196,7 +200,7 @@ export default function G7PracticeSession() {
     isSubmitting.current = true
     const q = questions[current]
     const isCorrect = selected === q.correctIndex
-    const updatedQ = await recordAttempt(q, isCorrect, unsure)
+    const updatedQ = await recordAttempt(q, isCorrect, unsure, q.shuffledOptions[selected])
     if (isCorrect) correctRef.current += 1
     else sessionWrongRef.current = [...sessionWrongRef.current, reshuffle(updatedQ)]
     setQuestions(prev => prev.map((item, i) => i === current ? { ...updatedQ, wasUnsure: unsure } : item))
@@ -254,7 +258,7 @@ export default function G7PracticeSession() {
     isSubmitting.current = true
     const q = questions[current]
     const isCorrect = selected === q.correctIndex
-    const updatedQ = await recordAttempt(q, isCorrect, unsure)
+    const updatedQ = await recordAttempt(q, isCorrect, unsure, q.shuffledOptions[selected])
     if (!isCorrect) {
       setUnsure(false)
       setQuestions(prev => prev.map((item, i) => i === current ? reshuffle(updatedQ) : item))

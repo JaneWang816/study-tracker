@@ -11,6 +11,9 @@ export const SESSION_SIZE = 10
 // 錯題畢業門檻：連續答對幾次移出錯題本
 export const GRADUATE_STREAK = 3
 
+// 家長報表：每科每天的新題目標
+export const DAILY_NEW_TARGET = 10
+
 export const G7_SUBJECTS = [
   { key: 'chinese',   label: '國文', icon: '📝', color: '#DC2626', bg: '#FEF2F2', subjectId: '71000000-0000-0000-0000-000000000001', available: false },
   { key: 'english',   label: '英文', icon: '🔤', color: '#7C3AED', bg: '#F5F3FF', subjectId: '71000000-0000-0000-0000-000000000002', available: false },

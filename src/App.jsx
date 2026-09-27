@@ -55,6 +55,7 @@ import G7Home from './pages/g7/G7Home'
 import G7SubjectHome from './pages/g7/G7SubjectHome'
 import G7PracticeSession from './pages/g7/G7PracticeSession'
 import G7AddQuestion from './pages/g7/G7AddQuestion'
+import G7Report from './pages/g7/G7Report'
 
 import './App.css'
 
@@ -267,6 +268,7 @@ function App() {
 
           {/* ── 七年級複習（7 科共用元件）── */}
           <Route path="/g7" element={<ProtectedRoute><G7Home /></ProtectedRoute>} />
+          <Route path="/g7/report" element={<ProtectedRoute><G7Report /></ProtectedRoute>} />
           <Route path="/g7/:subject" element={<ProtectedRoute><G7SubjectHome /></ProtectedRoute>} />
           <Route path="/g7/:subject/practice" element={<ProtectedRoute><G7PracticeSession /></ProtectedRoute>} />
           <Route path="/g7/:subject/add" element={<ProtectedRoute><G7AddQuestion /></ProtectedRoute>} />
