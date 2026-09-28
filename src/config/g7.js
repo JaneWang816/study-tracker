@@ -18,7 +18,7 @@ export const G7_SUBJECTS = [
   { key: 'chinese',   label: '國文', icon: '📝', color: '#DC2626', bg: '#FEF2F2', subjectId: '71000000-0000-0000-0000-000000000001', available: false },
   { key: 'english',   label: '英文', icon: '🔤', color: '#7C3AED', bg: '#F5F3FF', subjectId: '71000000-0000-0000-0000-000000000002', available: false },
   { key: 'math',      label: '數學', icon: '🔢', color: '#2563EB', bg: '#EFF6FF', subjectId: '71000000-0000-0000-0000-000000000003', available: false },
-  { key: 'geography', label: '地理', icon: '🌏', color: '#059669', bg: '#ECFDF5', subjectId: '71000000-0000-0000-0000-000000000004', available: false },
+  { key: 'geography', label: '地理', icon: '🌏', color: '#059669', bg: '#ECFDF5', subjectId: '71000000-0000-0000-0000-000000000004', available: true },
   { key: 'history',   label: '歷史', icon: '🏛️', color: '#D97706', bg: '#FFFBEB', subjectId: '71000000-0000-0000-0000-000000000005', available: false },
   { key: 'civics',    label: '公民', icon: '⚖️', color: '#0891B2', bg: '#ECFEFF', subjectId: '71000000-0000-0000-0000-000000000006', available: false },
   { key: 'bio',       label: '生物', icon: '🌿', color: '#16A34A', bg: '#F0FDF4', subjectId: '71000000-0000-0000-0000-000000000007', available: true  },
