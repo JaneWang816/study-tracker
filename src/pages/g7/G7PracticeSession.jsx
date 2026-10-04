@@ -13,12 +13,14 @@
 //   3. 一次撈整科題目再於前端篩選，錯題模式也拿得到題組母題的文章／圖片
 //   4. 單元標題從 units 表讀取，學習紀錄寫入正確名稱
 //   5. 解析支援換行
+//   6. 支援填充題（fill_in_blank）：輸入框作答，判定規則見 fill.js
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { getG7Subject, LEVELS, SESSION_SIZE, GRADUATE_STREAK } from '../../config/g7'
 import { fetchProgress, withProgress, saveProgress, logAnswer, isWrong } from './progress'
+import { isFill, parseBlanks, checkFill, fillAnswerText } from './fill'
 
 // ── 工具函式 ────────────────────────────────────────────────
 
@@ -38,6 +40,14 @@ function parseJson(v) {
 
 // 打亂選項（圖片選項同步搬移），算出打亂後的正解位置
 function prepareQuestion(q, parentQ = null) {
+  const group = {
+    groupContent: parentQ ? parentQ.content : null,
+    groupImageUrl: parentQ ? parentQ.image_url : null,
+  }
+  if (isFill(q)) {
+    const blanks = parseBlanks(q.answer)
+    return blanks && blanks.length ? { ...q, isFill: true, blanks, ...group } : null
+  }
   const options = parseJson(q.options)
   if (!options) return null
   const answerIndex = parseInt(String(q.answer).replace(/["\\]/g, ''), 10)
@@ -51,8 +61,7 @@ function prepareQuestion(q, parentQ = null) {
     shuffledOptionImgs: isImageOptions ? order.map(i => optImgs[i]) : null,
     correctIndex: order.indexOf(answerIndex),
     isImageOptions,
-    groupContent: parentQ ? parentQ.content : null,
-    groupImageUrl: parentQ ? parentQ.image_url : null,
+    ...group,
   }
 }
 
@@ -62,7 +71,7 @@ function toItems(questions) {
   const groups = {}
   for (const q of questions) {
     if (q.parent_id) (groups[q.parent_id] ||= []).push(q)
-    else if (!q.is_group && q.options != null) standalones.push(q)
+    else if (!q.is_group && (q.options != null || isFill(q))) standalones.push(q)
   }
   return [
     ...standalones.map(q => [q]),
@@ -120,6 +129,8 @@ export default function G7PracticeSession() {
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState(null)
   const [unsure, setUnsure] = useState(false)
+  const [typed, setTyped] = useState([])          // 填充題：各格輸入內容
+  const [revealed, setRevealed] = useState(false) // 填充題重做時已顯示正解
   const [showResult, setShowResult] = useState(false)
   const [startTime] = useState(Date.now())
   const isSubmitting = useRef(false)
@@ -190,17 +201,29 @@ export default function G7PracticeSession() {
     return { ...q, ...next }
   }
 
+  // ── 作答判定（選擇題看 selected，填充題看 typed）──
+  const isAnswered = q => q.isFill ? q.blanks.every((_, i) => (typed[i] || '').trim()) : selected !== null
+  const judge = q => q.isFill ? checkFill(q.blanks, typed).ok : selected === q.correctIndex
+  const chosenOf = q => q.isFill ? typed.map(t => (t || '').trim()).join('／') : q.shuffledOptions[selected]
+  function resetInput() { setSelected(null); setTyped([]); setRevealed(false) }
+  // 答錯重做：選擇題重洗選項；填充題清空並顯示正解，讓孩子照著打一次
+  function retry(q) {
+    if (q.isFill) { setTyped([]); setRevealed(true); return q }
+    setSelected(null)
+    return reshuffle(q)
+  }
+
   function reshuffle(q) {
     return prepareQuestion(q, q.groupContent ? { content: q.groupContent, image_url: q.groupImageUrl } : null)
   }
 
   // ── 一般模式（單元／隨機）──
   async function handleConfirm() {
-    if (selected === null || showResult || isSubmitting.current) return
-    isSubmitting.current = true
     const q = questions[current]
-    const isCorrect = selected === q.correctIndex
-    const updatedQ = await recordAttempt(q, isCorrect, unsure, q.shuffledOptions[selected])
+    if (!isAnswered(q) || showResult || isSubmitting.current) return
+    isSubmitting.current = true
+    const isCorrect = judge(q)
+    const updatedQ = await recordAttempt(q, isCorrect, unsure, chosenOf(q))
     if (isCorrect) correctRef.current += 1
     else sessionWrongRef.current = [...sessionWrongRef.current, reshuffle(updatedQ)]
     setQuestions(prev => prev.map((item, i) => i === current ? { ...updatedQ, wasUnsure: unsure } : item))
@@ -210,7 +233,7 @@ export default function G7PracticeSession() {
 
   async function handleNext() {
     setShowResult(false)
-    setSelected(null)
+    resetInput()
     setUnsure(false)
     if (current + 1 < questions.length) { setCurrent(c => c + 1); return }
     await finish()
@@ -236,16 +259,16 @@ export default function G7PracticeSession() {
 
   // ── 當次錯題訂正：答對即移除，不寫資料庫 ──
   function handleSessionWrongConfirm() {
-    if (selected === null || showResult) return
     const q = sessionWrong[wrongCurrent]
-    if (selected === q.correctIndex) { setShowResult(true); return }
-    setSessionWrong(prev => prev.map((item, i) => i === wrongCurrent ? reshuffle(item) : item))
-    setSelected(null)
+    if (!isAnswered(q) || showResult) return
+    if (judge(q)) { setShowResult(true); return }
+    const next = retry(q)
+    setSessionWrong(prev => prev.map((item, i) => i === wrongCurrent ? next : item))
   }
 
   function handleSessionWrongNext() {
     setShowResult(false)
-    setSelected(null)
+    resetInput()
     const remaining = sessionWrong.filter((_, i) => i !== wrongCurrent)
     if (remaining.length === 0) { setPhase('complete'); return }
     setSessionWrong(remaining)
@@ -254,27 +277,29 @@ export default function G7PracticeSession() {
 
   // ── 錯題模式：答錯重洗留在原題，答對移出本回合；連對達標即畢業 ──
   async function handleWrongConfirm() {
-    if (selected === null || showResult || isSubmitting.current) return
-    isSubmitting.current = true
     const q = questions[current]
-    const isCorrect = selected === q.correctIndex
-    const updatedQ = await recordAttempt(q, isCorrect, unsure, q.shuffledOptions[selected])
+    if (!isAnswered(q) || showResult || isSubmitting.current) return
+    isSubmitting.current = true
+    const isCorrect = judge(q)
+    // 看過正解後才答對的填充題，視同「不確定」：不累計連對，留在錯題本
+    const isUnsure = unsure || (q.isFill && revealed)
+    const updatedQ = await recordAttempt(q, isCorrect, isUnsure, chosenOf(q))
     if (!isCorrect) {
       setUnsure(false)
-      setQuestions(prev => prev.map((item, i) => i === current ? reshuffle(updatedQ) : item))
-      setSelected(null)
+      const next = retry(updatedQ)
+      setQuestions(prev => prev.map((item, i) => i === current ? next : item))
       isSubmitting.current = false
       return
     }
     if (updatedQ.consecutive_correct >= GRADUATE_STREAK) correctRef.current += 1
-    setQuestions(prev => prev.map((item, i) => i === current ? { ...updatedQ, wasUnsure: unsure } : item))
+    setQuestions(prev => prev.map((item, i) => i === current ? { ...updatedQ, wasUnsure: isUnsure } : item))
     setShowResult(true)
     isSubmitting.current = false
   }
 
   async function handleWrongNext() {
     setShowResult(false)
-    setSelected(null)
+    resetInput()
     setUnsure(false)
     const remaining = questions.filter((_, i) => i !== current)
     if (remaining.length === 0) {
@@ -323,9 +348,10 @@ export default function G7PracticeSession() {
         progress={sessionWrong.length / sessionWrongRef.current.length}
       >
         <Notice>📝 答對就能移除，繼續加油！</Notice>
-        <QuestionCard q={q} selected={selected} showResult={showResult} onSelect={setSelected} />
+        <QuestionCard q={q} selected={selected} showResult={showResult} onSelect={setSelected}
+          typed={typed} onType={setTyped} revealed={revealed} onSubmit={handleSessionWrongConfirm} />
         {!showResult ? (
-          <ConfirmButton color="#DC2626" disabled={selected === null} onClick={handleSessionWrongConfirm} />
+          <ConfirmButton color="#DC2626" disabled={!isAnswered(q)} onClick={handleSessionWrongConfirm} />
         ) : (
           <ResultPanel correct explanation={q.explanation} color="#DC2626"
             nextLabel={sessionWrong.length === 1 ? '完成訂正 🎉' : '下一題 →'}
@@ -339,7 +365,8 @@ export default function G7PracticeSession() {
   let badge = `${unitTitle}．${LEVELS[level].label}`
   if (isWrongMode) badge = unitTitle ? `${unitTitle}．錯題` : '整科錯題'
   if (mode === 'random') badge = `隨機抽題（${questions.length} 題）`
-  const isCorrect = selected === q.correctIndex
+  const isCorrect = judge(q)
+  const onConfirm = isWrongMode ? handleWrongConfirm : handleConfirm
 
   return (
     <SessionLayout
@@ -349,12 +376,12 @@ export default function G7PracticeSession() {
       onExit={isWrongMode ? null : handleEarlyExit}
     >
       {isWrongMode && <Notice>📋 錯題複習：有把握地連續答對 {GRADUATE_STREAK} 次，就會移出錯題本</Notice>}
-      <QuestionCard q={q} selected={selected} showResult={showResult} onSelect={setSelected} />
+      <QuestionCard q={q} selected={selected} showResult={showResult} onSelect={setSelected}
+        typed={typed} onType={setTyped} revealed={revealed} onSubmit={onConfirm} />
       {!showResult ? (
         <>
           <UnsureToggle checked={unsure} onChange={setUnsure} />
-          <ConfirmButton color={modeColor} disabled={selected === null}
-            onClick={isWrongMode ? handleWrongConfirm : handleConfirm} />
+          <ConfirmButton color={modeColor} disabled={!isAnswered(q)} onClick={onConfirm} />
         </>
       ) : (
         <ResultPanel
@@ -414,7 +441,7 @@ function Notice({ children }) {
   )
 }
 
-function QuestionCard({ q, selected, showResult, onSelect }) {
+function QuestionCard({ q, selected, showResult, onSelect, typed, onType, revealed, onSubmit }) {
   return (
     <div className="question-card" style={{ marginBottom: '20px' }}>
       {q.groupContent && (
@@ -443,6 +470,9 @@ function QuestionCard({ q, selected, showResult, onSelect }) {
           <img src={q.image_url} alt="題目圖片" style={{ maxWidth: '100%', maxHeight: '280px', borderRadius: '8px', border: '1px solid #E2E8F0', objectFit: 'contain' }} />
         </div>
       )}
+      {q.isFill ? (
+        <FillInputs q={q} typed={typed} onType={onType} showResult={showResult} revealed={revealed} onSubmit={onSubmit} />
+      ) : (
       <div className={q.isImageOptions ? 'options-grid options-grid-image' : 'options-grid'}>
         {q.shuffledOptions.map((opt, idx) => {
           let cls = 'option-btn'
@@ -462,6 +492,69 @@ function QuestionCard({ q, selected, showResult, onSelect }) {
           )
         })}
       </div>
+      )}
+    </div>
+  )
+}
+
+// 填充題輸入框：關閉自動大寫／自動修正／拼字檢查，避免手機幫孩子拼對
+function FillInputs({ q, typed, onType, showResult, revealed, onSubmit }) {
+  const last = q.blanks.length - 1
+  const results = showResult ? checkFill(q.blanks, typed).perBlank : null
+  function setAt(i, v) {
+    const next = [...typed]
+    next[i] = v
+    onType(next)
+  }
+  function onKeyDown(e, i) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    if (i < last) document.getElementById(`g7-fill-${i + 1}`)?.focus()
+    else onSubmit()
+  }
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+      {revealed && !showResult && (
+        <div style={{
+          background: '#FFFBEB', border: '1px solid #FCD34D', borderRadius: '10px',
+          padding: '10px 14px', fontSize: '15px', color: '#B45309',
+        }}>
+          💡 正確答案：<b>{fillAnswerText(q.blanks)}</b>　照著拼一次
+        </div>
+      )}
+      {q.blanks.map((acc, i) => {
+        const r = results?.[i]
+        const border = r ? (r.ok ? '#16A34A' : '#DC2626') : '#CBD5E1'
+        return (
+          <div key={i}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {q.blanks.length > 1 && <span style={{ fontSize: '15px', color: '#64748B', minWidth: '28px' }}>({i + 1})</span>}
+              <input
+                id={`g7-fill-${i}`}
+                type="text"
+                value={typed[i] || ''}
+                onChange={e => setAt(i, e.target.value)}
+                onKeyDown={e => onKeyDown(e, i)}
+                disabled={showResult}
+                autoCapitalize="off" autoCorrect="off" autoComplete="off" spellCheck={false}
+                enterKeyHint={i < last ? 'next' : 'done'}
+                placeholder={q.blanks.length > 1 ? `第 ${i + 1} 格` : '輸入答案'}
+                style={{
+                  flex: 1, minWidth: 0, fontSize: '18px', padding: '12px 14px', borderRadius: '10px',
+                  border: `2px solid ${border}`, outline: 'none', color: '#0F172A',
+                  background: r ? (r.ok ? '#F0FDF4' : '#FEF2F2') : 'white',
+                }}
+              />
+            </div>
+            {r && !r.caseOk && (
+              <div style={{ fontSize: '14px', marginTop: '6px', marginLeft: q.blanks.length > 1 ? '36px' : 0,
+                color: r.ok ? '#D97706' : '#16A34A', fontWeight: 600 }}>
+                {r.ok ? '⚠ 注意大小寫：' : '✅ 正確：'}{acc.join('／')}
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }

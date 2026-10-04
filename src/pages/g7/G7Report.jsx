@@ -15,6 +15,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { G7_SUBJECTS, DAILY_NEW_TARGET } from '../../config/g7'
 import { fetchAll, fetchProgress, withProgress, isWrong } from './progress'
+import { isFill, parseBlanks, fillAnswerText } from './fill'
 
 // ── 日期工具（以瀏覽器所在時區計算，一週從星期一開始）──
 const PERIODS = [['day', '日'], ['week', '週'], ['month', '月']]
@@ -54,6 +55,7 @@ function parseJson(v) {
   return Array.isArray(v) ? v : JSON.parse(v)
 }
 function answerText(q) {
+  if (isFill(q)) return fillAnswerText(parseBlanks(q.answer) || [])
   const opts = parseJson(q.options)
   const i = parseInt(String(q.answer).replace(/["\\]/g, ''), 10)
   return opts?.[i] ?? ''
@@ -135,7 +137,7 @@ export default function G7Report() {
       setLogs(rows)
 
       const wrongIds = [...new Set(rows.filter(r => !r.is_correct && r.question_id).map(r => r.question_id))]
-      const qs = await fetchByIds('questions', 'id, subject_id, unit_id, parent_id, content, options, answer, explanation, image_url', wrongIds)
+      const qs = await fetchByIds('questions', 'id, subject_id, unit_id, parent_id, question_type_id, content, options, answer, explanation, image_url', wrongIds)
       const parentIds = [...new Set(qs.map(q => q.parent_id).filter(Boolean))]
       const parents = await fetchByIds('questions', 'id, content, image_url', parentIds)
       const unitIds = [...new Set(qs.map(q => q.unit_id))]
