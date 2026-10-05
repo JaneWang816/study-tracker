@@ -8,6 +8,7 @@
 // 定義：
 //   新題     ＝ 單元練習或隨機抽題中，第一次作答的題目（is_new）
 //   錯題複習 ＝ 在錯題本回合（mode = 'wrong'）作答的題目，同一題答錯重來也各算一次
+//   再練習   ＝ 單元練習或隨機抽題中，以前做過的題目（隨機抽題只抽做過的題，所以全部算在這裡）
 //   目標     ＝ 每科每天 DAILY_NEW_TARGET 題新題，並複習一次錯題本
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -233,12 +234,13 @@ export default function G7Report() {
                         <th style={th}>新題<br />正確率</th>
                         <th style={th}>錯題複習<br /><small>{period === 'day' ? '' : '（天數）'}</small></th>
                         <th style={th}>複習<br />正確率</th>
+                        <th style={th}>再練習<br /><small>（正確率）</small></th>
                         <th style={th}>錯題本<br />剩餘</th>
                       </tr>
                     </thead>
                     <tbody>
                       {subjects.map(s => {
-                        const x = stats[s.subjectId] || { newN: 0, newC: 0, revN: 0, revC: 0, reviewDays: new Set() }
+                        const x = stats[s.subjectId] || { newN: 0, newC: 0, revN: 0, revC: 0, otherN: 0, otherC: 0, reviewDays: new Set() }
                         const remain = wrongBook[s.subjectId] || 0
                         const ratio = target ? x.newN / target : 0
                         return (
@@ -253,6 +255,10 @@ export default function G7Report() {
                                 : <small style={{ color: 'var(--text-light)' }}>（{x.reviewDays.size} 天）</small>}
                             </td>
                             <td style={td}>{pct(x.revC, x.revN)}</td>
+                            <td style={td}>
+                              {x.otherN}
+                              {x.otherN > 0 && <small style={{ color: 'var(--text-light)' }}>（{pct(x.otherC, x.otherN)}）</small>}
+                            </td>
                             <td style={{ ...td, color: remain >= 10 ? '#DC2626' : 'inherit', fontWeight: remain >= 10 ? 700 : 400 }}>{remain}</td>
                           </tr>
                         )
@@ -260,7 +266,7 @@ export default function G7Report() {
                     </tbody>
                   </table>
                 </div>
-                <p style={noteStyle}>新題顏色：綠＝達標、橘＝達一半、紅＝不到一半。錯題本剩餘為目前數量，不隨期間變動。</p>
+                <p style={noteStyle}>新題顏色：綠＝達標、橘＝達一半、紅＝不到一半。再練習＝單元練習或隨機抽題中以前做過的題目。錯題本剩餘為目前數量，不隨期間變動。</p>
               </Section>
 
               {/* 每日明細（週、月） */}
@@ -360,7 +366,9 @@ function WrongCard({ w, unitTitle }) {
       <div style={{ fontSize: '14px', lineHeight: 1.8 }}>
         <div><span style={{ color: '#DC2626', fontWeight: 700 }}>❌ 他的答案：</span>{[...w.chosen].join('／') || '—'}</div>
         <div><span style={{ color: '#16A34A', fontWeight: 700 }}>✅ 正確答案：</span>{answerText(q)}</div>
-        {w.modes.has('wrong') && <div style={{ color: '#D97706', fontSize: '13px' }}>（含錯題複習時答錯）</div>}
+        <div style={{ color: 'var(--text-light)', fontSize: '13px' }}>
+          答錯時：{['unit', 'random', 'wrong'].filter(m => w.modes.has(m)).map(m => MODE_LABEL[m]).join('、')}
+        </div>
       </div>
       {q.explanation && (
         <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '10px', padding: '12px 14px',
